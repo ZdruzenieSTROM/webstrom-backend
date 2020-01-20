@@ -1,0 +1,21 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="sk">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" type="text/css" href="{% static 'vendor/css/bootstrap.min.css' %}" />
+
+    <title>{% block title %}{% endblock title %}</title>
+</head>
+
+<body>
+    {% block content %}
+    {% endblock content %}
+    <script type="application/javascript" src="{% static 'vendor/js/jquery-3.4.1.min.js' %}"></script>
+    <script type="application/javascript" src="{% static 'vendor/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+
+</html>
