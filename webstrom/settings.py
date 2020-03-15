@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'django.contrib.flatpages',
     'base.apps.BaseConfig',
+	'user.apps.UserConfig',
 ]
 
 MIDDLEWARE = [
@@ -84,6 +85,16 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+
+# User model
+
+LOGIN_URL = 'user:login'
+
+LOGOUT_REDIRECT_URL = 'user:logout'
+
+AUTH_USER_MODEL = 'user.User'
+
+PASSWORD_RESET_TIMEOUT_DAYS = 3
 
 
 # Password validation
