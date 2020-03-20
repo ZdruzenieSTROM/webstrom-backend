@@ -39,14 +39,14 @@ class Skola(models.Model):
         verbose_name = 'škola'
         verbose_name_plural = 'školy'
 
-    nazov = models.CharField(max_length=100)
-    skratka = models.CharField(max_length=10)
-    ulica = models.CharField(max_length=100)
-    obec = models.CharField(max_length=100)
+    nazov = models.CharField(max_length=100, verbose_name='názov')
+    skratka = models.CharField(max_length=10, verbose_name='skratka')
+    ulica = models.CharField(max_length=100, verbose_name='ulica')
+    obec = models.CharField(max_length=100, verbose_name='obec')
     # TODO: dať do zoznamu škôl psč?
-    psc = models.CharField(max_length=5, null=True)
+    psc = models.CharField(max_length=5, null=True, verbose_name='PSČ')
     # TODO: určite nám treba mail na školy v databáze?
-    email = models.CharField(max_length=50)
+    email = models.CharField(max_length=50, verbose_name='e-mail')
     okres = models.ForeignKey(Okres, on_delete=models.CASCADE)
 
     def __str__(self):
