@@ -1,11 +1,12 @@
 from django.contrib import admin
-from django.contrib.auth.models import Group, Permission
 from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.models import Group, Permission
 
-from user.models import User
-from user.forms import CustomUserCreationForm, CustomUserChangeForm
+from .forms import CustomUserChangeForm, CustomUserCreationForm
+from .models import Kraj, Okres, Skola, User
 
 
+@admin.register(User)
 class CustomUserAdmin(UserAdmin):
     add_form = CustomUserCreationForm
     form = CustomUserChangeForm
@@ -48,14 +49,14 @@ class CustomUserAdmin(UserAdmin):
         ('Oprávnenia', {
             'classes': ('wide',),
             'fields': (('is_staff', 'is_superuser'), 'groups'),
-        }), 
+        }),
         ('Extra oprávnenia', {
-            'classes': ('collapse',), 
-            'fields': ('user_permissions',), 
-            'description': 'Za normálnych okolností sa neudeľujú a mali by vystačiť '+\
-                'skupiny oprávnení, avšak pre nejaké špeciálne potreby môžu byť '+\
-                    'využité. Priraďujú oprávnenia nad rámec skupín.'
-        }), 
+            'classes': ('collapse',),
+            'fields': ('user_permissions',),
+            'description': 'Za normálnych okolností sa neudeľujú a mali by vystačiť ' +
+            'skupiny oprávnení, avšak pre nejaké špeciálne potreby môžu byť ' +
+            'využité. Priraďujú oprávnenia nad rámec skupín.'
+        }),
     )
 
     add_fieldsets = (
@@ -70,9 +71,11 @@ class CustomUserAdmin(UserAdmin):
         ('Oprávnenia', {
             'classes': ('wide',),
             'fields': (('is_staff', 'is_superuser'), 'groups'),
-        }), 
+        }),
     )
 
 
-admin.site.register(User, CustomUserAdmin)
 admin.site.register(Permission)
+admin.site.register(Kraj)
+admin.site.register(Okres)
+admin.site.register(Skola)

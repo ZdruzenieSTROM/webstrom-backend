@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'django.contrib.flatpages',
     'base.apps.BaseConfig',
-	'user.apps.UserConfig',
+    'user.apps.UserConfig',
 ]
 
 MIDDLEWARE = [
@@ -89,8 +89,9 @@ DATABASES = {
 # User model
 
 LOGIN_URL = 'user:login'
+LOGIN_REDIRECT_URL = '/'
 
-LOGOUT_REDIRECT_URL = 'user:logout'
+LOGOUT_REDIRECT_URL = '/'
 
 AUTH_USER_MODEL = 'user.User'
 

@@ -1,7 +1,14 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
 {% block title %}{{ flatpage.title }}{% endblock title %}
 
 {% block content %}
-{{ flatpage.content }}
+<div class="card">
+    <div class="card-header">
+        {{ flatpage.title }}
+    </div>
+    <div class="card-body">
+        {{ flatpage.content }}
+    </div>
+</div>
 {% endblock content %}

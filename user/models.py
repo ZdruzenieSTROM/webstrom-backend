@@ -7,6 +7,58 @@ from django.contrib.auth.models import (
 from django.core.validators import RegexValidator
 
 
+class Kraj(models.Model):
+    class Meta:
+        verbose_name = 'kraj'
+        verbose_name_plural = 'kraje'
+
+    kod = models.IntegerField(primary_key=True, verbose_name='kód')
+    nazov = models.CharField(max_length=30, verbose_name='názov')
+
+    def __str__(self):
+        return self.nazov
+
+
+class Okres(models.Model):
+    class Meta:
+        verbose_name = 'okres'
+        verbose_name_plural = 'okresy'
+
+    kod = models.IntegerField(primary_key=True, verbose_name='kód')
+    nazov = models.CharField(max_length=30, verbose_name='názov')
+    kraj = models.ForeignKey(Kraj, on_delete=models.CASCADE)
+    skratka_okresu = models.CharField(
+        max_length=2, verbose_name='skratka okresu')
+
+    def __str__(self):
+        return self.nazov
+
+
+class Skola(models.Model):
+    class Meta:
+        verbose_name = 'škola'
+        verbose_name_plural = 'školy'
+
+    nazov = models.CharField(max_length=100)
+    skratka = models.CharField(max_length=10)
+    ulica = models.CharField(max_length=100)
+    obec = models.CharField(max_length=100)
+    # TODO: dať do zoznamu škôl psč?
+    psc = models.CharField(max_length=5, null=True)
+    # TODO: určite nám treba mail na školy v databáze?
+    email = models.CharField(max_length=50)
+    okres = models.ForeignKey(Okres, on_delete=models.CASCADE)
+
+    def __str__(self):
+        # TODO: Nejaky pekny vypis skoly
+        # TODO: dočasne
+        return f'{ self.nazov } { self.ulica }, { self.obec }'
+
+    def stitok(self):
+        # TODO: Texovsky stitok skoly
+        pass
+
+
 class UserManager(BaseUserManager):
     def create_user(self, email, password, **extra_fields):
         if not email:
@@ -49,8 +101,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name='priezvisko'
     )
 
-    # TODO: change school to ChoiceField from model School
-    school = models.CharField(max_length=128)
+    school = models.ForeignKey(Skola, on_delete=models.CASCADE, null=True)
 
     phone = models.CharField(
         max_length=32,
