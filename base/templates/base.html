@@ -6,16 +6,41 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <link rel="stylesheet" type="text/css" href="{% static 'vendor/css/bootstrap.min.css' %}" />
-
     <title>{% block title %}{% endblock title %}</title>
+
+    {% include 'favicon.html' %}
+
+    <link rel="stylesheet" type="text/css" href="{% static 'vendor/css/bootstrap.min.css' %}" />
+    {% block css %}
+    {% endblock css %}
 </head>
 
 <body>
-    {% block content %}
-    {% endblock content %}
-    <script type="application/javascript" src="{% static 'vendor/js/jquery-3.4.1.min.js' %}"></script>
-    <script type="application/javascript" src="{% static 'vendor/js/bootstrap.bundle.min.js' %}"></script>
+    {% include 'navbar.html' %}
+
+    {# posunutie obsahu stránky pod fixed navbar, asi dočasné #}
+    <div class="container-fluid" style="padding-top:64px;">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-header">
+                        Menu
+                    </div>
+                    {% include 'menu.html' %}
+                </div>
+            </div>
+
+            <div class="col-md-9">
+                {% block content %}
+                {% endblock content %}
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'vendor/js/jquery-3.4.1.min.js' %}"></script>
+    <script src="{% static 'vendor/js/bootstrap.bundle.min.js' %}"></script>
+    {% block javascript %}
+    {% endblock javascript %}
 </body>
 
 </html>
