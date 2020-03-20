@@ -1,0 +1,81 @@
+kod,nazov,skratka_okresu,kraj
+101,Bratislava I,BA,1
+102,Bratislava II,BA,1
+103,Bratislava III,BA,1
+104,Bratislava IV,BA,1
+105,Bratislava V,BA,1
+106,Malacky,MA,1
+107,Pezinok,PK,1
+108,Senec,SC,1
+201,Dunajská Streda,DS,2
+202,Galanta,GA,2
+203,Hlohovec,HC,2
+204,Piešťany,PN,2
+205,Senica,SE,2
+206,Skalica,SI,2
+207,Trnava,TT,2
+301,Bánovce nad Bebravou,BN,3
+302,Ilava,IL,3
+303,Myjava,MY,3
+304,Nové Mesto nad Váhom,NM,3
+305,Partizánske,PE,3
+306,Považská Bystrica,PB,3
+307,Prievidza,PD,3
+308,Púchov,PU,3
+309,Trenčín,TN,3
+401,Komárno,KN,4
+402,Levice,LV,4
+403,Nitra,NR,4
+404,Nové Zámky,NZ,4
+405,Šaľa,SA,4
+406,Topoľčany,TO,4
+407,Zlaté Moravce,ZM,4
+501,Bytča,BY,5
+502,Čadca,CA,5
+503,Dolný Kubín,DK,5
+504,Kysucké Nové Mesto,KM,5
+505,Liptovský Mikuláš,LM,5
+506,Martin,MT,5
+507,Námestovo,NO,5
+508,Ružomberok,RK,5
+509,Turčianske Teplice,TR,5
+510,Tvrdošín,TS,5
+511,Žilina,ZA,5
+601,Banská Bystrica,BB,6
+602,Banská Štiavnica,BS,6
+603,Brezno,BR,6
+604,Detva,DT,6
+605,Krupina,KA,6
+606,Lučenec,LC,6
+607,Poltár,PT,6
+608,Revúca,RA,6
+609,Rimavská Sobota,RS,6
+610,Veľký Krtíš,VK,6
+611,Zvolen,ZV,6
+612,Žarnovica,ZC,6
+613,Žiar nad Hronom,ZH,6
+701,Bardejov,BJ,7
+702,Humenné,HE,7
+703,Kežmarok,KK,7
+704,Levoča,LE,7
+705,Medzilaborce,ML,7
+706,Poprad,PP,7
+707,Prešov,PO,7
+708,Sabinov,SB,7
+709,Snina,SV,7
+710,Stará Ľubovňa,SL,7
+711,Stropkov,SP,7
+712,Svidník,SK,7
+713,Vranov nad Topľou,VT,7
+801,Gelnica,GL,8
+802,Košice I,KE,8
+803,Košice II,KE,8
+804,Košice III,KE,8
+805,Košice IV,KE,8
+806,Košice - okolie,KS,8
+807,Michalovce,MI,8
+808,Rožňava,RV,8
+809,Sobrance,SO,8
+810,Spišská Nová Ves,SN,8
+811,Trebišov,TV,8
+900,Zahraničie,--,9
