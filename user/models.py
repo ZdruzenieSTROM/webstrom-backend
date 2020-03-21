@@ -7,56 +7,55 @@ from django.contrib.auth.models import (
 from django.core.validators import RegexValidator
 
 
-class Kraj(models.Model):
+class County(models.Model):
     class Meta:
         verbose_name = 'kraj'
         verbose_name_plural = 'kraje'
 
-    kod = models.IntegerField(primary_key=True, verbose_name='kód')
-    nazov = models.CharField(max_length=30, verbose_name='názov')
+    code = models.IntegerField(primary_key=True, verbose_name='kód')
+    name = models.CharField(max_length=30, verbose_name='názov')
 
     def __str__(self):
-        return self.nazov
+        return self.name
 
 
-class Okres(models.Model):
+class District(models.Model):
     class Meta:
         verbose_name = 'okres'
         verbose_name_plural = 'okresy'
 
-    kod = models.IntegerField(primary_key=True, verbose_name='kód')
-    nazov = models.CharField(max_length=30, verbose_name='názov')
-    kraj = models.ForeignKey(Kraj, on_delete=models.CASCADE)
-    skratka_okresu = models.CharField(
+    code = models.IntegerField(primary_key=True, verbose_name='kód')
+    name = models.CharField(max_length=30, verbose_name='názov')
+    county = models.ForeignKey(County, on_delete=models.SET_NULL)
+    abbreviation = models.CharField(
         max_length=2, verbose_name='skratka okresu')
 
     def __str__(self):
-        return self.nazov
+        return self.name
 
 
-class Skola(models.Model):
+class School(models.Model):
     class Meta:
         verbose_name = 'škola'
         verbose_name_plural = 'školy'
 
-    nazov = models.CharField(max_length=100, verbose_name='názov')
-    skratka = models.CharField(max_length=10, verbose_name='skratka')
-    ulica = models.CharField(max_length=100, verbose_name='ulica')
-    obec = models.CharField(max_length=100, verbose_name='obec')
+    name = models.CharField(max_length=100)
+    abbreviation = models.CharField(max_length=10)
+    street = models.CharField(max_length=100)
+    city = models.CharField(max_length=100)
     # TODO: dať do zoznamu škôl psč?
-    psc = models.CharField(max_length=5, null=True, verbose_name='PSČ')
-    # TODO: určite nám treba mail na školy v databáze?
-    email = models.CharField(max_length=50, verbose_name='e-mail')
-    okres = models.ForeignKey(Okres, on_delete=models.CASCADE)
+    zip_code = models.CharField(max_length=6, null=True)
+    email = models.CharField(max_length=50)
+    district = models.ForeignKey(District, on_delete=models.SET_NULL)
+
 
     def __str__(self):
         # TODO: Nejaky pekny vypis skoly
         # TODO: dočasne
-        return f'{ self.nazov } { self.ulica }, { self.obec }'
+        return f'{ self.name }, { self.street }, { self.city }'
 
     def stitok(self):
-        # TODO: Texovsky stitok skoly
-        pass
+        return f'\stitok{{{ self.nazov }}}{{{ self.city }}}{{{ self.zip }}}{{{ self.street }}}' 
 
 
 class UserManager(BaseUserManager):
@@ -101,7 +100,11 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name='priezvisko'
     )
 
-    school = models.ForeignKey(Skola, on_delete=models.CASCADE, null=True)
+    nick_name = models.CharField(
+        max_length=32,
+        verbose_name='prezývka'
+    )
+    school = models.ForeignKey(School, on_delete=models.SET_NULL, null=True)
 
     phone = models.CharField(
         max_length=32,
