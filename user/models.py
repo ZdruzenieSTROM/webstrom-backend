@@ -48,6 +48,7 @@ class School(models.Model):
     email = models.CharField(max_length=50)
     district = models.ForeignKey(District, on_delete=models.SET_NULL)
 
+
     def __str__(self):
         # TODO: Nejaky pekny vypis skoly
         # TODO: dočasne
