@@ -58,6 +58,24 @@ class School(models.Model):
         return f'\stitok{{{ self.nazov }}}{{{ self.city }}}{{{ self.zip }}}{{{ self.street }}}' 
 
 
+class Grade(models.Model):
+    class Meta:
+        verbose_name = 'ročník'
+        verbose_name_plural = 'ročníky'
+    
+    name = models.CharField(
+        max_length = 32,
+        verbose_name = 'názov ročníku'
+        )
+    tag = models.CharField(
+        max_length = 2,
+        unique = True,
+        verbose_name = 'skratka'
+        )
+    years_in_school = models.PositiveSmallIntegerField(
+        verbose_name = 'počet rokov v škole'
+    )
+
 class UserManager(BaseUserManager):
     def create_user(self, email, password, **extra_fields):
         if not email:
@@ -105,6 +123,8 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name='prezývka'
     )
     school = models.ForeignKey(School, on_delete=models.SET_NULL, null=True)
+
+    grade = models.ForeignKey(Grade, on_delete=nodels.SET_NULL, null=False)
 
     phone = models.CharField(
         max_length=32,
