@@ -3,7 +3,7 @@ from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Group, Permission
 
 from .forms import CustomUserChangeForm, CustomUserCreationForm
-from .models import Kraj, Okres, Skola, User
+from .models import County, District, School, User
 
 
 @admin.register(User)
@@ -76,6 +76,6 @@ class CustomUserAdmin(UserAdmin):
 
 
 admin.site.register(Permission)
-admin.site.register(Kraj)
-admin.site.register(Okres)
-admin.site.register(Skola)
+admin.site.register(County)
+admin.site.register(District)
+admin.site.register(School)
