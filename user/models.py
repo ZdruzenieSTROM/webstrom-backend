@@ -4,7 +4,7 @@ from django.contrib.auth.models import (
     BaseUserManager,
     PermissionsMixin,
 )
-from django.core.validators import RegexValidator
+from base.validators import phone_number_validator
 
 
 class County(models.Model):
@@ -26,7 +26,7 @@ class District(models.Model):
 
     code = models.IntegerField(primary_key=True, verbose_name='kód')
     name = models.CharField(max_length=30, verbose_name='názov')
-    county = models.ForeignKey(County, on_delete=models.SET_NULL)
+    county = models.ForeignKey(County, on_delete=models.SET_NULL, null=True)
     abbreviation = models.CharField(
         max_length=2, verbose_name='skratka okresu')
 
@@ -43,11 +43,10 @@ class School(models.Model):
     abbreviation = models.CharField(max_length=10)
     street = models.CharField(max_length=100)
     city = models.CharField(max_length=100)
-    # TODO: dať do zoznamu škôl psč?
-    zip_code = models.CharField(max_length=6, null=True)
+    zip_code = models.CharField(max_length=6)
     email = models.CharField(max_length=50)
-    district = models.ForeignKey(District, on_delete=models.SET_NULL)
-
+    district = models.ForeignKey(
+        District, on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
         # TODO: Nejaky pekny vypis skoly
@@ -55,26 +54,27 @@ class School(models.Model):
         return f'{ self.name }, { self.street }, { self.city }'
 
     def stitok(self):
-        return f'\stitok{{{ self.nazov }}}{{{ self.city }}}{{{ self.zip }}}{{{ self.street }}}' 
+        return f'\stitok{{{ self.nazov }}}{{{ self.city }}}{{{ self.zip }}}{{{ self.street }}}'
 
 
 class Grade(models.Model):
     class Meta:
         verbose_name = 'ročník'
         verbose_name_plural = 'ročníky'
-    
+
     name = models.CharField(
-        max_length = 32,
-        verbose_name = 'názov ročníku'
-        )
-    tag = models.CharField(
-        max_length = 2,
-        unique = True,
-        verbose_name = 'skratka'
-        )
-    years_in_school = models.PositiveSmallIntegerField(
-        verbose_name = 'počet rokov v škole'
+        max_length=32,
+        verbose_name='názov ročníku'
     )
+    tag = models.CharField(
+        max_length=2,
+        unique=True,
+        verbose_name='skratka'
+    )
+    years_in_school = models.PositiveSmallIntegerField(
+        verbose_name='počet rokov v škole'
+    )
+
 
 class UserManager(BaseUserManager):
     def create_user(self, email, password, **extra_fields):
@@ -124,18 +124,13 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
     school = models.ForeignKey(School, on_delete=models.SET_NULL, null=True)
 
-    grade = models.ForeignKey(Grade, on_delete=models.SET_NULL, null=False)
+    grade = models.ForeignKey(Grade, on_delete=models.SET_NULL, null=True)
 
     phone = models.CharField(
         max_length=32,
         blank=True,
         null=True,
-        validators=[
-            RegexValidator(
-                regex=r'^(\+\d{1,3}\s?\d{3}\s?\d{3}\s?\d{3}|\d{4}\s?\d{3}\s?\d{3})$',
-                message='Zadaj telefónne číslo vo formáte +421 123 456 789 alebo 0912 345 678.', # ale prejde to tym aj bez medzier
-            ),
-        ],
+        validators=[phone_number_validator],
         verbose_name='telefónne číslo',
         help_text='Telefonné číslo oddelené medzerami po trojčísliach \
         na začiatku s predvoľbou.'
@@ -144,12 +139,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         max_length=32,
         blank=True,
         null=True,
-        validators=[
-            RegexValidator(
-                regex=r'^(\+\d{1,3}\s?\d{3}\s?\d{3}\s?\d{3}|\d{4}\s?\d{3}\s?\d{3})$',
-                message='Zadaj telefónne číslo vo formáte +421 123 456 789 alebo 0912 345 678.', # ale prejde to tym aj bez medzier
-            ),
-        ],
+        validators=[phone_number_validator],
         verbose_name='telefónne číslo na rodiča',
         help_text='Telefonné číslo oddelené medzerami po trojčísliach \
         na začiatku s predvoľbou.'
