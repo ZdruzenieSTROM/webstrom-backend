@@ -124,7 +124,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
     school = models.ForeignKey(School, on_delete=models.SET_NULL, null=True)
 
-    grade = models.ForeignKey(Grade, on_delete=nodels.SET_NULL, null=False)
+    grade = models.ForeignKey(Grade, on_delete=models.SET_NULL, null=False)
 
     phone = models.CharField(
         max_length=32,
@@ -132,8 +132,8 @@ class User(AbstractBaseUser, PermissionsMixin):
         null=True,
         validators=[
             RegexValidator(
-                regex='^\+42(1|0)( \d{3}){3}$',
-                message='Telefónne číslo musí byť vo formáte +421 123 456 789.',
+                regex=r'^(\+\d{1,3}\s?\d{3}\s?\d{3}\s?\d{3}|\d{4}\s?\d{3}\s?\d{3})$',
+                message='Zadaj telefónne číslo vo formáte +421 123 456 789 alebo 0912 345 678.', # ale prejde to tym aj bez medzier
             ),
         ],
         verbose_name='telefónne číslo',
@@ -146,8 +146,8 @@ class User(AbstractBaseUser, PermissionsMixin):
         null=True,
         validators=[
             RegexValidator(
-                regex='^\+42(1|0)( \d{3}){3}$',
-                message='Telefónne číslo musí byť vo formáte +421 123 456 789.',
+                regex=r'^(\+\d{1,3}\s?\d{3}\s?\d{3}\s?\d{3}|\d{4}\s?\d{3}\s?\d{3})$',
+                message='Zadaj telefónne číslo vo formáte +421 123 456 789 alebo 0912 345 678.', # ale prejde to tym aj bez medzier
             ),
         ],
         verbose_name='telefónne číslo na rodiča',
