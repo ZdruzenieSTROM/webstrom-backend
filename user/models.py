@@ -124,7 +124,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
     school = models.ForeignKey(School, on_delete=models.SET_NULL, null=True)
 
-    grade = models.ForeignKey(Grade, on_delete=models.SET_NULL, null=True)
+    year_of_graduation = models.PositiveSmallIntegerField(
+        verbose_name='rok maturity'
+    )
 
     phone = models.CharField(
         max_length=32,
