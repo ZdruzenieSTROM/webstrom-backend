@@ -118,14 +118,15 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name='priezvisko'
     )
 
-    nick_name = models.CharField(
+    nickname = models.CharField(
         max_length=32,
         verbose_name='prezývka'
     )
+
     school = models.ForeignKey(School, on_delete=models.SET_NULL, null=True)
 
     year_of_graduation = models.PositiveSmallIntegerField(
-        verbose_name='rok maturity'
+        verbose_name='rok maturity', null=True
     )
 
     phone = models.CharField(
@@ -142,7 +143,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         blank=True,
         null=True,
         validators=[phone_number_validator],
-        verbose_name='telefónne číslo na rodiča',
+        verbose_name='telefónne číslo rodiča',
         help_text='Telefonné číslo oddelené medzerami po trojčísliach \
         na začiatku s predvoľbou.'
     )
