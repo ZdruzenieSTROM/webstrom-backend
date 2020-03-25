@@ -7,3 +7,4 @@ django-env
 
 .vscode
 env/*
+.env
