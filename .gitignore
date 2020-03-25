@@ -8,3 +8,5 @@ django-env
 .vscode
 env/*
 .env
+
+emails
