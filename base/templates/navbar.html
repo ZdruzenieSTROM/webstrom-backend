@@ -23,6 +23,7 @@
         </ul>
         <ul class="navbar-nav ml-auto">
             {% if user.is_authenticated %}
+            <li class="nav-item"><a class="nav-link" href="{% url 'user:password_change' %}">Zmeniť heslo</a>
             <li class="nav-item"><a class="nav-link" href="{% url 'user:logout' %}">Prihlásený ako {{ user.email }}</a>
             </li>
             {% else %}
