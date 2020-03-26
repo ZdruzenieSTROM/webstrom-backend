@@ -11,26 +11,34 @@ def remove_contents(dir, exclude=()):
         return
 
     for file in os.listdir(dir):
-        if file in exclude:
+        full_path = os.path.join(dir, file)
+
+        if file in exclude or os.path.isdir(full_path):
             continue
-        os.remove(os.path.join(dir, file))
+        os.remove(os.path.join(full_path))
 
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
+        if not settings.DEBUG:
+            self.stdout.write('Do not run this command with DEBUG=False')
+            return
+
         for app in settings.LOCAL_APPS:
             app_dir = os.path.join(settings.BASE_DIR, app.split('.')[0])
-
-            migrations_dir = os.path.join(app_dir, 'migrations')
-            remove_contents(migrations_dir, exclude=[
-                            '__init__.py', '__pycache__'])
 
             pycache_dirs = [os.path.join(app_dir, pycache_dir, '__pycache__')
                             for pycache_dir in APP_PYCACHE_DIRS]
             for pycache_dir in pycache_dirs:
                 remove_contents(pycache_dir)
 
-        database = settings.DATABASES['default'].get('NAME', None)
+            migrations_dir = os.path.join(app_dir, 'migrations')
+            remove_contents(migrations_dir, exclude=['__init__.py'])
+
+        remove_contents(os.path.join(
+            settings.BASE_DIR, 'webstrom', '__pycache__'))
+
+        database = settings.DATABASES['default'].get('NAME', '')
 
         if os.path.exists(database):
             os.remove(database)
