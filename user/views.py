@@ -2,7 +2,6 @@ from django.views.generic import FormView, TemplateView
 from django.views.generic.base import RedirectView
 
 from user.models import User
-from user.forms import *
 
 
 class SignupView(FormView):
