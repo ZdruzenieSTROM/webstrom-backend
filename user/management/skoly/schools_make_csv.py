@@ -3,12 +3,15 @@ import re
 import unidecode
 import wget
 import math
-
+import json
 
 
 kraje = 'kraje.xlsx'
 okresy = 'okresy.xlsx'
 files = ['SOS_Z.XLS','zs_z.xls','GYM_Z.XLS']
+output_format = 'json'
+
+
 
 def remove_vowels(s):
     return re.sub('[aeiouy]','',s)
@@ -36,19 +39,26 @@ def create_abbreviation(nazov_skoly,ulica,mesto,okres):
 def nacitaj_kraje(file):
     df_kraje = pd.read_excel(file,header=0)
     print(f'Zo súboru {file} bolo načítaných {df_kraje.shape[0]} krajov')
-    df_kraje.to_csv('kraje.csv')
-    print('Kraje boli exportované do kraje.csv')
+    if output_format=='csv':
+        df_kraje.to_csv('kraje.csv')
+    elif output_format=='json':
+        df_kraje.to_json('kraje.json', orient='records', force_ascii=False)
+    print(f'Kraje boli exportované do kraje.{output_format}')
 
 def nacitaj_okresy(file):
     df_okresy = pd.read_excel(file,header=0)
-    df_okresy['kraj'] = list(map(lambda x: x//100, list(df_okresy['kod'])))
-    df_okresy = df_okresy.set_index('kod')
+    df_okresy['county'] = list(map(lambda x: x//100, list(df_okresy['code'])))
+    
     print(f'Zo súboru {file} bolo načítaných {df_okresy.shape[0]} okresov')
 
     #Export do csv
-    df_okresy.to_csv('okresy.csv')
-    print('Okresy boli exportované do okresy.csv')
-
+    if output_format=='csv':
+        df_okresy = df_okresy.set_index('code')
+        df_okresy.to_csv('okresy.csv')
+    elif output_format=='json':
+        df_okresy.to_json('okresy.json', orient='records', force_ascii=False)
+    print(f'Okresy boli exportované do okresy.{output_format}')
+    df_okresy = df_okresy.set_index('code')
     return df_okresy
 
 def load_schools():
@@ -71,11 +81,12 @@ def load_schools():
 
         #Upravit typy a pripravit na join
         df = df.astype({'okres':'int64'})
-        df_okresy = df_okresy.rename(columns={'nazov':'nazov_okresu'})
-
+        df_okresy = df_okresy.rename(columns={'name':'nazov_okresu'})
+        df_okresy = df_okresy.rename(columns={'abbreviation':'dist_abbreviation'})
         df = df.join(df_okresy, on='okres')
+
         #df['skratka'] = list(map(create_abbreviation_x ,list(df['nazov']),list(df['ulica']),list(df['skratka_okresu'])))
-        df['skratka'] = list(map(create_abbreviation ,list(df['nazov']),list(df['ulica']),list(df['miesto']),list(df['skratka_okresu'])))
+        df['skratka'] = list(map(create_abbreviation ,list(df['nazov']),list(df['ulica']),list(df['miesto']),list(df['dist_abbreviation'])))
         
         skratky = set([])
         dupl = 0
@@ -110,9 +121,35 @@ def load_schools():
 
     df_all = df_all.rename(columns=rename_dict)
     columns_to_save = ['code','district','name','street','city','zip_code','email','abbreviation']
-    df_all.to_csv('skoly.csv', columns=columns_to_save,index=False)
+
+    if output_format=='csv':
+        df_all.to_csv('skoly.csv', columns=columns_to_save,index=False)
+    elif output_format=='json':
+        df_all = df_all[columns_to_save]
+        df_all.to_json('skoly.json', orient='records', force_ascii=False)
     print(f'Do súboru skoly.csv bolo vyexportovaných {df_all.shape[0]} škôl')
     print(f'Dokopy identifikovaných {celkove_duplicity} duplicít')
 
+
+def transform_json_to_django_format(file_names,primary_keys,model_names,output_file):
+    data = []
+    for file_name,primary_key,model_name in zip(file_names,primary_keys,model_names):
+        with open(file_name) as json_file:
+            content = json.load(json_file)
+            for item in content:
+                pk = item[primary_key]
+                del item[primary_key]
+                json_obj = { 
+                    "model": model_name,
+                    "pk": pk, 
+                    "fields": item}
+                data.append(json_obj)
+
+    with open(output_file, 'w') as outfile:
+        json.dump(data, outfile)
+
+
 nacitaj_kraje(kraje)
 load_schools()
+transform_json_to_django_format(['kraje.json','okresy.json','skoly.json'],['code','code','code'],['user.County','user.District','user.School'],'school_data.json')
+
