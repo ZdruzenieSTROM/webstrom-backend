@@ -16,6 +16,7 @@ def remove_contents(dir, exclude=()):
 
         if file in exclude or os.path.isdir(full_path):
             continue
+
         os.remove(os.path.join(full_path))
 
 
@@ -49,13 +50,9 @@ class Command(BaseCommand):
 
         load_fixture = partial(call_command, 'loaddata')
 
-        load_fixture('sites')
-        load_fixture('flatpages')
+        load_fixture('sites', 'flatpages')
 
         # Nahodenie krajov, okresov a škôl
-        load_fixture('counties')
-        load_fixture('districts')
-        load_fixture('schools')
-        load_fixture('schools_custom')
+        load_fixture('counties', 'districts', 'schools', 'schools_custom')
 
         load_fixture('superuser')
