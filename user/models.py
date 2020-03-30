@@ -42,7 +42,7 @@ class School(models.Model):
     street = models.CharField(max_length=100)
     city = models.CharField(max_length=100)
     zip_code = models.CharField(max_length=6)
-    email = models.CharField(max_length=50)
+    email = models.CharField(max_length=50, null=True)
     district = models.ForeignKey(
         District, on_delete=models.SET_NULL, null=True)
 

@@ -10,3 +10,7 @@ env/*
 .env
 
 emails
+
+user/fixtures/sources/*
+!user/fixtures/sources/schools_fixtures.py
+!user/fixtures/sources/requirements.txt
