@@ -1,6 +1,13 @@
 [
     {
         "model": "user.County",
+        "pk": 0,
+        "fields": {
+            "name": "Zahrani\u010die"
+        }
+    },
+    {
+        "model": "user.County",
         "pk": 1,
         "fields": {
             "name": "Bratislavsk\u00fd kraj"

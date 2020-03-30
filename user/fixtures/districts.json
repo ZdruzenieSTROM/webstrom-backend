@@ -1,6 +1,15 @@
 [
     {
         "model": "user.District",
+        "pk": 0,
+        "fields": {
+            "name": "Zahrani\u010die",
+            "abbreviation": "",
+            "county": 0
+        }
+    },
+    {
+        "model": "user.District",
         "pk": 101,
         "fields": {
             "name": "Bratislava I",

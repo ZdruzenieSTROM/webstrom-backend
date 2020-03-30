@@ -1,0 +1,19 @@
+[
+    {
+        "model": "flatpages.flatpage",
+        "pk": 1,
+        "fields": {
+            "url": "/",
+            "title": "Hlavn\u00e1 str\u00e1nka",
+            "content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec magna libero, molestie ac quam cursus, bibendum semper erat. Duis eu posuere leo. Quisque aliquet metus eget orci maximus accumsan. Vivamus eu pretium leo, id sollicitudin lorem. Mauris diam arcu, eleifend vitae feugiat in, pulvinar eu quam. Nulla ligula tortor, tristique imperdiet felis id, ultricies venenatis dolor. Praesent suscipit massa a suscipit aliquet. Curabitur tincidunt pellentesque magna, sit amet convallis ex. Sed elementum, diam quis sollicitudin feugiat, eros libero malesuada dui, sit amet vestibulum ante mauris et est. Nulla euismod orci sit amet libero luctus, nec sollicitudin elit consequat. Nulla cursus sed risus nec ullamcorper. Nam vitae dictum diam. Sed pulvinar tincidunt eros eget vulputate.",
+            "enable_comments": false,
+            "template_name": "",
+            "registration_required": false,
+            "sites": [
+                1,
+                2,
+                3
+            ]
+        }
+    }
+]

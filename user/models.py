@@ -24,7 +24,7 @@ class District(models.Model):
 
     code = models.IntegerField(primary_key=True, verbose_name='kód')
     name = models.CharField(max_length=30, verbose_name='názov')
-    county = models.ForeignKey(County, on_delete=models.SET_NULL, null=True)
+    county = models.ForeignKey(County, on_delete=models.CASCADE)
     abbreviation = models.CharField(
         max_length=2, verbose_name='skratka okresu')
 
@@ -44,7 +44,7 @@ class School(models.Model):
     zip_code = models.CharField(max_length=6)
     email = models.CharField(max_length=50, null=True)
     district = models.ForeignKey(
-        District, on_delete=models.SET_NULL, null=True)
+        District, on_delete=models.CASCADE)
 
     def __str__(self):
         # TODO: Nejaky pekny vypis skoly
@@ -121,11 +121,10 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name='prezývka'
     )
 
-    school = models.ForeignKey(School, on_delete=models.SET_NULL, null=True)
+    school = models.ForeignKey(School, on_delete=models.CASCADE)
 
     year_of_graduation = models.PositiveSmallIntegerField(
-        verbose_name='rok maturity', null=True
-    )
+        verbose_name='rok maturity')
 
     phone = models.CharField(
         max_length=32,

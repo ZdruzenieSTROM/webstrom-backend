@@ -1,4 +1,5 @@
 import os
+from functools import partial
 
 from django.conf import settings
 from django.core.management import BaseCommand, call_command
@@ -45,3 +46,16 @@ class Command(BaseCommand):
 
         call_command('makemigrations')
         call_command('migrate')
+
+        load_fixture = partial(call_command, 'loaddata')
+
+        load_fixture('sites')
+        load_fixture('flatpages')
+
+        # Nahodenie krajov, okresov a škôl
+        load_fixture('counties')
+        load_fixture('districts')
+        load_fixture('schools')
+        load_fixture('schools_custom')
+
+        load_fixture('superuser')
