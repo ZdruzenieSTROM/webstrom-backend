@@ -1,4 +1,5 @@
 import os
+from django.contrib.messages import constants as messages
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -29,13 +30,17 @@ DJANGO_APPS = [
     'django.contrib.flatpages',
 ]
 
+THIRD_PARTY_APPS = [
+    'crispy_forms',
+]
+
 LOCAL_APPS = [
     'base.apps.BaseConfig',
     'competition.apps.CompetitionConfig',
     'user.apps.UserConfig',
 ]
 
-INSTALLED_APPS = DJANGO_APPS + LOCAL_APPS
+INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -133,3 +138,17 @@ STATIC_URL = '/static/'
 
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'emails')
+
+# Crispy forms
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+# Messages
+
+MESSAGE_TAGS = {
+    messages.DEBUG: 'debug',
+    messages.INFO: 'info',
+    messages.SUCCESS: 'success',
+    messages.WARNING: 'warning',
+    messages.ERROR: 'danger',
+}
