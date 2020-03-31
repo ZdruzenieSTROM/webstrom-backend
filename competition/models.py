@@ -7,7 +7,11 @@ class Competition(models.Model):
         verbose_name = 'seminár'
         verbose_name_plural = 'semináre'
     
-    name = models.CharField(max_length=50, verbose_name='názov')
+    name = models.CharField(
+        max_length=50, 
+        verbose_name='názov'
+        )
+
     start_year = models.PositiveSmallIntegerField(
         verbose_name='rok prvého ročníka súťaže'
         )
@@ -17,14 +21,32 @@ class Semester(models.Model):
         verbose_name='semester'
         verbose_name_plural='semestre'
     
-    competition = models.ForeignKey(Competition, on_delete=models.CASCADE)
+    competition = models.ForeignKey(
+        Competition, 
+        on_delete=models.CASCADE
+        )
+
     year = models.PositiveSmallIntegerField(
         verbose_name='ročník'
         )
-    start = models.DateTimeField(verbose_name='dátum začiatku semestra')
-    end = models.DateTimeField(verbose_name='dátum konca semestra')
-    late_tags = models.ManyToManyField(LateTag, verbose_name='')
-    season = models.CharField(max_length=10, choices = ['zimný semester', 'letný semester'])
+
+    start = models.DateTimeField(
+        verbose_name='dátum začiatku semestra'
+        )
+
+    end = models.DateTimeField(
+        verbose_name='dátum konca semestra'
+        )
+    late_tags = models.ManyToManyField(
+        LateTag, 
+        verbose_name=''
+        )
+    season = models.CharField(
+        max_length=10, 
+        choices = [
+            ('ZS','zimný semester')
+            ('LS', 'letný semester')]
+        )
 
 class Series(models.Model):
     class Meta:
@@ -119,8 +141,6 @@ class UserSemesterRegistration(models.Model):
     class_level = models.ForeignKey(Grade, on_delete=models.CASCADE)
     semester = models.ForeignKey(Semester, on_delete=models.CASCADE)
 
-    def register_user(user):
-        #TODO:Vytvorí novú registráciu userovi
 
 
     
