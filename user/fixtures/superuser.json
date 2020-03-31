@@ -6,16 +6,7 @@
             "email": "webmaster@strom.sk",
             "password": "pbkdf2_sha256$180000$NyzwabHNPn2K$sTirqoFPMkLZpnUHkCpzUFZnAsbGM7Bp2+EoN8sOuQA=",
             "is_superuser": true,
-            "is_staff": true,
-            "is_active": true,
-            "email_verified": true,
-            "first_name": "Webmaster",
-            "last_name": "STROM",
-            "nickname": "admin",
-            "school": 0,
-            "year_of_graduation": 1900,
-            "phone": "",
-            "parent_phone": ""
+            "is_staff": true
         }
     }
 ]
