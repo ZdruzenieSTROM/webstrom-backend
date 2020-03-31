@@ -91,6 +91,23 @@ class Problem(models.Model):
         )
     order = models.PositiveSmallIntegerField(verbose_name='poradie v sérii')
 
+class Grade(models.Model):
+    class Meta:
+        verbose_name = 'ročník'
+        verbose_name_plural = 'ročníky'
+
+    name = models.CharField(
+        max_length=32,
+        verbose_name='názov ročníku'
+    )
+    tag = models.CharField(
+        max_length=2,
+        unique=True,
+        verbose_name='skratka'
+    )
+    years_in_school = models.PositiveSmallIntegerField(
+        verbose_name='počet rokov v škole'
+    )
 
 class UserSemesterRegistration(models.Model):
     class Meta:
