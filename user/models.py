@@ -10,7 +10,7 @@ class County(models.Model):
         verbose_name = 'kraj'
         verbose_name_plural = 'kraje'
 
-    code = models.IntegerField(primary_key=True, verbose_name='kód')
+    code = models.AutoField(primary_key=True, verbose_name='kód')
     name = models.CharField(max_length=30, verbose_name='názov')
 
     def __str__(self):
@@ -22,11 +22,10 @@ class District(models.Model):
         verbose_name = 'okres'
         verbose_name_plural = 'okresy'
 
-    code = models.IntegerField(primary_key=True, verbose_name='kód')
+    code = models.AutoField(primary_key=True, verbose_name='kód')
     name = models.CharField(max_length=30, verbose_name='názov')
     county = models.ForeignKey(County, on_delete=models.CASCADE)
-    abbreviation = models.CharField(
-        max_length=2, verbose_name='skratka okresu')
+    abbreviation = models.CharField(max_length=2, verbose_name='skratka')
 
     def __str__(self):
         return self.name
@@ -37,14 +36,14 @@ class School(models.Model):
         verbose_name = 'škola'
         verbose_name_plural = 'školy'
 
-    name = models.CharField(max_length=100)
-    abbreviation = models.CharField(max_length=10)
-    street = models.CharField(max_length=100)
-    city = models.CharField(max_length=100)
-    zip_code = models.CharField(max_length=6)
-    email = models.CharField(max_length=50, null=True)
-    district = models.ForeignKey(
-        District, on_delete=models.CASCADE)
+    code = models.AutoField(primary_key=True, verbose_name='kód')
+    name = models.CharField(max_length=100, verbose_name='názov')
+    abbreviation = models.CharField(max_length=10, verbose_name='skratka')
+    street = models.CharField(max_length=100, verbose_name='ulica')
+    city = models.CharField(max_length=100, verbose_name='obec')
+    zip_code = models.CharField(max_length=6, verbose_name='PSČ')
+    email = models.CharField(max_length=50, verbose_name='email', null=True)
+    district = models.ForeignKey(District, on_delete=models.CASCADE)
 
     def __str__(self):
         # TODO: Nejaky pekny vypis skoly
@@ -53,9 +52,6 @@ class School(models.Model):
 
     def stitok(self):
         return f'\stitok{{{ self.nazov }}}{{{ self.city }}}{{{ self.zip }}}{{{ self.street }}}'
-
-
-
 
 
 class UserManager(BaseUserManager):
