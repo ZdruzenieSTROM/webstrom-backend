@@ -8,13 +8,13 @@ from .models import County, District, School, User, Profile
 
 
 class UserCreationForm(forms.ModelForm):
-    password1 = forms.CharField(label='Heslo', widget=forms.PasswordInput)
-    password2 = forms.CharField(
-        label='Potvrdenie hesla', widget=forms.PasswordInput)
-
     class Meta:
         model = User
         fields = ('email',)
+
+    password1 = forms.CharField(label='Heslo', widget=forms.PasswordInput)
+    password2 = forms.CharField(
+        label='Potvrdenie hesla', widget=forms.PasswordInput)
 
     def clean_password2(self):
         password1 = self.cleaned_data.get('password1')

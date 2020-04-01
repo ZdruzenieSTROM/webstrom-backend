@@ -34,7 +34,7 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    class Meta(AbstractBaseUser.Meta):
+    class Meta:
         verbose_name = 'používateľ'
         verbose_name_plural = 'používatelia'
 
@@ -50,7 +50,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []
 
     def __str__(self):
         return self.email
