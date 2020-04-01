@@ -67,7 +67,8 @@ class Profile(models.Model):
     nickname = models.CharField(
         max_length=32, blank=True, null=True, verbose_name='prezývka')
 
-    school = models.ForeignKey('user.School', on_delete=models.CASCADE)
+    school = models.ForeignKey(
+        'user.School', on_delete=models.CASCADE, verbose_name='škola')
 
     year_of_graduation = models.PositiveSmallIntegerField(
         verbose_name='rok maturity')
@@ -86,7 +87,7 @@ class Profile(models.Model):
         blank=True,
         null=True,
         validators=[phone_number_validator],
-        verbose_name='telefónne číslo rodiča',
+        verbose_name='telefónne číslo na rodiča',
         help_text='Telefonné číslo oddelené medzerami po trojčísliach \
         na začiatku s predvoľbou.'
     )
@@ -114,9 +115,10 @@ class District(models.Model):
 
     code = models.AutoField(primary_key=True, verbose_name='kód')
     name = models.CharField(max_length=30, verbose_name='názov')
-
-    county = models.ForeignKey(County, on_delete=models.CASCADE)
     abbreviation = models.CharField(max_length=2, verbose_name='skratka')
+
+    county = models.ForeignKey(
+        County, on_delete=models.CASCADE, verbose_name='kraj')
 
     def __str__(self):
         return self.name
@@ -136,10 +138,14 @@ class School(models.Model):
     zip_code = models.CharField(max_length=6, verbose_name='PSČ')
     email = models.CharField(max_length=50, verbose_name='email', null=True)
 
-    district = models.ForeignKey(District, on_delete=models.CASCADE)
+    district = models.ForeignKey(
+        District, on_delete=models.CASCADE, verbose_name='okres')
 
     def __str__(self):
-        return f'{ self.name }, { self.street }, { self.city }'
+        if self.street and self.city:
+            return f'{ self.name }, { self.street }, { self.city }'
+        else:
+            return self.name
 
     def stitok(self):
         return f'\stitok{{{ self.nazov }}}{{{ self.city }}}{{{ self.zip }}}{{{ self.street }}}'

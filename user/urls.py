@@ -7,13 +7,13 @@ from django.contrib.auth.views import (LoginView, LogoutView,
                                        PasswordResetView)
 from django.urls import path, reverse_lazy
 
-from user.views import (SignupView, VerificationSendView,
+from user.views import (signup, VerificationSendView,
                         VerificationWaitingView, VerifyEmailView)
 
 app_name = 'user'
 
 urlpatterns = [
-    path('signup/', SignupView.as_view(), name='sign_up'),
+    path('signup/', signup, name='signup'),
     path('login/', LoginView.as_view(template_name='user/login.html'), name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),
 

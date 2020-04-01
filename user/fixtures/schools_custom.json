@@ -4,10 +4,10 @@
         "pk": 0,
         "fields": {
             "district": 0,
-            "name": "Nezn\u00e1ma \u0161kola",
-            "street": "Hlavn\u00e1 42",
-            "city": "Ko\u0161ice",
-            "zip_code": "04011",
+            "name": "Moja škola nie je v zozname",
+            "street": "",
+            "city": "",
+            "zip_code": "",
             "abbreviation": ""
         }
     }
