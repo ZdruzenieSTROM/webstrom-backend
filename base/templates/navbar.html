@@ -2,9 +2,9 @@
 <nav class="navbar navbar-expand-md navbar-light bg-light fixed-top">
     {# Tu budú asi linky na stránky, zatiaľ len takto ručne #}
     {# neskôr aj s detekciou aktuálnej stránky #}
-    <a class="navbar-brand" href="#">
+    <a class="navbar-brand" href="{{ request.path }}">
         <img src="{% static 'favicon/favicon.svg' %}" width="30" height="30" class="d-inline-block align-top" alt="">
-        STROM
+        {{ current_site.name }}
     </a>
 
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown">
@@ -13,8 +13,10 @@
 
     <div class="collapse navbar-collapse" id="navbarNavDropdown">
         <ul class="navbar-nav">
-            <li class="nav-item"><a class="nav-link" href="#">Malynár</a></li>
-            <li class="nav-item"><a class="nav-link" href="#">Matik</a></li>
+            {% for site in other_sites %}
+            <li class="nav-item"><a class="nav-link"
+                    href="{{ request.scheme }}://{{ site }}{{ request.path }}">{{ site.name }}</a></li>
+            {% endfor %}
             <li class="nav-item"><a class="nav-link" href="#">Združenie</a></li>
             {% if user.is_staff %}
             <li class="nav-item"><a class="nav-link" href="{% url 'admin:index' %}">Administrácia</a></li>
