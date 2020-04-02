@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 
+{% load static %}
 {% load crispy_forms_tags %}
 
 {% block content %}
@@ -9,4 +10,8 @@
     {{ profile_form|crispy }}
     <input type="submit" value="Registrovať">
 </form>
-{% endblock %}
+{% endblock content %}
+
+{% block js %}
+<script src="{% static 'user/signup.js' %}"></script>
+{% endblock js %}

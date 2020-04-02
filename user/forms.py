@@ -3,13 +3,13 @@ from datetime import date
 from django import forms
 from django.db.models import IntegerChoices
 
-from user.models import County, District, Profile, User
+from user.models import County, District, Profile, School, User
 
 
 class GradeChoices(IntegerChoices):
     # TODO: toto sa ešte môže zísť inde, prehodiť to niekam inam
     Z1 = 12, 'Prvý ročník ZŠ'
-    Z2 = 11, 'Druhý ročńik ZŠ'
+    Z2 = 11, 'Druhý ročník ZŠ'
     Z3 = 10, 'Tretí ročník ZŠ'
     Z4 = 9, 'Štvrtý ročník ZŠ'
     Z5 = 8, 'Piaty ročník ZŠ'
@@ -52,15 +52,23 @@ class ProfileCreationForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ('first_name', 'last_name', 'nickname',
-                  'county', 'district', 'school', 'grade', 'phone', 'parent_phone')
+                  'county', 'district', 'school', 'school_info',
+                  'grade', 'phone', 'parent_phone')
 
     grade = forms.ChoiceField(
         choices=GradeChoices.choices, required=True, label='ročník')
     school_info = forms.CharField(
-        widget=forms.Textarea, label='povedz nám, kam chodíš na školu, aby sme ti ju mohli dodatočne pridať')
+        widget=forms.Textarea, required=False,
+        label='povedz nám, kam chodíš na školu, aby sme ti ju mohli dodatočne pridať')
 
-    county = forms.ModelChoiceField(queryset=County.objects)
-    district = forms.ModelChoiceField(queryset=District.objects)
+    county = forms.ModelChoiceField(queryset=County.objects, label='kraj')
+    district = forms.ModelChoiceField(queryset=District.objects, label='okres')
+
+    def __init__(self, *args, **kwargs):
+        super(ProfileCreationForm, self).__init__(*args, **kwargs)
+
+        self.fields['district'].queryset = District.objects.none()
+        self.fields['school'].queryset = School.objects.none()
 
     def save(self, commit=True):
         profile = super(ProfileCreationForm, self).save(commit=False)

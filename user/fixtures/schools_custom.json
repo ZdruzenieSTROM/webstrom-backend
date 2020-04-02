@@ -4,11 +4,7 @@
         "pk": 0,
         "fields": {
             "district": 0,
-            "name": "Moja škola nie je v zozname",
-            "street": "",
-            "city": "",
-            "zip_code": "",
-            "abbreviation": ""
+            "name": "Iná škola"
         }
     }
 ]
