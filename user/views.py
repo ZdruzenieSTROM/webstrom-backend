@@ -8,7 +8,7 @@ from user.forms import ProfileCreationForm, UserCreationForm
 from user.models import County, District, School
 
 
-def signup(request):
+def register(request):
     # TODO: presmerovať prihlásených preč, asi na zmenu profilu
     if request.method == 'POST':
         user_form = UserCreationForm(request.POST)
@@ -28,7 +28,7 @@ def signup(request):
         user_form = UserCreationForm()
         profile_form = ProfileCreationForm()
 
-    return render(request, 'user/signup.html',
+    return render(request, 'user/register.html',
                   {'user_form': user_form, 'profile_form': profile_form})
 
 
