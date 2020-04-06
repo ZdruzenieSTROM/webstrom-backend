@@ -60,7 +60,7 @@ class Series(models.Model):
     order = models.PositiveSmallIntegerField(verbose_name='poradie série')
     deadline = models.DateTimeField(verbose_name='termín série')
     complete = models.BooleanField(verbose_name='séria uzavretá')
-    sum_method =  # NO FOKEN IDEA
+    #sum_method =  # NO FOKEN IDEA
 
 
 class LateTag(models.Model):
@@ -85,9 +85,9 @@ class Solution(models.Model):
         UserSemesterRegistration,
         on_delete=models.CASCADE
     )
-    solution_path =  # File field - isteho typu
+    #solution_path =  # File field - isteho typu
 
-    corrected_solution_path =  # File field - isteho typu
+    #corrected_solution_path =  # File field - isteho typu
 
     score = models.PositiveSmallIntegerField(verbose_name='body')
 
@@ -96,7 +96,7 @@ class Solution(models.Model):
     # V prípade, že riešenie prišlo po termíne nastaví sa na príslušný tag
     late_tag = models.ForeignKey(
         LateTag,
-        on_delete=models.SET_NULL
+        on_delete=models.SET_NULL,
         verbose_name='',
         null=True,
         blank=True)
