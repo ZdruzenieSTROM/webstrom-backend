@@ -3,7 +3,7 @@
         "model": "user.District",
         "pk": 0,
         "fields": {
-            "name": "Zahrani\u010die",
+            "name": "Neur\u010den\u00fd okres",
             "abbreviation": "",
             "county": 0
         }
@@ -717,6 +717,15 @@
             "name": "Trebi\u0161ov",
             "abbreviation": "TV",
             "county": 8
+        }
+    },
+    {
+        "model": "user.District",
+        "pk": 901,
+        "fields": {
+            "name": "Zahrani\u010die",
+            "abbreviation": "",
+            "county": 9
         }
     }
 ]

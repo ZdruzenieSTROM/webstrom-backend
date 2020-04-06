@@ -3,7 +3,7 @@
         "model": "user.County",
         "pk": 0,
         "fields": {
-            "name": "Zahrani\u010die"
+            "name": "Neur\u010den\u00fd kraj"
         }
     },
     {
@@ -60,6 +60,13 @@
         "pk": 8,
         "fields": {
             "name": "Ko\u0161ick\u00fd kraj"
+        }
+    },
+    {
+        "model": "user.County",
+        "pk": 9,
+        "fields": {
+            "name": "Zahrani\u010die"
         }
     }
 ]
