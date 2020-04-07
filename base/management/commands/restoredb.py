@@ -56,3 +56,5 @@ class Command(BaseCommand):
         load_fixture('counties', 'districts', 'schools', 'schools_custom')
 
         load_fixture('superuser')
+        load_fixture('users')
+        load_fixture('profiles')
