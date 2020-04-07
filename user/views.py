@@ -1,10 +1,8 @@
 from django.contrib import messages
-from django.core.serializers import serialize
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render, reverse
-from django.views.generic import FormView, TemplateView
+from django.views.generic import TemplateView
 from django.views.generic.base import RedirectView
-from django.views.generic.detail import SingleObjectMixin
 
 from user.forms import ProfileCreationForm, UserCreationForm
 from user.models import County, District, School
@@ -43,11 +41,11 @@ def district_by_county(request, pk):
 
 def school_by_district(request, pk):
     district = get_object_or_404(District, pk=pk)
-    queryset = School.objects.filter(district=district)
-    unknown_school = School.objects.filter(pk=0)
+    queryset = School.objects.filter(
+        district=district, include_unspecified=True).values(
+            'pk', 'name', 'street', 'city')
 
-    return JsonResponse(list((queryset | unknown_school).values(
-        'pk', 'name', 'street', 'city')), safe=False)
+    return JsonResponse(list(queryset), safe=False)
 
 
 class VerificationSendView(RedirectView):

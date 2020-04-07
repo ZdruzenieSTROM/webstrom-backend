@@ -2,7 +2,7 @@ from django import forms
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
-from django.contrib.auth.models import Group, Permission
+from django.contrib.auth.models import Permission
 
 from user.models import County, District, School, User, Profile
 from user.forms import UserCreationForm
@@ -48,9 +48,10 @@ class UserAdmin(BaseUserAdmin):
         ('Extra oprávnenia', {
             'classes': ('collapse',),
             'fields': ('user_permissions',),
-            'description': 'Za normálnych okolností sa neudeľujú a mali by vystačiť ' +
-            'skupiny oprávnení, avšak pre nejaké špeciálne potreby môžu byť ' +
-            'využité. Priraďujú oprávnenia nad rámec skupín.'
+            'description': 'Za normálnych okolností sa neudeľujú a mali by '
+                           'vystačiť skupiny oprávnení, avšak pre nejaké '
+                           'špeciálne potreby môžu byť využité. Priraďujú '
+                           'oprávnenia nad rámec skupín.'
         }),
     )
 
