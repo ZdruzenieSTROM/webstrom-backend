@@ -3,7 +3,7 @@ from django.db import models
 
 
 class UnspecifiedValueManager(models.Manager):
-    """Custom manager pre modely kde vystupuje jedna hodnota ako 
+    """Custom manager pre modely kde vystupuje jedna hodnota ako
     'neurčená', aby sme sa nemuseli ďalej v kóde spoliehať na to
     že táto hodnota bude mať vždy nejaké konkrétne id
     """
@@ -31,6 +31,6 @@ class UnspecifiedValueManager(models.Manager):
         filter_results = queryset.filter(*args, **kwargs)
 
         if include_unspecified:
-            return filter_results | queryset.filter(pk=self.unspecified_value_pk)
-        else:
-            return filter_results
+            filter_results |= queryset.filter(pk=self.unspecified_value_pk)
+
+        return filter_results
