@@ -1,0 +1,26 @@
+[
+    {
+        "model": "competition.Competition", 
+        "pk": 0,
+        "fields": {
+            "name": "STROM",
+            "start_year": "1976"
+        } 
+    },
+    {
+        "model": "competition.Competition", 
+        "pk": 1,
+        "fields": {
+            "name": "Matik",
+            "start_year": "1987"
+        } 
+    },
+    {
+        "model": "competition.Competition", 
+        "pk": 2,
+        "fields": {
+            "name": "Malynár",
+            "start_year": "1991"
+        } 
+    }
+]

@@ -159,7 +159,7 @@ def transform_json_to_django_format(file_names, primary_keys, model_names, outpu
 
 
 if __name__ == "__main__":
-    nacitaj_kraje(kraje)
+    #nacitaj_kraje(kraje)
     load_schools()
     transform_json_to_django_format(['kraje.json'], ['code'], [
                                     'user.County'], 'counties.json')
