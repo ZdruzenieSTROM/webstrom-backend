@@ -3,6 +3,7 @@ from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
 from django.db import models
 
 from base.validators import phone_number_validator
+from base.managers import UnspecifiedValueManager
 
 
 class UserManager(BaseUserManager):
@@ -104,6 +105,8 @@ class County(models.Model):
     code = models.AutoField(primary_key=True, verbose_name='kód')
     name = models.CharField(max_length=30, verbose_name='názov')
 
+    objects = UnspecifiedValueManager(unspecified_value_pk=0)
+
     def __str__(self):
         return self.name
 
@@ -119,6 +122,8 @@ class District(models.Model):
 
     county = models.ForeignKey(
         County, on_delete=models.CASCADE, verbose_name='kraj')
+
+    objects = UnspecifiedValueManager(unspecified_value_pk=0)
 
     def __str__(self):
         return self.name
@@ -141,11 +146,14 @@ class School(models.Model):
     district = models.ForeignKey(
         District, on_delete=models.CASCADE, verbose_name='okres')
 
+    objects = UnspecifiedValueManager(unspecified_value_pk=0)
+
     def __str__(self):
         if self.street and self.city:
             return f'{ self.name }, { self.street }, { self.city }'
-        else:
-            return self.name
+
+        return self.name
 
     def stitok(self):
-        return f'\stitok{{{ self.nazov }}}{{{ self.city }}}{{{ self.zip }}}{{{ self.street }}}'
+        return f'\\stitok{{{ self.nazov }}}{{{ self.city }}}' \
+               f'{{{ self.zip }}}{{{ self.street }}}'

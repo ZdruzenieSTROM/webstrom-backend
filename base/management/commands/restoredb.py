@@ -59,3 +59,4 @@ class Command(BaseCommand):
 
         load_fixture('semester')
         load_fixture('superuser')
+        load_fixture('users', 'profiles')

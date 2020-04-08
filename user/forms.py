@@ -67,6 +67,8 @@ class ProfileCreationForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(ProfileCreationForm, self).__init__(*args, **kwargs)
 
+        self.fields['county'].queryset = County.objects.exclude(
+            pk=County.objects.get_unspecified_value().pk)
         self.fields['district'].queryset = District.objects.none()
         self.fields['school'].queryset = School.objects.none()
 

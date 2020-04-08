@@ -1,14 +1,14 @@
 from django.contrib import messages
-from django.shortcuts import redirect, render, reverse
-from django.views.generic import FormView, TemplateView
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render, reverse
+from django.views.generic import TemplateView
 from django.views.generic.base import RedirectView
-from django.views.generic.detail import SingleObjectMixin
 
 from user.forms import ProfileCreationForm, UserCreationForm
 from user.models import County, District, School
 
 
-def signup(request):
+def register(request):
     # TODO: presmerovať prihlásených preč, asi na zmenu profilu
     if request.method == 'POST':
         user_form = UserCreationForm(request.POST)
@@ -28,44 +28,24 @@ def signup(request):
         user_form = UserCreationForm()
         profile_form = ProfileCreationForm()
 
-    return render(request, 'user/signup.html',
+    return render(request, 'user/register.html',
                   {'user_form': user_form, 'profile_form': profile_form})
 
 
-class FilterDistrictView(TemplateView, SingleObjectMixin):
-    model = County
+def district_by_county(request, pk):
+    county = get_object_or_404(County, pk=pk)
+    queryset = District.objects.filter(county=county).values('pk', 'name')
 
-    template_name = 'user/district_options.html'
-
-    def dispatch(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        return super().dispatch(request, *args, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
-        context['districts'] = District.objects.filter(
-            county=self.object)
-
-        return context
+    return JsonResponse(list(queryset), safe=False)
 
 
-class FilterSchoolView(TemplateView, SingleObjectMixin):
-    model = District
+def school_by_district(request, pk):
+    district = get_object_or_404(District, pk=pk)
+    queryset = School.objects.filter(
+        district=district, include_unspecified=True).values(
+            'pk', 'name', 'street', 'city')
 
-    template_name = 'user/school_options.html'
-
-    def dispatch(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        return super().dispatch(request, *args, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
-        context['schools'] = School.objects.filter(
-            district=self.object) | School.objects.filter(pk=0)
-
-        return context
+    return JsonResponse(list(queryset), safe=False)
 
 
 class VerificationSendView(RedirectView):

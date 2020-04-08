@@ -7,14 +7,14 @@ from django.contrib.auth.views import (LoginView, LogoutView,
                                        PasswordResetView)
 from django.urls import path, reverse_lazy
 
-from user.views import (FilterDistrictView, FilterSchoolView,
-                        VerificationSendView, VerificationWaitingView,
-                        VerifyEmailView, signup)
+from user.views import (VerificationSendView, VerificationWaitingView,
+                        VerifyEmailView, district_by_county, register,
+                        school_by_district)
 
 app_name = 'user'
 
 urlpatterns = [
-    path('signup/', signup, name='signup'),
+    path('register/', register, name='register'),
     path('login/', LoginView.as_view(template_name='user/login.html'), name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),
 
@@ -58,6 +58,6 @@ urlpatterns = [
          ),
          name='password_change_done'),
 
-    path('district/<int:pk>/', FilterDistrictView.as_view(), name='filter_district'),
-    path('school/<int:pk>/', FilterSchoolView.as_view(), name='filter_school'),
+    path('district/<int:pk>/', district_by_county, name='filter_district'),
+    path('school/<int:pk>/', school_by_district, name='filter_school'),
 ]
