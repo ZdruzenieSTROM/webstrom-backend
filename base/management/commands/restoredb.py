@@ -55,8 +55,8 @@ class Command(BaseCommand):
         # Nahodenie krajov, okresov a škôl
         load_fixture('counties', 'districts', 'schools', 'schools_custom')
         
-        load_fixture('competition')
+        load_fixture('competitions')
 
-        load_fixture('semester')
+        load_fixture('semesters')
         load_fixture('superuser')
         load_fixture('users', 'profiles')
