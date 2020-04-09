@@ -1,6 +1,5 @@
 from django.db import models
 
-from base.models import ContentTypeRestrictedFileField
 
 
 class Competition(models.Model):
@@ -17,6 +16,23 @@ class Competition(models.Model):
         verbose_name='rok prvého ročníka súťaže'
     )
 
+    def __str__(self):
+        return self.name
+
+
+class LateTag(models.Model):
+    class Meta:
+        verbose_name = 'omeškanie'
+        verbose_name_plural = 'omeškanie'
+
+    name = models.CharField(
+        max_length=50, verbose_name='označenie štítku pre riešiteľa')
+    upper_bound = models.DurationField(
+        verbose_name='maximálna dĺžka omeškania')
+    comment = models.TextField(verbose_name='komentár pre opravovateľa')
+
+    def __str__(self):
+        return self.name
 
 class Semester(models.Model):
     class Meta:
@@ -44,14 +60,14 @@ class Semester(models.Model):
         verbose_name=''
     )
     season = models.CharField(
-        max_length=10,
-        choices=[
-            ('ZS', 'zimný semester')
-            ('LS', 'letný semester')]
+        max_length=10
+        
     )
 
+    def __str__(self):
+        return f'{self.competition.name} - {self.year}. ročník {self.season} semester'
 
-class Series(models.Model):
+class Serie(models.Model):
     class Meta:
         verbose_name = 'séria'
         verbose_name_plural = 'série'
@@ -62,48 +78,14 @@ class Series(models.Model):
     complete = models.BooleanField(verbose_name='séria uzavretá')
     #sum_method =  # NO FOKEN IDEA
 
-
-class LateTag(models.Model):
-    class Meta:
-        verbose_name = 'séria'
-        verbose_name_plural = 'série'
-
-    name = models.CharField(
-        max_length=50, verbose_name='označenie štítku pre riešiteľa')
-    upper_bound = models.DurationField(
-        verbose_name='maximálna dĺžka omeškania')
-    comment = models.TextField(verbose_name='komentár pre opravovateľa')
+    def __str__(self):
+        return f'{self.semester} - {self.order}. séria'
 
 
-class Solution(models.Model):
-    class Meta:
-        verbose_name = 'riešenie'
-        verbose_name_plural = 'riešenia'
 
-    problem = models.ForeignKey(Problem, on_delete=models.CASCADE)
-    user_semester_registration = models.ForeignKey(
-        UserSemesterRegistration,
-        on_delete=models.CASCADE
-    )
-    #solution_path =  # File field - isteho typu
 
-    #corrected_solution_path =  # File field - isteho typu
 
-    score = models.PositiveSmallIntegerField(verbose_name='body')
 
-    uploaded_at = DateTimeField(auto_now=True, verbose_name='nahrané dňa')
-
-    # V prípade, že riešenie prišlo po termíne nastaví sa na príslušný tag
-    late_tag = models.ForeignKey(
-        LateTag,
-        on_delete=models.SET_NULL,
-        verbose_name='',
-        null=True,
-        blank=True)
-
-    is_online = models.BooleanField(
-        verbose_name='internetové riešenie'
-    )
 
 
 class Problem(models.Model):
@@ -111,13 +93,16 @@ class Problem(models.Model):
         verbose_name = 'úloha'
         verbose_name_plural = 'úlohy'
 
-    problem = models.TextField(verbose_name='znenie úlohy')
+    text = models.TextField(verbose_name='znenie úlohy')
     serie = models.ForeignKey(
-        Series,
-        on_delete=models.cascade,
+        Serie,
+        on_delete=models.CASCADE,
         verbose_name='úloha zaradená do série'
     )
     order = models.PositiveSmallIntegerField(verbose_name='poradie v sérii')
+
+    def __str__(self):
+        return f'{self.serie.semester.competition.name}-{self.serie.semester.year}-{self.serie.semester.season}-S{self.serie.order} - {self.order}. úloha'
 
 
 class Grade(models.Model):
@@ -137,6 +122,8 @@ class Grade(models.Model):
     years_in_school = models.PositiveSmallIntegerField(
         verbose_name='počet rokov v škole'
     )
+    def __str__(self):
+        return self.name
 
 
 class UserSemesterRegistration(models.Model):
@@ -149,3 +136,33 @@ class UserSemesterRegistration(models.Model):
         'user.School', on_delete=models.SET_NULL, null=True)
     class_level = models.ForeignKey(Grade, on_delete=models.CASCADE)
     semester = models.ForeignKey(Semester, on_delete=models.CASCADE)
+
+class Solution(models.Model):
+    class Meta:
+        verbose_name = 'riešenie'
+        verbose_name_plural = 'riešenia'
+
+    problem = models.ForeignKey(Problem, on_delete=models.CASCADE)
+    user_semester_registration = models.ForeignKey(
+        UserSemesterRegistration,
+        on_delete=models.CASCADE
+    )
+    #solution_path =  # File field - isteho typu
+
+    #corrected_solution_path =  # File field - isteho typu
+
+    score = models.PositiveSmallIntegerField(verbose_name='body')
+
+    uploaded_at = models.DateTimeField(auto_now=True, verbose_name='nahrané dňa')
+
+    # V prípade, že riešenie prišlo po termíne nastaví sa na príslušný tag
+    late_tag = models.ForeignKey(
+        LateTag,
+        on_delete=models.SET_NULL,
+        verbose_name='',
+        null=True,
+        blank=True)
+
+    is_online = models.BooleanField(
+        verbose_name='internetové riešenie'
+    )
