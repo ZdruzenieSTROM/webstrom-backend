@@ -6,14 +6,19 @@ import datetime
 
 
 class SemesterManager:
-    def __init__(self,free_semester_id=0,free_serie_id=0):
+    def __init__(self,free_semester_id=0,free_serie_id=0,free_problem_id=0):
         self._semester_id = free_semester_id
         self._serie_id = free_serie_id
+        self._problem_id = free_problem_id
         self._competition_id = 0
 
     def get_serie_id(self):
         self._serie_id+=1
         return self._serie_id-1
+    
+    def get_problem_id(self):
+        self._problem_id+=1
+        return self._problem_id-1
 
     def get_competition_id(self):
         self._competition_id+=1
@@ -24,16 +29,13 @@ class SemesterManager:
         return self._semester_id-1
 
     @staticmethod
-    def create_competition():
-        return SemesterManager.django_repr('competition.Competition', 0, {"name" : "STROM", "start_year":"2000"})
-
-    @staticmethod
     def django_repr(model_name,pk,fields):
         return {
             "model": model_name,
             "pk": pk,
             "fields": fields
             }
+    
     def create_semester(self,comp_id,year,start,end,late_tags,season):
         fields = {
             "competition" : comp_id,
@@ -42,31 +44,45 @@ class SemesterManager:
             "end": end,
             "season" : season
         }
-        return django_repr('competition.Semester',self.get_semester_id(),fields)
+        return SemesterManager.django_repr('competition.Semester',self.get_semester_id(),fields)
 
-    def create_serie(self,comp_id,year,start,end,late_tags,season):
+    def create_serie(self,semester_id,order,deadline):
         fields = {
-            "competition" : comp_id,
-            "year" : year,
-            "start": start,
-            "end": end,
-            "season" : season
-        }
-        return django_repr('competition.Semester',self.get_semester_id(),fields)
+            "semester" : semester_id,
+            "order" : order,
+            "deadline": deadline,
+            "complete": False,
 
-    def create_new_semester_json(self):
+        }
+        return SemesterManager.django_repr('competition.Semester',self.get_serie_id(),fields)
+
+    def create_problem(self,text,serie,order):
+        fields = {
+            'problem': text,
+            'serie': serie,
+            'order': order
+        }
+        return SemesterManager.django_repr('competition.Problem',self.get_problem_id(),fields)
+
+    def create_new_semester_json(self,problems):
         objects = []
-        start_sem = datetime.datetime(2020,1,1)
-        first_term = datetime.datetime(2020,3,1)
-        end_sem = datetime.datetime(2020,6,1)
-        objects.append(self.create_semester(0,44,start_sem,end_sem,None,1))
-        s1 = self.create_serie()
+        start_sem ='2020-01-01 22:00:00'
+        first_term = '2020-03-01 22:00:00'
+        end_sem = '2020-06-01 22:00:00'
+        semester = self.create_semester(0,44,start_sem,end_sem,None,1)
+        semester_id = semester['pk']
+        s1 = self.create_serie(semester_id,1,first_term)
         s1_key = s1['pk']
         objects.append(s1)
-        s2 = self.create_serie()
+        s2 = self.create_serie(semester_id,2,end_sem)
         s2_key = s2['pk']
         objects.append(s2)
-        json.dumb(objects,'semesters')
+        for problem_serie, problem_order, problem_text in problems:
+            serie_key = s1_key if problem_serie==1 else s2_key
+            objects.append(self.create_problem(problem_text,serie_key,problem_order))
+        with open('semesters.json','w') as f:
+            print(objects)
+            json.dump(objects,f,indent=4)
 
     
 manager = SemesterManager()
@@ -114,6 +130,7 @@ class SemesterLaTeXLoader():
             return semester
 
 if __name__=='__main__':
-    x = SemesterLaTeXLoader.load_strom('ul1.tex')
-    print(x)
+    x = SemesterLaTeXLoader.load_strom('ulohy_strom.tex')
+    manager.create_new_semester_json(x)
+    
 

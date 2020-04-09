@@ -1,0 +1,130 @@
+[
+    {
+        "model": "competition.Semester",
+        "pk": 0,
+        "fields": {
+            "semester": 0,
+            "order": 1,
+            "deadline": "2020-03-01 22:00:00",
+            "complete": false
+        }
+    },
+    {
+        "model": "competition.Semester",
+        "pk": 1,
+        "fields": {
+            "semester": 0,
+            "order": 2,
+            "deadline": "2020-06-01 22:00:00",
+            "complete": false
+        }
+    },
+    {
+        "model": "competition.Problem",
+        "pk": 0,
+        "fields": {
+            "problem": "Majme doty\u010dnicov\u00fd \u0161tvoruholn\u00edk $ABCD$ rozdelen\u00fd uhloprie\u010dkou $AC$ na 2 trojuholn\u00edky. Dok\u00e1\u017ete, \u017ee kru\u017enica vp\u00edsan\u00e1 trojuholn\u00edku $ABC$ sa dotkne \u00fase\u010dky $AC$ v rovnakom bode ako kru\u017enica vp\u00edsan\u00e1 trojuholn\u00edku $ADC$.",
+            "serie": 0,
+            "order": 1
+        }
+    },
+    {
+        "model": "competition.Problem",
+        "pk": 1,
+        "fields": {
+            "problem": "Majme \u0161tvorcov\u00fa tabu\u013eku s rozmermi $n \\times n$. Ka\u017ed\u00e9 pol\u00ed\u010dko tabu\u013eky je zafarben\u00e9 \u010dervenou, zelenou alebo \u017eltou farbou. Bez toho, aby sme videli tabu\u013eku, si mus\u00edme tipn\u00fa\u0165, \u010di je v nej p\u00e1rny alebo nep\u00e1rny po\u010det \u010derven\u00fdch pol\u00ed\u010dok. \u010co si m\u00e1me tipn\u00fa\u0165 v z\u00e1vislosti od $n$, aby sme mali v\u00e4\u010d\u0161iu \u0161ancu, \u017ee si tipneme spr\u00e1vne? Vieme, \u017ee ka\u017ed\u00e9 mo\u017en\u00e9 ofarbenie tabu\u013eky je rovnako pravdepodobn\u00e9.",
+            "serie": 0,
+            "order": 2
+        }
+    },
+    {
+        "model": "competition.Problem",
+        "pk": 2,
+        "fields": {
+            "problem": "Konvexn\u00fd 2020-uholn\u00edk m\u00e1 v\u0161etky svoje vrcholy v mre\u017eov\u00fdch bodoch (teda maj\u00fa celo\u010d\u00edseln\u00e9 s\u00faradnice) a m\u00e1 celo\u010d\u00edseln\u00e9 strany. Dok\u00e1\u017ete, \u017ee obvod tohto \u00fatvaru je p\u00e1rne \u010d\u00edslo.",
+            "serie": 0,
+            "order": 3
+        }
+    },
+    {
+        "model": "competition.Problem",
+        "pk": 3,
+        "fields": {
+            "problem": "Medzi v\u0161etk\u00fdmi nez\u00e1porn\u00fdmi \u010d\u00edslami reprezentovan\u00fdmi vz\u0165ahom $36^k-5^l$, kde $k$ a $l$ s\u00fa kladn\u00e9 cel\u00e9 \u010d\u00edsla, n\u00e1jdite najmen\u0161ie. Svoje tvrdenie dok\u00e1\u017ete.",
+            "serie": 0,
+            "order": 4
+        }
+    },
+    {
+        "model": "competition.Problem",
+        "pk": 4,
+        "fields": {
+            "problem": "V rovine je bod s celo\u010d\u00edseln\u00fdmi s\u00faradnicami $[x,y]$, av\u0161ak tieto s\u00faradnice nepozn\u00e1me. Pozn\u00e1me v\u0161ak hodnoty v\u00fdrazov $x^2+y$ a $y^2+x$, pri\u010dom tieto hodnoty s\u00fa r\u00f4zne. Dok\u00e1\u017ete, \u017ee s t\u00fdmito inform\u00e1ciami vieme jednozna\u010dne ur\u010di\u0165 s\u00faradnice h\u013eadan\u00e9ho bodu.",
+            "serie": 0,
+            "order": 5
+        }
+    },
+    {
+        "model": "competition.Problem",
+        "pk": 5,
+        "fields": {
+            "problem": "Majme $k$ prep\u00edna\u010dov v rade. Ka\u017ed\u00fd prep\u00edna\u010d ukazuje hore, doprava, dole alebo do\u013eava. Ak tri susedn\u00e9 prep\u00edna\u010de ukazuj\u00fa r\u00f4znymi smermi, prepneme v\u0161etky tri do \u0161tvrt\u00e9ho smeru. Ak by v jednom momente bolo viac tak\u00fdchto troj\u00edc, prepneme t\u00fa najviac na\u013eavo. \nUk\u00e1\u017ete, \u017ee sa proces zastav\u00ed.",
+            "serie": 0,
+            "order": 6
+        }
+    },
+    {
+        "model": "competition.Problem",
+        "pk": 6,
+        "fields": {
+            "problem": "Majme \u010d\u00edsla od 1 do $n$. Pre ka\u017ed\u00e9 $n$ n\u00e1jdite najv\u00e4\u010d\u0161ie $k$ tak\u00e9, \u017ee na\u0161e \u010d\u00edsla vieme rozdeli\u0165 do $k$ skup\u00edn s rovnak\u00fdm s\u00fa\u010dtom.",
+            "serie": 0,
+            "order": 1
+        }
+    },
+    {
+        "model": "competition.Problem",
+        "pk": 7,
+        "fields": {
+            "problem": "Majme rovnostrann\u00fd trojuholn\u00edk. Ka\u017ed\u00e1 jeho strana je rozdelen\u00e1 na $k$ rovnak\u00fdch \u010dast\u00ed pomocou $k-1$ bodov. T\u00fdmito bodmi ve\u010fme rovnobe\u017eky so zvy\u0161n\u00fdmi dvoma stranami trojuholn\u00edka. Takto vznikne trojuholn\u00edkov\u00e1 sie\u0165 zlo\u017een\u00e1 z $k^2$ men\u0161\u00edch trojuholn\u00edkov\u00fdch pol\u00ed\u010dok. Nazvime re\u0165az tak\u00fa sekvenciu pol\u00ed\u010dok, \u017ee ka\u017ed\u00e9 pol\u00ed\u010dko je v nej zahrnut\u00e9 maxim\u00e1lne raz a po sebe nasleduj\u00face pol\u00ed\u010dka maj\u00fa spolo\u010dn\u00fa stranu. Ak\u00e1 je najdlh\u0161ia mo\u017en\u00e1 re\u0165az?",
+            "serie": 1,
+            "order": 2
+        }
+    },
+    {
+        "model": "competition.Problem",
+        "pk": 8,
+        "fields": {
+            "problem": "Ka\u017ed\u00e9 z \u010d\u00edsel $a_1, a_2, \\dots , a_n$ je rovn\u00e9 $1$ alebo $-1$ a plat\u00ed \n$$a_1a_2a_3a_4 + a_2a_3a_4a_5 + a_3a_4a_5a_6 + \\dots + a_{n-1}a_na_1a_2 + a_na_1a_2a_3 = 0$$\nDok\u00e1\u017ete, \u017ee $n$ je delite\u013en\u00e9 4.",
+            "serie": 1,
+            "order": 3
+        }
+    },
+    {
+        "model": "competition.Problem",
+        "pk": 9,
+        "fields": {
+            "problem": "Je dan\u00fd \u0161tvorsten $ABCD$. Po \u00fase\u010dke $AB$ sa pohybuje bod $X$. Ozna\u010dme $P$ p\u00e4tu v\u00fd\u0161ky spustenej z bodu $D$ na priamku $CX$. Ur\u010dte mno\u017einu bodov $P$, ktor\u00e9 vyhovuj\u00fa zadaniu.",
+            "serie": 1,
+            "order": 4
+        }
+    },
+    {
+        "model": "competition.Problem",
+        "pk": 10,
+        "fields": {
+            "problem": "N\u00e1jdite najv\u00e4\u010d\u0161ie \u010d\u00edslo $p$ tak\u00e9, \u017ee je mo\u017en\u00e9 na \u0161achovnicu $2019\\times 2019$ umiestni\u0165 $p$ pe\u0161iakov a $p+2019$ ve\u017e\u00ed tak, aby sa \u017eiadne dve ve\u017ee neohrozovali. (Dve ve\u017ee sa ohrozuj\u00fa, ak s\u00fa v tom istom riadku alebo st\u013apci a v\u0161etky pol\u00ed\u010dka medzi nimi s\u00fa pr\u00e1zdne).",
+            "serie": 1,
+            "order": 5
+        }
+    },
+    {
+        "model": "competition.Problem",
+        "pk": 11,
+        "fields": {
+            "problem": "Nech $ABC$ je ostrouhl\u00fd nerovnoramenn\u00fd trojuholn\u00edk, $M$ je stred strany $BC$ a $AD$ je os uhla pri vrchole $A$, pri\u010dom $D$ le\u017e\u00ed na strane $BC$. Kru\u017enica op\u00edsan\u00e1 trojuholn\u00edku $ADM$ pret\u00edna $AB$ v bode $E$ a $AC$ v bode $F$. Bod $I$ je stred $EF$ a $MI$ pret\u00edna priamky $AB$ v bode $X$ a $AC$ v bode $Y$. Dok\u00e1\u017ete, \u017ee $AXY$ je rovnoramenn\u00fd.",
+            "serie": 1,
+            "order": 6
+        }
+    }
+]
