@@ -54,11 +54,11 @@ class SemesterManager:
             "complete": False,
 
         }
-        return SemesterManager.django_repr('competition.Semester',self.get_serie_id(),fields)
+        return SemesterManager.django_repr('competition.Serie',self.get_serie_id(),fields)
 
     def create_problem(self,text,serie,order):
         fields = {
-            'problem': text,
+            'text': text,
             'serie': serie,
             'order': order
         }
@@ -66,10 +66,11 @@ class SemesterManager:
 
     def create_new_semester_json(self,problems):
         objects = []
-        start_sem ='2020-01-01 22:00:00'
-        first_term = '2020-03-01 22:00:00'
-        end_sem = '2020-06-01 22:00:00'
+        start_sem ='2020-01-01T20:00:00+02:00'
+        first_term = '2020-03-01T20:00:00+02:00'
+        end_sem = '2020-06-01T20:00:00+02:00'
         semester = self.create_semester(0,44,start_sem,end_sem,None,1)
+        objects.append(semester)
         semester_id = semester['pk']
         s1 = self.create_serie(semester_id,1,first_term)
         s1_key = s1['pk']
