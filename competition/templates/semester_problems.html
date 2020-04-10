@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% load crispy_forms_tags %}
+
+
+
+
+{% block content %}
+    {% for serie in series%}
+        <h2>{{serie.order}}. séria</h2>
+        {% for key,problems in problems.items %}
+            {% if key == serie.pk%}
+                {% for problem in problems %}
+                    <h3>{{problem.order}}. úloha</h3>
+                    <p>
+                        {{problem.text}}
+                    </p>
+                {% endfor %}
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+{% endblock content %}
+
+{% block javascript %}
+
+{% endblock javascript %}
