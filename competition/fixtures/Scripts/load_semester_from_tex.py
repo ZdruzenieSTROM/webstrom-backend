@@ -127,7 +127,7 @@ class SemesterLaTeXLoader():
             problems = re.findall(r'(\\ifcase\\numexpr\\value\{uloha\}-1|\\or).*?\{(.*?)\}[^\{\}]*?(?=\\fi|$|\\or)',text,flags=re.S)
             semester = []
             for i,problem in enumerate(problems):
-                semester.append(((i//7)+1,(i%6)+1,problem[1].strip('\n')))
+                semester.append(((i//6)+1,(i%6)+1,problem[1].strip('\n')))
             return semester
 
 if __name__=='__main__':
