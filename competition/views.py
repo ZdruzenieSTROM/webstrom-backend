@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.views.generic.detail import DetailView
-from competition.models import Semester, Serie, Problem
+from competition.models import Competition,Semester, Serie, Problem
 
 # Create your views here.
 class SemesterProblemsView(DetailView):
@@ -16,13 +16,13 @@ class SemesterProblemsView(DetailView):
         context['problems'] = {}
         
         for serie in context['series']:
-            context['problems'][serie.pk] = Problem.objects.filter(
-                serie=serie
-            ).order_by('order')
+            context['problems'][serie.pk] = serie.problem_set.order_by('order')
 
+        context['competition_semesters'] = self.object.competition.semester_set.all()
         return context
 
 
 class LatestSemesterView(SemesterProblemsView):
-    def get_object():
-        pass
+    def get_object(self):
+        return Competition.get_by_current_site().semester_set.order_by('-end')[0]
+
