@@ -1,6 +1,8 @@
 from django.db import models
-
-
+import datetime
+from django.utils.timezone import now
+from django.contrib.sites.models import Site
+from django.shortcuts import get_object_or_404
 
 class Competition(models.Model):
     class Meta:
@@ -15,9 +17,18 @@ class Competition(models.Model):
     start_year = models.PositiveSmallIntegerField(
         verbose_name='rok prvého ročníka súťaže'
     )
+    site = models.ForeignKey(Site, blank=True, null=True,on_delete=models.SET_NULL)
 
     def __str__(self):
         return self.name
+
+    @classmethod
+    def get_by_site(cls, site):
+        return get_object_or_404(cls, site=site)
+
+    @classmethod
+    def get_by_current_site(cls):
+        return cls.get_by_site(Site.objects.get_current())
 
 
 class LateTag(models.Model):
@@ -65,7 +76,7 @@ class Semester(models.Model):
     )
 
     def __str__(self):
-        return f'{self.competition.name} - {self.year}. ročník {self.season} semester'
+        return f'{self.competition.name}, {self.year}. ročník - {self.season} semester'
 
 class Serie(models.Model):
     class Meta:
@@ -80,6 +91,19 @@ class Serie(models.Model):
 
     def __str__(self):
         return f'{self.semester} - {self.order}. séria'
+
+    @property
+    def is_past_deadline(self):
+        return now() > self.deadline
+    
+    @property
+    def time_to_deadline(self):
+        remaining_time = self.deadline - now()
+
+        if remaining_time.total_seconds() < 0:
+            return datetime.timedelta(0)
+        else:
+            return remaining_time
 
 
 
@@ -102,7 +126,7 @@ class Problem(models.Model):
     order = models.PositiveSmallIntegerField(verbose_name='poradie v sérii')
 
     def __str__(self):
-        return f'{self.serie.semester.competition.name}-{self.serie.semester.year}-{self.serie.semester.season}-S{self.serie.order} - {self.order}. úloha'
+        return f'{self.serie.semester.competition.name}-{self.serie.semester.year}-{self.serie.semester.season[0]}S-S{self.serie.order} - {self.order}. úloha'
 
 
 class Grade(models.Model):
