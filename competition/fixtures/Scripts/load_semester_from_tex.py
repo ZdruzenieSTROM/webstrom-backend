@@ -123,6 +123,17 @@ class SemesterLaTeXLoader():
                 semester.append(((i//6)+1,(i%6)+1,problem[1].strip('\n')))
             return semester
 
+    def load_strom_old(file_name):
+        with open(file_name, 'r', encoding='utf8') as input_tex:
+            text = input_tex.read()
+            text = SemesterLaTeXLoader.remove_latex_comments(text)
+            problems = re.findall(r'\\uloha\{([^\{\}]+)\.\}\{(.*?)\}[^\{\}]*(?=\\uloha|$)',text,flags=re.S)
+            semester = []
+            for i,problem in enumerate(problems):
+                semester.append(((i//6)+1,(i%6)+1,problem[1].strip('\n')))
+            deadlines = re.findall(r'\\znak\{(.)\}\{.*?\}\{(.*?)\}',text,flags=re.S)
+            return semester
+
 comp_ids = {
     'STROM': 0,
     'Matik': 1,
@@ -136,20 +147,25 @@ def process_files(files):
         match = re.findall(r'(.+?)-(.+?)-(.+?).tex',file)
         if len(match)==1:
             seminar,year,season = match[0]
+            year=int(year)
         else:
             print(f'Skipping \"{file}\": File name is not in format Seminar-year-season.tex ')
             continue
 
-        if season==2:
+        if season=='2':
             season = 'Letný'
         else:
             season = 'Zimný'
 
         if seminar=='STROM':
-            print(f'Parsing \"{file}\" with STROM template...')
-            parsed = SemesterLaTeXLoader.load_strom(file)
+            if year>44 or (year==44 and season=='Letný'):
+                print(f'Parsing \"{file}\" with STROM-NEW template...')
+                parsed = SemesterLaTeXLoader.load_strom(file)
+            else:
+                print(f'Parsing \"{file}\" with STROM-OLD template...')
+                parsed = SemesterLaTeXLoader.load_strom_old(file)
         else:
-            print(f'Parsing \"{file}\" woth Kricky template...')
+            print(f'Parsing \"{file}\" with Kricky template...')
             parsed = SemesterLaTeXLoader.load_kricky(file)
         
         objects+=manager.create_new_semester_json(
@@ -160,12 +176,12 @@ def process_files(files):
             )
     
     with open('semesters.json','w') as f:
-        print(objects)
+        
         json.dump(objects,f,indent=4)
 
 
 if __name__=='__main__':
-    files = ['STROM--1.tex', 'STROM-44-1.tex', 'STROM-44-1.tex']
+    files = ['STROM-44-2.tex', 'STROM-44-1.tex', 'STROM-43-2.tex','STROM-43-1.tex','STROM-42-2.tex','STROM-42-1.tex']
     process_files(files)
 
 
