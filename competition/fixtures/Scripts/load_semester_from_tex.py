@@ -62,14 +62,14 @@ class SemesterManager:
             'serie': serie,
             'order': order
         }
-        return SemesterManager.django_repr('competition.Problem',self.get_problem_id(),fields)
+        return SemesterManager.django_repr('competition.Problem', self.get_problem_id(),fields)
 
-    def create_new_semester_json(self,problems):
+    def create_new_semester_json(self,problems,competition_id,semester_year,semester_season):
         objects = []
         start_sem ='2020-01-01T20:00:00+02:00'
         first_term = '2020-03-01T20:00:00+02:00'
         end_sem = '2020-06-01T20:00:00+02:00'
-        semester = self.create_semester(0,44,start_sem,end_sem,None,1)
+        semester = self.create_semester(competition_id,semester_year,start_sem,end_sem,None,semester_season)
         objects.append(semester)
         semester_id = semester['pk']
         s1 = self.create_serie(semester_id,1,first_term)
@@ -81,12 +81,10 @@ class SemesterManager:
         for problem_serie, problem_order, problem_text in problems:
             serie_key = s1_key if problem_serie==1 else s2_key
             objects.append(self.create_problem(problem_text,serie_key,problem_order))
-        with open('semesters.json','w') as f:
-            print(objects)
-            json.dump(objects,f,indent=4)
+        return objects
 
     
-manager = SemesterManager()
+
 
 roman_numerals={
     'I':1,
@@ -105,12 +103,7 @@ class SemesterLaTeXLoader():
         text = re.sub(r'\\begin\{comment\}.*?\\end\{comment\}','',text, flags=re.S)
         return re.sub(r'^%.*$',r'',text,flags=re.M)
 
-    def create_semester_db():
-        pass
 
-    def export_semester_json():
-        
-        pass
 
     def load_kricky(file_name,json_file=None):
         with open(file_name, 'r', encoding='utf8') as input_tex:
@@ -130,8 +123,49 @@ class SemesterLaTeXLoader():
                 semester.append(((i//6)+1,(i%6)+1,problem[1].strip('\n')))
             return semester
 
-if __name__=='__main__':
-    x = SemesterLaTeXLoader.load_strom('ulohy_strom.tex')
-    manager.create_new_semester_json(x)
+comp_ids = {
+    'STROM': 0,
+    'Matik': 1,
+    'Malynar': 2
+}
+
+def process_files(files):
+    objects = []
+    manager = SemesterManager()
+    for file in files:
+        match = re.findall(r'(.+?)-(.+?)-(.+?).tex',file)
+        if len(match)==1:
+            seminar,year,season = match[0]
+        else:
+            print(f'Skipping \"{file}\": File name is not in format Seminar-year-season.tex ')
+            continue
+
+        if season==2:
+            season = 'Letný'
+        else:
+            season = 'Zimný'
+
+        if seminar=='STROM':
+            print(f'Parsing \"{file}\" with STROM template...')
+            parsed = SemesterLaTeXLoader.load_strom(file)
+        else:
+            print(f'Parsing \"{file}\" woth Kricky template...')
+            parsed = SemesterLaTeXLoader.load_kricky(file)
+        
+        objects+=manager.create_new_semester_json(
+            parsed,
+            competition_id=comp_ids[seminar],
+            semester_year=year,
+            semester_season=season
+            )
     
+    with open('semesters.json','w') as f:
+        print(objects)
+        json.dump(objects,f,indent=4)
+
+
+if __name__=='__main__':
+    files = ['STROM--1.tex', 'STROM-44-1.tex', 'STROM-44-1.tex']
+    process_files(files)
+
 
