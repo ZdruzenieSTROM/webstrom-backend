@@ -4,11 +4,22 @@
 {% load crispy_forms_tags %}
 
 
+    
+
+
 
 
 {% block content %}
+    <h1>{{semester}}</h1>
+    <div class="col-md-3">
+        {% include "semester_dropdown.html"%}
+    </div>
     {% for serie in series%}
         <h2>{{serie.order}}. séria</h2>
+        <p>Termín odovzdania série: {{serie.deadline}}</p>
+        {% if not serie.is_past_deadline %}
+            Do termínu zostáva: {{serie.time_to_deadline}}
+        {% endif %}
         {% for key,problems in problems.items %}
             {% if key == serie.pk%}
                 {% for problem in problems %}

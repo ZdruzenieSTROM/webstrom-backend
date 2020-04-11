@@ -1,0 +1,16 @@
+{% load i18n %}
+
+    <div class="btn-group pull-right" style="margin-top:15px;">
+      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">Vyber semester
+        <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu" role="menu">
+        {% for competition_semester in competition_semesters %}
+            <li>
+
+                    {{competition_semester}}
+                
+            </li>
+        {% endfor %}
+      </ul>
+    </div>
