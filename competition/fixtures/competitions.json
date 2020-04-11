@@ -4,7 +4,8 @@
         "pk": 0,
         "fields": {
             "name": "STROM",
-            "start_year": "1976"
+            "start_year": "1976",
+            "site": 1
         } 
     },
     {
@@ -12,7 +13,8 @@
         "pk": 1,
         "fields": {
             "name": "Matik",
-            "start_year": "1987"
+            "start_year": "1987",
+            "site": 2
         } 
     },
     {
@@ -20,7 +22,8 @@
         "pk": 2,
         "fields": {
             "name": "Malynár",
-            "start_year": "1991"
+            "start_year": "1991",
+            "site": 3
         } 
     }
 ]
