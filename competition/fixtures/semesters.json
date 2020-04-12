@@ -144,8 +144,8 @@
         "fields": {
             "competition": 0,
             "year": 44,
-            "start": "2020-01-01T20:00:00+02:00",
-            "end": "2020-06-01T20:00:00+02:00",
+            "start": "2019-10-08T00:00:00+02:00",
+            "end": "2019-12-02T00:00:00+02:00",
             "season": "Zimn\u00fd"
         }
     },
@@ -155,7 +155,7 @@
         "fields": {
             "semester": 1,
             "order": 1,
-            "deadline": "2020-03-01T20:00:00+02:00",
+            "deadline": "2019-10-28T00:00:00+02:00",
             "complete": false
         }
     },
@@ -165,7 +165,7 @@
         "fields": {
             "semester": 1,
             "order": 2,
-            "deadline": "2020-06-01T20:00:00+02:00",
+            "deadline": "2019-12-02T00:00:00+02:00",
             "complete": false
         }
     },
@@ -218,7 +218,7 @@
         "model": "competition.Problem",
         "pk": 17,
         "fields": {
-            "text": "Ka\u017ed\u00fd bod v rovine s celo\u010d\u00edseln\u00fdmi s\u00faradnicami je ofarben\u00fd bu\u010f \u010dervenou alebo modrou farbou tak, aby boli splnen\u00e9 podmienky:\n\\begin{enumerate}\n\\item Na \u00fase\u010dke sp\u00e1jaj\u00facej \u010derven\u00e9 body nele\u017e\u00ed \u017eiaden modr\u00fd bod.\n\\item Ak maj\u00fa dva modr\u00e9 body vzdialenos\u0165 2, potom bod uprostred medzi nimi je modr\u00fd.\n\\end{enumerate}\n\nDok\u00e1\u017ete, \u017ee z \u013eubovo\u013en\u00e9ho \u010derven\u00e9ho bodu sa vieme dosta\u0165 do \u013eubovo\u013en\u00e9ho in\u00e9ho tak, \u017ee nemus\u00edme prejs\u0165 cez \u017eiaden modr\u00fd bod, pri\u010dom kroky vieme robi\u0165 len vodorovne a zvislo, v\u017edy o vzdialenos\u0165 jedna.\n}\n\n\\newpage\n\n\n\\znak{2}{Druh\u00e1}{2.~12.~2019",
+            "text": "Ka\u017ed\u00fd bod v rovine s celo\u010d\u00edseln\u00fdmi s\u00faradnicami je ofarben\u00fd bu\u010f \u010dervenou alebo modrou farbou tak, aby boli splnen\u00e9 podmienky:\n\\begin{enumerate}\n\\item Na \u00fase\u010dke sp\u00e1jaj\u00facej \u010derven\u00e9 body nele\u017e\u00ed \u017eiaden modr\u00fd bod.\n\\item Ak maj\u00fa dva modr\u00e9 body vzdialenos\u0165 2, potom bod uprostred medzi nimi je modr\u00fd.\n\\end{enumerate}\n\nDok\u00e1\u017ete, \u017ee z \u013eubovo\u013en\u00e9ho \u010derven\u00e9ho bodu sa vieme dosta\u0165 do \u013eubovo\u013en\u00e9ho in\u00e9ho tak, \u017ee nemus\u00edme prejs\u0165 cez \u017eiaden modr\u00fd bod, pri\u010dom kroky vieme robi\u0165 len vodorovne a zvislo, v\u017edy o vzdialenos\u0165 jedna.",
             "serie": 2,
             "order": 6
         }
@@ -272,7 +272,7 @@
         "model": "competition.Problem",
         "pk": 23,
         "fields": {
-            "text": "N\u00e1jdite v\u0161etky funkcie $f: \\mathbb R \\rightarrow \\mathbb R$ tak\u00e9, \u017ee pre v\u0161etky re\u00e1lne \u010d\u00edsla $x, y$ plat\u00ed: $f(xy+f(x))=xf(y)$.\n}\n\n\n\\vfill\n\n\\textbf{Autori zadan\u00ed \u00faloh:",
+            "text": "N\u00e1jdite v\u0161etky funkcie $f: \\mathbb R \\rightarrow \\mathbb R$ tak\u00e9, \u017ee pre v\u0161etky re\u00e1lne \u010d\u00edsla $x, y$ plat\u00ed: $f(xy+f(x))=xf(y)$.",
             "serie": 3,
             "order": 6
         }
@@ -283,8 +283,8 @@
         "fields": {
             "competition": 0,
             "year": 43,
-            "start": "2020-01-01T20:00:00+02:00",
-            "end": "2020-06-01T20:00:00+02:00",
+            "start": "2019-02-26T00:00:00+02:00",
+            "end": "2019-04-24T00:00:00+02:00",
             "season": "Letn\u00fd"
         }
     },
@@ -294,7 +294,7 @@
         "fields": {
             "semester": 2,
             "order": 1,
-            "deadline": "2020-03-01T20:00:00+02:00",
+            "deadline": "2019-03-18T00:00:00+02:00",
             "complete": false
         }
     },
@@ -304,7 +304,7 @@
         "fields": {
             "semester": 2,
             "order": 2,
-            "deadline": "2020-06-01T20:00:00+02:00",
+            "deadline": "2019-04-24T00:00:00+02:00",
             "complete": false
         }
     },
@@ -357,7 +357,7 @@
         "model": "competition.Problem",
         "pk": 29,
         "fields": {
-            "text": "V \u0161kole sa niektor\u00e9 dvojice \u017eiakov kamar\u00e1tia a niektor\u00e9 nie (kamar\u00e1tstvo je obojstrann\u00e9). T\u00edmom naz\u00fdvame skupinu pr\u00e1ve 20 \u013eud\u00ed, v ktorej sa v\u0161etci navz\u00e1jom kamar\u00e1tia. Ka\u017ed\u00fd \u017eiak je \u010dlenom nejak\u00e9ho t\u00edmu, ale ke\u010f zru\u0161\u00edme \u013eubovo\u013en\u00e9 kamar\u00e1tstvo, tak v\u017edy bude existova\u0165 aspo\u0148 jeden \u017eiak, ktor\u00fd nie je v \u017eiadnom t\u00edme. T\u00edm, ktor\u00fd obsahuje \u017eiaka, ktor\u00fd m\u00e1 kamar\u00e1tov len v tomto t\u00edme, nazveme \\textit{\\uv{t\u00edm so stredom}}. Dok\u00e1\u017ete, \u017ee pre \u013eubovo\u013en\u00fa dvojicu \u017eiakov, ktor\u00ed sa kamar\u00e1tia, existuje t\u00edm so stredom, ktor\u00e9ho s\u00fa obaja \u010dlenmi.}\n\n\n\\smallskip\n\n\n\n\\znak{2}{Druh\u00e1}{24.~4.~2019",
+            "text": "V \u0161kole sa niektor\u00e9 dvojice \u017eiakov kamar\u00e1tia a niektor\u00e9 nie (kamar\u00e1tstvo je obojstrann\u00e9). T\u00edmom naz\u00fdvame skupinu pr\u00e1ve 20 \u013eud\u00ed, v ktorej sa v\u0161etci navz\u00e1jom kamar\u00e1tia. Ka\u017ed\u00fd \u017eiak je \u010dlenom nejak\u00e9ho t\u00edmu, ale ke\u010f zru\u0161\u00edme \u013eubovo\u013en\u00e9 kamar\u00e1tstvo, tak v\u017edy bude existova\u0165 aspo\u0148 jeden \u017eiak, ktor\u00fd nie je v \u017eiadnom t\u00edme. T\u00edm, ktor\u00fd obsahuje \u017eiaka, ktor\u00fd m\u00e1 kamar\u00e1tov len v tomto t\u00edme, nazveme \\textit{\\uv{t\u00edm so stredom}}. Dok\u00e1\u017ete, \u017ee pre \u013eubovo\u013en\u00fa dvojicu \u017eiakov, ktor\u00ed sa kamar\u00e1tia, existuje t\u00edm so stredom, ktor\u00e9ho s\u00fa obaja \u010dlenmi.",
             "serie": 4,
             "order": 6
         }
@@ -411,7 +411,7 @@
         "model": "competition.Problem",
         "pk": 35,
         "fields": {
-            "text": "N\u00e1jdite v\u0161etky funkcie $f(x)$ na re\u00e1lnych \u010d\u00edslach sp\u013a\u0148aj\u00face $f(t^2 + u) = t\\cdot f(t) + f(u)$ pre v\u0161etky re\u00e1lne \u010d\u00edsla $t$ a $u$.}\n\n\\vfill\n\\textbf{Autori zadan\u00ed \u00faloh:",
+            "text": "N\u00e1jdite v\u0161etky funkcie $f(x)$ na re\u00e1lnych \u010d\u00edslach sp\u013a\u0148aj\u00face $f(t^2 + u) = t\\cdot f(t) + f(u)$ pre v\u0161etky re\u00e1lne \u010d\u00edsla $t$ a $u$.",
             "serie": 5,
             "order": 6
         }
@@ -422,8 +422,8 @@
         "fields": {
             "competition": 0,
             "year": 43,
-            "start": "2020-01-01T20:00:00+02:00",
-            "end": "2020-06-01T20:00:00+02:00",
+            "start": "2018-10-09T00:00:00+02:00",
+            "end": "2018-12-03T00:00:00+02:00",
             "season": "Zimn\u00fd"
         }
     },
@@ -433,7 +433,7 @@
         "fields": {
             "semester": 3,
             "order": 1,
-            "deadline": "2020-03-01T20:00:00+02:00",
+            "deadline": "2018-10-29T00:00:00+02:00",
             "complete": false
         }
     },
@@ -443,7 +443,7 @@
         "fields": {
             "semester": 3,
             "order": 2,
-            "deadline": "2020-06-01T20:00:00+02:00",
+            "deadline": "2018-12-03T00:00:00+02:00",
             "complete": false
         }
     },
@@ -496,7 +496,7 @@
         "model": "competition.Problem",
         "pk": 41,
         "fields": {
-            "text": "Prirodzen\u00e9 \u010d\u00edslo $n$ nazveme chutn\u00e9, ak pre \u013eubovo\u013en\u00e9 dve prirodzen\u00e9 \u010d\u00edsla $a$, $b$ tak\u00e9, \u017ee $a+b=n$ plat\u00ed, \u017ee aspo\u0148 jeden zo zlomkov $\\frac ab,\\frac ba$ m\u00e1 kone\u010dn\u00fd desatinn\u00fd rozvoj. Existuje nekone\u010dne ve\u013ea chutn\u00fdch \u010d\u00edsel? Svoje rie\u0161enie od\u00f4vodnite.}\n\n\\smallskip\n\n\n\n\\znak{2}{Druh\u00e1}{3.~12.~2018",
+            "text": "Prirodzen\u00e9 \u010d\u00edslo $n$ nazveme chutn\u00e9, ak pre \u013eubovo\u013en\u00e9 dve prirodzen\u00e9 \u010d\u00edsla $a$, $b$ tak\u00e9, \u017ee $a+b=n$ plat\u00ed, \u017ee aspo\u0148 jeden zo zlomkov $\\frac ab,\\frac ba$ m\u00e1 kone\u010dn\u00fd desatinn\u00fd rozvoj. Existuje nekone\u010dne ve\u013ea chutn\u00fdch \u010d\u00edsel? Svoje rie\u0161enie od\u00f4vodnite.",
             "serie": 6,
             "order": 6
         }
@@ -550,7 +550,7 @@
         "model": "competition.Problem",
         "pk": 47,
         "fields": {
-            "text": "Nech $ABC$ je ostrouhl\u00fd trojuholn\u00edk s $|AB|<|AC|$. Nech $M$, $N$ s\u00fa postupne stredy str\u00e1n $AB$ a $AC$ a nech $AD$ je v\u00fd\u0161ka v tomto trojuholn\u00edku. Na \u00fase\u010dke $MN$ zvol\u00edme tak\u00fd bod $K$, \u017ee $|BK|=|CK|$. Polpriamka $KD$ pret\u00edna kru\u017enicu op\u00edsan\u00fa trojuholn\u00edku $ABC$ v bode $Q$. Dok\u00e1\u017ete, \u017ee body $C$, $N$, $K$, $Q$ le\u017eia na jednej kru\u017enici.}\n\n\\vfill\n\\textbf{Autori zadan\u00ed \u00faloh:",
+            "text": "Nech $ABC$ je ostrouhl\u00fd trojuholn\u00edk s $|AB|<|AC|$. Nech $M$, $N$ s\u00fa postupne stredy str\u00e1n $AB$ a $AC$ a nech $AD$ je v\u00fd\u0161ka v tomto trojuholn\u00edku. Na \u00fase\u010dke $MN$ zvol\u00edme tak\u00fd bod $K$, \u017ee $|BK|=|CK|$. Polpriamka $KD$ pret\u00edna kru\u017enicu op\u00edsan\u00fa trojuholn\u00edku $ABC$ v bode $Q$. Dok\u00e1\u017ete, \u017ee body $C$, $N$, $K$, $Q$ le\u017eia na jednej kru\u017enici.",
             "serie": 7,
             "order": 6
         }
@@ -561,8 +561,8 @@
         "fields": {
             "competition": 0,
             "year": 42,
-            "start": "2020-01-01T20:00:00+02:00",
-            "end": "2020-06-01T20:00:00+02:00",
+            "start": "2018-02-27T00:00:00+02:00",
+            "end": "2018-05-07T00:00:00+02:00",
             "season": "Letn\u00fd"
         }
     },
@@ -572,7 +572,7 @@
         "fields": {
             "semester": 4,
             "order": 1,
-            "deadline": "2020-03-01T20:00:00+02:00",
+            "deadline": "2018-03-19T00:00:00+02:00",
             "complete": false
         }
     },
@@ -582,7 +582,7 @@
         "fields": {
             "semester": 4,
             "order": 2,
-            "deadline": "2020-06-01T20:00:00+02:00",
+            "deadline": "2018-05-07T00:00:00+02:00",
             "complete": false
         }
     },
@@ -635,7 +635,7 @@
         "model": "competition.Problem",
         "pk": 53,
         "fields": {
-            "text": "V rovine je nieko\u013eko priamok, pri\u010dom \u017eiadne tri neprech\u00e1dzaj\u00fa jedn\u00fdm bodom a \u017eiadne dve nie s\u00fa rovnobe\u017en\u00e9. Tieto priamky rozdelia rovinu na nieko\u013eko oblast\u00ed. Dok\u00e1\u017ete, \u017ee m\u00f4\u017eeme da\u0165 do ka\u017edej oblasti kladn\u00e9 \u010d\u00edslo tak, aby pre ka\u017ed\u00fa priamku platilo, \u017ee s\u00fa\u010det \u010d\u00edsel v oblastiach na jednej strane priamky je rovnak\u00fd ako s\u00fa\u010det \u010d\u00edsel v oblastiach na druhej strane.}\n\n\\smallskip\n\n\n\n\\znak{2}{Druh\u00e1}{7.~5.~2018",
+            "text": "V rovine je nieko\u013eko priamok, pri\u010dom \u017eiadne tri neprech\u00e1dzaj\u00fa jedn\u00fdm bodom a \u017eiadne dve nie s\u00fa rovnobe\u017en\u00e9. Tieto priamky rozdelia rovinu na nieko\u013eko oblast\u00ed. Dok\u00e1\u017ete, \u017ee m\u00f4\u017eeme da\u0165 do ka\u017edej oblasti kladn\u00e9 \u010d\u00edslo tak, aby pre ka\u017ed\u00fa priamku platilo, \u017ee s\u00fa\u010det \u010d\u00edsel v oblastiach na jednej strane priamky je rovnak\u00fd ako s\u00fa\u010det \u010d\u00edsel v oblastiach na druhej strane.",
             "serie": 8,
             "order": 6
         }
@@ -689,7 +689,7 @@
         "model": "competition.Problem",
         "pk": 59,
         "fields": {
-            "text": "N\u00e1jdite v\u0161etky funkcie $f:\\langle 0,+\\infty) \\rightarrow \\langle 0,+\\infty)$, ktor\u00e9 vyhovuj\u00fa s\u00fa\u010dasne nasleduj\u00facim trom podmienkam:\n\\begin{enumerate}\n\\item pre \u013eubovo\u013en\u00e9 nez\u00e1porn\u00e9 re\u00e1lne \u010d\u00edsla $x$, $y$ tak\u00e9, \u017ee $x+y>0$, plat\u00ed rovnos\u0165 $f(x\\cdot f(y))\\cdot f(y) = f(xy/(x+y))$,\n\\item $f(1) = 0$,\n\\item $f(x) > 0$ pre \u013eubovo\u013en\u00e9 $x>1$.\n\\end{enumerate}}\n\n\n\\textbf{Autori zadan\u00ed \u00faloh:",
+            "text": "N\u00e1jdite v\u0161etky funkcie $f:\\langle 0,+\\infty) \\rightarrow \\langle 0,+\\infty)$, ktor\u00e9 vyhovuj\u00fa s\u00fa\u010dasne nasleduj\u00facim trom podmienkam:\n\\begin{enumerate}\n\\item pre \u013eubovo\u013en\u00e9 nez\u00e1porn\u00e9 re\u00e1lne \u010d\u00edsla $x$, $y$ tak\u00e9, \u017ee $x+y>0$, plat\u00ed rovnos\u0165 $f(x\\cdot f(y))\\cdot f(y) = f(xy/(x+y))$,\n\\item $f(1) = 0$,\n\\item $f(x) > 0$ pre \u013eubovo\u013en\u00e9 $x>1$.\n\\end{enumerate}",
             "serie": 9,
             "order": 6
         }
@@ -700,8 +700,8 @@
         "fields": {
             "competition": 0,
             "year": 42,
-            "start": "2020-01-01T20:00:00+02:00",
-            "end": "2020-06-01T20:00:00+02:00",
+            "start": "2017-10-03T00:00:00+02:00",
+            "end": "2017-11-20T00:00:00+02:00",
             "season": "Zimn\u00fd"
         }
     },
@@ -711,7 +711,7 @@
         "fields": {
             "semester": 5,
             "order": 1,
-            "deadline": "2020-03-01T20:00:00+02:00",
+            "deadline": "2017-10-23T00:00:00+02:00",
             "complete": false
         }
     },
@@ -721,7 +721,7 @@
         "fields": {
             "semester": 5,
             "order": 2,
-            "deadline": "2020-06-01T20:00:00+02:00",
+            "deadline": "2017-11-20T00:00:00+02:00",
             "complete": false
         }
     },
@@ -774,7 +774,7 @@
         "model": "competition.Problem",
         "pk": 65,
         "fields": {
-            "text": "Je mo\u017en\u00e9 nap\u00edsa\u0165 do ka\u017ed\u00e9ho pol\u00ed\u010dka nekone\u010dnej \u0161tvor\u010dekovej tabu\u013eky prirodzen\u00e9 \u010d\u00edslo tak, aby pre ka\u017ed\u00fa dvojicu prirodzen\u00fdch \u010d\u00edsel $m$, $n$ platilo, \u017ee s\u00fa\u010det \u010d\u00edsel v \u013eubovo\u013enom obd\u013a\u017eniku $m\\times n$ je delite\u013en\u00fd $m+n$?\nPozn\u00e1mka: Tabu\u013eka je nekone\u010dn\u00e1 do v\u0161etk\u00fdch \u0161tyroch smerov, m\u00f4\u017eeme si to predstavi\u0165 tak, \u017ee m\u00e1 riadky aj st\u013apce o\u010d\u00edslovan\u00e9 cel\u00fdmi \u010d\u00edslami.}\n\n\\smallskip\n\n\n\n\\znak{2}{Druh\u00e1}{20.~11.~2017",
+            "text": "Je mo\u017en\u00e9 nap\u00edsa\u0165 do ka\u017ed\u00e9ho pol\u00ed\u010dka nekone\u010dnej \u0161tvor\u010dekovej tabu\u013eky prirodzen\u00e9 \u010d\u00edslo tak, aby pre ka\u017ed\u00fa dvojicu prirodzen\u00fdch \u010d\u00edsel $m$, $n$ platilo, \u017ee s\u00fa\u010det \u010d\u00edsel v \u013eubovo\u013enom obd\u013a\u017eniku $m\\times n$ je delite\u013en\u00fd $m+n$?\nPozn\u00e1mka: Tabu\u013eka je nekone\u010dn\u00e1 do v\u0161etk\u00fdch \u0161tyroch smerov, m\u00f4\u017eeme si to predstavi\u0165 tak, \u017ee m\u00e1 riadky aj st\u013apce o\u010d\u00edslovan\u00e9 cel\u00fdmi \u010d\u00edslami.",
             "serie": 10,
             "order": 6
         }
@@ -828,7 +828,7 @@
         "model": "competition.Problem",
         "pk": 71,
         "fields": {
-            "text": "$ABCD$ je rovnobe\u017en\u00edk s ostr\u00fdm uhlom $DAB$. Body $A,\\ P,\\ B,\\ D$ le\u017eia na jednej kru\u017enici v tomto porad\u00ed. Priamky $AP$ a $CD$ sa pret\u00ednaj\u00fa v bode $Q$. Bod $O$ je stred kru\u017enice op\u00edsanej trojuholn\u00edku $CPQ$. Dok\u00e1\u017ete, \u017ee ak $D \\neq O$, tak priamky $AD$ a $DO$ s\u00fa na seba kolm\u00e9.}\n\n\\vfill\n\\textbf{Autori zadan\u00ed \u00faloh:",
+            "text": "$ABCD$ je rovnobe\u017en\u00edk s ostr\u00fdm uhlom $DAB$. Body $A,\\ P,\\ B,\\ D$ le\u017eia na jednej kru\u017enici v tomto porad\u00ed. Priamky $AP$ a $CD$ sa pret\u00ednaj\u00fa v bode $Q$. Bod $O$ je stred kru\u017enice op\u00edsanej trojuholn\u00edku $CPQ$. Dok\u00e1\u017ete, \u017ee ak $D \\neq O$, tak priamky $AD$ a $DO$ s\u00fa na seba kolm\u00e9.",
             "serie": 11,
             "order": 6
         }
