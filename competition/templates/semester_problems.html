@@ -9,9 +9,13 @@
 
 
 {% block content %}
-    <h1>{{semester}}</h1>
-    <div class="col-md-3">
-        {% include "semester_dropdown.html"%}
+    <div class="row">
+        <div class="col-md-9">
+            <h1>{{semester}}</h1>
+        </div>
+        <div class="col-md-3">
+            {% include "semester_dropdown.html" with view_name='competition:semester-problems-detail' %}
+        </div>
     </div>
     {% for serie in series%}
         <h2>{{serie.order}}. séria</h2>
