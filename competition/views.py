@@ -1,8 +1,8 @@
-from django.shortcuts import render
 from django.views.generic.detail import DetailView
-from competition.models import Competition,Semester, Serie, Problem
 
-# Create your views here.
+from competition.models import Competition, Semester, Series
+
+
 class SemesterProblemsView(DetailView):
     template_name = 'semester_problems.html'
     model = Semester
@@ -10,19 +10,19 @@ class SemesterProblemsView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['semester'] = self.object
-        context['series'] = Serie.objects.filter(
-            semester=self.object
-        )
+        context['series'] = Series.objects.filter(
+            semester=self.object)
         context['problems'] = {}
-        
-        for serie in context['series']:
-            context['problems'][serie.pk] = serie.problem_set.order_by('order')
+
+        for series in context['series']:
+            context['problems'][series.pk] = series.problem_set.order_by(
+                'order')
 
         context['competition_semesters'] = self.object.competition.semester_set.all()
+
         return context
 
 
 class LatestSemesterView(SemesterProblemsView):
     def get_object(self):
-        return Competition.get_by_current_site().semester_set.order_by('-end')[0]
-
+        return Competition.get_by_current_site().semester_set.order_by('-end').first()

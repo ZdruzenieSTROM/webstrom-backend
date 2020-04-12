@@ -51,12 +51,6 @@ class Command(BaseCommand):
         load_fixture = partial(call_command, 'loaddata')
 
         load_fixture('sites', 'flatpages')
-
-        # Nahodenie krajov, okresov a škôl
         load_fixture('counties', 'districts', 'schools', 'schools_custom')
-        
-        load_fixture('competitions')
-
-        load_fixture('semesters')
-        load_fixture('superuser')
-        load_fixture('users', 'profiles')
+        load_fixture('competitions', 'semesters')
+        load_fixture('superuser', 'users', 'profiles')

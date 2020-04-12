@@ -3,50 +3,44 @@
 {% load static %}
 {% load crispy_forms_tags %}
 
-
-
-
-
-
 {% block content %}
-    <div class="row">
-        <div class="col-md-9">
-            <h1>{{semester}}</h1>
-        </div>
-        <div class="col-md-3">
-            {% include "semester_dropdown.html" with view_name='competition:semester-problems-detail' %}
-        </div>
+<div class="row">
+    <div class="col-md-9">
+        <h1>{{ semester }}</h1>
     </div>
-    {% for serie in series%}
-        <h2>{{serie.order}}. séria</h2>
-        <p>Termín odovzdania série: {{serie.deadline}}</p>
-        {% if not serie.is_past_deadline %}
-            Do termínu zostáva: {{serie.time_to_deadline}}
-        {% endif %}
-        {% for key,problems in problems.items %}
-            {% if key == serie.pk%}
-                {% for problem in problems %}
-                    <h3>{{problem.order}}. úloha</h3>
-                    <p>
-                        {{problem.text}}
-                    </p>
-                {% endfor %}
-            {% endif %}
-        {% endfor %}
-    {% endfor %}
+    <div class="col-md-3">
+        {% include "semester_dropdown.html" with view_name='competition:semester-problems-detail' %}
+    </div>
+</div>
+{% for series in series %}
+<h2>{{ series.order }}. séria</h2>
+<p>Termín odovzdania série: {{ series.deadline }}</p>
+{% if not series.is_past_deadline %}
+Do termínu zostáva: {{ series.time_to_deadline }}
+{% endif %}
+{% for key,problems in problems.items %}
+{% if key == series.pk %}
+{% for problem in problems %}
+<h3>{{ problem.order }}. úloha</h3>
+<p>
+    {{ problem.text }}
+</p>
+{% endfor %}
+{% endif %}
+{% endfor %}
+{% endfor %}
 {% endblock content %}
 
 {% block javascript %}
 <script type="text/x-mathjax-config">
     MathJax.Hub.Config({
-      tex2jax: {
-        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-        processEscapes: true
-      }
+        tex2jax: {
+            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+            processEscapes: true
+        }
     });
-  </script>
-  
-  <script type="text/javascript"
-      src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-  </script>
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
 {% endblock javascript %}

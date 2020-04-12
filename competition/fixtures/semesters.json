@@ -11,7 +11,7 @@
         }
     },
     {
-        "model": "competition.Serie",
+        "model": "competition.series",
         "pk": 0,
         "fields": {
             "semester": 0,
@@ -21,7 +21,7 @@
         }
     },
     {
-        "model": "competition.Serie",
+        "model": "competition.series",
         "pk": 1,
         "fields": {
             "semester": 0,
@@ -35,7 +35,7 @@
         "pk": 0,
         "fields": {
             "text": "Majme doty\u010dnicov\u00fd \u0161tvoruholn\u00edk $ABCD$ rozdelen\u00fd uhloprie\u010dkou $AC$ na 2 trojuholn\u00edky. Dok\u00e1\u017ete, \u017ee kru\u017enica vp\u00edsan\u00e1 trojuholn\u00edku $ABC$ sa dotkne \u00fase\u010dky $AC$ v rovnakom bode ako kru\u017enica vp\u00edsan\u00e1 trojuholn\u00edku $ADC$.",
-            "serie": 0,
+            "series": 0,
             "order": 1
         }
     },
@@ -44,7 +44,7 @@
         "pk": 1,
         "fields": {
             "text": "Majme \u0161tvorcov\u00fa tabu\u013eku s rozmermi $n \\times n$. Ka\u017ed\u00e9 pol\u00ed\u010dko tabu\u013eky je zafarben\u00e9 \u010dervenou, zelenou alebo \u017eltou farbou. Bez toho, aby sme videli tabu\u013eku, si mus\u00edme tipn\u00fa\u0165, \u010di je v nej p\u00e1rny alebo nep\u00e1rny po\u010det \u010derven\u00fdch pol\u00ed\u010dok. \u010co si m\u00e1me tipn\u00fa\u0165 v z\u00e1vislosti od $n$, aby sme mali v\u00e4\u010d\u0161iu \u0161ancu, \u017ee si tipneme spr\u00e1vne? Vieme, \u017ee ka\u017ed\u00e9 mo\u017en\u00e9 ofarbenie tabu\u013eky je rovnako pravdepodobn\u00e9.",
-            "serie": 0,
+            "series": 0,
             "order": 2
         }
     },
@@ -53,7 +53,7 @@
         "pk": 2,
         "fields": {
             "text": "Konvexn\u00fd 2020-uholn\u00edk m\u00e1 v\u0161etky svoje vrcholy v mre\u017eov\u00fdch bodoch (teda maj\u00fa celo\u010d\u00edseln\u00e9 s\u00faradnice) a m\u00e1 celo\u010d\u00edseln\u00e9 strany. Dok\u00e1\u017ete, \u017ee obvod tohto \u00fatvaru je p\u00e1rne \u010d\u00edslo.",
-            "serie": 0,
+            "series": 0,
             "order": 3
         }
     },
@@ -62,7 +62,7 @@
         "pk": 3,
         "fields": {
             "text": "Medzi v\u0161etk\u00fdmi nez\u00e1porn\u00fdmi \u010d\u00edslami reprezentovan\u00fdmi vz\u0165ahom $36^k-5^l$, kde $k$ a $l$ s\u00fa kladn\u00e9 cel\u00e9 \u010d\u00edsla, n\u00e1jdite najmen\u0161ie. Svoje tvrdenie dok\u00e1\u017ete.",
-            "serie": 0,
+            "series": 0,
             "order": 4
         }
     },
@@ -71,7 +71,7 @@
         "pk": 4,
         "fields": {
             "text": "V rovine je bod s celo\u010d\u00edseln\u00fdmi s\u00faradnicami $[x,y]$, av\u0161ak tieto s\u00faradnice nepozn\u00e1me. Pozn\u00e1me v\u0161ak hodnoty v\u00fdrazov $x^2+y$ a $y^2+x$, pri\u010dom tieto hodnoty s\u00fa r\u00f4zne. Dok\u00e1\u017ete, \u017ee s t\u00fdmito inform\u00e1ciami vieme jednozna\u010dne ur\u010di\u0165 s\u00faradnice h\u013eadan\u00e9ho bodu.",
-            "serie": 0,
+            "series": 0,
             "order": 5
         }
     },
@@ -80,7 +80,7 @@
         "pk": 5,
         "fields": {
             "text": "Majme $k$ prep\u00edna\u010dov v rade. Ka\u017ed\u00fd prep\u00edna\u010d ukazuje hore, doprava, dole alebo do\u013eava. Ak tri susedn\u00e9 prep\u00edna\u010de ukazuj\u00fa r\u00f4znymi smermi, prepneme v\u0161etky tri do \u0161tvrt\u00e9ho smeru. Ak by v jednom momente bolo viac tak\u00fdchto troj\u00edc, prepneme t\u00fa najviac na\u013eavo. \nUk\u00e1\u017ete, \u017ee sa proces zastav\u00ed.",
-            "serie": 0,
+            "series": 0,
             "order": 6
         }
     },
@@ -89,7 +89,7 @@
         "pk": 6,
         "fields": {
             "text": "Majme \u010d\u00edsla od 1 do $n$. Pre ka\u017ed\u00e9 $n$ n\u00e1jdite najv\u00e4\u010d\u0161ie $k$ tak\u00e9, \u017ee na\u0161e \u010d\u00edsla vieme rozdeli\u0165 do $k$ skup\u00edn s rovnak\u00fdm s\u00fa\u010dtom.",
-            "serie": 1,
+            "series": 1,
             "order": 1
         }
     },
@@ -98,7 +98,7 @@
         "pk": 7,
         "fields": {
             "text": "Majme rovnostrann\u00fd trojuholn\u00edk. Ka\u017ed\u00e1 jeho strana je rozdelen\u00e1 na $k$ rovnak\u00fdch \u010dast\u00ed pomocou $k-1$ bodov. T\u00fdmito bodmi ve\u010fme rovnobe\u017eky so zvy\u0161n\u00fdmi dvoma stranami trojuholn\u00edka. Takto vznikne trojuholn\u00edkov\u00e1 sie\u0165 zlo\u017een\u00e1 z $k^2$ men\u0161\u00edch trojuholn\u00edkov\u00fdch pol\u00ed\u010dok. Nazvime re\u0165az tak\u00fa sekvenciu pol\u00ed\u010dok, \u017ee ka\u017ed\u00e9 pol\u00ed\u010dko je v nej zahrnut\u00e9 maxim\u00e1lne raz a po sebe nasleduj\u00face pol\u00ed\u010dka maj\u00fa spolo\u010dn\u00fa stranu. Ak\u00e1 je najdlh\u0161ia mo\u017en\u00e1 re\u0165az?",
-            "serie": 1,
+            "series": 1,
             "order": 2
         }
     },
@@ -107,7 +107,7 @@
         "pk": 8,
         "fields": {
             "text": "Ka\u017ed\u00e9 z \u010d\u00edsel $a_1, a_2, \\dots , a_n$ je rovn\u00e9 $1$ alebo $-1$ a plat\u00ed \n$$a_1a_2a_3a_4 + a_2a_3a_4a_5 + a_3a_4a_5a_6 + \\dots + a_{n-1}a_na_1a_2 + a_na_1a_2a_3 = 0$$\nDok\u00e1\u017ete, \u017ee $n$ je delite\u013en\u00e9 4.",
-            "serie": 1,
+            "series": 1,
             "order": 3
         }
     },
@@ -116,7 +116,7 @@
         "pk": 9,
         "fields": {
             "text": "Je dan\u00fd \u0161tvorsten $ABCD$. Po \u00fase\u010dke $AB$ sa pohybuje bod $X$. Ozna\u010dme $P$ p\u00e4tu v\u00fd\u0161ky spustenej z bodu $D$ na priamku $CX$. Ur\u010dte mno\u017einu bodov $P$, ktor\u00e9 vyhovuj\u00fa zadaniu.",
-            "serie": 1,
+            "series": 1,
             "order": 4
         }
     },
@@ -125,7 +125,7 @@
         "pk": 10,
         "fields": {
             "text": "N\u00e1jdite najv\u00e4\u010d\u0161ie \u010d\u00edslo $p$ tak\u00e9, \u017ee je mo\u017en\u00e9 na \u0161achovnicu $2019\\times 2019$ umiestni\u0165 $p$ pe\u0161iakov a $p+2019$ ve\u017e\u00ed tak, aby sa \u017eiadne dve ve\u017ee neohrozovali. (Dve ve\u017ee sa ohrozuj\u00fa, ak s\u00fa v tom istom riadku alebo st\u013apci a v\u0161etky pol\u00ed\u010dka medzi nimi s\u00fa pr\u00e1zdne).",
-            "serie": 1,
+            "series": 1,
             "order": 5
         }
     },
@@ -134,7 +134,7 @@
         "pk": 11,
         "fields": {
             "text": "Nech $ABC$ je ostrouhl\u00fd nerovnoramenn\u00fd trojuholn\u00edk, $M$ je stred strany $BC$ a $AD$ je os uhla pri vrchole $A$, pri\u010dom $D$ le\u017e\u00ed na strane $BC$. Kru\u017enica op\u00edsan\u00e1 trojuholn\u00edku $ADM$ pret\u00edna $AB$ v bode $E$ a $AC$ v bode $F$. Bod $I$ je stred $EF$ a $MI$ pret\u00edna priamky $AB$ v bode $X$ a $AC$ v bode $Y$. Dok\u00e1\u017ete, \u017ee $AXY$ je rovnoramenn\u00fd.",
-            "serie": 1,
+            "series": 1,
             "order": 6
         }
     },
@@ -150,7 +150,7 @@
         }
     },
     {
-        "model": "competition.Serie",
+        "model": "competition.series",
         "pk": 2,
         "fields": {
             "semester": 1,
@@ -160,7 +160,7 @@
         }
     },
     {
-        "model": "competition.Serie",
+        "model": "competition.series",
         "pk": 3,
         "fields": {
             "semester": 1,
@@ -174,7 +174,7 @@
         "pk": 12,
         "fields": {
             "text": "Ban\u00edk sa nach\u00e1dza na kocke. Ka\u017ed\u00fa min\u00fatu sa rozhodne, \u010di prejde do niektor\u00e9ho vrcholu, ktor\u00fd sused\u00ed hranou s vrcholom, kde sa pr\u00e1ve nach\u00e1dza, alebo sa prev\u0155ta do vrcholu, ktor\u00fd je presne oproti. Ban\u00edk sa v\u017edy rozhodne n\u00e1hodne s rovnakou pravdepodobnos\u0165ou pre ka\u017ed\u00fa vo\u013ebu nasleduj\u00faceho vrcholu. Ak\u00e1 je pravdepodobnos\u0165, \u017ee sa po 2019 min\u00fatach bude nach\u00e1dza\u0165 vo vrchole, ktor\u00fd je presne oproti po\u010diato\u010dn\u00e9mu vrcholu?",
-            "serie": 2,
+            "series": 2,
             "order": 1
         }
     },
@@ -183,7 +183,7 @@
         "pk": 13,
         "fields": {
             "text": "Dok\u00e1\u017ete, \u017ee pre v\u0161etky $x \\in \\mathbb{R}$, pre v\u0161etky cel\u00e9 kladn\u00e9 $n$ a pre \u013eubovo\u013en\u00e9 rozdelenie znamienok $+$ a $-$ vo v\u00fdrazoch $\\pm$ plat\u00ed\n$$x^{2n} \\pm x^{2n-1} + x^{2n-2} \\pm x^{2n-3} + x^{2n-4} \\pm \\dots \\pm x + 1 > \\frac{1}{2}.$$",
-            "serie": 2,
+            "series": 2,
             "order": 2
         }
     },
@@ -192,7 +192,7 @@
         "pk": 14,
         "fields": {
             "text": "Majme deku s rozmermi $3 \\times 3$ metre ofarben\u00fa troma farbami. Uk\u00e1\u017ete, \u017ee vieme zapichn\u00fa\u0165 dvojzubec do deky tak, \u017ee hroty dvojzubca prepichn\u00fa deku na miestach s rovnakou farbou. Predpoklad\u00e1me, \u017ee hrot je jeden bod a \u017ee vzdialenos\u0165 hrotov dvojzubca je $1 cm$.",
-            "serie": 2,
+            "series": 2,
             "order": 3
         }
     },
@@ -201,7 +201,7 @@
         "pk": 15,
         "fields": {
             "text": "Dok\u00e1\u017ete, \u017ee ak $a$, $b$ s\u00fa korene polyn\u00f3mu $x^2 - 8x + 1$, tak potom pre v\u0161etky nez\u00e1porn\u00e9 cel\u00e9 \u010d\u00edsla $n$ plat\u00ed, \u017ee $a^n +b^n$ je cel\u00e9 \u010d\u00edslo nedelite\u013en\u00e9 siedmimi.",
-            "serie": 2,
+            "series": 2,
             "order": 4
         }
     },
@@ -210,7 +210,7 @@
         "pk": 16,
         "fields": {
             "text": "Dan\u00e1 je \u00fase\u010dka $PQ$ a kru\u017enica $k$. Body $A$ a $B$ sa h\u00fdbu po kru\u017enici $k$ tak, aby v\u017edy platilo $|AB|=|PQ|$. Ak ozna\u010d\u00edme $T$ priese\u010dn\u00edk os\u00ed \u00fase\u010diek  $AP$ a $BQ$, potom ka\u017ed\u00e1 poloha tetivy $AB$ ur\u010duje polohu bodu $T$. Dok\u00e1\u017ete, \u017ee v\u0161etky mo\u017en\u00e9 body $T$ le\u017eia na jednej priamke. ",
-            "serie": 2,
+            "series": 2,
             "order": 5
         }
     },
@@ -219,7 +219,7 @@
         "pk": 17,
         "fields": {
             "text": "Ka\u017ed\u00fd bod v rovine s celo\u010d\u00edseln\u00fdmi s\u00faradnicami je ofarben\u00fd bu\u010f \u010dervenou alebo modrou farbou tak, aby boli splnen\u00e9 podmienky:\n\\begin{enumerate}\n\\item Na \u00fase\u010dke sp\u00e1jaj\u00facej \u010derven\u00e9 body nele\u017e\u00ed \u017eiaden modr\u00fd bod.\n\\item Ak maj\u00fa dva modr\u00e9 body vzdialenos\u0165 2, potom bod uprostred medzi nimi je modr\u00fd.\n\\end{enumerate}\n\nDok\u00e1\u017ete, \u017ee z \u013eubovo\u013en\u00e9ho \u010derven\u00e9ho bodu sa vieme dosta\u0165 do \u013eubovo\u013en\u00e9ho in\u00e9ho tak, \u017ee nemus\u00edme prejs\u0165 cez \u017eiaden modr\u00fd bod, pri\u010dom kroky vieme robi\u0165 len vodorovne a zvislo, v\u017edy o vzdialenos\u0165 jedna.",
-            "serie": 2,
+            "series": 2,
             "order": 6
         }
     },
@@ -228,7 +228,7 @@
         "pk": 18,
         "fields": {
             "text": "Ur\u010dte, pre ktor\u00e9 kladn\u00e9 cel\u00e9 \u010d\u00edsla $n$ existuje tabu\u013eka $n\\times n$ obsahuj\u00faca $n^2$ kladn\u00fdch cel\u00fdch \u010d\u00edsel, pre ktor\u00fa plat\u00ed, \u017ee pre \u013eubovo\u013en\u00fa vo\u013ebu $i$ a $j$ (m\u00f4\u017eu nadob\u00fada\u0165 hodnoty od $1$ po $n$) je v pol\u00ed\u010dku v $i$-tom riadku a $j$-tom st\u013apci po\u010det v\u0161etk\u00fdch hodn\u00f4t $j$, ktor\u00e9 sa vyskytuj\u00fa v $i$-tom st\u013apci. ",
-            "serie": 3,
+            "series": 3,
             "order": 1
         }
     },
@@ -237,7 +237,7 @@
         "pk": 19,
         "fields": {
             "text": "Mih\u00e1l nem\u00e1 r\u00e1d \u010d\u00edsla s pr\u00edvlastkom. M\u00e1 v\u0161ak r\u00e1d tak\u00e9 kladn\u00e9 cel\u00e9 \u010d\u00edsla $m$, pre ktor\u00e9 je ka\u017ed\u00e9 z \u010d\u00edsel $m$, $m+1$, $m+2$ a $m+3$ delite\u013en\u00e9 svojim cifern\u00fdm s\u00fa\u010dtom. Dok\u00e1\u017ete, \u017ee ak posledn\u00e1 cifra v takomto \u010d\u00edsle je 8, tak potom predposledn\u00e1 cifra tohto \u010d\u00edsla je nutne 9.",
-            "serie": 3,
+            "series": 3,
             "order": 2
         }
     },
@@ -246,7 +246,7 @@
         "pk": 20,
         "fields": {
             "text": "Majme \u0161tvorec $ABCD$, ktor\u00fd m\u00e1 nad stranou $AB$ zostrojen\u00fa polkru\u017enicu vo vn\u00fatri \u0161tvorca $ABCD$. K tejto polkru\u017enici ve\u010fme doty\u010dnicu prech\u00e1dzaj\u00facu bodom $C$ r\u00f4znu od priamky $CB$ a ozna\u010dme jej bod dotyku $F$. Prienik \u00fase\u010dky $BD$ a polkru\u017enice ozna\u010d\u00edme $E$. Ak\u00fd je obsah trojuholn\u00edka $BEF$, ak je d\u013a\u017eka strany \u0161tvorca $ABCD$ rovn\u00e1 10?",
-            "serie": 3,
+            "series": 3,
             "order": 3
         }
     },
@@ -255,7 +255,7 @@
         "pk": 21,
         "fields": {
             "text": "V od\u013eahlej \u010dasti mesta stoj\u00ed nieko\u013eko rovnak\u00fdch ve\u017e\u00ed s kruhov\u00fdm p\u00f4dorysom. Vandali sa rozhoduj\u00fa, kde bud\u00fa sprejova\u0165, pri\u010dom na mape si vyzna\u010dia bod na obvode ve\u017ee pr\u00e1ve vtedy, ke\u010f z dan\u00e9ho miesta nevidno \u017eiadnu in\u00fa ve\u017eu. Dok\u00e1\u017ete, \u017ee celkov\u00e1 d\u013a\u017eka vyzna\u010den\u00fdch oblast\u00ed je rovn\u00e1 obvodu jednej ve\u017ee. ",
-            "serie": 3,
+            "series": 3,
             "order": 4
         }
     },
@@ -264,7 +264,7 @@
         "pk": 22,
         "fields": {
             "text": "Dvaja hr\u00e1\u010di hraj\u00fa pi\u0161kvorky na nekone\u010dne ve\u013ekom trojuholn\u00edkovom papieri a striedaj\u00fa sa v \u0165ahoch. Ten, kto je na \u0165ahu, v\u017edy nakresl\u00ed svoju zna\u010dku do niektor\u00e9ho vo\u013en\u00e9ho pol\u00ed\u010dka. Vyhr\u00e1 hr\u00e1\u010d, ktor\u00fd m\u00e1 ako prv\u00fd nepreru\u0161ovan\u00fa rovn\u00fa radu (smeruj\u00facu jedn\u00fdm z troch mo\u017en\u00fdch smerov v mrie\u017eke) aspo\u0148 $n$ svojich znakov, kde $n$ je nejak\u00e9 prirodzen\u00e9 \u010d\u00edslo. V z\u00e1vislosti na $n$ ur\u010dte, kto m\u00e1 vyhr\u00e1vaj\u00facu alebo neprehr\u00e1vaj\u00facu strat\u00e9giu.",
-            "serie": 3,
+            "series": 3,
             "order": 5
         }
     },
@@ -273,7 +273,7 @@
         "pk": 23,
         "fields": {
             "text": "N\u00e1jdite v\u0161etky funkcie $f: \\mathbb R \\rightarrow \\mathbb R$ tak\u00e9, \u017ee pre v\u0161etky re\u00e1lne \u010d\u00edsla $x, y$ plat\u00ed: $f(xy+f(x))=xf(y)$.",
-            "serie": 3,
+            "series": 3,
             "order": 6
         }
     },
@@ -289,7 +289,7 @@
         }
     },
     {
-        "model": "competition.Serie",
+        "model": "competition.series",
         "pk": 4,
         "fields": {
             "semester": 2,
@@ -299,7 +299,7 @@
         }
     },
     {
-        "model": "competition.Serie",
+        "model": "competition.series",
         "pk": 5,
         "fields": {
             "semester": 2,
@@ -313,7 +313,7 @@
         "pk": 24,
         "fields": {
             "text": "Dok\u00e1\u017ete, \u017ee $\\sqrt{n+1} + \\sqrt{n-1}$ nie je racion\u00e1lne \u010d\u00edslo pre \u017eiadne celo\u010d\u00edseln\u00e9 $n$.",
-            "serie": 4,
+            "series": 4,
             "order": 1
         }
     },
@@ -322,7 +322,7 @@
         "pk": 25,
         "fields": {
             "text": "Nech $a$, $b$, $c$, $x$, $y$ a $z$ s\u00fa nez\u00e1porn\u00e9 re\u00e1lne \u010d\u00edsla tak\u00e9, \u017ee $a^2 + b^2 = c^2$ a $x^2+y^2=z^2$. Dok\u00e1\u017ete, \u017ee potom plat\u00ed $(a+x)^2 + (b+y)^2 \\leq (c+z)^2$ a zistite, kedy nast\u00e1va rovnos\u0165.",
-            "serie": 4,
+            "series": 4,
             "order": 2
         }
     },
@@ -331,7 +331,7 @@
         "pk": 26,
         "fields": {
             "text": "M\u00e1me \u0161achovnicu $n\\times n$. Niektor\u00e9 pol\u00ed\u010dka (okrem \u013eav\u00e9ho horn\u00e9ho a prav\u00e9ho doln\u00e9ho rohu) nafarb\u00edme na \u010derveno tak, \u017ee \u0161achov\u00fd k\u00f4\u0148 sa nevie dosta\u0165 z \u013eav\u00e9ho horn\u00e9ho rohu do prav\u00e9ho doln\u00e9ho rohu bez toho, aby musel st\u00fapi\u0165 na \u010derven\u00e9 pol\u00ed\u010dko. Zistite, pre ktor\u00e9 $n$ plat\u00ed, \u017ee pri \u013eubovo\u013enom takomto ofarben\u00ed vieme n\u00e1js\u0165 tri po sebe id\u00face pol\u00ed\u010dka na nejakej diagon\u00e1le tak\u00e9, \u017ee aspo\u0148 dve z nich s\u00fa \u010derven\u00e9.",
-            "serie": 4,
+            "series": 4,
             "order": 3
         }
     },
@@ -340,7 +340,7 @@
         "pk": 27,
         "fields": {
             "text": "Lichobe\u017en\u00edk $ABCD$ je vp\u00edsan\u00fd do kru\u017enice tak, \u017ee z\u00e1klad\u0148a lichobe\u017en\u00edka $AB$ je jej priemer. Ozna\u010dme $E$ priese\u010dn\u00edk uhloprie\u010dok lichobe\u017en\u00edka $ABCD$, $S$ stred \u00fase\u010dky $AB$ a zostroj\u00edme bod $X$ tak, aby bol $ASEX$ rovnobe\u017en\u00edk. Uk\u00e1\u017ete, \u017ee $|XA|=|XD|$.",
-            "serie": 4,
+            "series": 4,
             "order": 4
         }
     },
@@ -349,7 +349,7 @@
         "pk": 28,
         "fields": {
             "text": "Dok\u00e1\u017ete, \u017ee ak funkcia $f:\\mathbb{R} \\rightarrow \\mathbb{R}$ sp\u013a\u0148a nerovnosti $f(x)\\leq x$ a $f(x+y) \\leq f(x)+f(y)$ pre v\u0161etky $x$, $y$ re\u00e1lne \u010d\u00edsla, potom $f(x)=x$ pre v\u0161etky re\u00e1lne $x$.",
-            "serie": 4,
+            "series": 4,
             "order": 5
         }
     },
@@ -358,7 +358,7 @@
         "pk": 29,
         "fields": {
             "text": "V \u0161kole sa niektor\u00e9 dvojice \u017eiakov kamar\u00e1tia a niektor\u00e9 nie (kamar\u00e1tstvo je obojstrann\u00e9). T\u00edmom naz\u00fdvame skupinu pr\u00e1ve 20 \u013eud\u00ed, v ktorej sa v\u0161etci navz\u00e1jom kamar\u00e1tia. Ka\u017ed\u00fd \u017eiak je \u010dlenom nejak\u00e9ho t\u00edmu, ale ke\u010f zru\u0161\u00edme \u013eubovo\u013en\u00e9 kamar\u00e1tstvo, tak v\u017edy bude existova\u0165 aspo\u0148 jeden \u017eiak, ktor\u00fd nie je v \u017eiadnom t\u00edme. T\u00edm, ktor\u00fd obsahuje \u017eiaka, ktor\u00fd m\u00e1 kamar\u00e1tov len v tomto t\u00edme, nazveme \\textit{\\uv{t\u00edm so stredom}}. Dok\u00e1\u017ete, \u017ee pre \u013eubovo\u013en\u00fa dvojicu \u017eiakov, ktor\u00ed sa kamar\u00e1tia, existuje t\u00edm so stredom, ktor\u00e9ho s\u00fa obaja \u010dlenmi.",
-            "serie": 4,
+            "series": 4,
             "order": 6
         }
     },
@@ -367,7 +367,7 @@
         "pk": 30,
         "fields": {
             "text": "V tabu\u013eke $25\\times 25$ s\u00fa \u010d\u00edsla $+1$ a $-1$. Nech $a_i$ je s\u00fa\u010din \u010d\u00edsel v $i$-tom riadku a $b_j$ je s\u00fa\u010din \u010d\u00edsel v $j$-tom st\u013apci. Dok\u00e1\u017ete, \u017ee s\u00fa\u010det $a_1+b_1+\\dots+a_{25}+b_{25}$ nie je rovn\u00fd nule.",
-            "serie": 5,
+            "series": 5,
             "order": 1
         }
     },
@@ -376,7 +376,7 @@
         "pk": 31,
         "fields": {
             "text": "Uk\u00e1\u017ete, \u017ee neexistuje aritmetick\u00e1 postupnos\u0165 s 3 \u010dlenmi z nekone\u010dnej geometrickej postupnosti ${\\{2^k\\}}^\\infty_{k=0}$.",
-            "serie": 5,
+            "series": 5,
             "order": 2
         }
     },
@@ -385,7 +385,7 @@
         "pk": 32,
         "fields": {
             "text": "V lichobe\u017en\u00edku $ABCD$ s\u00fa $AB$ a $CD$ rovnobe\u017en\u00e9 a navy\u0161e plat\u00ed $|BC| = |AB|+|CD|$. Nech $F$ je stredom $AD$. N\u00e1jdite v\u0161etky mo\u017en\u00e9 ve\u013ekosti uhla $BFC$.",
-            "serie": 5,
+            "series": 5,
             "order": 3
         }
     },
@@ -394,7 +394,7 @@
         "pk": 33,
         "fields": {
             "text": "M\u00e1me trojuholn\u00edk $ABC$ a na strane $AB$ vyzna\u010d\u00edme bod $S$ tak, aby $|AS|=|BS|$. N\u00e1sledne ozna\u010dme $I_1$ stred kru\u017enice vp\u00edsanej trojuholn\u00edku $CAS$ a $I_2$ stred kru\u017enice vp\u00edsanej trojuholn\u00edku $CBS$. Ozna\u010dme $k_1$ kru\u017enicu op\u00edsan\u00fa trojuholn\u00edku $AI_1C$ a $k_2$ kru\u017enicu op\u00edsan\u00fa trojuholn\u00edku $BI_2C$. Dok\u00e1\u017ete, \u017ee $k_1$ a $k_2$ sa okrem bodu $C$ pret\u00ednaj\u00fa na priamke $CS$.",
-            "serie": 5,
+            "series": 5,
             "order": 4
         }
     },
@@ -403,7 +403,7 @@
         "pk": 34,
         "fields": {
             "text": "N\u00e1jdite v\u0161etky trojice cel\u00fdch \u010d\u00edsel $(a,\\,b,\\,c)$ tak\u00e9, \u017ee $3^a+3^b+3^c$ je druhou mocninou cel\u00e9ho \u010d\u00edsla.",
-            "serie": 5,
+            "series": 5,
             "order": 5
         }
     },
@@ -412,7 +412,7 @@
         "pk": 35,
         "fields": {
             "text": "N\u00e1jdite v\u0161etky funkcie $f(x)$ na re\u00e1lnych \u010d\u00edslach sp\u013a\u0148aj\u00face $f(t^2 + u) = t\\cdot f(t) + f(u)$ pre v\u0161etky re\u00e1lne \u010d\u00edsla $t$ a $u$.",
-            "serie": 5,
+            "series": 5,
             "order": 6
         }
     },
@@ -428,7 +428,7 @@
         }
     },
     {
-        "model": "competition.Serie",
+        "model": "competition.series",
         "pk": 6,
         "fields": {
             "semester": 3,
@@ -438,7 +438,7 @@
         }
     },
     {
-        "model": "competition.Serie",
+        "model": "competition.series",
         "pk": 7,
         "fields": {
             "semester": 3,
@@ -452,7 +452,7 @@
         "pk": 36,
         "fields": {
             "text": "Dok\u00e1\u017ete, \u017ee ak s\u00fa $a$, $b$, $c$, $d$ re\u00e1lne \u010d\u00edsla a $ac=2(b+d)$, tak m\u00e1 aspo\u0148 jedna z rovn\u00edc $x^2 + ax +b=0$ a $x^2+cx+d=0$ v\u0161etky korene re\u00e1lne.",
-            "serie": 6,
+            "series": 6,
             "order": 1
         }
     },
@@ -461,7 +461,7 @@
         "pk": 37,
         "fields": {
             "text": "Majme trojuholn\u00edk $ABC$, kde $AB$ je najdlh\u0161ia jeho strana. Zvo\u013eme bod $D$ tak, aby sa nach\u00e1dzal na opa\u010dnej polpriamke k $BA$, teda $B$ je medzi bodmi $A$ a $D$ a z\u00e1rove\u0148 plat\u00ed $|BC|=|BD|$. Dok\u00e1\u017ete, \u017ee trojuholn\u00edk $ACD$ je tupouhl\u00fd.",
-            "serie": 6,
+            "series": 6,
             "order": 2
         }
     },
@@ -470,7 +470,7 @@
         "pk": 38,
         "fields": {
             "text": "M\u00e1me $n$ bodov v rovine. M\u00f4\u017eeme urobi\u0165 to, \u017ee dva z nich vyberieme a n\u00e1sledne obidva presunieme do stredu \u00fase\u010dky, ktor\u00e1 ich sp\u00e1ja. Body iba pres\u00favame, \u017eiaden z nich nezanik\u00e1. Zistite, pre ktor\u00e9 $n$ je mo\u017en\u00e9 v\u017edy pres\u00fava\u0165 dan\u00e9 body tak, aby v\u0161etky splynuli (boli v jednom bode).",
-            "serie": 6,
+            "series": 6,
             "order": 3
         }
     },
@@ -479,7 +479,7 @@
         "pk": 39,
         "fields": {
             "text": "N\u00e1jdite v\u0161etky polyn\u00f3my $P(x)$ s re\u00e1lnymi koeficientami, ktor\u00e9 sp\u013a\u0148aj\u00fa $(x^2 - 6x + 8)\\cdot P(x) = (x^2 + 2x)\\cdot P(x-4)$ pre v\u0161etky re\u00e1lne \u010d\u00edsla $x$.",
-            "serie": 6,
+            "series": 6,
             "order": 4
         }
     },
@@ -488,7 +488,7 @@
         "pk": 40,
         "fields": {
             "text": "Majme $n^2$ bodov rozmiestnen\u00fdch do mrie\u017eky $n\\times n$. Z nich n\u00e1hodne vyberieme $2n$ bodov. Dva vybran\u00e9 body s\u00fa spojen\u00e9 zelenou \u00fase\u010dkou, ak s\u00fa v rovnakom riadku, a \u010dervenou \u00fase\u010dkou, ak s\u00fa v rovnakom st\u013apci. Dok\u00e1\u017ete, \u017ee existuje uzavret\u00e1 lomen\u00e1 \u010diara s vrcholmi vo vybran\u00fdch bodoch a so stranami tvoren\u00fdmi t\u00fdmito \u00fase\u010dkami tak\u00e1, \u017ee sa farby jej str\u00e1n striedaj\u00fa.",
-            "serie": 6,
+            "series": 6,
             "order": 5
         }
     },
@@ -497,7 +497,7 @@
         "pk": 41,
         "fields": {
             "text": "Prirodzen\u00e9 \u010d\u00edslo $n$ nazveme chutn\u00e9, ak pre \u013eubovo\u013en\u00e9 dve prirodzen\u00e9 \u010d\u00edsla $a$, $b$ tak\u00e9, \u017ee $a+b=n$ plat\u00ed, \u017ee aspo\u0148 jeden zo zlomkov $\\frac ab,\\frac ba$ m\u00e1 kone\u010dn\u00fd desatinn\u00fd rozvoj. Existuje nekone\u010dne ve\u013ea chutn\u00fdch \u010d\u00edsel? Svoje rie\u0161enie od\u00f4vodnite.",
-            "serie": 6,
+            "series": 6,
             "order": 6
         }
     },
@@ -506,7 +506,7 @@
         "pk": 42,
         "fields": {
             "text": "Nech $ABCD$ je \u0161tvoruholn\u00edk, v ktorom existuje kru\u017enica, ktor\u00e1 prech\u00e1dza stredmi v\u0161etk\u00fdch str\u00e1n tohto \u0161tvoruholn\u00edka. Dok\u00e1\u017ete, \u017ee $AC$ a $BD$ s\u00fa na seba kolm\u00e9.",
-            "serie": 7,
+            "series": 7,
             "order": 1
         }
     },
@@ -515,7 +515,7 @@
         "pk": 43,
         "fields": {
             "text": "M\u00e1me riadok, v ktorom je 1000 \u010d\u00edsel. Pod tento riadok prid\u00e1me \u010fal\u0161\u00ed tak, \u017ee pod ka\u017ed\u00fdm \u010d\u00edslom $a$ je nap\u00edsan\u00e1 hodnota $f(a)$, kde $f(a)$ je po\u010det v\u00fdskytov \u010d\u00edsla $a$ v predch\u00e1dzaj\u00facom riadku. Takto postupne prid\u00e1vame \u010fal\u0161ie riadky. Dok\u00e1\u017ete, \u017ee po pridan\u00ed dostato\u010dn\u00e9ho po\u010dtu riadkov bud\u00fa pod sebou dva rovnak\u00e9 riadky.",
-            "serie": 7,
+            "series": 7,
             "order": 2
         }
     },
@@ -524,7 +524,7 @@
         "pk": 44,
         "fields": {
             "text": "Je dan\u00e1 rovnica $x!y!z!=t!$, kde $x$, $y$, $z$, $t$ s\u00fa prirodzen\u00e9 \u010d\u00edsla v\u00e4\u010d\u0161ie ako jedna. Uk\u00e1\u017ete, \u017ee existuje nekone\u010dne ve\u013ea \u0161tvor\u00edc $(x,y,z,t)$, ktor\u00e9 sp\u013a\u0148aj\u00fa t\u00fato rovnicu. \\it{Pozn.: $n!$ je \u010d\u00edslo $n\\cdot (n-1)\\cdot \\dots \\cdot 2\\cdot 1$.}",
-            "serie": 7,
+            "series": 7,
             "order": 3
         }
     },
@@ -533,7 +533,7 @@
         "pk": 45,
         "fields": {
             "text": "Majme $n$ nenulov\u00fdch \u010d\u00edsel, ktor\u00fdch s\u00fa\u010det je 0. Uk\u00e1\u017ete, \u017ee je mo\u017en\u00e9 ich o\u010d\u00edslova\u0165 tak, aby platila nerovnos\u0165: $$a_1a_2 + a_2a_3 + \\dots + a_na_1 < 0.$$",
-            "serie": 7,
+            "series": 7,
             "order": 4
         }
     },
@@ -542,7 +542,7 @@
         "pk": 46,
         "fields": {
             "text": "Dok\u00e1\u017ete, \u017ee \u013eubovo\u013en\u00e9 cel\u00e9 \u010d\u00edslo m\u00f4\u017ee by\u0165 nap\u00edsan\u00e9 ako s\u00fa\u010det 5 tret\u00edch mocn\u00edn cel\u00fdch \u010d\u00edsel.",
-            "serie": 7,
+            "series": 7,
             "order": 5
         }
     },
@@ -551,7 +551,7 @@
         "pk": 47,
         "fields": {
             "text": "Nech $ABC$ je ostrouhl\u00fd trojuholn\u00edk s $|AB|<|AC|$. Nech $M$, $N$ s\u00fa postupne stredy str\u00e1n $AB$ a $AC$ a nech $AD$ je v\u00fd\u0161ka v tomto trojuholn\u00edku. Na \u00fase\u010dke $MN$ zvol\u00edme tak\u00fd bod $K$, \u017ee $|BK|=|CK|$. Polpriamka $KD$ pret\u00edna kru\u017enicu op\u00edsan\u00fa trojuholn\u00edku $ABC$ v bode $Q$. Dok\u00e1\u017ete, \u017ee body $C$, $N$, $K$, $Q$ le\u017eia na jednej kru\u017enici.",
-            "serie": 7,
+            "series": 7,
             "order": 6
         }
     },
@@ -567,7 +567,7 @@
         }
     },
     {
-        "model": "competition.Serie",
+        "model": "competition.series",
         "pk": 8,
         "fields": {
             "semester": 4,
@@ -577,7 +577,7 @@
         }
     },
     {
-        "model": "competition.Serie",
+        "model": "competition.series",
         "pk": 9,
         "fields": {
             "semester": 4,
@@ -591,7 +591,7 @@
         "pk": 48,
         "fields": {
             "text": "Ur\u010dte po\u010det v\u0161etk\u00fdch neusporiadan\u00fdch troj\u00edc dvojcifern\u00fdch prirodzen\u00fdch \u010d\u00edsel $a,\\ b,\\ c$, ktor\u00fdch s\u00fa\u010din $abc$ m\u00e1 z\u00e1pis, v~ktorom s\u00fa v\u0161etky cifry rovnak\u00e9.",
-            "serie": 8,
+            "series": 8,
             "order": 1
         }
     },
@@ -600,7 +600,7 @@
         "pk": 49,
         "fields": {
             "text": "Ko\u013ek\u00fdmi sp\u00f4sobmi je mo\u017en\u00e9 ofarbi\u0165 \u010d\u00edsla $1, 2, \\dots , n$ \u010dervenou, zelenou a modrou farbou tak, \u017ee p\u00e1rne \u010d\u00edsla nie s\u00fa zelen\u00e9 a \u017eiadne dve susedn\u00e9 \u010d\u00edsla nemaj\u00fa rovnak\u00fa farbu?",
-            "serie": 8,
+            "series": 8,
             "order": 2
         }
     },
@@ -609,7 +609,7 @@
         "pk": 50,
         "fields": {
             "text": "Ke\u010f\u017ee Mat\u00fa\u0161ova fenka Bodka je leniv\u00e1 chodi\u0165 od jedn\u00e9ho stromu k druh\u00e9mu, tak jej Mat\u00fa\u0161 postavil syst\u00e9m minivl\u00e1\u010dikov. Medzi ka\u017ed\u00fdmi dvoma stromami v parku jazd\u00ed minivl\u00e1\u010dik pr\u00e1ve v jednom smere. Bodka sa rozhodla, \u017ee si vypln\u00ed \u010das t\u00fdm, \u017ee si vyberie nejak\u00fd prv\u00fd strom a potom sa prevezie minivl\u00e1\u010dikmi tak, \u017ee ka\u017ed\u00fd strom nav\u0161t\u00edvi pr\u00e1ve raz (a medzi stromami sa bude pohybova\u0165 len pomocou minivl\u00e1\u010dikov). Dok\u00e1\u017ete, \u017ee si tak Bodka vie vybra\u0165 bez oh\u013eadu na to, ako Mat\u00fa\u0161 minivl\u00e1\u010diky postavil.",
-            "serie": 8,
+            "series": 8,
             "order": 3
         }
     },
@@ -618,7 +618,7 @@
         "pk": 51,
         "fields": {
             "text": "Nech $a,b,c\\ge-1$ s\u00fa tak\u00e9 re\u00e1lne \u010d\u00edsla, \u017ee $a^3+b^3+c^3=1$. Dok\u00e1\u017ete, \u017ee $a+b+c+a^2+b^2+c^2\\le4$.",
-            "serie": 8,
+            "series": 8,
             "order": 4
         }
     },
@@ -627,7 +627,7 @@
         "pk": 52,
         "fields": {
             "text": "Dan\u00fd je \u0161tvorec $ABCD$. N\u00e1jdite mno\u017einu v\u0161etk\u00fdch bodov $P$ tak\u00fdch, \u017ee existuje rovnoramenn\u00fd pravouhl\u00fd trojuholn\u00edk $APQ$ s prav\u00fdm uhlom  pri vrchole $P$ a bod $Q$ le\u017e\u00ed na strane $CD$.",
-            "serie": 8,
+            "series": 8,
             "order": 5
         }
     },
@@ -636,7 +636,7 @@
         "pk": 53,
         "fields": {
             "text": "V rovine je nieko\u013eko priamok, pri\u010dom \u017eiadne tri neprech\u00e1dzaj\u00fa jedn\u00fdm bodom a \u017eiadne dve nie s\u00fa rovnobe\u017en\u00e9. Tieto priamky rozdelia rovinu na nieko\u013eko oblast\u00ed. Dok\u00e1\u017ete, \u017ee m\u00f4\u017eeme da\u0165 do ka\u017edej oblasti kladn\u00e9 \u010d\u00edslo tak, aby pre ka\u017ed\u00fa priamku platilo, \u017ee s\u00fa\u010det \u010d\u00edsel v oblastiach na jednej strane priamky je rovnak\u00fd ako s\u00fa\u010det \u010d\u00edsel v oblastiach na druhej strane.",
-            "serie": 8,
+            "series": 8,
             "order": 6
         }
     },
@@ -645,7 +645,7 @@
         "pk": 54,
         "fields": {
             "text": "N\u00e1jdite v\u0161etky prirodzen\u00e9 \u010d\u00edsla $n$ tak\u00e9, \u017ee v\u0161etky tri \u010d\u00edsla $2n^{2}+1$, $3n^{2}+1$ a $6n^{2}+1$ s\u00fa druh\u00fdmi mocninami cel\u00fdch \u010d\u00edsel.",
-            "serie": 9,
+            "series": 9,
             "order": 1
         }
     },
@@ -654,7 +654,7 @@
         "pk": 55,
         "fields": {
             "text": "Nech $p,q$ s\u00fa re\u00e1lne \u010d\u00edsla tak\u00e9, \u017ee rovnica $x^3+px+q=0$ m\u00e1 tri r\u00f4zne re\u00e1lne rie\u0161enia. Dok\u00e1\u017ete, \u017ee potom plat\u00ed $p\\le0$.",
-            "serie": 9,
+            "series": 9,
             "order": 2
         }
     },
@@ -663,7 +663,7 @@
         "pk": 56,
         "fields": {
             "text": "Vodka a Tom\u00e1\u0161ko hraj\u00fa hru na pl\u00e1niku $2018\\times2$. Obaja maj\u00fa $2\\times1$ domino bloky, ktor\u00e9 postupne po jednom pokladaj\u00fa na pl\u00e1nik (v \u0165ahoch sa striedaj\u00fa a hr\u00e1\u010d mus\u00ed v \u0165ahu polo\u017ei\u0165 blok na pl\u00e1n). Tom\u00e1\u0161ko za\u010d\u00edna a m\u00f4\u017ee poklada\u0165 bloky len v horizont\u00e1lnom smere (ten, v ktorom m\u00e1 pl\u00e1nik rozmer 2018). Vodka m\u00f4\u017ee poklada\u0165 bloky len vo vertik\u00e1lnom smere. Hr\u00e1\u010d, ktor\u00fd nevie spravi\u0165 \u0165ah, prehr\u00e1va. Zistite, pre ktor\u00e9ho z hr\u00e1\u010dov existuje v\u00fdhern\u00e1 strat\u00e9gia.",
-            "serie": 9,
+            "series": 9,
             "order": 3
         }
     },
@@ -672,7 +672,7 @@
         "pk": 57,
         "fields": {
             "text": "Kru\u017enica so stredom v bode $I$ je vp\u00edsan\u00e1 do \u0161tvoruholn\u00edka $ABCD$. Polpriamky $BA$ a $CD$ sa pret\u00ednaj\u00fa v bode $P$, polpriamky $AD$ a $BC$ sa pret\u00ednaj\u00fa v bode $Q$. Za predpokladu, \u017ee $P$ le\u017e\u00ed na kru\u017enici op\u00edsanej trojuholn\u00edku $AIC$ dok\u00e1\u017ete, \u017ee $Q$ tie\u017e le\u017e\u00ed na tejto kru\u017enici.",
-            "serie": 9,
+            "series": 9,
             "order": 4
         }
     },
@@ -681,7 +681,7 @@
         "pk": 58,
         "fields": {
             "text": "N\u00e1jdite najmen\u0161ie prvo\u010d\u00edslo, ktor\u00e9 sa ned\u00e1 zap\u00edsa\u0165 v tvare $|2^a-3^b|$, kde $a$, $b$ s\u00fa nez\u00e1porn\u00e9 cel\u00e9 \u010d\u00edsla.",
-            "serie": 9,
+            "series": 9,
             "order": 5
         }
     },
@@ -690,7 +690,7 @@
         "pk": 59,
         "fields": {
             "text": "N\u00e1jdite v\u0161etky funkcie $f:\\langle 0,+\\infty) \\rightarrow \\langle 0,+\\infty)$, ktor\u00e9 vyhovuj\u00fa s\u00fa\u010dasne nasleduj\u00facim trom podmienkam:\n\\begin{enumerate}\n\\item pre \u013eubovo\u013en\u00e9 nez\u00e1porn\u00e9 re\u00e1lne \u010d\u00edsla $x$, $y$ tak\u00e9, \u017ee $x+y>0$, plat\u00ed rovnos\u0165 $f(x\\cdot f(y))\\cdot f(y) = f(xy/(x+y))$,\n\\item $f(1) = 0$,\n\\item $f(x) > 0$ pre \u013eubovo\u013en\u00e9 $x>1$.\n\\end{enumerate}",
-            "serie": 9,
+            "series": 9,
             "order": 6
         }
     },
@@ -706,7 +706,7 @@
         }
     },
     {
-        "model": "competition.Serie",
+        "model": "competition.series",
         "pk": 10,
         "fields": {
             "semester": 5,
@@ -716,7 +716,7 @@
         }
     },
     {
-        "model": "competition.Serie",
+        "model": "competition.series",
         "pk": 11,
         "fields": {
             "semester": 5,
@@ -730,7 +730,7 @@
         "pk": 60,
         "fields": {
             "text": "Nech $a$, $b$, $c$ s\u00fa d\u013a\u017eky str\u00e1n trojuholn\u00edka $ABC$ ($a$ oproti $A$, $b$ oproti $B$ a $c$ oproti $C$). Navy\u0161e tieto d\u013a\u017eky s\u00fa celo\u010d\u00edseln\u00e9 a $b$, $c$ s\u00fa nes\u00fadelite\u013en\u00e9 \u010d\u00edsla. Nech $D$ je priese\u010dn\u00edk strany $BC$ a osi uhla $BAC$. Dok\u00e1\u017ete, \u017ee ak s\u00fa trojuholn\u00edky $DBA$ a $ABC$ podobn\u00e9, tak $c$ je druhou mocninou cel\u00e9ho \u010d\u00edsla.",
-            "serie": 10,
+            "series": 10,
             "order": 1
         }
     },
@@ -739,7 +739,7 @@
         "pk": 61,
         "fields": {
             "text": "Nech $P_1(x)=x^2+a_1x+b_1$ a $P_2(x)=x^2+a_2x+b_2$ s\u00fa dva kvadratick\u00e9 polyn\u00f3my s celo\u010d\u00edseln\u00fdmi koeficientami. Plat\u00ed, \u017ee $a_1\\not =a_2$ a existuj\u00fa r\u00f4zne cel\u00e9 \u010d\u00edsla $m$, $n$ tak\u00e9, \u017ee $P_1(m)=P_2(n)$ a $P_1(n)=P_2(m)$. Dok\u00e1\u017ete, \u017ee $a_1-a_2$ je p\u00e1rne.",
-            "serie": 10,
+            "series": 10,
             "order": 2
         }
     },
@@ -748,7 +748,7 @@
         "pk": 62,
         "fields": {
             "text": "Na stretnutie pri\u0161lo $2k+1$ \u013eud\u00ed. Ka\u017ed\u00ed dvaja sa bu\u010f poznaj\u00fa, alebo nepoznaj\u00fa (vz\u0165ahy s\u00fa vz\u00e1jomn\u00e9). Pre ka\u017ed\u00fa skupinu pr\u00e1ve $k$ \u013eud\u00ed existuje \u010dlovek mimo tejto skupiny, ktor\u00fd v nej pozn\u00e1 ka\u017ed\u00e9ho. Dok\u00e1\u017ete, \u017ee na stretnut\u00ed je \u010dlovek, ktor\u00fd pozn\u00e1 v\u0161etk\u00fdch.",
-            "serie": 10,
+            "series": 10,
             "order": 3
         }
     },
@@ -757,7 +757,7 @@
         "pk": 63,
         "fields": {
             "text": "Nech $c$, $d$ s\u00fa dva delitele \u010d\u00edsla $n$, pri\u010dom $c>d$. Dok\u00e1\u017ete, \u017ee $c>d+d^2/n$.",
-            "serie": 10,
+            "series": 10,
             "order": 4
         }
     },
@@ -766,7 +766,7 @@
         "pk": 64,
         "fields": {
             "text": "Dan\u00fd je trojuholn\u00edk $ABC$. Nech $k$ je jeho prip\u00edsan\u00e1 kru\u017enica, ktor\u00e1 sa dot\u00fdka strany $BC$ v bode $K$ a polpriamok $AB$ a $AC$ sa dot\u00fdka v bodoch $L$ a $M$. Kru\u017enica s priemerom $BC$ pret\u00edna \u00fase\u010dku $LM$ v bodoch $P$, $Q$, pri\u010dom $P$ le\u017e\u00ed medzi $L$ a $Q$. Dok\u00e1\u017ete, \u017ee polpriamky $BP$ a $CQ$ sa pret\u00ednaj\u00fa v strede kru\u017enice $k$.",
-            "serie": 10,
+            "series": 10,
             "order": 5
         }
     },
@@ -775,7 +775,7 @@
         "pk": 65,
         "fields": {
             "text": "Je mo\u017en\u00e9 nap\u00edsa\u0165 do ka\u017ed\u00e9ho pol\u00ed\u010dka nekone\u010dnej \u0161tvor\u010dekovej tabu\u013eky prirodzen\u00e9 \u010d\u00edslo tak, aby pre ka\u017ed\u00fa dvojicu prirodzen\u00fdch \u010d\u00edsel $m$, $n$ platilo, \u017ee s\u00fa\u010det \u010d\u00edsel v \u013eubovo\u013enom obd\u013a\u017eniku $m\\times n$ je delite\u013en\u00fd $m+n$?\nPozn\u00e1mka: Tabu\u013eka je nekone\u010dn\u00e1 do v\u0161etk\u00fdch \u0161tyroch smerov, m\u00f4\u017eeme si to predstavi\u0165 tak, \u017ee m\u00e1 riadky aj st\u013apce o\u010d\u00edslovan\u00e9 cel\u00fdmi \u010d\u00edslami.",
-            "serie": 10,
+            "series": 10,
             "order": 6
         }
     },
@@ -784,7 +784,7 @@
         "pk": 66,
         "fields": {
             "text": "Cel\u00e9 \u010d\u00edsla $a,\\ b,\\ c$ sp\u013a\u0148aj\u00fa rovnos\u0165 $a+b+c=bc$. Dok\u00e1\u017ete, \u017ee \u010d\u00edslo $(a+b)(a+c)$ je delite\u013en\u00e9 4.",
-            "serie": 11,
+            "series": 11,
             "order": 1
         }
     },
@@ -793,7 +793,7 @@
         "pk": 67,
         "fields": {
             "text": "Deti s\u00fa rozdelen\u00e9 do 3 t\u00edmov -- \u010derven\u00e9ho, zelen\u00e9ho a modr\u00e9ho. Na za\u010diatku je v \u010dervenom t\u00edme $c$ det\u00ed, v zelenom $z$ det\u00ed a v modrom $m$ det\u00ed. Ke\u010f sa stretn\u00fa dve deti z r\u00f4znych t\u00edmov, tak sa obaja pridaj\u00fa k t\u00edmu tej farby, ktor\u00fa nemal ani jeden z nich. V z\u00e1vislosti od $c$, $m$, $z$ zistite, \u010di je mo\u017en\u00e9, aby po \u010dase skon\u010dili v\u0161etky deti v jednom t\u00edme.",
-            "serie": 11,
+            "series": 11,
             "order": 2
         }
     },
@@ -802,7 +802,7 @@
         "pk": 68,
         "fields": {
             "text": "Biliardov\u00fd st\u00f4l m\u00e1 tvar obd\u013a\u017enika $ABCD$. Nech $XKLMNX$ je dr\u00e1ha biliardovej gule, ktor\u00e1 sa z bodu $X$ dostane po odraze od v\u0161etk\u00fdch \u0161tyroch str\u00e1n biliardov\u00e9ho stola nasp\u00e4\u0165 na p\u00f4vodn\u00e9 miesto, t.j. body $K,\\ L,\\ M,\\ N$ le\u017eia postupne na stran\u00e1ch $AB,\\ BC,\\ CD,\\ DA$. Dok\u00e1\u017ete, \u017ee $KLMN$ je rovnobe\u017en\u00edk a d\u013a\u017eka cesty nez\u00e1vis\u00ed od polohy bodu $X$. Vyjadrite ju.",
-            "serie": 11,
+            "series": 11,
             "order": 3
         }
     },
@@ -811,7 +811,7 @@
         "pk": 69,
         "fields": {
             "text": "Na tabuli je nap\u00edsan\u00fdch $n>3$ r\u00f4znych prirodzen\u00fdch \u010d\u00edsel, ktor\u00e9 s\u00fa nanajv\u00fd\u0161 $(n-1)!$. Pre ka\u017ed\u00fa dvojicu \u010d\u00edsel $a>b$ na tabuli si do zo\u0161ita zap\u00ed\u0161eme \u010diasto\u010dn\u00fd podiel (v\u00fdsledok po celo\u010d\u00edselnom delen\u00ed) \u010d\u00edsel $a$ a $b$. (Teda ak $a=47$ a $b=7$, tak si zap\u00ed\u0161eme 6.) Dok\u00e1\u017ete, \u017ee sme si do zo\u0161ita zap\u00edsali aspo\u0148 2 rovnak\u00e9 \u010d\u00edsla.",
-            "serie": 11,
+            "series": 11,
             "order": 4
         }
     },
@@ -820,7 +820,7 @@
         "pk": 70,
         "fields": {
             "text": "Nech $\\alpha$ je dan\u00e9 re\u00e1lne \u010d\u00edslo. N\u00e1jdite v\u0161etky funkcie $f:\\mathbb{R}\\rightarrow \\mathbb{R}$ tak\u00e9, \u017ee pre v\u0161etky re\u00e1lne \u010d\u00edsla $x$, $y$ plat\u00ed\n$$f(f(x+y)f(x-y))=x^2+\\alpha yf(y).$$",
-            "serie": 11,
+            "series": 11,
             "order": 5
         }
     },
@@ -829,7 +829,7 @@
         "pk": 71,
         "fields": {
             "text": "$ABCD$ je rovnobe\u017en\u00edk s ostr\u00fdm uhlom $DAB$. Body $A,\\ P,\\ B,\\ D$ le\u017eia na jednej kru\u017enici v tomto porad\u00ed. Priamky $AP$ a $CD$ sa pret\u00ednaj\u00fa v bode $Q$. Bod $O$ je stred kru\u017enice op\u00edsanej trojuholn\u00edku $CPQ$. Dok\u00e1\u017ete, \u017ee ak $D \\neq O$, tak priamky $AD$ a $DO$ s\u00fa na seba kolm\u00e9.",
-            "serie": 11,
+            "series": 11,
             "order": 6
         }
     }
