@@ -124,7 +124,7 @@ class Problem(models.Model):
     order = models.PositiveSmallIntegerField(verbose_name='poradie v sérii')
 
     def __str__(self):
-        return f'{self.seriessemester.competition.name}-{self.seriessemester.year}-{self.seriessemester.season[0]}S-S{self.seriesorder} - {self.order}. úloha'
+        return f'{self.series.semester.competition.name}-{self.series.semester.year}-{self.series.semester.season[0]}S-S{self.series.order} - {self.order}. úloha'
 
 
 class Grade(models.Model):
