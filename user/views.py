@@ -14,7 +14,10 @@ def register(request):
         user_form = UserCreationForm(request.POST)
         profile_form = ProfileCreationForm(request.POST)
 
-        if user_form.is_valid() and profile_form.is_valid():
+        user_form_valid = user_form.is_valid()
+        profile_form_valid = profile_form.is_valid()
+
+        if user_form_valid and profile_form_valid:
             user = user_form.save()
             profile = profile_form.save(commit=False)
             profile.user = user
@@ -27,6 +30,9 @@ def register(request):
     else:
         user_form = UserCreationForm()
         profile_form = ProfileCreationForm()
+
+        profile_form.fields['district'].queryset = District.objects.none()
+        profile_form.fields['school'].queryset = School.objects.none()
 
     return render(request, 'user/register.html',
                   {'user_form': user_form, 'profile_form': profile_form})

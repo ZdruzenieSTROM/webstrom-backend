@@ -69,8 +69,6 @@ class ProfileCreationForm(forms.ModelForm):
 
         self.fields['county'].queryset = County.objects.exclude(
             pk=County.objects.get_unspecified_value().pk)
-        self.fields['district'].queryset = District.objects.none()
-        self.fields['school'].queryset = School.objects.none()
 
     def save(self, commit=True):
         profile = super(ProfileCreationForm, self).save(commit=False)
