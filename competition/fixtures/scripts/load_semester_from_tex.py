@@ -112,18 +112,36 @@ roman_numerals = {
 
 
 class SemesterLaTeXLoader():
-    def check_latex():
-        pass
+    @staticmethod
+    def itemizetohtml(text):
+        text = re.sub(r'\\begin\{itemize\}','<ul>',text,flags=re.S)
+        text = re.sub(r'\\end\{itemize\}','</ul>',text,flags=re.S)
+        text = re.sub(r'\\begin\{enumerate\}','<ol>',text,flags=re.S)
+        text = re.sub(r'\\end\{enumerate\}','</ol>',text,flags=re.S)
+        text = re.sub(r'\\item(.*?)(?=\\item|$|\\end)',r'<li>\1</li>',text,flags=re.M |re.S)
+        return text
 
+    @staticmethod
+    def latex2html(text):
+        return SemesterLaTeXLoader.itemizetohtml(text)
+
+    @staticmethod
+    def semester_latex2html(semester):
+        return [ (s,u,SemesterLaTeXLoader.latex2html(problem)) for s,u,problem in semester]
+
+
+    @staticmethod
     def remove_latex_comments(text):
         text = re.sub(
             r'\\begin\{comment\}.*?\\end\{comment\}', '', text, flags=re.S)
         return re.sub(r'^%.*$', r'', text, flags=re.M)
 
+    @staticmethod
     def remove_authors(text):
         text = re.sub(r'\\textbf\{Autori .*?\}.*$', '', text, flags=re.S)
         return text
 
+    @staticmethod
     def load_kricky(file_name, json_file=None):
         with open(file_name, 'r', encoding='utf8') as input_tex:
             text = input_tex.read()
@@ -132,6 +150,7 @@ class SemesterLaTeXLoader():
                 r'\\newcommand\{\\zad([^\{\}]+)s([^\{\}]+)\}\{(.*?)\}[^\{\}]*(?=\\newcommand|$)', text, flags=re.S)
             return [(roman_numerals[problem_series], roman_numerals[problem_order], problem_text.strip('\n')) for problem_order, problem_series, problem_text in problems]
 
+    @staticmethod
     def load_strom(file_name):
         with open(file_name, 'r', encoding='utf8') as input_tex:
             text = input_tex.read()
@@ -143,6 +162,7 @@ class SemesterLaTeXLoader():
                 semester.append(((i//6)+1, (i % 6)+1, problem[1].strip('\n')))
             return semester
 
+    @staticmethod
     def load_strom_old(file_name):
         with open(file_name, 'r', encoding='utf8') as input_tex:
             text = input_tex.read()
@@ -200,7 +220,7 @@ def process_files(files):
         else:
             print(f'Parsing \"{file}\" with Kricky template...')
             parsed = SemesterLaTeXLoader.load_kricky(file)
-
+        parsed = SemesterLaTeXLoader.semester_latex2html(parsed)
         objects += manager.create_new_semester_json(
             parsed,
             competition_id=comp_ids[seminar],
