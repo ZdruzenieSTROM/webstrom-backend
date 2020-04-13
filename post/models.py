@@ -22,6 +22,9 @@ class Post(models.Model):
     img_url = models.URLField(
         verbose_name='adresa obrázku'
     )
+    post_template = models.FileField(
+        verbose_name='šablóna príspevku'
+    )
 
     published = models.BooleanField(
         default = False,
