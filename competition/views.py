@@ -4,7 +4,7 @@ from competition.models import Competition, Semester, Series
 
 
 class SemesterProblemsView(DetailView):
-    template_name = 'semester_problems.html'
+    template_name = 'competition/semester_problems.html'
     model = Semester
 
     def get_context_data(self, **kwargs):
