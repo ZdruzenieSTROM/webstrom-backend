@@ -1,17 +1,22 @@
 __pycache__
+
+# Django veci
 db.sqlite3
 db.sqlite3-journal
-*/migrations/*
-!*/migrations/__init__.py
-django-env
-
-.vscode
-env/*
-.env
-vevericka
-
 emails
 
-user/fixtures/sources/*
-!user/fixtures/sources/school_fixtures.py
-!user/fixtures/sources/requirements.txt
+*/migrations/*
+!*/migrations/__init__.py
+
+*/fixtures/sources/*
+!*/fixtures/sources/*.py
+!*/fixtures/sources/requirements.txt
+
+# Environmenty
+env
+.env
+vevericka
+django-env
+
+# Bordel od IDE
+.vscode
