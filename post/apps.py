@@ -3,4 +3,4 @@ from django.apps import AppConfig
 
 class PostConfig(AppConfig):
     name = 'post'
-    verbose_name = 'príspevok'
+    verbose_name = 'Príspevky'

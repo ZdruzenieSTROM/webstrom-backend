@@ -1,7 +1,6 @@
+from django.urls import path
 
-from django.urls import path, reverse_lazy
 from post.views import PostDetailView, PostListView
-
 
 app_name = 'post'
 
