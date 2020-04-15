@@ -1,5 +1,22 @@
-<div class="list-group list-group-flush">
-    <a class="list-group-item list-group-item-action" href="#">Položka 1</a>
-    <a class="list-group-item list-group-item-action" href="#">Položka 2</a>
-    <a class="list-group-item list-group-item-action" href="#">Položka 3</a>
-</div>
+<div class="col-md-3">
+    <div class="card">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item list-group-item-action" href="/">Domov</a>
+            <a class="list-group-item list-group-item-action" href="{% url 'post:post-list-view' %}">Príspevky</a>
+        </div>
+    </div>
+    <br>
+    <div class="card">
+        <div class="card-header">
+            Seminár
+        </div>
+        <div class="list-group list-group-flush">
+            <a class="list-group-item list-group-item-action" href="{% url 'competition:latest-semester-view'  %}">Úlohy</a>
+            <a class="list-group-item list-group-item-action" href="#">_Výsledky</a>
+            <a class="list-group-item list-group-item-action" href="#">_Archív</a>
+            <a class="list-group-item list-group-item-action" href="#">_Pravidlá</a>
+            <a class="list-group-item list-group-item-action" href="#">_Fotogaléria</a>
+            <a class="list-group-item list-group-item-action" href="#">_Položka 6</a>
+        </div>
+    </div>
+</div>    
