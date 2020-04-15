@@ -9,7 +9,7 @@
         <h1>{{ semester }}</h1>
     </div>
     <div class="col-md-3">
-        {% include "semester_dropdown.html" with view_name='competition:semester-problems-detail' %}
+        {% include "competition/semester_dropdown.html" with view_name='competition:semester-problems-detail' %}
     </div>
 </div>
 {% for series in series %}
@@ -23,7 +23,7 @@ Do termínu zostáva: {{ series.time_to_deadline }}
 {% for problem in problems %}
 <h3>{{ problem.order }}. úloha</h3>
 <p>
-    {{ problem.text }}
+    {{ problem.text|safe }}
 </p>
 {% endfor %}
 {% endif %}

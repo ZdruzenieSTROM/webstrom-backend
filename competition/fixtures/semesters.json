@@ -218,7 +218,7 @@
         "model": "competition.Problem",
         "pk": 17,
         "fields": {
-            "text": "Ka\u017ed\u00fd bod v rovine s celo\u010d\u00edseln\u00fdmi s\u00faradnicami je ofarben\u00fd bu\u010f \u010dervenou alebo modrou farbou tak, aby boli splnen\u00e9 podmienky:\n\\begin{enumerate}\n\\item Na \u00fase\u010dke sp\u00e1jaj\u00facej \u010derven\u00e9 body nele\u017e\u00ed \u017eiaden modr\u00fd bod.\n\\item Ak maj\u00fa dva modr\u00e9 body vzdialenos\u0165 2, potom bod uprostred medzi nimi je modr\u00fd.\n\\end{enumerate}\n\nDok\u00e1\u017ete, \u017ee z \u013eubovo\u013en\u00e9ho \u010derven\u00e9ho bodu sa vieme dosta\u0165 do \u013eubovo\u013en\u00e9ho in\u00e9ho tak, \u017ee nemus\u00edme prejs\u0165 cez \u017eiaden modr\u00fd bod, pri\u010dom kroky vieme robi\u0165 len vodorovne a zvislo, v\u017edy o vzdialenos\u0165 jedna.",
+            "text": "Ka\u017ed\u00fd bod v rovine s celo\u010d\u00edseln\u00fdmi s\u00faradnicami je ofarben\u00fd bu\u010f \u010dervenou alebo modrou farbou tak, aby boli splnen\u00e9 podmienky:\n<ol>\n<li> Na \u00fase\u010dke sp\u00e1jaj\u00facej \u010derven\u00e9 body nele\u017e\u00ed \u017eiaden modr\u00fd bod.</li>\n<li> Ak maj\u00fa dva modr\u00e9 body vzdialenos\u0165 2, potom bod uprostred medzi nimi je modr\u00fd.</li>\n</ol>\n\nDok\u00e1\u017ete, \u017ee z \u013eubovo\u013en\u00e9ho \u010derven\u00e9ho bodu sa vieme dosta\u0165 do \u013eubovo\u013en\u00e9ho in\u00e9ho tak, \u017ee nemus\u00edme prejs\u0165 cez \u017eiaden modr\u00fd bod, pri\u010dom kroky vieme robi\u0165 len vodorovne a zvislo, v\u017edy o vzdialenos\u0165 jedna.",
             "series": 2,
             "order": 6
         }
@@ -689,7 +689,7 @@
         "model": "competition.Problem",
         "pk": 59,
         "fields": {
-            "text": "N\u00e1jdite v\u0161etky funkcie $f:\\langle 0,+\\infty) \\rightarrow \\langle 0,+\\infty)$, ktor\u00e9 vyhovuj\u00fa s\u00fa\u010dasne nasleduj\u00facim trom podmienkam:\n\\begin{enumerate}\n\\item pre \u013eubovo\u013en\u00e9 nez\u00e1porn\u00e9 re\u00e1lne \u010d\u00edsla $x$, $y$ tak\u00e9, \u017ee $x+y>0$, plat\u00ed rovnos\u0165 $f(x\\cdot f(y))\\cdot f(y) = f(xy/(x+y))$,\n\\item $f(1) = 0$,\n\\item $f(x) > 0$ pre \u013eubovo\u013en\u00e9 $x>1$.\n\\end{enumerate}",
+            "text": "N\u00e1jdite v\u0161etky funkcie $f:\\langle 0,+\\infty) \\rightarrow \\langle 0,+\\infty)$, ktor\u00e9 vyhovuj\u00fa s\u00fa\u010dasne nasleduj\u00facim trom podmienkam:\n<ol>\n<li> pre \u013eubovo\u013en\u00e9 nez\u00e1porn\u00e9 re\u00e1lne \u010d\u00edsla $x$, $y$ tak\u00e9, \u017ee $x+y>0$, plat\u00ed rovnos\u0165 $f(x\\cdot f(y))\\cdot f(y) = f(xy/(x+y))$,</li>\n<li> $f(1) = 0$,</li>\n<li> $f(x) > 0$ pre \u013eubovo\u013en\u00e9 $x>1$.</li>\n</ol>",
             "series": 9,
             "order": 6
         }
