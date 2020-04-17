@@ -21,8 +21,9 @@
     {# posunutie obsahu stránky pod fixed navbar, asi dočasné #}
     <div class="container-fluid" style="padding-top:64px;">
         <div class="row">
-            {% include 'menu.html' %}
-            
+            <div class="col-md-3">
+                {% include 'menu.html' %}
+            </div>
             <div class="col-md-9">
                 {% include 'messages.html' %}
 

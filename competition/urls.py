@@ -1,6 +1,6 @@
 from django.urls import path
 
-from competition.views import SemesterProblemsView, LatestSemesterView
+from competition.views import LatestSemesterView, SemesterProblemsView
 
 app_name = 'competition'
 
