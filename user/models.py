@@ -109,6 +109,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     verified_email = models.BooleanField(
         default=False, verbose_name='overený email')
 
+    date_joined = models.DateTimeField(auto_now_add=True)
+
     is_staff = models.BooleanField(
         default=False, verbose_name='správcovský prístup')
     is_active = models.BooleanField(default=True, verbose_name='je aktívny')

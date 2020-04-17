@@ -5,6 +5,7 @@
         "fields": {
             "email": "webmaster@strom.sk",
             "password": "pbkdf2_sha256$180000$NyzwabHNPn2K$sTirqoFPMkLZpnUHkCpzUFZnAsbGM7Bp2+EoN8sOuQA=",
+            "date_joined": "2020-04-07T20:43:01.351Z",
             "is_superuser": true,
             "is_staff": true
         }

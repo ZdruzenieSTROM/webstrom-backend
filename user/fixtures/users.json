@@ -5,6 +5,7 @@
         "fields": {
             "password": "pbkdf2_sha256$180000$uvmcamhPG22q$rlnqnedLz2jwRxvEZIlikOfmLKmGEm5CVzKfOszFLO4=",
             "last_login": "2020-04-07T20:43:01.351Z",
+            "date_joined": "2020-04-07T20:43:01.351Z",
             "is_superuser": false,
             "email": "uho\u013en\u00e1@ba.\u0148a",
             "verified_email": false,
@@ -20,6 +21,7 @@
         "fields": {
             "password": "pbkdf2_sha256$180000$UQCtl76TyAYT$y7KcapcAcpnZ5P2cOP75RnzM9dsZAFPGSwsFvzG+YsA=",
             "last_login": "2020-04-07T21:00:28.430Z",
+            "date_joined": "2020-04-07T20:43:01.351Z",
             "is_superuser": false,
             "email": "example@example.net",
             "verified_email": true,
@@ -35,6 +37,7 @@
         "fields": {
             "password": "pbkdf2_sha256$180000$3gRQEjw1jJd8$tXKthc92X95On0MbkpyJH0ZjNXD0FxvoaGbwdaeoLL4=",
             "last_login": "2020-04-07T21:02:39.447Z",
+            "date_joined": "2020-04-07T20:43:01.351Z",
             "is_superuser": false,
             "email": "hu@hu.hu",
             "verified_email": false,
@@ -50,6 +53,7 @@
         "fields": {
             "password": "pbkdf2_sha256$180000$UQCtl76TyAYT$y7KcapcAcpnZ5P2cOP75RnzM9dsZAFPGSwsFvzG+YsA=",
             "last_login": null,
+            "date_joined": "2020-04-07T20:43:01.351Z",
             "is_superuser": false,
             "email": "mat",
             "verified_email": true,
@@ -65,6 +69,7 @@
         "fields": {
             "password": "pbkdf2_sha256$180000$UQCtl76TyAYT$y7KcapcAcpnZ5P2cOP75RnzM9dsZAFPGSwsFvzG+YsA=",
             "last_login": null,
+            "date_joined": "2020-04-07T20:43:01.351Z",
             "is_superuser": false,
             "email": "pat",
             "verified_email": true,
