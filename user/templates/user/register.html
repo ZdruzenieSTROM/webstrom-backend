@@ -4,7 +4,6 @@
 {% load crispy_forms_tags %}
 
 {% block css %}
-{{ super }}
 <link rel="stylesheet" type="text/css" href="{% static 'user/validations.css' %}" />
 {% endblock css %}
 
@@ -18,7 +17,6 @@
 {% endblock content %}
 
 {% block javascript %}
-{{ super }}
 <script src="{% static 'vendor/js/jquery.validate.min.js' %}"></script>
 <script src="{% static 'user/register.js' %}"></script>
 {% endblock javascript %}
