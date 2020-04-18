@@ -13,10 +13,5 @@
 {% endblock content %}
 
 {% block javascript %}
-<script>
-    //TODO presunut do base.html
-    filter_district_url = "{% url 'user:filter_district' 0 %}";
-    filter_school_url = "{% url 'user:filter_school' 0 %}";
-</script>
 <script src="{% static 'user/register.js' %}"></script>
 {% endblock javascript %}
