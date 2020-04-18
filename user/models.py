@@ -6,6 +6,71 @@ from base.validators import phone_number_validator
 from base.managers import UnspecifiedValueManager
 
 
+class County(models.Model):
+    class Meta:
+        verbose_name = 'kraj'
+        verbose_name_plural = 'kraje'
+
+    code = models.AutoField(primary_key=True, verbose_name='kód')
+    name = models.CharField(max_length=30, verbose_name='názov')
+
+    objects = UnspecifiedValueManager(unspecified_value_pk=0)
+
+    def __str__(self):
+        return self.name
+
+
+class District(models.Model):
+    class Meta:
+        verbose_name = 'okres'
+        verbose_name_plural = 'okresy'
+
+    code = models.AutoField(primary_key=True, verbose_name='kód')
+    name = models.CharField(max_length=30, verbose_name='názov')
+    abbreviation = models.CharField(max_length=2, verbose_name='skratka')
+
+    county = models.ForeignKey(
+        County, on_delete=models.SET(County.objects.get_unspecified_value),
+        verbose_name='kraj')
+
+    objects = UnspecifiedValueManager(unspecified_value_pk=0)
+
+    def __str__(self):
+        return self.name
+
+
+class School(models.Model):
+    class Meta:
+        verbose_name = 'škola'
+        verbose_name_plural = 'školy'
+
+    code = models.AutoField(primary_key=True, verbose_name='kód')
+    name = models.CharField(max_length=100, verbose_name='názov')
+    abbreviation = models.CharField(max_length=10, verbose_name='skratka')
+
+    street = models.CharField(max_length=100, verbose_name='ulica')
+    city = models.CharField(max_length=100, verbose_name='obec')
+    zip_code = models.CharField(max_length=6, verbose_name='PSČ')
+    email = models.CharField(max_length=50, verbose_name='email', null=True)
+
+    district = models.ForeignKey(
+        District, on_delete=models.SET(
+            District.objects.get_unspecified_value),
+        verbose_name='okres')
+
+    objects = UnspecifiedValueManager(unspecified_value_pk=0)
+
+    def __str__(self):
+        if self.street and self.city:
+            return f'{ self.name }, { self.street }, { self.city }'
+
+        return self.name
+
+    def stitok(self):
+        return f'\\stitok{{{ self.name }}}{{{ self.city }}}' \
+               f'{{{ self.zip_code }}}{{{ self.street }}}'
+
+
 class UserManager(BaseUserManager):
     def _create_user(self, email, password, **extra_fields):
         if not email:
@@ -44,6 +109,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     verified_email = models.BooleanField(
         default=False, verbose_name='overený email')
 
+    date_joined = models.DateTimeField(auto_now_add=True)
+
     is_staff = models.BooleanField(
         default=False, verbose_name='správcovský prístup')
     is_active = models.BooleanField(default=True, verbose_name='je aktívny')
@@ -69,7 +136,8 @@ class Profile(models.Model):
         max_length=32, blank=True, null=True, verbose_name='prezývka')
 
     school = models.ForeignKey(
-        'user.School', on_delete=models.CASCADE, verbose_name='škola')
+        'user.School', on_delete=models.SET(School.objects.get_unspecified_value),
+        verbose_name='škola')
 
     year_of_graduation = models.PositiveSmallIntegerField(
         verbose_name='rok maturity')
@@ -95,65 +163,3 @@ class Profile(models.Model):
 
     def __str__(self):
         return f'{self.first_name} {self.last_name}'
-
-
-class County(models.Model):
-    class Meta:
-        verbose_name = 'kraj'
-        verbose_name_plural = 'kraje'
-
-    code = models.AutoField(primary_key=True, verbose_name='kód')
-    name = models.CharField(max_length=30, verbose_name='názov')
-
-    objects = UnspecifiedValueManager(unspecified_value_pk=0)
-
-    def __str__(self):
-        return self.name
-
-
-class District(models.Model):
-    class Meta:
-        verbose_name = 'okres'
-        verbose_name_plural = 'okresy'
-
-    code = models.AutoField(primary_key=True, verbose_name='kód')
-    name = models.CharField(max_length=30, verbose_name='názov')
-    abbreviation = models.CharField(max_length=2, verbose_name='skratka')
-
-    county = models.ForeignKey(
-        County, on_delete=models.CASCADE, verbose_name='kraj')
-
-    objects = UnspecifiedValueManager(unspecified_value_pk=0)
-
-    def __str__(self):
-        return self.name
-
-
-class School(models.Model):
-    class Meta:
-        verbose_name = 'škola'
-        verbose_name_plural = 'školy'
-
-    code = models.AutoField(primary_key=True, verbose_name='kód')
-    name = models.CharField(max_length=100, verbose_name='názov')
-    abbreviation = models.CharField(max_length=10, verbose_name='skratka')
-
-    street = models.CharField(max_length=100, verbose_name='ulica')
-    city = models.CharField(max_length=100, verbose_name='obec')
-    zip_code = models.CharField(max_length=6, verbose_name='PSČ')
-    email = models.CharField(max_length=50, verbose_name='email', null=True)
-
-    district = models.ForeignKey(
-        District, on_delete=models.CASCADE, verbose_name='okres')
-
-    objects = UnspecifiedValueManager(unspecified_value_pk=0)
-
-    def __str__(self):
-        if self.street and self.city:
-            return f'{ self.name }, { self.street }, { self.city }'
-
-        return self.name
-
-    def stitok(self):
-        return f'\\stitok{{{ self.nazov }}}{{{ self.city }}}' \
-               f'{{{ self.zip }}}{{{ self.street }}}'

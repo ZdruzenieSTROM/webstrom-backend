@@ -23,7 +23,7 @@ py -m venv <názov prostredia>
 call <názov prostredia>\Scripts\activate.bat
 ```
 
-*Ak si prostredie pre python vytváraš v priečinku so stránkou, nezabudni pridať priečinok s prostredím do `.gitignore`*
+**Ak si prostredie pre python vytváraš v priečinku so stránkou, nezabudni pridať priečinok s prostredím do `.gitignore`**
 
 Nainštaluj potrebné balíky:
 
@@ -31,17 +31,12 @@ Nainštaluj potrebné balíky:
 pip install -r requirements.txt
 ```
 
-Vytvor migračné modely a databázu:
+**Package `pdf2image` používa externé programy, zariaď, aby si ich mal nainštalované ([dokumentácia](https://pypi.org/project/pdf2image/))**
+
+Vytvor a naplň databázu:
 
 ```shell
-python manage.py makemigrations
-python manage.py migrate
-```
-
-Vytvor superusera:
-
-```shell
-python manage.py createsuperuser
+python manage.py restoredb
 ```
 
 Spusti lokálny vývojový server:
