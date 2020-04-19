@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-9">
+            <h1>{{ series }}</h1>
+        </div>
+    </div>
+    <p>Termín odovzdania série: {{ series.deadline }}</p>
+    {% if not series.is_past_deadline %}
+        Do termínu zostáva: {{ series.time_to_deadline }}
+    {% endif %}
+        {% for problem in series.problem_set.all %}
+                <h3>{{ problem.order }}. úloha</h3>
+                <p>
+                    {{ problem.text|safe }}
+                </p>
+        {% endfor %}
+{% endblock content %}
+
+{% block javascript %}
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+            processEscapes: true
+        }
+    });
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+{% endblock javascript %}

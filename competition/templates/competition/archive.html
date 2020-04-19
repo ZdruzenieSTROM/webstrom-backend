@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% for year, listOfSemesters in context.items %}
+<div class=" my-3">
+    <div class="row p-2 bg-primary text-white">
+        <h4>{{year}}. ročník</h4>
+    </div>
+    {% for semester in listOfSemesters %}
+    <div class="row p-2 bg-secondary">
+        <a class="col-10 text-white" href="{% url 'competition:semester-detail' semester.pk %}">
+            {{ semester.season }} semester
+        </a>
+        <a class="btn col-1 border bg-white" href="{# stranka sustredenia #}">
+            #sústredenie
+        </a>
+        <a class="btn col-1 border bg-white" href="{# 1.casopis #}">
+            #časopis
+        </a>
+    </div>
+
+
+    {% for series in semester.series_set.all %}
+    <div class="row p-2 bg-white border">
+        <div class="col-9 ">
+            {{series.order}}.séria
+        </div>
+        <a class="btn col-1 border" href="{% url 'competition:series-problems-detail' series.pk %}">
+            zadania
+        </a>
+        <a class="btn col-1 border" href="{# casopis so vzorakmi (?) #}">
+            #riešenia
+        </a>
+        <a class="btn col-1 border" href="{# vysledky #}">
+            #výsledky
+        </a>
+
+    </div>
+    {% endfor %}
+    {% endfor %}
+</div>
+{% endfor %}
+{% endblock content %}
