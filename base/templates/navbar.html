@@ -2,34 +2,37 @@
 <nav class="navbar navbar-expand-md navbar-light bg-light fixed-top">
     {# Tu budú asi linky na stránky, zatiaľ len takto ručne #}
     {# neskôr aj s detekciou aktuálnej stránky #}
-    <a class="navbar-brand" href="/">
-        <img src="{% static 'favicon/favicon.svg' %}" width="30" height="30" class="d-inline-block align-top" alt="">
-        {{ current_site.name }}
-    </a>
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <img src="{% static 'favicon/favicon.svg' %}" width="30" height="30" class="d-inline-block align-top"
+                alt="">
+            {{ current_site.name }}
+        </a>
 
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown">
-        <span class="navbar-toggler-icon"></span>
-    </button>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-    <div class="collapse navbar-collapse" id="navbarNavDropdown">
-        <ul class="navbar-nav">
-            {% for site in other_sites %}
-            <li class="nav-item"><a class="nav-link"
-                    href="{{ request.scheme }}://{{ site }}{{ request.path }}">{{ site.name }}</a></li>
-            {% endfor %}
-            <li class="nav-item"><a class="nav-link" href="#">Združenie</a></li>
-            {% if user.is_staff %}
-            <li class="nav-item"><a class="nav-link" href="{% url 'admin:index' %}">Administrácia</a></li>
-            {% endif %}
-        </ul>
-        <ul class="navbar-nav ml-auto">
-            {% if user.is_authenticated %}
-            <li class="nav-item"><a class="nav-link" href="{% url 'user:password_change' %}">Zmeniť heslo</a>
-            <li class="nav-item"><a class="nav-link" href="{% url 'user:logout' %}">Odhlásiť sa</a></li>
-            {% else %}
-            <li class="nav-item"><a class="nav-link" href="{% url 'user:login' %}">Prihlásenie</a></li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'user:register' %}">Registrácia</a></li>
-            {% endif %}
-        </ul>
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+            <ul class="navbar-nav">
+                {% for site in other_sites %}
+                <li class="nav-item"><a class="nav-link"
+                        href="{{ request.scheme }}://{{ site }}{{ request.path }}">{{ site.name }}</a></li>
+                {% endfor %}
+                <li class="nav-item"><a class="nav-link" href="#">Združenie</a></li>
+                {% if user.is_staff %}
+                <li class="nav-item"><a class="nav-link" href="{% url 'admin:index' %}">Administrácia</a></li>
+                {% endif %}
+            </ul>
+            <ul class="navbar-nav ml-auto">
+                {% if user.is_authenticated %}
+                <li class="nav-item"><a class="nav-link" href="{% url 'user:password_change' %}">Zmeniť heslo</a>
+                <li class="nav-item"><a class="nav-link" href="{% url 'user:logout' %}">Odhlásiť sa</a></li>
+                {% else %}
+                <li class="nav-item"><a class="nav-link" href="{% url 'user:login' %}">Prihlásenie</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'user:register' %}">Registrácia</a></li>
+                {% endif %}
+            </ul>
+        </div>
     </div>
 </nav>
