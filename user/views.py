@@ -48,10 +48,11 @@ def district_by_county(request, pk):
 def school_by_district(request, pk):
     district = get_object_or_404(District, pk=pk)
     queryset = School.objects.filter(
-        district=district, include_unspecified=True).values(
-            'pk', 'name', 'street', 'city')
+        district=district, include_unspecified=True)
 
-    return JsonResponse(list(queryset), safe=False)
+    values = [{'pk': school.pk, 'name': str(school)} for school in queryset]
+
+    return JsonResponse(list(values), safe=False)
 
 
 class VerificationSendView(RedirectView):
