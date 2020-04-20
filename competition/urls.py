@@ -1,12 +1,8 @@
 from django.urls import path
 
-from competition.views import (
-    LatestSemesterView,
-    SemesterProblemsView,
-    SeriesProblemsView,
-    ArchiveView,
-    SemesterDetailView
-)
+from competition.views import (ArchiveView, LatestSemesterView,
+                               SemesterDetailView, SemesterProblemsView,
+                               SeriesProblemsView)
 
 app_name = 'competition'
 

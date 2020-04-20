@@ -12,12 +12,16 @@
         {% include "competition/semester_dropdown.html" with view_name='competition:semester-problems-detail' %}
     </div>
 </div>
+
 {% for series in series %}
 <h2>{{ series.order }}. séria</h2>
+
 <p>Termín odovzdania série: {{ series.deadline }}</p>
+
 {% if not series.is_past_deadline %}
 Do termínu zostáva: {{ series.time_to_deadline }}
 {% endif %}
+
 {% for key,problems in problems.items %}
 {% if key == series.pk %}
 {% for problem in problems %}

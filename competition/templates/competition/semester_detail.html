@@ -1,41 +1,40 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="row">
-        <div class="col-md-9">
-            <h1>{{ semester }}</h1>
-        </div>
+<div class="row">
+    <div class="col-md-9">
+        <h1>{{ semester }}</h1>
     </div>
+</div>
 
-    <div>
-        Pekná stránka semestra, bla, bla, bla
+<div>
+    Pekná stránka semestra, bla, bla, bla
+</div>
+
+{% for series in semester.series_set.all %}
+<div class="row p-2 bg-white border">
+    <div class="col-9 ">
+        {{series.order}}.séria
     </div>
+    <a class="btn col-1 border" href="{% url 'competition:series-problems-detail' series.pk %}">
+        zadania
+    </a>
+    <a class="btn col-1 border" href="{# vysledky #}">
+        #výsledky
+    </a>
+</div>
+{% endfor %}
 
-    {% for series in semester.series_set.all %}
-    <div class="row p-2 bg-white border">
-        <div class="col-9 ">
-            {{series.order}}.séria
-        </div>
-        <a class="btn col-1 border" href="{% url 'competition:series-problems-detail' series.pk %}">
-            zadania
-        </a>
-        <a class="btn col-1 border" href="{# vysledky #}">
-            #výsledky
-        </a>
-    </div>
-    {% endfor %}
-
-    <a class="btn col-2 border bg-white" href="{# stranka semestra #}">
-        #sústredenie
-    </a>
-    <a class="btn col-2 border bg-white" href="{# casopis 1 #}">
-        #časopis 1
-    </a>
-    <a class="btn col-2 border bg-white" href="{# casopis 2 #}">
-        #časopis 2
-    </a>
-    <a class="btn col-2 border bg-white" href="{# casopis 3 #}">
-        #časopis 3
-    </a>
-    
+<a class="btn col-2 border bg-white" href="{# stranka semestra #}">
+    #sústredenie
+</a>
+<a class="btn col-2 border bg-white" href="{# casopis 1 #}">
+    #časopis 1
+</a>
+<a class="btn col-2 border bg-white" href="{# casopis 2 #}">
+    #časopis 2
+</a>
+<a class="btn col-2 border bg-white" href="{# casopis 3 #}">
+    #časopis 3
+</a>
 {% endblock content %}

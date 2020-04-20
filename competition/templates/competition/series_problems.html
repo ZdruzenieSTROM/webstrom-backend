@@ -4,21 +4,24 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-    <div class="row">
-        <div class="col-md-9">
-            <h1>{{ series }}</h1>
-        </div>
+<div class="row">
+    <div class="col-md-9">
+        <h1>{{ series }}</h1>
     </div>
-    <p>Termín odovzdania série: {{ series.deadline }}</p>
-    {% if not series.is_past_deadline %}
-        Do termínu zostáva: {{ series.time_to_deadline }}
-    {% endif %}
-        {% for problem in series.problem_set.all %}
-                <h3>{{ problem.order }}. úloha</h3>
-                <p>
-                    {{ problem.text|safe }}
-                </p>
-        {% endfor %}
+</div>
+
+<p>Termín odovzdania série: {{ series.deadline }}</p>
+
+{% if not series.is_past_deadline %}
+Do termínu zostáva: {{ series.time_to_deadline }}
+{% endif %}
+
+{% for problem in series.problem_set.all %}
+<h3>{{ problem.order }}. úloha</h3>
+<p>
+    {{ problem.text|safe }}
+</p>
+{% endfor %}
 {% endblock content %}
 
 {% block javascript %}
