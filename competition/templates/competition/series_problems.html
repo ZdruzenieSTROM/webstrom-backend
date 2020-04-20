@@ -6,15 +6,9 @@
 {% block content %}
 <div class="row">
     <div class="col-md-9">
-        <h1>{{ semester }}</h1>
-    </div>
-    <div class="col-md-3">
-        {% include "competition/semester_dropdown.html" with view_name='competition:semester-problems-detail' %}
+        <h1>{{ series }}</h1>
     </div>
 </div>
-
-{% for series in series %}
-<h2>{{ series.order }}. séria</h2>
 
 <p>Termín odovzdania série: {{ series.deadline }}</p>
 
@@ -22,16 +16,11 @@
 Do termínu zostáva: {{ series.time_to_deadline }}
 {% endif %}
 
-{% for key,problems in problems.items %}
-{% if key == series.pk %}
-{% for problem in problems %}
+{% for problem in series.problem_set.all %}
 <h3>{{ problem.order }}. úloha</h3>
 <p>
     {{ problem.text|safe }}
 </p>
-{% endfor %}
-{% endif %}
-{% endfor %}
 {% endfor %}
 {% endblock content %}
 
