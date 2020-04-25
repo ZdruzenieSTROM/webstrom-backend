@@ -47,6 +47,7 @@ class ArchiveView(ListView):
 
     def get_queryset(self):
         site_competition = Competition.get_by_current_site()
+        context = {}
         years = {}
 
         for sem in Semester.objects.filter(competition=site_competition).order_by('-year'):
@@ -56,7 +57,9 @@ class ArchiveView(ListView):
                 years[sem.year] = []
             years[sem.year].append(sem)
 
-        return years
+        context["mostRecentYear"] = Semester.objects.filter(competition=site_competition).order_by('-year').first().year
+        context["years"] = years
+        return context
 
 
 class SemesterDetailView(DetailView):
