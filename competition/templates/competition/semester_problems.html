@@ -13,8 +13,12 @@
     </div>
 </div>
 
-{% for series in series %}
-<h2>{{ series.order }}. séria</h2>
+{% for series in semester.series_set.all %}
+<div class="row">
+    <div class="col-md-9">
+        <h2>{{ series }}</h2>
+    </div>
+</div>
 
 <p>Termín odovzdania série: {{ series.deadline }}</p>
 
@@ -22,17 +26,9 @@
 Do termínu zostáva: {{ series.time_to_deadline }}
 {% endif %}
 
-{% for key,problems in problems.items %}
-{% if key == series.pk %}
-{% for problem in problems %}
-<h3>{{ problem.order }}. úloha</h3>
-<p>
-    {{ problem.text|safe }}
-</p>
+{% include 'competition/problems.html' %}
 {% endfor %}
-{% endif %}
-{% endfor %}
-{% endfor %}
+
 {% endblock content %}
 
 {% block javascript %}
