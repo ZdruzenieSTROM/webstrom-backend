@@ -9,13 +9,13 @@
     </div>
     {% for semester in listOfSemesters %}
     <div class="row p-2 bg-secondary">
-        <a class="col-10 text-white" href="{% url 'competition:semester-detail' semester.pk %}">
+        <a class="col text-white" href="{% url 'competition:semester-detail' semester.pk %}">
             {{ semester.season }} semester
         </a>
-        <a class="btn col-1 border bg-white" href="{# stranka sustredenia #}">
+        <a class="btn col-auto border bg-white" href="{# stranka sustredenia #}">
             #sústredenie
         </a>
-        <a class="btn col-1 border bg-white" href="{# 1.casopis #}">
+        <a class="btn col-auto border bg-white" href="{# 1.casopis #}">
             #časopis
         </a>
     </div>
@@ -23,19 +23,19 @@
 
     {% for series in semester.series_set.all %}
     <div class="row p-2 bg-white border">
-        <div class="col-9 ">
+        <div class="col">
             {{series.order}}.séria
         </div>
-        <a class="btn col-1 border" href="{% url 'competition:series-problems-detail' series.pk %}">
+        <a class="btn border col-auto" href="{% url 'competition:series-problems-detail' series.pk %}">
             zadania
         </a>
-        <a class="btn col-1 border" href="{# casopis so vzorakmi (?) #}">
-            #riešenia
-        </a>
-        <a class="btn col-1 border" href="{# vysledky #}">
+        <a class="btn border col-auto" href="{# vysledky #}">
             #výsledky
         </a>
-
+        <a class="btn border col-auto" href="{# casopis so vzorakmi (?) #}">
+            #časopis
+        </a>
+        
     </div>
     {% endfor %}
     {% endfor %}
