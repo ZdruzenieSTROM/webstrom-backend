@@ -1,10 +1,10 @@
 import datetime
-
+import pdf2image
 from django.contrib.sites.models import Site
 from django.db import models
 from django.shortcuts import get_object_or_404
 from django.utils.timezone import now
-
+from django.utils.functional import cached_property
 
 class Competition(models.Model):
     class Meta:
@@ -77,6 +77,10 @@ class Semester(models.Model):
     season = models.CharField(
         max_length=10
     )
+
+    @cached_property
+    def is_active(self):
+        return self.series_set.filter(complete=False).count() > 0
 
     def __str__(self):
         return f'{self.competition.name}, {self.year}. ročník - {self.season} semester'
@@ -191,3 +195,28 @@ class Solution(models.Model):
     is_online = models.BooleanField(
         verbose_name='internetové riešenie'
     )
+
+
+class Booklet(models.Model):
+    class Meta:
+        verbose_name = 'časopis'
+        verbose_name_plural = 'časopisy'
+    
+    semester = models.ForeignKey(Semester,null=True,on_delete=models.SET_NULL)
+    pdf_file = models.FileField(
+
+    )
+    order = models.PositiveSmallIntegerField()
+    @property
+    def thumbnail_path(self):
+        pass
+    def __str__(self):
+        f'{self.semester.competition}-{self.semester.year}-{self.order}'
+"""
+@receiver(post_save, sender=Leaflet)
+def generate_leaflet_thumbnail(sender, instance, created, **kwargs):
+    source_path = instance.get_leaflet_path()
+    dest_path = instance.get_thumbnail_path()
+    pdf2image.
+
+"""
