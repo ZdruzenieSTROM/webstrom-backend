@@ -54,29 +54,21 @@ class Semester(models.Model):
         verbose_name = 'semester'
         verbose_name_plural = 'semestre'
 
-    competition = models.ForeignKey(
-        Competition,
-        on_delete=models.CASCADE
+        ordering = ['year', ]
+
+    SEASON_CHOICES = (
+        ('Z', 'Zimný'),
+        ('L', 'Letný'),
     )
 
-    year = models.PositiveSmallIntegerField(
-        verbose_name='ročník'
-    )
+    competition = models.ForeignKey(Competition, on_delete=models.CASCADE)
+    year = models.PositiveSmallIntegerField(verbose_name='ročník')
+    season = models.CharField(choices=SEASON_CHOICES, max_length=1)
 
-    start = models.DateTimeField(
-        verbose_name='dátum začiatku semestra'
-    )
+    start = models.DateTimeField(verbose_name='dátum začiatku semestra')
+    end = models.DateTimeField(verbose_name='dátum konca semestra')
 
-    end = models.DateTimeField(
-        verbose_name='dátum konca semestra'
-    )
-    late_tags = models.ManyToManyField(
-        LateTag,
-        verbose_name=''
-    )
-    season = models.CharField(
-        max_length=10
-    )
+    # late_tags = models.ManyToManyField(LateTag, verbose_name='')
 
     def __str__(self):
         return f'{self.competition.name}, {self.year}. ročník - {self.season} semester'
@@ -86,6 +78,8 @@ class Series(models.Model):
     class Meta:
         verbose_name = 'séria'
         verbose_name_plural = 'série'
+
+        ordering = ['order', ]
 
     semester = models.ForeignKey(Semester, on_delete=models.CASCADE)
     order = models.PositiveSmallIntegerField(verbose_name='poradie série')
@@ -114,6 +108,8 @@ class Problem(models.Model):
     class Meta:
         verbose_name = 'úloha'
         verbose_name_plural = 'úlohy'
+
+        ordering = ['order', ]
 
     text = models.TextField(verbose_name='znenie úlohy')
     series = models.ForeignKey(
