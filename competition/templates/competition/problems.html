@@ -1,0 +1,6 @@
+{% for problem in series.problem_set.all %}
+<h3>{{ problem.order }}. úloha</h3>
+<p>
+    {{ problem.text|safe }}
+</p>
+{% endfor %}
