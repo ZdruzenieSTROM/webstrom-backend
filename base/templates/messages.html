@@ -6,3 +6,9 @@
     </button>
 </div>
 {% endfor %}
+
+{% if user.is_authenticated and not user.verified_email %}
+<div class="alert alert-danger" role="alert">
+    Sem príde správa pre debilkov bez overeného mailu
+</div>
+{% endif %}

@@ -1,15 +1,14 @@
 from django.contrib import messages
-from django.contrib.auth import login
 from django.core.mail import send_mail
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
-from django.utils.encoding import force_bytes, force_text
+from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 
 from user.forms import ProfileCreationForm, UserCreationForm
 from user.models import County, District, School, User
-from user.tokens import email_verification_token
+from user.tokens import email_verification_token_generator
 
 
 def register(request):
@@ -18,59 +17,47 @@ def register(request):
         user_form = UserCreationForm(request.POST)
         profile_form = ProfileCreationForm(request.POST)
 
-        user_form_valid = user_form.is_valid()
-        profile_form_valid = profile_form.is_valid()
-
-        if user_form_valid and profile_form_valid:
+        if user_form.is_valid() and profile_form.is_valid():
             user = user_form.save()
             profile = profile_form.save(commit=False)
             profile.user = user
             profile.save()
 
-            login(request, user)
+            send_verification_email(user)
+            messages.info(request, 'Odoslali sme ti overovací email')
 
-            return redirect('user:verify-send')
+            return redirect('user:login')
     else:
         user_form = UserCreationForm()
         profile_form = ProfileCreationForm()
 
-        # profile_form.fields['district'].queryset = District.objects.none()
-        # profile_form.fields['school'].queryset = School.objects.none()
+        profile_form.fields['district'].queryset = District.objects.none()
+        profile_form.fields['school'].queryset = School.objects.none()
 
     return render(request, 'user/register.html',
                   {'user_form': user_form, 'profile_form': profile_form})
 
 
-def send_verification_email(request):
-    if not request.user.is_authenticated:
-        messages.error(
-            request, 'Na poslanie overovacieho emailu sa musíš prihlásiť')
+def send_verification_email(user):
+    # Nie je mi úplne jasné, na čo je dobré user id zakódovať do base64,
+    # ale používa to aj reset hesla tak prečo nie
+    message = render_to_string('user/email/email_verification.html', {
+        'uidb64': urlsafe_base64_encode(force_bytes(user.pk)),
+        'token': email_verification_token_generator.make_token(user)
+    })
 
-    elif request.user.verified_email:
-        messages.error(
-            request, 'Tvoj email už je overený')
-    else:
-        message = render_to_string('user/email/email_verification.html', {
-            'uidb64': urlsafe_base64_encode(force_bytes(request.user.pk)),
-            'token': email_verification_token.make_token(request.user)
-        })
-
-        send_mail('Overovací email', message,
-                  'web@strom.sk', [request.user.email])
-
-        messages.success(request, 'Odoslali sme ti overovací email')
-
-    return redirect('/')
+    send_mail('Overovací email', message,
+              'web@strom.sk', [user.email])
 
 
 def verify(request, uidb64, token):
     try:
-        uid = force_text(urlsafe_base64_decode(uidb64))
+        uid = urlsafe_base64_decode(uidb64).decode()
         user = User.objects.get(pk=uid)
-    except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
 
-    if user is not None and email_verification_token.check_token(user, token):
+    if email_verification_token_generator.check_token(user, token):
         user.verified_email = True
         user.save()
 
@@ -95,4 +82,4 @@ def school_by_district(request, pk):
 
     values = [{'pk': school.pk, 'name': str(school)} for school in queryset]
 
-    return JsonResponse(list(values), safe=False)
+    return JsonResponse(values, safe=False)
