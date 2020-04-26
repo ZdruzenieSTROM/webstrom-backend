@@ -11,7 +11,7 @@ class SemesterProblemsView(DetailView):
 
 class LatestSemesterView(SemesterProblemsView):
     def get_object(self, queryset=None):
-        return Competition.get_by_current_site().semester_set.order_by('-end').first()
+        return Competition.get_seminar_by_current_site().semester_set.order_by('-end').first()
 
 
 class SeriesProblemsView(DetailView):
@@ -27,7 +27,7 @@ class ArchiveView(ListView):
     context_object_name = 'context'
 
     def get_queryset(self):
-        site_competition = Competition.get_by_current_site()
+        site_competition = Competition.get_seminar_by_current_site()
         context = {}
         years = {}
 
