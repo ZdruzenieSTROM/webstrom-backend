@@ -1,11 +1,14 @@
 from django.contrib import messages
+from django.core.mail import send_mail
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404, redirect, render, reverse
-from django.views.generic import TemplateView
-from django.views.generic.base import RedirectView
+from django.shortcuts import get_object_or_404, redirect, render
+from django.template.loader import render_to_string
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 
 from user.forms import ProfileCreationForm, UserCreationForm
-from user.models import County, District, School
+from user.models import County, District, School, User
+from user.tokens import email_verification_token_generator
 
 
 def register(request):
@@ -14,19 +17,16 @@ def register(request):
         user_form = UserCreationForm(request.POST)
         profile_form = ProfileCreationForm(request.POST)
 
-        user_form_valid = user_form.is_valid()
-        profile_form_valid = profile_form.is_valid()
-
-        if user_form_valid and profile_form_valid:
+        if user_form.is_valid() and profile_form.is_valid():
             user = user_form.save()
             profile = profile_form.save(commit=False)
             profile.user = user
             profile.save()
 
-            messages.success(
-                request, 'Registrácia bola úspešná, môžes sa prihlásiť')
+            send_verification_email(user)
+            messages.info(request, 'Odoslali sme ti overovací email')
 
-            return redirect(reverse('user:login'))
+            return redirect('user:login')
     else:
         user_form = UserCreationForm()
         profile_form = ProfileCreationForm()
@@ -36,6 +36,36 @@ def register(request):
 
     return render(request, 'user/register.html',
                   {'user_form': user_form, 'profile_form': profile_form})
+
+
+def send_verification_email(user):
+    # Nie je mi úplne jasné, na čo je dobré user id zakódovať do base64,
+    # ale používa to aj reset hesla tak prečo nie
+    message = render_to_string('user/email/email_verification.html', {
+        'uidb64': urlsafe_base64_encode(force_bytes(user.pk)),
+        'token': email_verification_token_generator.make_token(user)
+    })
+
+    send_mail('Overovací email', message,
+              'web@strom.sk', [user.email])
+
+
+def verify(request, uidb64, token):
+    try:
+        uid = urlsafe_base64_decode(uidb64).decode()
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+
+    if email_verification_token_generator.check_token(user, token):
+        user.verified_email = True
+        user.save()
+
+        messages.success(request, 'Tvoj email bol úspešne overený')
+    else:
+        messages.error(request, 'Tvoj email sa nepodarilo overiť')
+
+    return redirect('/')
 
 
 def district_by_county(request, pk):
@@ -52,20 +82,4 @@ def school_by_district(request, pk):
 
     values = [{'pk': school.pk, 'name': str(school)} for school in queryset]
 
-    return JsonResponse(list(values), safe=False)
-
-
-class VerificationSendView(RedirectView):
-    # TODO: send email and redirect
-    pass
-
-
-class VerificationWaitingView(TemplateView):
-    # TODO: email verification view
-    # (email was send info and resend button)
-    pass
-
-
-class VerifyEmailView(RedirectView):
-    # TODO: verify email by 'key', login and redirect
-    pass
+    return JsonResponse(values, safe=False)

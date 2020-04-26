@@ -142,6 +142,8 @@ STATIC_URL = '/static/'
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'emails')
 
+EMAIL_VERIFICATION_TIMEOUT = 86400
+
 # Crispy forms
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
