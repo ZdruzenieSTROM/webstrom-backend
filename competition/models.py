@@ -5,11 +5,13 @@ from django.db import models
 from django.shortcuts import get_object_or_404
 from django.utils.timezone import now
 from django.utils.functional import cached_property
+from base.validators import school_year_validator
+
 
 class Competition(models.Model):
     class Meta:
-        verbose_name = 'seminár'
-        verbose_name_plural = 'semináre'
+        verbose_name = 'súťaž'
+        verbose_name_plural = 'súťaže'
 
     name = models.CharField(
         max_length=50,
@@ -17,21 +19,29 @@ class Competition(models.Model):
     )
 
     start_year = models.PositiveSmallIntegerField(
-        verbose_name='rok prvého ročníka súťaže'
+        verbose_name='rok prvého ročníka súťaže',
+        blank=True
     )
-    site = models.ForeignKey(
-        Site, blank=True, null=True, on_delete=models.SET_NULL)
+    sites = models.ManyToManyField(Site)
+    competition_type = models.PositiveSmallIntegerField(
+        choices=[(0, 'Seminar'), (1, 'Single day competition'), (2, 'Other')],
+        verbose_name='typ súťaže'
+    )
 
     def __str__(self):
         return self.name
 
-    @classmethod
-    def get_by_site(cls, site):
-        return get_object_or_404(cls, site=site)
+    @cached_property
+    def semester_set(self):
+        return self.event_set.exclude(semester__isnull=True)
 
     @classmethod
-    def get_by_current_site(cls):
-        return cls.get_by_site(Site.objects.get_current())
+    def get_seminar_by_site(cls, site):
+        return get_object_or_404(cls, sites=site, competition_type=0)
+
+    @classmethod
+    def get_seminar_by_current_site(cls):
+        return cls.get_seminar_by_site(Site.objects.get_current())
 
 
 class LateTag(models.Model):
@@ -49,30 +59,56 @@ class LateTag(models.Model):
         return self.name
 
 
-class Semester(models.Model):
+class Event(models.Model):
+    class Meta:
+        verbose_name = 'ročník súťaže'
+        verbose_name_plural = 'ročníky súťaží'
+        ordering = ['-school_year', ]
+
+    competition = models.ForeignKey(
+        Competition, null=True, on_delete=models.CASCADE)
+    year = models.PositiveSmallIntegerField(blank=True, verbose_name='ročník')
+    school_year = models.CharField(
+        max_length=10, blank=True, verbose_name='školský rok', validators=[school_year_validator])
+    start = models.DateTimeField(verbose_name='dátum začiatku súťaže')
+    end = models.DateTimeField(verbose_name='dátum konca súťaže')
+
+    @cached_property
+    def is_active(self):
+        return self.serie_set.filter(complete=False).count() > 0
+
+    @classmethod
+    def get_school_year_by_date(cls, date):
+        year = date.year
+        if date.month < 9:
+            year -= 1
+        return f'{year}/{year+1}'
+
+    def __str__(self):
+        if self.semester:
+            return str(self.semester)
+        else:
+            return f'{self.competition.name}, {self.year}. ročník'
+
+
+class Semester(Event):
     class Meta:
         verbose_name = 'semester'
         verbose_name_plural = 'semestre'
 
-        ordering = ['year', ]
+        ordering = ['-year','season_code' ]
 
     SEASON_CHOICES = (
-        ('Z', 'Zimný'),
-        ('L', 'Letný'),
+        (0, 'Zimný'),
+        (1, 'Letný'),
     )
 
-    competition = models.ForeignKey(Competition, on_delete=models.CASCADE)
-    year = models.PositiveSmallIntegerField(verbose_name='ročník')
-    season = models.CharField(choices=SEASON_CHOICES, max_length=1)
-
-    start = models.DateTimeField(verbose_name='dátum začiatku semestra')
-    end = models.DateTimeField(verbose_name='dátum konca semestra')
-
-    # late_tags = models.ManyToManyField(LateTag, verbose_name='')
+    season_code = models.PositiveSmallIntegerField(choices=SEASON_CHOICES)
+    late_tags = models.ManyToManyField(LateTag, verbose_name='', blank=True)
 
     @cached_property
-    def is_active(self):
-        return self.series_set.filter(complete=False).count() > 0
+    def season(self):
+        return self.get_season_code_display()
 
     def __str__(self):
         return f'{self.competition.name}, {self.year}. ročník - {self.season} semester'
@@ -83,7 +119,7 @@ class Series(models.Model):
         verbose_name = 'séria'
         verbose_name_plural = 'série'
 
-        ordering = ['order', ]
+        ordering = ['semester','order', ]
 
     semester = models.ForeignKey(Semester, on_delete=models.CASCADE)
     order = models.PositiveSmallIntegerField(verbose_name='poradie série')
@@ -107,13 +143,16 @@ class Series(models.Model):
         else:
             return remaining_time
 
+    def get_user_results(self):
+        pass
+
 
 class Problem(models.Model):
     class Meta:
         verbose_name = 'úloha'
         verbose_name_plural = 'úlohy'
 
-        ordering = ['order', ]
+        ordering = ['series','order', ]
 
     text = models.TextField(verbose_name='znenie úlohy')
     series = models.ForeignKey(
@@ -126,11 +165,15 @@ class Problem(models.Model):
     def __str__(self):
         return f'{self.series.semester.competition.name}-{self.series.semester.year}-{self.series.semester.season[0]}S-S{self.series.order} - {self.order}. úloha'
 
+    def get_mean_point(self):
+        pass
+
 
 class Grade(models.Model):
     class Meta:
-        verbose_name = 'ročník'
-        verbose_name_plural = 'ročníky'
+        verbose_name = 'ročník účastníka'
+        verbose_name_plural = 'ročníky účastníka'
+        ordering = ['years_until_graduation']
 
     name = models.CharField(
         max_length=32,
@@ -141,24 +184,30 @@ class Grade(models.Model):
         unique=True,
         verbose_name='skratka'
     )
-    years_in_school = models.PositiveSmallIntegerField(
-        verbose_name='počet rokov v škole'
+    years_until_graduation = models.PositiveSmallIntegerField(
+        verbose_name='počet rokov do maturity'
+    )
+    is_active = models.BooleanField(
+        verbose_name="aktuálne používaný ročník"
     )
 
     def __str__(self):
         return self.name
 
 
-class UserSemesterRegistration(models.Model):
+class UserEventRegistration(models.Model):
     class Meta:
-        verbose_name = 'séria'
-        verbose_name_plural = 'série'
+        verbose_name = 'registrácia užívateľa na akciu'
+        verbose_name_plural = 'registrácie užívateľov na akcie'
 
     user = models.ForeignKey('user.User', on_delete=models.CASCADE)
     school = models.ForeignKey(
         'user.School', on_delete=models.SET_NULL, null=True)
     class_level = models.ForeignKey(Grade, on_delete=models.CASCADE)
-    semester = models.ForeignKey(Semester, on_delete=models.CASCADE)
+    event = models.ForeignKey(Semester, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.user} v {self.event}'
 
 
 class Solution(models.Model):
@@ -168,12 +217,12 @@ class Solution(models.Model):
 
     problem = models.ForeignKey(Problem, on_delete=models.CASCADE)
     user_semester_registration = models.ForeignKey(
-        UserSemesterRegistration,
+        UserEventRegistration,
         on_delete=models.CASCADE
     )
-    # solution_path =  # File field - isteho typu
+    solution_path =  models.FileField(verbose_name='účastnícke riešenie')
 
-    # corrected_solution_path =  # File field - isteho typu
+    corrected_solution_path =  models.FileField(verbose_name='opravené riešenie')
 
     score = models.PositiveSmallIntegerField(verbose_name='body')
 
@@ -192,27 +241,43 @@ class Solution(models.Model):
         verbose_name='internetové riešenie'
     )
 
+    def __str__(self):
+        return f'Riešiteľ: {self.user_semester_registration} - úloha: {self.problem}'
 
-class Booklet(models.Model):
+# Časopisy, brožúry, pozvánky, výsledkové listiny ...
+class Publication(models.Model):
     class Meta:
-        verbose_name = 'časopis'
-        verbose_name_plural = 'časopisy'
-    
-    semester = models.ForeignKey(Semester,null=True,on_delete=models.SET_NULL)
-    pdf_file = models.FileField(
+        verbose_name = 'publikácia'
+        verbose_name_plural = 'publikácie'
+        
 
+    event = models.ForeignKey(Event, null=True, on_delete=models.SET_NULL)
+    pdf_file = models.FileField(
+        upload_to='publications/'
     )
     order = models.PositiveSmallIntegerField()
+    #TODO: Premyslieť ukladanie
     @property
-    def thumbnail_path(self):
-        pass
+    def get_thumbnail_path(self):
+        return f'publications/thumbnails/{self.file_name}'
+
+    @property
+    def get_publication_path(self):
+        return f'publications/{self.file_name}'
+
+    @property
+    def file_name(self):
+        f'{self.event.competition}-{self.event.year}-{self.order}-{self.pk}.pdf'
+
     def __str__(self):
-        f'{self.semester.competition}-{self.semester.year}-{self.order}'
+        return f'{self.event.competition}-{self.event.year}-{self.order}'
+
+
 """
-@receiver(post_save, sender=Leaflet)
+@receiver(post_save, sender=Publication)
 def generate_leaflet_thumbnail(sender, instance, created, **kwargs):
-    source_path = instance.get_leaflet_path()
+    source_path = instance.get_publication_path()
     dest_path = instance.get_thumbnail_path()
-    pdf2image.
+    pdf2image.convert_from_path(source_path)
 
 """
