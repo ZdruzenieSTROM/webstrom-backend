@@ -1,7 +1,7 @@
 import datetime
 
 
-def get_school_year_by_date(cls, date):
+def get_school_year_by_date(date):
     year = date.year
     if date.month < 9:
         year -= 1
