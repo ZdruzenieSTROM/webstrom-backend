@@ -47,9 +47,13 @@ jQuery.validator.addMethod("email", function (value, element) {
     return this.optional(element) || /^[a-zA-Z0-9.!#$%&*+\/=?^_`{|}~-]+@[a-zA-Z0-9.!#$%&*+\/=?^_`{|}~-]+\.[a-zA-Z]{2,63}$/.test(value);
 }, "Zadajte platnú e-mailovú adresu.");
 
+function myTrim(string) {
+    return string.replace(/\s+/g, '');
+}
+
 jQuery.validator.addMethod("phone", function (value, element) {
-    return this.optional(element) || /^(\+\d{1,3}\s?\d{3}\s?\d{3}\s?\d{3}|\d{4}\s?\d{3}\s?\d{3})$/.test(value);
-}, "Zadaj telefónne číslo vo formáte +421 123 456 789 alebo 0912 345 678.");
+    return this.optional(element) || /^(\+\d{1,3}\d{9})$/.test(myTrim(value));
+}, "Zadaj telefónne číslo vo formáte validnom formáte +421 123 456 789 alebo +421123456789.");
 
 jQuery.validator.addMethod("firstPassword", function (value, element) {
     // run validation on password2 again
@@ -88,6 +92,12 @@ function validateForm() {
         }
     })
 }
+
 $('#id_email, #id_password1, #id_password2, #id_phone, #id_parent_phone').change(function () {
     validateForm()
 });
+
+$('form').on( "submit", function() {
+    $('#phone').val(myTrim($('#phone').val()));
+    $('#parent_phone').val(myTrim($('#parent_phone').val()));
+} )
