@@ -40,6 +40,20 @@ $('#id_district').change(function () {
     }
 });
 
+////////// JS modifications of register form
+
+$(document).ready(function(){ 
+    $('#div_id_school_info').hide();
+});
+
+$('#id_school').change(function(){
+    if ($( this ).val() == 0) {
+        $('#div_id_school_info').show();
+    } else {
+        $('#div_id_school_info').hide();
+    }
+})
+
 ////////// JS validations of form during completion
 
 // rewrite default email validation
@@ -94,7 +108,7 @@ function validateForm() {
 }
 
 $('#id_email, #id_password1, #id_password2, #id_phone, #id_parent_phone').change(function () {
-    validateForm()
+    validateForm();
 });
 
 $('form').on( "submit", function() {
