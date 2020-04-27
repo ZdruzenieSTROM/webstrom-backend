@@ -19,17 +19,7 @@ def get_school_year_start_by_date(date=None):
 
 
 # Súčtové metódy pre semináre
-SERIES_SUM_METHODS = [
-    (series_simple_sum, 'Súčet bodov'),
-    (series_Malynar_sum, 'Súčet bodov + bonifikácia Malynár'),
-    (series_Matik_sum, 'Súčet bodov + bonifikácia Matik'),
-    (series_STROM_sum, 'Súčet bodov + bonifikácia STROM'),
-    (series_STROM_4problems_sum, 'Súčet bodov + bonifikácia STROM (ročníky XXXX-YYYY)')
-]
 
-SEMESTER_SUM_METHODS = [
-    (semester_simple_sum, 'Súčet bodov')
-]
 
 
 def dot_product(solutions, weights):
@@ -97,3 +87,16 @@ def series_STROM_4problems_sum(solutions, user_registration):
 
 def semester_simple_sum(series_subtotals):
     return sum(series_subtotals)
+
+
+SERIES_SUM_METHODS = [
+    ('series_simple_sum', 'Súčet bodov'),
+    ('series_Malynar_sum', 'Súčet bodov + bonifikácia Malynár'),
+    ('series_Matik_sum', 'Súčet bodov + bonifikácia Matik'),
+    ('series_STROM_sum', 'Súčet bodov + bonifikácia STROM'),
+    ('series_STROM_4problems_sum', 'Súčet bodov + bonifikácia STROM (ročníky XXXX-YYYY)')
+]
+
+SEMESTER_SUM_METHODS = [
+    ('semester_simple_sum', 'Súčet bodov')
+]

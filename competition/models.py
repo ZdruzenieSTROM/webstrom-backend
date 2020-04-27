@@ -8,7 +8,7 @@ from django.utils.functional import cached_property
 from django.utils.timezone import now
 
 from base.validators import school_year_validator
-from competitions.utils import get_school_year_start_by_date
+from competition.utils import get_school_year_start_by_date, SERIES_SUM_METHODS
 
 
 class Competition(models.Model):
@@ -132,7 +132,12 @@ class Series(models.Model):
     order = models.PositiveSmallIntegerField(verbose_name='poradie série')
     deadline = models.DateTimeField(verbose_name='termín série')
     complete = models.BooleanField(verbose_name='séria uzavretá')
-    # sum_method =  # NO FOKEN IDEA
+    sum_method = models.CharField(max_length=50,
+        blank=True,
+        null=True,
+        verbose_name='Súčtová metóda',
+        choices=SERIES_SUM_METHODS
+        )
 
     def __str__(self):
         return f'{self.semester} - {self.order}. séria'
