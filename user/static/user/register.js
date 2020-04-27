@@ -80,38 +80,36 @@ jQuery.validator.addMethod("secondPassword", function (value, element) {
     return this.optional(element) || !value || value == $('#id_password1').val();
 }, "Heslá sa nezhodujú.");
 
-function validateForm() {
-    $("form").validate({
-        rules: {
-            email: {
-                required: true,
-                email: true
-            },
-            password1: {
-                required: true,
-                firstPassword: true
-            },
-            password2: {
-                required: true,
-                secondPassword: true
-            },
-            phone: {
-                required: false,
-                phone: true
-            },
-            parent_phone: {
-                required: false,
-                phone: true
-            },
-        }
-    })
-}
+var validator = $("form").validate({
+    rules: {
+        email: {
+            required: true,
+            email: true
+        },
+        password1: {
+            required: true,
+            firstPassword: true
+        },
+        password2: {
+            required: true,
+            secondPassword: true
+        },
+        phone: {
+            required: false,
+            phone: true
+        },
+        parent_phone: {
+            required: false,
+            phone: true
+        },
+    }
+});
 
-$('#id_email, #id_password1, #id_password2, #id_phone, #id_parent_phone').change(function () {
-    validateForm();
+$('#id_email, #id_password1, #id_password2, #id_phone, #id_parent_phone').change(function (element) {
+    validator.element( element );
 });
 
 $('form').on( "submit", function() {
-    $('#phone').val(myTrim($('#phone').val()));
-    $('#parent_phone').val(myTrim($('#parent_phone').val()));
+    if ($('#phone').val()) $('#phone').val(myTrim($('#phone').val()));
+    if ($('#parent_phone').val()) $('#parent_phone').val(myTrim($('#parent_phone').val()));
 } )

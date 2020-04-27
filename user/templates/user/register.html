@@ -12,7 +12,7 @@
     {% csrf_token %}
     {{ user_form|crispy }}
     {{ profile_form|crispy }}
-    <input type="submit" value="Registrovať">
+    <input id="submit_button" class="btn btn-primary" type="submit" value="Registrovať">
 </form>
 {% endblock content %}
 
