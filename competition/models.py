@@ -77,12 +77,6 @@ class Event(models.Model):
     def is_active(self):
         return self.serie_set.filter(complete=False).count() > 0
 
-    @classmethod
-    def get_school_year_by_date(cls, date):
-        year = date.year
-        if date.month < 9:
-            year -= 1
-        return f'{year}/{year+1}'
 
     def __str__(self):
         if self.semester:
