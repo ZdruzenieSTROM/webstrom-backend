@@ -220,9 +220,9 @@ class Solution(models.Model):
         UserEventRegistration,
         on_delete=models.CASCADE
     )
-    solution_path =  models.FileField(verbose_name='účastnícke riešenie')
+    solution_path =  models.FileField(upload_to='solutions/',verbose_name='účastnícke riešenie')
 
-    corrected_solution_path =  models.FileField(verbose_name='opravené riešenie')
+    corrected_solution_path =  models.FileField(upload_to='solutions/corrected/',verbose_name='opravené riešenie')
 
     score = models.PositiveSmallIntegerField(verbose_name='body')
 
