@@ -131,11 +131,11 @@
     },
     {
         "model": "competition.Grade",
-        "pk": 9,
+        "pk": 13,
         "fields": {
             "name": "Už nechodím do školy",
             "tag": "XX",
-            "years_until_graduation": 0,
+            "years_until_graduation": -1,
             "is_active": true
         }
     }
