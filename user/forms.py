@@ -56,7 +56,8 @@ class ProfileCreationForm(forms.ModelForm):
                   'grade', 'phone', 'parent_phone')
 
     grade = forms.ChoiceField(
-        choices=GradeChoices.choices, required=True, label='ročník')
+        choices=GradeChoices.choices, required=True, label='ročník',
+        help_text='V prípade, že je leto, zadaj ročník, ktorý končíš (školský rok začína septembrom).')
     school_info = forms.CharField(
         widget=forms.Textarea, required=False,
         label='povedz nám, kam chodíš na školu, aby sme ti ju mohli dodatočne pridať')
