@@ -14,8 +14,7 @@
         "model": "competition.Semester",
         "pk": 0,
         "fields": {
-
-            "late_tags":[],
+            "late_tags": [],
             "season_code": 1
         }
     },
@@ -162,7 +161,7 @@
         "model": "competition.Semester",
         "pk": 1,
         "fields": {
-            "late_tags":[],
+            "late_tags": [],
             "season_code": 0
         }
     },
@@ -309,7 +308,7 @@
         "model": "competition.Semester",
         "pk": 2,
         "fields": {
-            "late_tags":[],
+            "late_tags": [],
             "season_code": 1
         }
     },
@@ -456,7 +455,7 @@
         "model": "competition.Semester",
         "pk": 3,
         "fields": {
-            "late_tags":[],
+            "late_tags": [],
             "season_code": 0
         }
     },
@@ -603,7 +602,7 @@
         "model": "competition.Semester",
         "pk": 4,
         "fields": {
-            "late_tags":[],
+            "late_tags": [],
             "season_code": 1
         }
     },
@@ -750,7 +749,7 @@
         "model": "competition.Semester",
         "pk": 5,
         "fields": {
-            "late_tags":[],
+            "late_tags": [],
             "season_code": 0
         }
     },

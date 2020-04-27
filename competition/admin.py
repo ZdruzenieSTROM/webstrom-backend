@@ -1,6 +1,8 @@
 from django.contrib import admin
 
-from competition.models import Competition, Event, Grade, Problem, Semester, Series, UserEventRegistration, Publication, Solution, LateTag
+from competition.models import (Competition, Event, Grade, LateTag, Problem,
+                                Publication, Semester, Series, Solution,
+                                UserEventRegistration)
 
 admin.site.register(Competition)
 admin.site.register(Event)

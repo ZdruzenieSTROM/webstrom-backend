@@ -1,140 +1,140 @@
 [
     {
         "model": "competition.Grade",
-        "pk":0,
-        "fields":{
-            "name":"Prvý ročník ZŠ",
-            "tag":"Z1",
+        "pk": 0,
+        "fields": {
+            "name": "Prvý ročník ZŠ",
+            "tag": "Z1",
             "years_until_graduation": 12,
             "is_active": true
         }
     },
     {
         "model": "competition.Grade",
-        "pk":1,
-        "fields":{
-            "name":"Druhý ročník ZŠ",
-            "tag":"Z2",
+        "pk": 1,
+        "fields": {
+            "name": "Druhý ročník ZŠ",
+            "tag": "Z2",
             "years_until_graduation": 11,
             "is_active": true
         }
     },
     {
         "model": "competition.Grade",
-        "pk":2,
-        "fields":{
-            "name":"Tretí ročník ZŠ",
-            "tag":"Z3",
+        "pk": 2,
+        "fields": {
+            "name": "Tretí ročník ZŠ",
+            "tag": "Z3",
             "years_until_graduation": 10,
             "is_active": true
         }
     },
     {
         "model": "competition.Grade",
-        "pk":3,
-        "fields":{
-            "name":"Štvrtý ročník ZŠ",
-            "tag":"Z4",
+        "pk": 3,
+        "fields": {
+            "name": "Štvrtý ročník ZŠ",
+            "tag": "Z4",
             "years_until_graduation": 9,
             "is_active": true
         }
     },
     {
         "model": "competition.Grade",
-        "pk":4,
-        "fields":{
-            "name":"Piaty ročník ZŠ",
-            "tag":"Z5",
+        "pk": 4,
+        "fields": {
+            "name": "Piaty ročník ZŠ",
+            "tag": "Z5",
             "years_until_graduation": 8,
             "is_active": true
         }
     },
     {
         "model": "competition.Grade",
-        "pk":5,
-        "fields":{
-            "name":"Šiesty ročník ZŠ | Príma",
-            "tag":"Z6",
+        "pk": 5,
+        "fields": {
+            "name": "Šiesty ročník ZŠ | Príma",
+            "tag": "Z6",
             "years_until_graduation": 7,
             "is_active": true
         }
     },
     {
         "model": "competition.Grade",
-        "pk":6,
-        "fields":{
-            "name":"Siedmy ročník ZŠ | Sekunda",
-            "tag":"Z7",
+        "pk": 6,
+        "fields": {
+            "name": "Siedmy ročník ZŠ | Sekunda",
+            "tag": "Z7",
             "years_until_graduation": 6,
             "is_active": true
         }
     },
     {
         "model": "competition.Grade",
-        "pk":7,
-        "fields":{
-            "name":"Ôsmy ročník ZŠ | Tercia",
-            "tag":"Z8",
+        "pk": 7,
+        "fields": {
+            "name": "Ôsmy ročník ZŠ | Tercia",
+            "tag": "Z8",
             "years_until_graduation": 5,
             "is_active": true
         }
     },
     {
         "model": "competition.Grade",
-        "pk":8,
-        "fields":{
-            "name":"Deviaty ročník ZŠ | Kvarta | 1. ročník 5-ročného gymnázia",
-            "tag":"Z9",
+        "pk": 8,
+        "fields": {
+            "name": "Deviaty ročník ZŠ | Kvarta | 1. ročník 5-ročného gymnázia",
+            "tag": "Z9",
             "years_until_graduation": 4,
             "is_active": true
         }
     },
     {
         "model": "competition.Grade",
-        "pk":9,
-        "fields":{
-            "name":"Prvý ročník SŠ | Kvinta | 2. ročník 5-ročného gymnázia",
-            "tag":"S1",
+        "pk": 9,
+        "fields": {
+            "name": "Prvý ročník SŠ | Kvinta | 2. ročník 5-ročného gymnázia",
+            "tag": "S1",
             "years_until_graduation": 3,
             "is_active": true
         }
     },
     {
         "model": "competition.Grade",
-        "pk":10,
-        "fields":{
-            "name":"Druhý ročník SŠ | Sexta | 3. ročník 5-ročného gymnázia",
-            "tag":"S2",
+        "pk": 10,
+        "fields": {
+            "name": "Druhý ročník SŠ | Sexta | 3. ročník 5-ročného gymnázia",
+            "tag": "S2",
             "years_until_graduation": 2,
             "is_active": true
         }
     },
     {
         "model": "competition.Grade",
-        "pk":11,
-        "fields":{
-            "name":"Tretí ročník SŠ | Septima | 4. ročník 5-ročného gymnázia",
-            "tag":"S3",
+        "pk": 11,
+        "fields": {
+            "name": "Tretí ročník SŠ | Septima | 4. ročník 5-ročného gymnázia",
+            "tag": "S3",
             "years_until_graduation": 1,
             "is_active": true
         }
     },
     {
         "model": "competition.Grade",
-        "pk":12,
-        "fields":{
-            "name":"Štvrtý ročník SŠ | Oktáva | 5. ročník 5-ročného gymnázia",
-            "tag":"S4",
+        "pk": 12,
+        "fields": {
+            "name": "Štvrtý ročník SŠ | Oktáva | 5. ročník 5-ročného gymnázia",
+            "tag": "S4",
             "years_until_graduation": 0,
             "is_active": true
         }
     },
     {
         "model": "competition.Grade",
-        "pk":9,
-        "fields":{
-            "name":"Už nechodím do školy",
-            "tag":"XX",
+        "pk": 9,
+        "fields": {
+            "name": "Už nechodím do školy",
+            "tag": "XX",
             "years_until_graduation": 0,
             "is_active": true
         }

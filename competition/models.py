@@ -1,10 +1,12 @@
 import datetime
+
 import pdf2image
 from django.contrib.sites.models import Site
 from django.db import models
 from django.shortcuts import get_object_or_404
-from django.utils.timezone import now
 from django.utils.functional import cached_property
+from django.utils.timezone import now
+
 from base.validators import school_year_validator
 
 
@@ -77,7 +79,6 @@ class Event(models.Model):
     def is_active(self):
         return self.serie_set.filter(complete=False).count() > 0
 
-
     def __str__(self):
         if self.semester:
             return str(self.semester)
@@ -90,7 +91,7 @@ class Semester(Event):
         verbose_name = 'semester'
         verbose_name_plural = 'semestre'
 
-        ordering = ['-year','season_code' ]
+        ordering = ['-year', 'season_code']
 
     SEASON_CHOICES = (
         (0, 'Zimný'),
@@ -113,7 +114,7 @@ class Series(models.Model):
         verbose_name = 'séria'
         verbose_name_plural = 'série'
 
-        ordering = ['semester','order', ]
+        ordering = ['semester', 'order', ]
 
     semester = models.ForeignKey(Semester, on_delete=models.CASCADE)
     order = models.PositiveSmallIntegerField(verbose_name='poradie série')
@@ -146,7 +147,7 @@ class Problem(models.Model):
         verbose_name = 'úloha'
         verbose_name_plural = 'úlohy'
 
-        ordering = ['series','order', ]
+        ordering = ['series', 'order', ]
 
     text = models.TextField(verbose_name='znenie úlohy')
     series = models.ForeignKey(
@@ -214,9 +215,11 @@ class Solution(models.Model):
         UserEventRegistration,
         on_delete=models.CASCADE
     )
-    solution_path =  models.FileField(upload_to='solutions/',verbose_name='účastnícke riešenie')
+    solution_path = models.FileField(
+        upload_to='solutions/', verbose_name='účastnícke riešenie')
 
-    corrected_solution_path =  models.FileField(upload_to='solutions/corrected/',verbose_name='opravené riešenie')
+    corrected_solution_path = models.FileField(
+        upload_to='solutions/corrected/', verbose_name='opravené riešenie')
 
     score = models.PositiveSmallIntegerField(verbose_name='body')
 
@@ -239,18 +242,19 @@ class Solution(models.Model):
         return f'Riešiteľ: {self.user_semester_registration} - úloha: {self.problem}'
 
 # Časopisy, brožúry, pozvánky, výsledkové listiny ...
+
+
 class Publication(models.Model):
     class Meta:
         verbose_name = 'publikácia'
         verbose_name_plural = 'publikácie'
-        
 
     event = models.ForeignKey(Event, null=True, on_delete=models.SET_NULL)
     pdf_file = models.FileField(
         upload_to='publications/'
     )
     order = models.PositiveSmallIntegerField()
-    #TODO: Premyslieť ukladanie
+    # TODO: Premyslieť ukladanie
     @property
     def get_thumbnail_path(self):
         return f'publications/thumbnails/{self.file_name}'
