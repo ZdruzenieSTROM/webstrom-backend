@@ -44,3 +44,22 @@ Spusti lokálny vývojový server:
 ```shell
 python manage.py runserver
 ```
+
+# Nastavenia linteru a formátovaču
+
+## Linter
+
+VSCode python extension podporuje viacero linterov, medzi nimi aj `pylint`. Aby si ho mohol používať, potrebuješ mať **vo vnútri virtual environmentu** nainštalovaný package `pylint` a `pylint-django`. Ďalej treba VSCodu povedať, aby pri spustení linteru načítal djangový plugin, teda do workspace settings (`${workspaceFolder}/.vscode/settings.json`) treba pridať
+
+```json
+"python.linting.pylintArgs": [
+    "--load-plugins",
+    "pylint_django"
+]
+```
+
+Teraz ak nemáš nejak veľmi zle nastavený globálny config, mal by ťa linter začať šikanovať tým, že ti bude podfarbovať kusy kódu a pridávať položky do panelu `PROBLEMS`.
+
+## Formátovač
+
+Nainštaluj si (opäť, vo vnútri svojho virtual environmentu) package `autopep8`. Okrem toho potrebuješ zapnúť `editor.formatOnSave` (defaultne je vypnuté), buď v globálnom configu alebo len lokálne vo projekte (odporúčam globálne).
