@@ -47,7 +47,7 @@ class Competition(models.Model):
 
     @cached_property
     def semester_set(self):
-        return self.event_set.exclude(semester__isnull=True)
+        return Semester.objects.filter(competition=self.pk).all()
 
     @classmethod
     def get_seminar_by_site(cls, site):
