@@ -1,11 +1,21 @@
 import datetime
 
 
-def get_school_year_by_date(date):
+def get_school_year_by_date(date=None):
+    if date is None:
+        date = datetime.datetime.now
     year = date.year
     if date.month < 9:
         year -= 1
     return f'{year}/{year+1}'
+
+def get_school_year_start_by_date(date=None):
+    if date is None:
+        date = datetime.datetime.now
+    year = date.year
+    if date.month < 9:
+        year -= 1
+    return year
 
 
 # Súčtové metódy pre semináre

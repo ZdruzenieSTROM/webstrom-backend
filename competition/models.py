@@ -8,6 +8,7 @@ from django.utils.functional import cached_property
 from django.utils.timezone import now
 
 from base.validators import school_year_validator
+from competitions.utils import get_school_year_start_by_date
 
 
 class Competition(models.Model):
@@ -29,6 +30,13 @@ class Competition(models.Model):
         choices=[(0, 'Seminar'), (1, 'Single day competition'), (2, 'Other')],
         verbose_name='typ súťaže'
     )
+    min_years_until_graduation = models.PositiveSmallIntegerField(
+        verbose_name='Minimálny počet rokov do maturity',
+        help_text='Horná hranica na účasť v súťaži. Zadáva sa v počte rokov do maturity. Ak najstraší, kto môže riešiť súťaž je deviatak, zadá sa 4.'
+    )
+
+    def can_user_participate(self,user):
+        return user.profile.year_of_graduation-get_school_year_start_by_date()>=self.min_years_until_graduation
 
     def __str__(self):
         return self.name
