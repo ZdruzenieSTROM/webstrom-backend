@@ -32,11 +32,15 @@ class Competition(models.Model):
     )
     min_years_until_graduation = models.PositiveSmallIntegerField(
         verbose_name='Minimálny počet rokov do maturity',
-        help_text='Horná hranica na účasť v súťaži. Zadáva sa v počte rokov do maturity. Ak najstraší, kto môže riešiť súťaž je deviatak, zadá sa 4.'
+        help_text='Horná hranica na účasť v súťaži. Zadáva sa v počte rokov do maturity. Ak najstraší, kto môže riešiť súťaž je deviatak, zadá sa 4.',
+        null=True
     )
 
     def can_user_participate(self,user):
-        return user.profile.year_of_graduation-get_school_year_start_by_date()>=self.min_years_until_graduation
+        if self.min_years_until_graduation:
+            return user.profile.year_of_graduation-get_school_year_start_by_date()>=self.min_years_until_graduation
+        else:
+            return True
 
     def __str__(self):
         return self.name
