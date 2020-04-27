@@ -7,12 +7,12 @@ from django.core.management import BaseCommand, call_command
 APP_PYCACHE_DIRS = ['', 'migrations', os.path.join('management', 'commands')]
 
 
-def remove_contents(dir, exclude=()):
-    if not os.path.exists(dir):
+def remove_contents(path, exclude=()):
+    if not os.path.exists(path):
         return
 
-    for file in os.listdir(dir):
-        full_path = os.path.join(dir, file)
+    for file in os.listdir(path):
+        full_path = os.path.join(path, file)
 
         if file in exclude or os.path.isdir(full_path):
             continue
@@ -52,5 +52,5 @@ class Command(BaseCommand):
 
         load_fixture('sites', 'flatpages')
         load_fixture('counties', 'districts', 'schools', 'schools_custom')
-        load_fixture('competitions', 'semesters')
+        load_fixture('competitions', 'semesters', 'grade', 'late_tags')
         load_fixture('superuser', 'users', 'profiles')
