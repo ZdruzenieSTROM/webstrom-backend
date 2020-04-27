@@ -187,7 +187,7 @@ class Grade(models.Model):
         unique=True,
         verbose_name='skratka'
     )
-    years_until_graduation = models.PositiveSmallIntegerField(
+    years_until_graduation = models.SmallIntegerField(
         verbose_name='počet rokov do maturity'
     )
     is_active = models.BooleanField(
@@ -250,8 +250,6 @@ class Solution(models.Model):
         return f'Riešiteľ: {self.user_semester_registration} - úloha: {self.problem}'
 
 # Časopisy, brožúry, pozvánky, výsledkové listiny ...
-
-
 class Publication(models.Model):
     class Meta:
         verbose_name = 'publikácia'
