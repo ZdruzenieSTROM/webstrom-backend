@@ -77,7 +77,7 @@ class Event(models.Model):
 
     @cached_property
     def is_active(self):
-        return self.serie_set.filter(complete=False).count() > 0
+        return self.semester.series_set.filter(complete=False).count() > 0
 
     def __str__(self):
         if self.semester:
