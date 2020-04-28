@@ -8,7 +8,8 @@ from django.utils.functional import cached_property
 from django.utils.timezone import now
 
 from base.validators import school_year_validator
-from competition.utils import SERIES_SUM_METHODS, get_school_year_start_by_date
+from competition.utils import (SERIES_SUM_METHODS, get_school_year_end_by_date,
+                               get_school_year_start_by_date)
 
 
 class Competition(models.Model):
@@ -185,23 +186,17 @@ class Grade(models.Model):
     class Meta:
         verbose_name = 'ročník účastníka'
         verbose_name_plural = 'ročníky účastníka'
-        ordering = ['years_until_graduation']
+        ordering = ['years_until_graduation', ]
 
-    name = models.CharField(
-        max_length=32,
-        verbose_name='názov ročníku'
-    )
-    tag = models.CharField(
-        max_length=2,
-        unique=True,
-        verbose_name='skratka'
-    )
+    name = models.CharField(max_length=32, verbose_name='názov ročníku')
+    tag = models.CharField(max_length=2, unique=True, verbose_name='skratka')
     years_until_graduation = models.SmallIntegerField(
-        verbose_name='počet rokov do maturity'
-    )
+        verbose_name='počet rokov do maturity')
     is_active = models.BooleanField(
-        verbose_name="aktuálne používaný ročník"
-    )
+        verbose_name='aktuálne používaný ročník')
+
+    def get_year_of_graduation_by_date(self, date=None):
+        return get_school_year_end_by_date(date) + self.years_until_graduation
 
     def __str__(self):
         return self.name

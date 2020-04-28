@@ -20,6 +20,10 @@ class UnspecifiedValueManager(models.Manager):
 
         super(UnspecifiedValueManager, self).__init__(*args, **kwargs)
 
+    def all_except_unspecified(self):
+        queryset = super(UnspecifiedValueManager, self).get_queryset()
+        return queryset.exclude(pk=self.unspecified_value_pk)
+
     def get_unspecified_value(self):
         return super(UnspecifiedValueManager, self).get_queryset().get(
             pk=self.unspecified_value_pk)

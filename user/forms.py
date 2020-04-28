@@ -1,27 +1,7 @@
-from datetime import date
-
 from django import forms
-from django.db.models import IntegerChoices
 
-from user.models import County, District, Profile, School, User
-
-
-class GradeChoices(IntegerChoices):
-    # TODO: toto sa ešte môže zísť inde, prehodiť to niekam inam
-    Z1 = 12, 'Prvý ročník ZŠ'
-    Z2 = 11, 'Druhý ročník ZŠ'
-    Z3 = 10, 'Tretí ročník ZŠ'
-    Z4 = 9, 'Štvrtý ročník ZŠ'
-    Z5 = 8, 'Piaty ročník ZŠ'
-    Z6 = 7, 'Šiesty ročník ZŠ | Príma'
-    Z7 = 6, 'Siedmy ročník ZŠ | Sekunda'
-    Z8 = 5, 'Ôsmy ročník ZŠ | Tercia'
-    Z9 = 4, 'Deviaty ročník ZŠ | Kvarta'
-    S1 = 3, 'Prvý ročník SŠ | Kvinta'
-    S2 = 2, 'Druhý ročník SŠ | Sexta'
-    S3 = 1, 'Tretí ročník SŠ | Septima'
-    S4 = 0, 'Štvrtý ročník SŠ | Oktáva'
-    XX = -1, 'Už nechodím do školy'
+from competition.models import Grade
+from user.models import County, District, Profile, User
 
 
 class UserCreationForm(forms.ModelForm):
@@ -41,10 +21,12 @@ class UserCreationForm(forms.ModelForm):
         return password2
 
     def save(self, commit=True):
-        user = super().save(commit=False)
+        user = super(UserCreationForm, self).save(commit=False)
         user.set_password(self.cleaned_data['password1'])
+
         if commit:
             user.save()
+
         return user
 
 
@@ -55,33 +37,24 @@ class ProfileCreationForm(forms.ModelForm):
                   'county', 'district', 'school', 'school_info',
                   'grade', 'phone', 'parent_phone')
 
-    grade = forms.ChoiceField(
-        choices=GradeChoices.choices, required=True, label='ročník')
+    grade = forms.ModelChoiceField(queryset=Grade.objects, label='Ročník')
     school_info = forms.CharField(
         widget=forms.Textarea, required=False,
         label='povedz nám, kam chodíš na školu, aby sme ti ju mohli dodatočne pridať')
 
-    county = forms.ModelChoiceField(queryset=County.objects, label='kraj')
-    district = forms.ModelChoiceField(queryset=District.objects, label='okres')
+    county = forms.ModelChoiceField(queryset=County.objects, label='Kraj')
+    district = forms.ModelChoiceField(queryset=District.objects, label='Okres')
 
     def __init__(self, *args, **kwargs):
         super(ProfileCreationForm, self).__init__(*args, **kwargs)
 
-        self.fields['county'].queryset = County.objects.exclude(
-            pk=County.objects.get_unspecified_value().pk)
+        self.fields['county'].queryset = County.objects.all_except_unspecified()
 
     def save(self, commit=True):
         profile = super(ProfileCreationForm, self).save(commit=False)
 
-        # TODO: toto sa ešte hodí inde, vybrať niekde von
-        today = date.today()
-        s4_graduation_year = today.year
-
-        if today >= date(today.year, 9, 1):
-            s4_graduation_year += 1
-
-        profile.year_of_graduation = s4_graduation_year + \
-            int(self.cleaned_data['grade'])
+        profile.year_of_graduation = \
+            self.cleaned_data['grade'].get_year_of_graduation_by_date()
 
         if commit:
             profile.save()
