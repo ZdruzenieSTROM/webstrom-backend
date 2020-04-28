@@ -161,5 +161,8 @@ class Profile(models.Model):
         na začiatku s predvoľbou.'
     )
 
+    gdpr = models.BooleanField(
+        verbose_name='súhlas so spracovaním osobných údajov', default=False)
+
     def __str__(self):
         return f'{self.first_name} {self.last_name}'

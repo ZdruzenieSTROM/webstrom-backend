@@ -35,7 +35,7 @@ class ProfileCreationForm(forms.ModelForm):
         model = Profile
         fields = ('first_name', 'last_name', 'nickname',
                   'county', 'district', 'school', 'school_info',
-                  'grade', 'phone', 'parent_phone')
+                  'grade', 'phone', 'parent_phone', 'gdpr',)
 
     grade = forms.ModelChoiceField(queryset=Grade.objects, label='Ročník')
     school_info = forms.CharField(
@@ -49,6 +49,15 @@ class ProfileCreationForm(forms.ModelForm):
         super(ProfileCreationForm, self).__init__(*args, **kwargs)
 
         self.fields['county'].queryset = County.objects.all_except_unspecified()
+
+    def clean_gdpr(self):
+        gdpr = self.cleaned_data['gdpr']
+
+        if not gdpr:
+            raise forms.ValidationError(
+                'Súhlas so spracovaním osobných údajov je nutnou podmienkou registrácie')
+
+        return gdpr
 
     def save(self, commit=True):
         profile = super(ProfileCreationForm, self).save(commit=False)
