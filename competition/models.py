@@ -8,7 +8,7 @@ from django.utils.functional import cached_property
 from django.utils.timezone import now
 
 from base.validators import school_year_validator
-from competition.utils import get_school_year_start_by_date, SERIES_SUM_METHODS
+from competition.utils import SERIES_SUM_METHODS, get_school_year_start_by_date
 
 
 class Competition(models.Model):
@@ -32,15 +32,17 @@ class Competition(models.Model):
     )
     min_years_until_graduation = models.PositiveSmallIntegerField(
         verbose_name='Minimálny počet rokov do maturity',
-        help_text='Horná hranica na účasť v súťaži. Zadáva sa v počte rokov do maturity. Ak najstraší, kto môže riešiť súťaž je deviatak, zadá sa 4.',
+        help_text='Horná hranica na účasť v súťaži. '
+        'Zadáva sa v počte rokov do maturity. Ak najstraší, kto môže riešiť súťaž je deviatak, zadá sa 4.',
         null=True
     )
 
-    def can_user_participate(self,user):
+    def can_user_participate(self, user):
         if self.min_years_until_graduation:
-            return user.profile.year_of_graduation-get_school_year_start_by_date()>=self.min_years_until_graduation
-        else:
-            return True
+            return user.profile.year_of_graduation-get_school_year_start_by_date() \
+                >= self.min_years_until_graduation
+
+        return True
 
     def __str__(self):
         return self.name
@@ -132,12 +134,9 @@ class Series(models.Model):
     order = models.PositiveSmallIntegerField(verbose_name='poradie série')
     deadline = models.DateTimeField(verbose_name='termín série')
     complete = models.BooleanField(verbose_name='séria uzavretá')
-    sum_method = models.CharField(max_length=50,
-        blank=True,
-        null=True,
-        verbose_name='Súčtová metóda',
-        choices=SERIES_SUM_METHODS
-        )
+    sum_method = models.CharField(
+        max_length=50, blank=True, null=True,
+        verbose_name='Súčtová metóda', choices=SERIES_SUM_METHODS)
 
     def __str__(self):
         return f'{self.semester} - {self.order}. séria'
@@ -175,7 +174,8 @@ class Problem(models.Model):
     order = models.PositiveSmallIntegerField(verbose_name='poradie v sérii')
 
     def __str__(self):
-        return f'{self.series.semester.competition.name}-{self.series.semester.year}-{self.series.semester.season[0]}S-S{self.series.order} - {self.order}. úloha'
+        return f'{self.series.semester.competition.name}-{self.series.semester.year}' \
+            f'-{self.series.semester.season[0]}S-S{self.series.order} - {self.order}. úloha'
 
     def get_mean_point(self):
         pass
@@ -259,6 +259,8 @@ class Solution(models.Model):
         return f'Riešiteľ: {self.user_semester_registration} - úloha: {self.problem}'
 
 # Časopisy, brožúry, pozvánky, výsledkové listiny ...
+
+
 class Publication(models.Model):
     class Meta:
         verbose_name = 'publikácia'

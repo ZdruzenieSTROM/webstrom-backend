@@ -9,6 +9,7 @@ def get_school_year_by_date(date=None):
         year -= 1
     return f'{year}/{year+1}'
 
+
 def get_school_year_start_by_date(date=None):
     if date is None:
         date = datetime.datetime.now
@@ -19,7 +20,6 @@ def get_school_year_start_by_date(date=None):
 
 
 # Súčtové metódy pre semináre
-
 
 
 def dot_product(solutions, weights):
