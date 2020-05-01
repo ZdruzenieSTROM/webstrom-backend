@@ -3,6 +3,7 @@ from django.views.generic import DetailView, ListView
 from competition.models import Competition, Semester, Series
 
 
+#tento view by sa nemal pouzivat, namiesto neho je seriesProblemsView
 class SemesterProblemsView(DetailView):
     template_name = 'competition/semester_problems.html'
     model = Semester
@@ -18,6 +19,13 @@ class SeriesProblemsView(DetailView):
     template_name = 'competition/series.html'
     model = Series
     context_object_name = 'series'
+
+#iba placeholder aby to nieco zobrazovalo, ofc model nebude series
+class ResultsView(DetailView):
+    template_name = 'competition/results.html'
+    model = Series
+    context_object_name = 'series'
+
 
 
 class ArchiveView(ListView):
