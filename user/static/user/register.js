@@ -182,11 +182,8 @@ jQuery.validator.addMethod("phone", function (value, element) {
 }, "Zadaj telefónne číslo vo formáte validnom formáte +421 123 456 789 alebo +421123456789.");
 
 jQuery.validator.addMethod("firstPassword", function (value, element) {
-    // run validation on password2 again
-    $("#id_password2").valid();
-    //TODO: check the strength of pasword
-    return true;
-}, "Heslá sa nezhodujú.");
+    return this.optional(element) || value.length >= 8;
+}, "Heslo musí mať minimálne 8 znakov.");
 
 jQuery.validator.addMethod("secondPassword", function (value, element) {
     return this.optional(element) || !value || value == $('#id_password1').val();
@@ -222,6 +219,11 @@ var validator = $("form").validate({
 
 $('#id_email, #id_password1, #id_password2, #id_phone, #id_parent_phone').change(function (element) {
     validator.element(element);
+});
+
+$('#id_password1').change(function (element) {
+    // run validation on password2 again
+    $("#id_password2").valid();
 });
 
 $('form').on("submit", function () {
