@@ -51,25 +51,39 @@ class UserCreationForm(forms.ModelForm):
 class ProfileCreationForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ('first_name', 'last_name', 'nickname',
-                  'county', 'district', 'school', 'school_info',
-                  'grade', 'phone', 'parent_phone')
+        fields = ('first_name', 'last_name', 'nickname', 'county', 'district', 'school',
+                  'school_name', 'school_not_found', 'school_info', 'grade', 'phone', 'parent_phone')
 
     grade = forms.ChoiceField(
         choices=GradeChoices.choices, required=True, label='ročník',
         help_text='V prípade, že je leto, zadaj ročník, ktorý končíš (školský rok začína septembrom).')
+    school_name = forms.CharField(
+        required=False,
+        label='Škola*',
+        help_text='V prípade, že sa tu tvoja škola nenachádza, zvoľ "Iná škola".')
+    school_not_found = forms.BooleanField(
+        required=False,
+        label='Moja škola sa v zozname nenachádza.')
     school_info = forms.CharField(
-        widget=forms.Textarea, required=False,
+        required=False,
+        widget=forms.Textarea,
         label='povedz nám, kam chodíš na školu, aby sme ti ju mohli dodatočne pridať')
 
-    county = forms.ModelChoiceField(queryset=County.objects, label='kraj')
-    district = forms.ModelChoiceField(queryset=District.objects, label='okres')
+    county = forms.ModelChoiceField(
+        required=False,
+        queryset=County.objects,
+        label='Kraj školy')
+    district = forms.ModelChoiceField(
+        required=False,
+        queryset=District.objects,
+        label='Okres školy')
 
     def __init__(self, *args, **kwargs):
         super(ProfileCreationForm, self).__init__(*args, **kwargs)
 
         self.fields['county'].queryset = County.objects.exclude(
             pk=County.objects.get_unspecified_value().pk)
+        self.fields['school'].widget = forms.HiddenInput()
 
     def save(self, commit=True):
         profile = super(ProfileCreationForm, self).save(commit=False)

@@ -1,5 +1,25 @@
 ////////// filling selects for school
 
+var selectedDistrict = null;
+var selectedSchool = null;
+var selectedSchoolName = null;
+
+$(document).ready(function () {
+    $('#div_id_school_info').hide();
+    $('#id_school_name').addClass("requiredField");
+
+    selectedDistrict = $('#id_district').val();
+    selectedSchool = $('#id_school').val();
+    selectedSchoolName = $('#id_school_name').val();
+    if (selectedDistrict) {
+        $('#id_county').change();
+    } else {
+        $("#id_district").prop('disabled', true);
+        $("#id_school_name").prop('disabled', true);
+        $("#id_school_not_found").prop('disabled', true);
+    }
+});
+
 function removeOptions(select) {
     while (select.length > 1) {
         select.remove(select.length - 1);
@@ -16,41 +36,104 @@ function setOptions(select, options) {
     }
 }
 
+// update of possible districts values
 $('#id_county').change(function () {
-    var select = $('#id_district')[0];
-    removeOptions(select);
-    if ($(this).val()) {
+    // remove values of districts before refilling it
+    removeOptions($('#id_district')[0]);
+    var value = $(this).val();
+    if (value) {    // if court is selected, refill districts
         $.ajax({
             url: filter_district_url.replace('0', $(this).val())
         }).done(function (data) {
-            setOptions(select, data);
+            setOptions($('#id_district')[0], data);
+            // if it is "zahraničie", set default district or enable district's select
+            if (value === "9") {
+                $('#id_district').val("901");
+                $("#id_district").prop('disabled', true);
+            } else {
+                $("#id_district").prop('disabled', false);
+            }
+            if (selectedDistrict) {     // set initial data if reopened form
+                $('#id_district').val(selectedDistrict);
+                selectedDistrict = null;
+            } else {
+                $('#id_district').change();     // trigger change event
+            }
         });
+    } else {       // if calue wasn't set, disable next select and also trigger change event
+        $('#id_district').change();
+        $("#id_district").prop('disabled', true);
     }
 });
 
+// update of possible school values
+var schools = [];
 $('#id_district').change(function () {
-    var select = $('#id_school')[0];
-    removeOptions(select);
-    if ($(this).val()) {
+    // remove old values because of new district
+    $('#id_school').val(null);
+    $('#id_school_name').val(null);
+    $("#id_school_not_found").prop("checked", false);
+    if ($(this).val()) {    // if district is selected, refill schools
         $.ajax({
             url: filter_school_url.replace('0', $(this).val())
         }).done(function (data) {
-            setOptions(select, data);
+            schools = data;
+            $("#id_school_name").prop('disabled', false);
+            $("#id_school_not_found").prop('disabled', false);
+            $("#id_school_name").autocomplete({
+                minLength: 0,
+                source: schools,
+                focus: function (event, ui) {
+                    return false;
+                },
+                select: function (event, ui) {
+                    $("#id_school").val(ui.item.value);
+                    $("#id_school_name").val(ui.item.label);
+                    return false;
+                }
+            })
+                .autocomplete("instance")._renderItem = function (ul, item) {
+                    return $("<li>")
+                        .append("<div>" + item.label + "</div>")
+                        .appendTo(ul);
+                };
+            if (selectedSchoolName) {     // set initial data if reopened form
+                $('#id_school').val(selectedSchool);
+                $('#id_school_name').val(selectedSchoolName);
+                selectedSchool = null;
+                selectedSchoolName = null;
+            }
         });
+    } else {
+        $("#id_school_name").prop('disabled', true);
+        $("#id_school_not_found").prop('disabled', true);
     }
 });
 
-////////// JS modifications of register form
+function chechAvailableSchools(school) {
+    const result = schools.find(({ label }) => label === school);
+    if (!result) {
+        $("#id_school").val(null);
+        $("#id_school_name").val(null);
+    }
+}
 
-$(document).ready(function(){ 
+$('#id_school_name').change(function () {
+    chechAvailableSchools($("#id_school_name").val());
     $('#div_id_school_info').hide();
-});
+})
 
-$('#id_school').change(function(){
-    if ($( this ).val() == 0) {
+$("#id_school_not_found").change(function () {
+    if ($(this).is(":checked")) {
         $('#div_id_school_info').show();
+        $("#id_school").val(0);
+        $("#id_school_name").val('Iná škola');
+        $("#id_school_name").prop('disabled', true);
     } else {
         $('#div_id_school_info').hide();
+        $("#id_school").val(null);
+        $("#id_school_name").val(null);
+        $("#id_school_name").prop('disabled', false);
     }
 })
 
@@ -102,14 +185,17 @@ var validator = $("form").validate({
             required: false,
             phone: true
         },
+        school_name: {
+            required: true
+        },
     }
 });
 
 $('#id_email, #id_password1, #id_password2, #id_phone, #id_parent_phone').change(function (element) {
-    validator.element( element );
+    validator.element(element);
 });
 
-$('form').on( "submit", function() {
+$('form').on("submit", function () {
     if ($('#phone').val()) $('#phone').val(myTrim($('#phone').val()));
     if ($('#parent_phone').val()) $('#parent_phone').val(myTrim($('#parent_phone').val()));
-} )
+})
