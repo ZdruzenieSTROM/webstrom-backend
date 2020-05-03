@@ -1,4 +1,5 @@
 from django import forms
+from django.contrib.auth.password_validation import validate_password
 
 from competition.models import Grade
 from user.models import County, District, Profile, User
@@ -12,6 +13,11 @@ class UserCreationForm(forms.ModelForm):
     password1 = forms.CharField(label='Heslo', widget=forms.PasswordInput)
     password2 = forms.CharField(
         label='Potvrdenie hesla', widget=forms.PasswordInput)
+
+    def clean_password1(self):
+        password1 = self.cleaned_data['password1']
+        validate_password(password1)
+        return password1
 
     def clean_password2(self):
         password1 = self.cleaned_data.get('password1')
