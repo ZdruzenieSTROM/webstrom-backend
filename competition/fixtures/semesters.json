@@ -1,13 +1,21 @@
 [
     {
-        "model": "competition.Semester",
+        "model": "competition.Event",
         "pk": 0,
         "fields": {
             "competition": 0,
             "year": 44,
+            "school_year": "2019/2020",
             "start": "2020-01-01T20:00:00+02:00",
-            "end": "2020-06-01T20:00:00+02:00",
-            "season": "Letn\u00fd"
+            "end": "2020-06-01T20:00:00+02:00"
+        }
+    },
+    {
+        "model": "competition.Semester",
+        "pk": 0,
+        "fields": {
+            "late_tags": [],
+            "season_code": 1
         }
     },
     {
@@ -139,14 +147,22 @@
         }
     },
     {
-        "model": "competition.Semester",
+        "model": "competition.Event",
         "pk": 1,
         "fields": {
             "competition": 0,
             "year": 44,
+            "school_year": "2019/2020",
             "start": "2019-10-08T00:00:00+02:00",
-            "end": "2019-12-02T00:00:00+02:00",
-            "season": "Zimn\u00fd"
+            "end": "2019-12-02T00:00:00+02:00"
+        }
+    },
+    {
+        "model": "competition.Semester",
+        "pk": 1,
+        "fields": {
+            "late_tags": [],
+            "season_code": 0
         }
     },
     {
@@ -278,14 +294,22 @@
         }
     },
     {
-        "model": "competition.Semester",
+        "model": "competition.Event",
         "pk": 2,
         "fields": {
             "competition": 0,
             "year": 43,
+            "school_year": "2018/2019",
             "start": "2019-02-26T00:00:00+02:00",
-            "end": "2019-04-24T00:00:00+02:00",
-            "season": "Letn\u00fd"
+            "end": "2019-04-24T00:00:00+02:00"
+        }
+    },
+    {
+        "model": "competition.Semester",
+        "pk": 2,
+        "fields": {
+            "late_tags": [],
+            "season_code": 1
         }
     },
     {
@@ -417,14 +441,22 @@
         }
     },
     {
-        "model": "competition.Semester",
+        "model": "competition.Event",
         "pk": 3,
         "fields": {
             "competition": 0,
             "year": 43,
+            "school_year": "2018/2019",
             "start": "2018-10-09T00:00:00+02:00",
-            "end": "2018-12-03T00:00:00+02:00",
-            "season": "Zimn\u00fd"
+            "end": "2018-12-03T00:00:00+02:00"
+        }
+    },
+    {
+        "model": "competition.Semester",
+        "pk": 3,
+        "fields": {
+            "late_tags": [],
+            "season_code": 0
         }
     },
     {
@@ -556,14 +588,22 @@
         }
     },
     {
-        "model": "competition.Semester",
+        "model": "competition.Event",
         "pk": 4,
         "fields": {
             "competition": 0,
             "year": 42,
+            "school_year": "2017/2018",
             "start": "2018-02-27T00:00:00+02:00",
-            "end": "2018-05-07T00:00:00+02:00",
-            "season": "Letn\u00fd"
+            "end": "2018-05-07T00:00:00+02:00"
+        }
+    },
+    {
+        "model": "competition.Semester",
+        "pk": 4,
+        "fields": {
+            "late_tags": [],
+            "season_code": 1
         }
     },
     {
@@ -695,14 +735,22 @@
         }
     },
     {
-        "model": "competition.Semester",
+        "model": "competition.Event",
         "pk": 5,
         "fields": {
             "competition": 0,
             "year": 42,
+            "school_year": "2017/2018",
             "start": "2017-10-03T00:00:00+02:00",
-            "end": "2017-11-20T00:00:00+02:00",
-            "season": "Zimn\u00fd"
+            "end": "2017-11-20T00:00:00+02:00"
+        }
+    },
+    {
+        "model": "competition.Semester",
+        "pk": 5,
+        "fields": {
+            "late_tags": [],
+            "season_code": 0
         }
     },
     {

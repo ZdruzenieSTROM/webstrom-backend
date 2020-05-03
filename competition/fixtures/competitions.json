@@ -1,29 +1,108 @@
 [
     {
-        "model": "competition.Competition", 
+        "model": "competition.Competition",
         "pk": 0,
         "fields": {
             "name": "STROM",
             "start_year": "1976",
-            "site": 1
-        } 
+            "competition_type": 0,
+            "min_years_until_graduation": 0,
+            "sites": [
+                1
+            ]
+        }
     },
     {
-        "model": "competition.Competition", 
+        "model": "competition.Competition",
         "pk": 1,
         "fields": {
             "name": "Matik",
             "start_year": "1987",
-            "site": 2
-        } 
+            "competition_type": 0,
+            "min_years_until_graduation": 4,
+            "sites": [
+                2
+            ]
+        }
     },
     {
-        "model": "competition.Competition", 
+        "model": "competition.Competition",
         "pk": 2,
         "fields": {
             "name": "Malynár",
             "start_year": "1991",
-            "site": 3
-        } 
+            "competition_type": 0,
+            "min_years_until_graduation": 7,
+            "sites": [
+                3
+            ]
+        }
+    },
+    {
+        "model": "competition.Competition",
+        "pk": 3,
+        "fields": {
+            "name": "Matboj",
+            "start_year": "2001",
+            "competition_type": 1,
+            "min_years_until_graduation": 0,
+            "sites": [
+                1
+            ]
+        }
+    },
+    {
+        "model": "competition.Competition",
+        "pk": 4,
+        "fields": {
+            "name": "Lomihlav",
+            "competition_type": 1,
+            "start_year": "2001",
+            "min_years_until_graduation": 4,
+            "sites": [
+                2
+            ]
+        }
+    },
+    {
+        "model": "competition.Competition",
+        "pk": 5,
+        "fields": {
+            "name": "Mamut",
+            "competition_type": 1,
+            "start_year": "2001",
+            "min_years_until_graduation": 7,
+            "sites": [
+                3
+            ]
+        }
+    },
+    {
+        "model": "competition.Competition",
+        "pk": 6,
+        "fields": {
+            "name": "Kôš",
+            "competition_type": 1,
+            "start_year": "2019",
+            "sites": [
+                1,
+                2,
+                3
+            ]
+        }
+    },
+    {
+        "model": "competition.Competition",
+        "pk": 7,
+        "fields": {
+            "name": "TMM",
+            "start_year": "2001",
+            "competition_type": 2,
+            "sites": [
+                1,
+                2,
+                3
+            ]
+        }
     }
 ]

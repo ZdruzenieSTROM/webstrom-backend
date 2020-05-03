@@ -159,5 +159,8 @@ class Profile(models.Model):
         help_text='Telefonné číslo v medzinárodnom formáte (napr. +421 123 456 789).'
     )
 
+    gdpr = models.BooleanField(
+        verbose_name='súhlas so spracovaním osobných údajov', default=False)
+
     def __str__(self):
         return f'{self.first_name} {self.last_name}'
