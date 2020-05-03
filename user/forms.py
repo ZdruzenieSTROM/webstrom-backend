@@ -39,13 +39,16 @@ class UserCreationForm(forms.ModelForm):
 class ProfileCreationForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ('first_name', 'last_name', 'nickname', 'school_not', 'county', 'district', 'school',
-                  'school_name', 'school_not_found', 'school_info', 'grade', 'phone', 'parent_phone', 'gdpr')
+        fields = ['first_name', 'last_name', 'nickname',
+                  'school_not', 'county', 'district', 'school',
+                  'school_name', 'school_not_found', 'school_info',
+                  'grade', 'phone', 'parent_phone', 'gdpr', ]
 
     grade = forms.ModelChoiceField(
         queryset=Grade.objects.filter(is_active=True),
         label='Ročník',
-        help_text='V prípade, že je leto, zadaj ročník, ktorý končíš (školský rok začína septembrom).')
+        help_text='V prípade, že je leto, zadaj ročník, '
+        'ktorý končíš (školský rok začína septembrom).')
     school_not = forms.BooleanField(
         required=False,
         label='Už nie som študent základnej ani strednej školy.')
