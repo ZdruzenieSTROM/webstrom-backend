@@ -43,7 +43,8 @@ class ProfileCreationForm(forms.ModelForm):
                   'county', 'district', 'school', 'school_info',
                   'grade', 'phone', 'parent_phone', 'gdpr',)
 
-    grade = forms.ModelChoiceField(queryset=Grade.objects, label='Ročník')
+    grade = forms.ModelChoiceField(
+        queryset=Grade.objects.filter(is_active=True), label='Ročník')
     school_info = forms.CharField(
         widget=forms.Textarea, required=False,
         label='povedz nám, kam chodíš na školu, aby sme ti ju mohli dodatočne pridať')
