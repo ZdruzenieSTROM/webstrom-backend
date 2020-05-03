@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-9">
+        <h1>{{ user.profile.first_name }} {{ user.profile.last_name }}</h1>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-9">
+        <table style="width:100%">
+            <tr>
+                <td>email</td>
+                <td>{{ user.email }}</td>
+            </tr>
+            <tr>
+                <td>prezývka</td>
+                <td>{{ user.profile.nickname }}</td>
+            </tr>
+            <tr>
+                <td>škola</td>
+                <td>{{ user.profile.school }}</td>
+            </tr>
+        </table>
+    </div>
+</div>
+{% endblock content %}

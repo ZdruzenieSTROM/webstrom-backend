@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+from django.views.generic.detail import DetailView
 
 from user.forms import ProfileCreationForm, UserCreationForm
 from user.models import County, District, School, User
@@ -83,3 +84,8 @@ def school_by_district(request, pk):
     values = [{'value': school.pk, 'label': str(school)} for school in queryset]
 
     return JsonResponse(values, safe=False)
+
+class UserProfileView(DetailView):
+    template_name = 'user/user_profile.html'
+    model = User
+    context_object_name = 'user'
