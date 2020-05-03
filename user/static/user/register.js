@@ -94,6 +94,49 @@ $('#id_county').change(function () {
 
 // update of possible school values
 var schools = [];
+var accentMap = {
+    "á": "a",
+    "ä": "a",
+    "č": "c",
+    "ď": "d",
+    "é": "e",
+    "í": "i",
+    "ĺ": "l",
+    "ľ": "l",
+    "ň": "n",
+    "ó": "o",
+    "ô": "o",
+    "ŕ": "r",
+    "š": "s",
+    "ť": "t",
+    "ú": "u",
+    "ý": "y",
+    "ž": "z",
+    "Ǎ": "a",
+    "Ä": "a",
+    "Č": "c",
+    "Ď": "d",
+    "É": "e",
+    "Í": "i",
+    "Ĺ": "l",
+    "Ľ": "l",
+    "Ň": "n",
+    "Ó": "o",
+    "Ô": "o",
+    "Ŕ": "r",
+    "Š": "s",
+    "Ť": "t",
+    "Ú": "u",
+    "Ý": "y",
+    "Ž": "z"
+};
+function normalize(term) {
+    var ret = "";
+    for (var i = 0; i < term.length; i++) {
+        ret += accentMap[term.charAt(i)] || term.charAt(i);
+    }
+    return ret;
+};
 $('#id_district').change(function () {
     // remove old values because of new district
     $('#id_school').val(null);
@@ -108,7 +151,13 @@ $('#id_district').change(function () {
             $("#id_school_not_found").prop('disabled', false);
             $("#id_school_name").autocomplete({
                 minLength: 0,
-                source: schools,
+                source: function (request, response) {
+                    var matcher = new RegExp($.ui.autocomplete.escapeRegex(request.term), "i");
+                    response($.grep(schools, function (value) {
+                        value = value.label || value.value || value;
+                        return matcher.test(value) || matcher.test(normalize(value));
+                    }));
+                },
                 focus: function (event, ui) {
                     return false;
                 },
@@ -128,7 +177,7 @@ $('#id_district').change(function () {
                 $('#id_school_name').val(selectedSchoolName);
                 selectedSchool = null;
                 selectedSchoolName = null;
-            } else if (selectedSchool == 0) {
+            } else if (selectedSchool === "0") {
                 $("#id_school_not_found").prop('checked', true);
                 $("#id_school_not_found").change();
             }
