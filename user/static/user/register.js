@@ -18,7 +18,34 @@ $(document).ready(function () {
         $("#id_school_name").prop('disabled', true);
         $("#id_school_not_found").prop('disabled', true);
     }
+    if ($('#id_school_not').is(":checked")) {
+        $("#id_school_not").change();
+    } else {
+        $('#id_grade option[value="-1"]').attr('disabled', true);
+    }
 });
+
+$("#id_school_not").change(function () {
+    if ($(this).is(":checked")) {
+        $('#div_id_school_info').hide();
+        $("#id_school").val(1);
+        $('#id_grade option[value="-1"]').attr('disabled', false);
+        $("#id_grade").val(-1);
+        $("#id_school_name").val('Bez školy');
+        $("#id_county").prop('disabled', true);
+        $("#id_district").prop('disabled', true);
+        $("#id_school_name").prop('disabled', true);
+        $('#id_grade option:not(:selected)').attr('disabled', true);
+    } else {
+        $('#div_id_school_info').hide();
+        $("#id_school").val(null);
+        $("#id_school_name").val(null);
+        $("#id_school_name").prop('disabled', false);
+        $('#id_grade option:not(:selected)').attr('disabled', false);
+        $('#id_grade option[value="-1"]').attr('disabled', true);
+        $("#id_grade").val(0);
+    }
+})
 
 function removeOptions(select) {
     while (select.length > 1) {
