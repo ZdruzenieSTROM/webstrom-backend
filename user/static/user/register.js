@@ -56,9 +56,8 @@ $('#id_county').change(function () {
             if (selectedDistrict) {     // set initial data if reopened form
                 $('#id_district').val(selectedDistrict);
                 selectedDistrict = null;
-            } else {
-                $('#id_district').change();     // trigger change event
             }
+            $('#id_district').change();     // trigger change event
         });
     } else {       // if calue wasn't set, disable next select and also trigger change event
         $('#id_district').change();
@@ -102,6 +101,9 @@ $('#id_district').change(function () {
                 $('#id_school_name').val(selectedSchoolName);
                 selectedSchool = null;
                 selectedSchoolName = null;
+            } else if (selectedSchool == 0) {
+                $("#id_school_not_found").prop('checked', true);
+                $("#id_school_not_found").change();
             }
         });
     } else {
