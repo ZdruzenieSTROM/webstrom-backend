@@ -47,42 +47,42 @@ def series_general_weighted_sum(solutions, weights):
 
 def series_Malynar_sum(solutions, user_registration):
     weights = None
-    if user_registration.grade is not None:
-        if user_registration.grade.years_until_graduation > 8:
+    if user_registration.class_level is not None:
+        if user_registration.class_level.years_until_graduation > 8:
             weights = [2, 1, 1, 1, 1, 0]
-        elif user_registration.grade.years_until_graduation == 8:
+        elif user_registration.class_level.years_until_graduation == 8:
             weights = [1, 1, 1, 1, 2, 0]
     return series_general_weighted_sum(solutions, weights)
 
 
 def series_Matik_sum(solutions, user_registration):
     weights = None
-    if user_registration.grade is not None:
-        if user_registration.grade.years_until_graduation > 5:
+    if user_registration.class_level is not None:
+        if user_registration.class_level.years_until_graduation > 5:
             weights = [2, 1, 1, 1, 1, 0]
-        elif user_registration.grade.years_until_graduation == 5:
+        elif user_registration.class_level.years_until_graduation == 5:
             weights = [1, 1, 1, 1, 2, 0]
     return series_general_weighted_sum(solutions, weights)
 
 
 def series_STROM_sum(solutions, user_registration):
     weights = None
-    if user_registration.grade is not None:
-        if user_registration.grade.years_until_graduation > 2:
+    if user_registration.class_level is not None:
+        if user_registration.class_level.years_until_graduation > 2:
             weights = [2, 1, 1, 1, 1, 0]
-        elif user_registration.grade.years_until_graduation == 2:
+        elif user_registration.class_level.years_until_graduation == 2:
             weights = [1, 1, 1, 1, 2, 0]
     return series_general_weighted_sum(solutions, weights)
 
 
 def series_STROM_4problems_sum(solutions, user_registration):
     weights = [1, 1, 1, 2]
-    if user_registration.grade is not None:
-        if user_registration.grade.years_until_graduation > 2:
+    if user_registration.class_level is not None:
+        if user_registration.class_level.years_until_graduation > 2:
             weights = [2, 1, 1, 1]
-        elif user_registration.grade.years_until_graduation == 2:
+        elif user_registration.class_level.years_until_graduation == 2:
             weights = [1, 2, 1, 1]
-        elif user_registration.grade.years_until_graduation == 1:
+        elif user_registration.class_level.years_until_graduation == 1:
             weights = [1, 1, 2, 1]
     return series_general_weighted_sum(solutions, weights)
 
