@@ -7,8 +7,9 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.views.generic.detail import DetailView
 
-from user.forms import ProfileCreationForm, UserCreationForm
-from user.models import County, District, School, User
+
+from user.forms import ProfileCreationForm, UserCreationForm, ProfileUpdateForm
+from user.models import County, District, School, User, Profile
 from user.tokens import email_verification_token_generator
 
 
@@ -85,7 +86,31 @@ def school_by_district(request, pk):
 
     return JsonResponse(values, safe=False)
 
+
 class UserProfileView(DetailView):
-    template_name = 'user/user_profile.html'
-    model = User
-    context_object_name = 'user'
+    template_name = 'user/profile_view.html'
+    model = Profile
+    context_object_name = 'profile'
+
+
+def profile_update(request):
+    profile = request.user.profile
+    if request.method == 'POST':
+        form = ProfileUpdateForm(request.POST, instance=profile)
+
+        if form.is_valid():
+            upd_profile = form.save(commit=False)
+            upd_profile.user = profile.user
+            upd_profile.save()
+
+            messages.info(request, 'Zmeny boli uložené.')
+            return redirect('user:profile-detail', upd_profile.id)
+    else:
+        form = ProfileUpdateForm(instance=profile)
+
+        form.fields['county'].initial = profile.school.district.county
+        form.fields['district'].initial = profile.school.district
+        form.fields['school_name'].initial = str(profile.school)
+        form.fields['grade'].initial = profile.grade().id
+
+    return render(request, 'user/profile_update.html', {'form': form})

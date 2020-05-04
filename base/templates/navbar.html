@@ -31,8 +31,8 @@
                         Profil<span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a class="nav-link" href="{% url 'user:profile-detail' user.id %}">Zobraziť profil</a></li>
-                        <li><a class="nav-link" href="#">#Upraviť profil</a></li>
+                        <li><a class="nav-link" href="{% url 'user:profile-detail' user.profile.id %}">Zobraziť profil</a></li>
+                        <li><a class="nav-link" href="{% url 'user:profile-update' %}">Upraviť profil</a></li>
                         <li><a class="nav-link" href="{% url 'user:password_change' %}">Zmeniť heslo</a></li>
                     </ul>
                 </li>
