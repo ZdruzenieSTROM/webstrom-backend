@@ -204,9 +204,10 @@ class Series(models.Model):
             user_solutions[solution.problem.order - 1] = solution
 
         # Uloz posledneho usera
-        results.append(self._create_user_dict(sum_func,current_user,user_solutions))
+        if current_user:
+            results.append(self._create_user_dict(sum_func,current_user,user_solutions))
 
-        assert len(results)>0
+        
         results.sort(key=lambda x: x['total'], reverse=True)
         return results
 
