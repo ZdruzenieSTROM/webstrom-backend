@@ -4,43 +4,43 @@
 
 {% for year, listOfSemesters in context.years.items %}
 <div class="m-3">
-    <div data-toggle="collapse" data-target="#collapse{{year}}" >
+    <div data-toggle="collapse" data-target="#collapse{{year}}">
         <div class="btn-link row bg-primary text-white p-1">
             <h5>{{year}}. ročník</h5>
-        </div>       
+        </div>
     </div>
     <div id="collapse{{year}}" class="collapse {% if year == context.mostRecentYear %} show {% endif %}">
         {% for semester in listOfSemesters %}
-            <div class="row bg-secondary p-1">
-                <a class="col text-white">
-                    {{ semester.season }} semester
-                </a>
-                <a class="btn col-auto border bg-white" href="{# stranka sustredenia #}">
-                    #sústredenie
-                </a>
-                <a class="btn col-auto border bg-white" href="{# 1.casopis #}">
-                    #časopis
-                </a>
+        <div class="row bg-secondary p-1">
+            <a class="col text-white">
+                {{ semester.season }} semester
+            </a>
+            <a class="btn col-auto border bg-white" href="{# stranka sustredenia #}">
+                #sústredenie
+            </a>
+            <a class="btn col-auto border bg-white" href="{# 1.casopis #}">
+                #časopis
+            </a>
+        </div>
+
+
+        {% for series in semester.series_set.all %}
+        <div class="row bg-white border p-1">
+            <div class="col">
+                {{series.order}}.séria
             </div>
+            <a class="btn border col-auto" href="{% url 'competition:series-problems-detail' series.pk %}">
+                zadania
+            </a>
+            <a class="btn border col-auto" href="{% url 'competition:series-results-detail' series.pk %}">
+                výsledky
+            </a>
+            <a class="btn border col-auto" href="{# casopis so vzorakmi (?) #}">
+                #časopis
+            </a>
 
-
-            {% for series in semester.series_set.all %}
-                <div class="row bg-white border p-1">
-                    <div class="col">
-                        {{series.order}}.séria
-                    </div>
-                    <a class="btn border col-auto" href="{% url 'competition:series-problems-detail' series.pk %}">
-                        zadania
-                    </a>
-                    <a class="btn border col-auto" href="{% url 'competition:series-results-detail' series.pk %}">
-                        výsledky
-                    </a>
-                    <a class="btn border col-auto" href="{# casopis so vzorakmi (?) #}">
-                        #časopis
-                    </a>
-                    
-                </div>
-            {% endfor %}
+        </div>
+        {% endfor %}
         {% endfor %}
     </div>
 </div>
