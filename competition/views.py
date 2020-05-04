@@ -48,3 +48,23 @@ class SemesterDetailView(DetailView):
     template_name = 'competition/semester_detail.html'
     model = Semester
     context_object_name = 'semester'
+
+class SeriesResultsView(DetailView):
+    model = Series
+    context_object_name = 'series'
+    template_name = 'competition/series_result.html'
+
+class SeriesResultsLatexView(DetailView):
+    model = Series
+    context_object_name = 'series'
+    
+
+class SemesterResultsView(DetailView):
+    model = Semester
+    context_object_name = 'semester'
+    
+
+class SemesterResultsLatexView(DetailView):
+    model = Semester
+    context_object_name = 'semester'
+    
