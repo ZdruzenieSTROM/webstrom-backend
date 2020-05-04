@@ -1,25 +1,22 @@
-import datetime
+from django.utils.timezone import now
 
 
-def get_school_year_by_date(date=None):
+def get_school_year_start_by_date(date=None) -> int:
     if date is None:
-        date = datetime.datetime.now
-    year = date.year
-    if date.month < 9:
-        year -= 1
-    return f'{year}/{year+1}'
+        date = now()
 
-def get_school_year_start_by_date(date=None):
-    if date is None:
-        date = datetime.datetime.now
-    year = date.year
-    if date.month < 9:
-        year -= 1
-    return year
+    return date.year if date.month >= 9 else date.year - 1
+
+
+def get_school_year_end_by_date(date=None) -> int:
+    return get_school_year_start_by_date(date) + 1
+
+
+def get_school_year_by_date(date=None) -> str:
+    return f'{get_school_year_start_by_date(date)}/{get_school_year_end_by_date(date)}'
 
 
 # Súčtové metódy pre semináre
-
 
 
 def dot_product(solutions, weights):

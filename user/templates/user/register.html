@@ -4,6 +4,7 @@
 {% load crispy_forms_tags %}
 
 {% block css %}
+<link rel="stylesheet" type="text/css" href="{% static 'vendor/css/jquery-ui.css' %}" />
 <link rel="stylesheet" type="text/css" href="{% static 'user/validations.css' %}" />
 {% endblock css %}
 
@@ -12,11 +13,12 @@
     {% csrf_token %}
     {{ user_form|crispy }}
     {{ profile_form|crispy }}
-    <input type="submit" value="Registrovať">
+    <input id="submit_button" class="btn btn-primary" type="submit" value="Registrovať">
 </form>
 {% endblock content %}
 
 {% block javascript %}
+<script src="{% static 'vendor/js/jquery-ui.min.js' %}"></script>
 <script src="{% static 'vendor/js/jquery.validate.min.js' %}"></script>
 <script src="{% static 'user/register.js' %}"></script>
 {% endblock javascript %}

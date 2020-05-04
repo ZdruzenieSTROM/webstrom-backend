@@ -6,5 +6,13 @@
             "district": 0,
             "name": "Iná škola"
         }
+    },
+    {
+        "model": "user.School",
+        "pk": 1,
+        "fields": {
+            "district": 0,
+            "name": "Bez školy"
+        }
     }
 ]

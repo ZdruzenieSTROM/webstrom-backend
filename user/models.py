@@ -148,8 +148,7 @@ class Profile(models.Model):
         null=True,
         validators=[phone_number_validator],
         verbose_name='telefónne číslo',
-        help_text='Telefonné číslo oddelené medzerami po trojčísliach \
-        na začiatku s predvoľbou.'
+        help_text='Telefonné číslo v medzinárodnom formáte (napr. +421 123 456 789).'
     )
     parent_phone = models.CharField(
         max_length=32,
@@ -157,9 +156,11 @@ class Profile(models.Model):
         null=True,
         validators=[phone_number_validator],
         verbose_name='telefónne číslo na rodiča',
-        help_text='Telefonné číslo oddelené medzerami po trojčísliach \
-        na začiatku s predvoľbou.'
+        help_text='Telefonné číslo v medzinárodnom formáte (napr. +421 123 456 789).'
     )
+
+    gdpr = models.BooleanField(
+        verbose_name='súhlas so spracovaním osobných údajov', default=False)
 
     def __str__(self):
         return f'{self.first_name} {self.last_name}'
