@@ -23,12 +23,14 @@ def get_school_year_start_by_date(date=None):
 
 
 def dot_product(solutions, weights):
-    return sum([(s.score or 0)*w for s, w in zip(solutions, weights)])
+    return sum([s*w for s, w in zip(solutions, weights)])
 
 
 def solutions_to_list_of_points(solutions):
     return [s.score or 0 if s is not None else 0 for s in solutions]
 
+def solutions_to_list_of_points_pretty(solutions):
+    return [str(s.score) or '?' if s is not None else '-' for s in solutions]
 
 def series_simple_sum(solutions, user_registration=None):
     return sum([s.score or 0 for s in solutions if s is not None])
