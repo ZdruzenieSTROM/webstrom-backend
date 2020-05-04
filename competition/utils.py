@@ -27,7 +27,7 @@ def solutions_to_list_of_points(solutions):
     return [s.score or 0 if s is not None else 0 for s in solutions]
 
 def solutions_to_list_of_points_pretty(solutions):
-    return [str(s.score) or '?' if s is not None else '-' for s in solutions]
+    return [str(s.score or '?') if s is not None else '-' for s in solutions]
 
 def series_simple_sum(solutions, user_registration=None):
     return sum([s.score or 0 for s in solutions if s is not None])
