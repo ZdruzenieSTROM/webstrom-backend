@@ -122,14 +122,37 @@ class SemesterLaTeXLoader():
         return text
 
     @staticmethod
-    def replace_pair_tags(text,latex_start,latex_end,html_start_tag,html_end_tag):
-        pass
+    def replace_pair_tags(text,latex_command,html_start_tag,html_end_tag):
+        print(f'Processing {text}')
+        latex_start='\\'+latex_command+'{'
+        pos = text.find(latex_start)
+        while pos!=-1:
+            pos = pos + len(latex_start)
+            par = 1
+            while par!=0 and pos<len(text):
+                if text[pos]=='{':
+                    par+=1
+                    print(par)
+                elif text[pos]=='}':
+                    par-=1
+                    print(par)
+                    if par==0:
+                        text = text[:pos]+html_end_tag+text[pos+1:]
+                pos+=1
+            
+            text = text.replace(latex_start,html_start_tag,1)
+            pos = text.find(latex_start)
+        return text
+        
 
     @staticmethod
     def latex2html(text):
         text =  SemesterLaTeXLoader.itemizetohtml(text)
-        text.replace('~','&nbsp')
-        text.replace('\\\\','<br>')
+        text = text.replace('~','&nbsp;')
+        text = text.replace('\\\\','<br>')
+        text = SemesterLaTeXLoader.replace_pair_tags(text,'textit','<i>','</i>')
+        text = SemesterLaTeXLoader.replace_pair_tags(text,'textbf','<b>','</b>')
+        text = SemesterLaTeXLoader.replace_pair_tags(text,'emph','<em>','</em>')
         return text
 
     @staticmethod
@@ -242,6 +265,5 @@ def process_files(files):
 
 
 if __name__ == '__main__':
-    files = ['STROM-44-2.tex', 'STROM-44-1.tex', 'STROM-43-2.tex',
-             'STROM-43-1.tex', 'STROM-42-2.tex', 'STROM-42-1.tex']
+    files = ['STROM-44-2.tex']
     process_files(files)
