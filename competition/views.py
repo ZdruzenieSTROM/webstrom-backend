@@ -49,10 +49,17 @@ class SemesterDetailView(DetailView):
     model = Semester
     context_object_name = 'semester'
 
+
+
 class SeriesResultsView(DetailView):
     model = Series
     context_object_name = 'series'
     template_name = 'competition/series_result.html'
+        
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['results'] = self.object.results()
+        return context
 
 class SeriesResultsLatexView(DetailView):
     model = Series
