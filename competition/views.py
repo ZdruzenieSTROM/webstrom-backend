@@ -3,18 +3,6 @@ from django.views.generic import DetailView, ListView
 from competition.models import Competition, Semester, Series
 
 
-# tento view by sa nemal pouzivat, namiesto neho je seriesProblemsView
-class SemesterProblemsView(DetailView):
-    template_name = 'competition/semester_problems.html'
-    model = Semester
-    context_object_name = 'semester'
-
-
-class LatestSemesterView(SemesterProblemsView):
-    def get_object(self, queryset=None):
-        return Competition.get_seminar_by_current_site().semester_set.order_by('-end').first()
-
-
 class SeriesProblemsView(DetailView):
     template_name = 'competition/series.html'
     model = Series
@@ -56,9 +44,3 @@ class ArchiveView(ListView):
             competition=site_competition).order_by('-year').first().year
         context["years"] = years
         return context
-
-
-class SemesterDetailView(DetailView):
-    template_name = 'competition/semester_detail.html'
-    model = Semester
-    context_object_name = 'semester'
