@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+<table>
+    <tr>
+      <th>Miesto</th>
+      <th>Meno</th>
+      <th>Škola</th>
+      <th>Ročník</th>
+      {%for problem in series.problem_set.all%}
+        <th>{{problem.order}}</th>
+      {%endfor%}
+      <th>Spolu</th>
+    </tr>
+    {% for result_row in results %}
+    <tr>
+      {% if result_row.rank_changed %}
+        {% if result_row.rank_start is result_row.rank_end %}
+          <td>{{result_row.rank_start}}.</td>
+        {% else %}
+          <td>{{result_row.rank_start}}. - {{result_row.rank_end}}.</td>
+        {% endif %}
+      {%else%}
+      <td></td>
+      {% endif %}
+      <td>{{result_row.name}}</td>
+      <td>{{result_row.school}}</td>
+      <td>{{result_row.grade}}</td>
+      {%for score in result_row.points %}
+        <td>{{score}}</td>
+      {%endfor%}
+      <td>{{result_row.total}}</td>
+    </tr>
+    {%endfor%}
+   
+  </table>
+  
+
+
+{% endblock content %}
