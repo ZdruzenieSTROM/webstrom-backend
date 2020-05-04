@@ -16,6 +16,32 @@ def get_school_year_by_date(date=None) -> str:
     return f'{get_school_year_start_by_date(date)}/{get_school_year_end_by_date(date)}'
 
 
+def rank_results(results):
+    
+    # Spodná hranica
+    current_rank = 1
+    n_teams = 1
+    last_points = None
+    for res in results:
+        if last_points != res['total']:
+            current_rank = n_teams
+            last_points = res['total']
+        res['rank_lower'] = current_rank
+        n_teams += 1
+
+    # Horná hranica
+    current_rank = len(results)
+    n_teams = len(results)
+    last_points = None
+    for res in reversed(results):
+        if last_points != res['total']:
+            current_rank = n_teams
+            last_points = res['total']
+        res['rank_lower'] = current_rank
+        n_teams -= 1
+    return results
+        
+
 # Súčtové metódy pre semináre
 
 
