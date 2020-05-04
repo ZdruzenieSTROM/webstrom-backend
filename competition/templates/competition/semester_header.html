@@ -5,45 +5,51 @@
 </div>
 
 <ul class="nav nav-tabs">
-  <li class="nav-item">
+<li class="nav-item">
     <a class="nav-link {% if active == 'problems' %} active {% endif %}" 
     href="{% url 'competition:series-problems-detail' pk=series.pk %}">Zadania</a>
-  </li>
-  <li class="nav-item">
+</li>
+<li class="nav-item">
     <a class="nav-link {% if active == 'results' %} active {% endif %}" 
     href="{% url 'competition:series-results-detail' pk=series.pk %}">Výsledky</a>
-  </li>
-  <li class="nav-item">
+</li>
+<li class="nav-item">
     <a class="nav-link {% if active == 'publications' %} active {% endif %}" 
     href="#">#Časopisy</a>
-  </li>
-  <li class="nav-item">
+</li>
+<li class="nav-item">
     <a class="nav-link {% if active == 'events' %} active {% endif %}" 
     href="#">#Akcie</a>
-  </li>
+</li>
 </ul>
 
 {% if active == 'problems'%}
 <ul class="nav nav-tabs">
-  <li class="nav-item">
-    <a class="nav-link {% if series.order == 1 %} active {% endif %}" 
-    href="{% url 'competition:series-problems-detail' pk=semester.series_set.first.pk %}">1. séria</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link {% if series.order == 2 %} active {% endif %}" 
-    href="{% url 'competition:series-problems-detail' pk=semester.series_set.last.pk %}">2. séria</a>
-  </li>
+    <li class="nav-item">
+        <a class="nav-link {% if series.order == 1 %} active {% endif %}" 
+        href="{% url 'competition:series-problems-detail' pk=semester.series_set.first.pk %}">1. séria</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {% if series.order == 2 %} active {% endif %}" 
+        href="{% url 'competition:series-problems-detail' pk=semester.series_set.last.pk %}">2. séria</a>
+    </li>
 </ul>
+
 {% elif active == 'results' %}
 <ul class="nav nav-tabs">
-  <li class="nav-item">
-    <a class="nav-link {% if series.order == 1 %} active {% endif %}" 
-    href="{% url 'competition:series-results-detail' pk=semester.series_set.first.pk %}">1. séria</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link {% if series.order == 2 %} active {% endif %}" 
-    href="{% url 'competition:series-results-detail' pk=semester.series_set.last.pk %}">2. séria</a>
-  </li>
+    <li class="nav-item">
+        <a class="nav-link {% if series.order == 1 %} active {% endif %}" 
+        href="{% url 'competition:series-results-detail' pk=semester.series_set.first.pk %}">1. séria</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {% if series.order == 2 %} active {% endif %}" 
+        href="{% url 'competition:series-results-detail' pk=semester.series_set.last.pk %}">2. séria</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" 
+        href="#">finálne poradie</a>
+    </li>
 </ul>
 {% endif %}
+
 </a>

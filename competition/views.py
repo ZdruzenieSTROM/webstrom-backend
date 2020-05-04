@@ -20,6 +20,12 @@ class SeriesProblemsView(DetailView):
     model = Series
     context_object_name = 'series'
 
+class LatestSeriesProblemsView(SeriesProblemsView):
+    def get_object(self, queryset=None):
+        #treba dorobit metodu co vrati aktualnu seriu a to tu capnut
+        return Competition.get_seminar_by_current_site().semester_set.order_by('-end').first().series_set.first()
+
+
 #iba placeholder aby to nieco zobrazovalo, ofc model nebude series
 class ResultsView(DetailView):
     template_name = 'competition/results.html'
