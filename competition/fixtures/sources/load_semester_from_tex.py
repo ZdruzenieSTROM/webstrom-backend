@@ -122,8 +122,15 @@ class SemesterLaTeXLoader():
         return text
 
     @staticmethod
+    def replace_pair_tags(text,latex_start,latex_end,html_start_tag,html_end_tag):
+        pass
+
+    @staticmethod
     def latex2html(text):
-        return SemesterLaTeXLoader.itemizetohtml(text)
+        text =  SemesterLaTeXLoader.itemizetohtml(text)
+        text.replace('~','&nbsp')
+        text.replace('\\\\','<br>')
+        return text
 
     @staticmethod
     def semester_latex2html(semester):
