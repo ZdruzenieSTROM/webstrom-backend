@@ -54,5 +54,116 @@
             "phone": "\ud83d\ude3d",
             "parent_phone": null
         }
+    },
+    {
+        "model": "user.profile",
+        "pk": 8,
+        "fields": {
+            "user": 5,
+            "first_name": "Ucastnik",
+            "last_name": "Jeden",
+            "nickname": null,
+            "school": 160997,
+            "year_of_graduation": 2021,
+            "phone": "+421912345678",
+            "parent_phone": "+421912345678"
+        }
+    },
+    {
+        "model": "user.profile",
+        "pk": 9,
+        "fields": {
+            "user": 6,
+            "first_name": "Ucastnik",
+            "last_name": "Dva",
+            "nickname": null,
+            "school": 160997,
+            "year_of_graduation": 2022,
+            "phone": "+421912345678",
+            "parent_phone": "+421912345678"
+        }
+    },
+    {
+        "model": "user.profile",
+        "pk": 10,
+        "fields": {
+            "user": 7,
+            "first_name": "Ucastnik",
+            "last_name": "Tri",
+            "nickname": null,
+            "school": "000598071",
+            "year_of_graduation": 2023,
+            "phone": "+421912345678",
+            "parent_phone": "+421912345678"
+        }
+    },
+    {
+        "model": "user.profile",
+        "pk": 11,
+        "fields": {
+            "user": 8,
+            "first_name": "Ucastnik",
+            "last_name": "Styri",
+            "nickname": null,
+            "school": "000160997",
+            "year_of_graduation": 2024,
+            "phone": "+421912345678",
+            "parent_phone": "+421912345678"
+        }
+    },
+    {
+        "model": "user.profile",
+        "pk": 12,
+        "fields": {
+            "user": 9,
+            "first_name": "Ucastnik",
+            "last_name": "Pat",
+            "nickname": null,
+            "school": "000160997",
+            "year_of_graduation": 2025,
+            "phone": "+421912345678",
+            "parent_phone": "+421912345678"
+        }
+    },
+    {
+        "model": "user.profile",
+        "pk": 13,
+        "fields": {
+            "user": 10,
+            "first_name": "Ucastnik",
+            "last_name": "Sest",
+            "nickname": null,
+            "school": "000160997",
+            "year_of_graduation": 2022,
+            "phone": "+421912345678",
+            "parent_phone": "+421912345678"
+        }
+    },
+    {
+        "model": "user.profile",
+        "pk": 14,
+        "fields": {
+            "user": 11,
+            "first_name": "Veducko",
+            "last_name": "Kristin",
+            "nickname": "Kikita",
+            "school": "000598071",
+            "year_of_graduation": 2016,
+            "phone": "+421912345678"
+        }
+    },
+    {
+        "model": "user.profile",
+        "pk": 15,
+        "fields": {
+            "user": 12,
+            "first_name": "Veducko ",
+            "last_name": "Janik",
+            "nickname": "Chalan z bicom",
+            "school": "000160997",
+            "year_of_graduation": 2021,
+            "phone": "+421912345678",
+            "parent_phone": "+421912345678"
+        }
     }
 ]
