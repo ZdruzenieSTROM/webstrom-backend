@@ -12,7 +12,7 @@
     <div id="collapse{{year}}" class="collapse {% if year == context.mostRecentYear %} show {% endif %}">
         {% for semester in listOfSemesters %}
             <div class="row bg-secondary p-1">
-                <a class="col text-white" href="{% url 'competition:semester-detail' semester.pk %}">
+                <a class="col text-white">
                     {{ semester.season }} semester
                 </a>
                 <a class="btn col-auto border bg-white" href="{# stranka sustredenia #}">
@@ -32,8 +32,8 @@
                     <a class="btn border col-auto" href="{% url 'competition:series-problems-detail' series.pk %}">
                         zadania
                     </a>
-                    <a class="btn border col-auto" href="{# vysledky #}">
-                        #výsledky
+                    <a class="btn border col-auto" href="{% url 'competition:series-results-detail' series.pk %}">
+                        výsledky
                     </a>
                     <a class="btn border col-auto" href="{# casopis so vzorakmi (?) #}">
                         #časopis
