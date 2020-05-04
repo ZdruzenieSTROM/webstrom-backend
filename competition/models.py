@@ -178,7 +178,8 @@ class Series(models.Model):
                 'school': user.school,
                 'grade': user.class_level.tag,
                 'points': utils.solutions_to_list_of_points_pretty(user_solutions),
-                'total': sum_func(user_solutions,user)
+                'total': sum_func(user_solutions,user),
+                'solutions': user_solutions
             }
 
     def results(self):
