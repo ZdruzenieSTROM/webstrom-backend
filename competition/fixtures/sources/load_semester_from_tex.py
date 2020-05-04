@@ -114,51 +114,53 @@ roman_numerals = {
 class SemesterLaTeXLoader():
     @staticmethod
     def itemizetohtml(text):
-        text = re.sub(r'\\begin\{itemize\}','<ul>',text,flags=re.S)
-        text = re.sub(r'\\end\{itemize\}','</ul>',text,flags=re.S)
-        text = re.sub(r'\\begin\{enumerate\}','<ol>',text,flags=re.S)
-        text = re.sub(r'\\end\{enumerate\}','</ol>',text,flags=re.S)
-        text = re.sub(r'\\item(.*?)(?=\\item|$|\\end)',r'<li>\1</li>',text,flags=re.M |re.S)
+        text = re.sub(r'\\begin\{itemize\}', '<ul>', text, flags=re.S)
+        text = re.sub(r'\\end\{itemize\}', '</ul>', text, flags=re.S)
+        text = re.sub(r'\\begin\{enumerate\}', '<ol>', text, flags=re.S)
+        text = re.sub(r'\\end\{enumerate\}', '</ol>', text, flags=re.S)
+        text = re.sub(r'\\item(.*?)(?=\\item|$|\\end)',
+                      r'<li>\1</li>', text, flags=re.M | re.S)
         return text
 
     @staticmethod
-    def replace_pair_tags(text,latex_command,html_start_tag,html_end_tag):
+    def replace_pair_tags(text, latex_command, html_start_tag, html_end_tag):
         print(f'Processing {text}')
-        latex_start='\\'+latex_command+'{'
+        latex_start = '\\'+latex_command+'{'
         pos = text.find(latex_start)
-        while pos!=-1:
+        while pos != -1:
             pos = pos + len(latex_start)
             par = 1
-            while par!=0 and pos<len(text):
-                if text[pos]=='{':
-                    par+=1
+            while par != 0 and pos < len(text):
+                if text[pos] == '{':
+                    par += 1
                     print(par)
-                elif text[pos]=='}':
-                    par-=1
+                elif text[pos] == '}':
+                    par -= 1
                     print(par)
-                    if par==0:
+                    if par == 0:
                         text = text[:pos]+html_end_tag+text[pos+1:]
-                pos+=1
-            
-            text = text.replace(latex_start,html_start_tag,1)
+                pos += 1
+
+            text = text.replace(latex_start, html_start_tag, 1)
             pos = text.find(latex_start)
         return text
-        
 
     @staticmethod
     def latex2html(text):
-        text =  SemesterLaTeXLoader.itemizetohtml(text)
-        text = text.replace('~','&nbsp;')
-        text = text.replace('\\\\','<br>')
-        text = SemesterLaTeXLoader.replace_pair_tags(text,'textit','<i>','</i>')
-        text = SemesterLaTeXLoader.replace_pair_tags(text,'textbf','<b>','</b>')
-        text = SemesterLaTeXLoader.replace_pair_tags(text,'emph','<em>','</em>')
+        text = SemesterLaTeXLoader.itemizetohtml(text)
+        text = text.replace('~', '&nbsp;')
+        text = text.replace('\\\\', '<br>')
+        text = SemesterLaTeXLoader.replace_pair_tags(
+            text, 'textit', '<i>', '</i>')
+        text = SemesterLaTeXLoader.replace_pair_tags(
+            text, 'textbf', '<b>', '</b>')
+        text = SemesterLaTeXLoader.replace_pair_tags(
+            text, 'emph', '<em>', '</em>')
         return text
 
     @staticmethod
     def semester_latex2html(semester):
-        return [ (s,u,SemesterLaTeXLoader.latex2html(problem)) for s,u,problem in semester]
-
+        return [(s, u, SemesterLaTeXLoader.latex2html(problem)) for s, u, problem in semester]
 
     @staticmethod
     def remove_latex_comments(text):
@@ -177,8 +179,12 @@ class SemesterLaTeXLoader():
             text = input_tex.read()
             text = SemesterLaTeXLoader.remove_latex_comments(text)
             problems = re.findall(
-                r'\\newcommand\{\\zad([^\{\}]+)s([^\{\}]+)\}\{(.*?)\}[^\{\}]*(?=\\newcommand|$)', text, flags=re.S)
-            return [(roman_numerals[problem_series], roman_numerals[problem_order], problem_text.strip('\n')) for problem_order, problem_series, problem_text in problems]
+                r'\\newcommand\{\\zad([^\{\}]+)s([^\{\}]+)\}\{(.*?)\}[^\{\}]*(?=\\newcommand|$)',
+                text, flags=re.S)
+            return [(roman_numerals[problem_series],
+                     roman_numerals[problem_order],
+                     problem_text.strip('\n'))
+                    for problem_order, problem_series, problem_text in problems]
 
     @staticmethod
     def load_strom(file_name):
@@ -186,7 +192,8 @@ class SemesterLaTeXLoader():
             text = input_tex.read()
             text = SemesterLaTeXLoader.remove_latex_comments(text)
             problems = re.findall(
-                r'(\\ifcase\\numexpr\\value\{uloha\}-1|\\or).*?\{(.*?)\}[^\{\}]*?(?=\\fi|$|\\or)', text, flags=re.S)
+                r'(\\ifcase\\numexpr\\value\{uloha\}-1|\\or).*?\{(.*?)\}[^\{\}]*?(?=\\fi|$|\\or)',
+                text, flags=re.S)
             semester = []
             for i, problem in enumerate(problems):
                 semester.append(((i//6)+1, (i % 6)+1, problem[1].strip('\n')))

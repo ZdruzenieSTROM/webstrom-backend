@@ -6,9 +6,10 @@ from django.db import models
 from django.shortcuts import get_object_or_404
 from django.utils.functional import cached_property
 from django.utils.timezone import now
-from user.models import User
-from base.validators import school_year_validator
+
 import competition.utils as utils
+from base.validators import school_year_validator
+from user.models import User
 
 
 class Competition(models.Model):
@@ -33,7 +34,8 @@ class Competition(models.Model):
     min_years_until_graduation = models.PositiveSmallIntegerField(
         verbose_name='Minimálny počet rokov do maturity',
         help_text='Horná hranica na účasť v súťaži. '
-        'Zadáva sa v počte rokov do maturity. Ak najstraší, kto môže riešiť súťaž je deviatak, zadá sa 4.',
+        'Zadáva sa v počte rokov do maturity. '
+        'Ak najstraší, kto môže riešiť súťaž je deviatak, zadá sa 4.',
         null=True
     )
 
@@ -76,6 +78,7 @@ class LateTag(models.Model):
 
 
 class Event(models.Model):
+    # pylint: disable=no-member
     class Meta:
         verbose_name = 'ročník súťaže'
         verbose_name_plural = 'ročníky súťaží'
@@ -93,13 +96,12 @@ class Event(models.Model):
     def is_active(self):
         return self.semester.series_set.filter(complete=False).count() > 0
 
-    def is_user_registered(self,user_id):
-        return UserEventRegistration.objects.filter(event=self.pk,user=user_id).count()>0
+    def is_user_registered(self, user_id):
+        return UserEventRegistration.objects.filter(event=self.pk, user=user_id).count() > 0
 
     @property
     def registered_users(self):
         return User.objects.filter(usereventregistration_set__event=self.pk).all()
-         
 
     def __str__(self):
         if self.semester:
@@ -143,11 +145,11 @@ class Series(models.Model):
     deadline = models.DateTimeField(verbose_name='termín série')
     complete = models.BooleanField(verbose_name='séria uzavretá')
     sum_method = models.CharField(max_length=50,
-        blank=True,
-        null=True,
-        verbose_name='Súčtová metóda',
-        choices=utils.SERIES_SUM_METHODS
-        )
+                                  blank=True,
+                                  null=True,
+                                  verbose_name='Súčtová metóda',
+                                  choices=utils.SERIES_SUM_METHODS
+                                  )
 
     def __str__(self):
         return f'{self.semester} - {self.order}. séria'
@@ -169,49 +171,53 @@ class Series(models.Model):
     def num_problems(self):
         return self.problem_set.count()
 
-    def _create_user_dict(self,sum_func,user,user_solutions):
+    def _create_user_dict(self, sum_func, user, user_solutions):
         return {
-                'rank_start':0,
-                'rank_end':0,
-                'rank_changed':True,
-                'name': f'{user.user.profile.first_name} ', #TODO: FullName
-                'school': user.school,
-                'grade': user.class_level.tag,
-                'points': utils.solutions_to_list_of_points_pretty(user_solutions),
-                'total': sum_func(user_solutions,user),
-                'solutions': user_solutions
-            }
+            'rank_start': 0,
+            'rank_end': 0,
+            'rank_changed': True,
+            'name': f'{user.user.profile.first_name} ',  # TODO: FullName
+            'school': user.school,
+            'grade': user.class_level.tag,
+            'points': utils.solutions_to_list_of_points_pretty(user_solutions),
+            'total': sum_func(user_solutions, user),
+            'solutions': user_solutions
+        }
 
     def results(self):
-        sum_func = getattr(utils, self.sum_method or '', utils.series_simple_sum)
+        sum_func = getattr(utils, self.sum_method or '',
+                           utils.series_simple_sum)
         results = []
-        
-        solutions = Solution.objects.only('user_semester_registration', 'problem', 'score').filter(problem__series=self.pk).order_by('user_semester_registration','problem').select_related('user_semester_registration','problem')
+
+        solutions = Solution.objects.only('user_semester_registration', 'problem', 'score')\
+            .filter(problem__series=self.pk)\
+            .order_by('user_semester_registration', 'problem')\
+            .select_related('user_semester_registration', 'problem')
 
         current_user = None
         user_solutions = [None] * self.num_problems
 
         for solution in solutions:
-            if current_user!=solution.user_semester_registration:
+            if current_user != solution.user_semester_registration:
                 if current_user:
-                    #Bolo dokončené spracovanie jedného usera
-                    #Zbali usera a a nahodi ho do vysledkov
-                    results.append(self._create_user_dict(sum_func,current_user,user_solutions))
+                    # Bolo dokončené spracovanie jedného usera
+                    # Zbali usera a a nahodi ho do vysledkov
+                    results.append(self._create_user_dict(
+                        sum_func, current_user, user_solutions))
                 # vytvori prazdny list s riešeniami
                 current_user = solution.user_semester_registration
                 user_solutions = [None] * self.num_problems
-            
+
             # Spracuj riešenie
             user_solutions[solution.problem.order - 1] = solution
 
         # Uloz posledneho usera
         if current_user:
-            results.append(self._create_user_dict(sum_func,current_user,user_solutions))
+            results.append(self._create_user_dict(
+                sum_func, current_user, user_solutions))
 
-        
         results.sort(key=lambda x: x['total'], reverse=True)
         return results
-
 
 
 class Problem(models.Model):
@@ -283,20 +289,21 @@ class Solution(models.Model):
         on_delete=models.CASCADE
     )
     solution_path = models.FileField(
-        upload_to='solutions/', 
-        verbose_name='účastnícke riešenie', 
-        null=True, 
+        upload_to='solutions/',
+        verbose_name='účastnícke riešenie',
+        null=True,
         blank=True
     )
 
     corrected_solution_path = models.FileField(
-        upload_to='solutions/corrected/', 
-        verbose_name='opravené riešenie', 
-        null=True, 
+        upload_to='solutions/corrected/',
+        verbose_name='opravené riešenie',
+        null=True,
         blank=True
-        )
+    )
 
-    score = models.PositiveSmallIntegerField(verbose_name='body', null=True, blank=True)
+    score = models.PositiveSmallIntegerField(
+        verbose_name='body', null=True, blank=True)
 
     uploaded_at = models.DateTimeField(
         auto_now=True, verbose_name='nahrané dňa')
@@ -340,17 +347,17 @@ class Publication(models.Model):
 
     @property
     def file_name(self):
-        f'{self.event.competition}-{self.event.year}-{self.order}-{self.pk}.pdf'
+        return f'{self.event.competition}-{self.event.year}-{self.order}-{self.pk}.pdf'
 
     def __str__(self):
         return f'{self.event.competition}-{self.event.year}-{self.order}'
 
 
-"""
-@receiver(post_save, sender=Publication)
-def generate_leaflet_thumbnail(sender, instance, created, **kwargs):
-    source_path = instance.get_publication_path()
-    dest_path = instance.get_thumbnail_path()
-    pdf2image.convert_from_path(source_path)
+# """
+# @receiver(post_save, sender=Publication)
+# def generate_leaflet_thumbnail(sender, instance, created, **kwargs):
+#     source_path = instance.get_publication_path()
+#     dest_path = instance.get_thumbnail_path()
+#     pdf2image.convert_from_path(source_path)
 
-"""
+# """
