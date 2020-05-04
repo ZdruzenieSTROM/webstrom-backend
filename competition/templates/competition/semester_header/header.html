@@ -11,7 +11,7 @@
     </li>
     <li class="nav-item">
         <a class="nav-link {% if active == 'results' %} active {% endif %}"
-            href="{% url 'competition:series-results-detail' pk=series.pk %}">Výsledky</a>
+            href="{% url 'competition:series-results' pk=series.pk %}">Výsledky</a>
     </li>
     <li class="nav-item">
         <a class="nav-link {% if active == 'publications' %} active {% endif %}" href="#">#Časopisy</a>
@@ -24,7 +24,7 @@
 {% if active == 'problems'%}
 {% include "competition/semester_header/series_selector.html" with current_url='competition:series-problems-detail' %}
 {% elif active == 'results' %}
-{% include "competition/semester_header/series_selector.html" with current_url='competition:series-results-detail' %}
+{% include "competition/semester_header/series_selector.html" with current_url='competition:series' %}
 {% endif %}
 
 </a>
