@@ -295,7 +295,7 @@ class Solution(models.Model):
         blank=True
         )
 
-    score = models.PositiveSmallIntegerField(verbose_name='body')
+    score = models.PositiveSmallIntegerField(verbose_name='body', null=True)
 
     uploaded_at = models.DateTimeField(
         auto_now=True, verbose_name='nahrané dňa')
