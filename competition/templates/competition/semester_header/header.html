@@ -1,0 +1,30 @@
+<div class="row">
+    <div class="col-md-9">
+        <h1>{{ semester }}</h1>
+    </div>
+</div>
+
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link {% if active == 'problems' %} active {% endif %}"
+            href="{% url 'competition:series-problems-detail' pk=series.pk %}">Zadania</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {% if active == 'results' %} active {% endif %}"
+            href="{% url 'competition:series-results' pk=series.pk %}">Výsledky</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {% if active == 'publications' %} active {% endif %}" href="#">#Časopisy</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {% if active == 'events' %} active {% endif %}" href="#">#Akcie</a>
+    </li>
+</ul>
+
+{% if active == 'problems'%}
+{% include "competition/semester_header/series_selector.html" with current_url='competition:series-problems-detail' %}
+{% elif active == 'results' %}
+{% include "competition/semester_header/series_selector.html" with current_url='competition:series' %}
+{% endif %}
+
+</a>

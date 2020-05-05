@@ -6,7 +6,7 @@
 <form method="post">
     {% csrf_token %}
     {{ form|crispy }}
-    <input type="submit" value="Prihlásiť">
+    <input type="submit" class="btn btn-primary" value="Prihlásiť">
 </form>
 <a href="{% url 'user:password_reset' %}">Zabudnuté heslo</a>
 {% endblock %}

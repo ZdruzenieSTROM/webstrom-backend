@@ -1,36 +1,27 @@
 from django.urls import path
 
-from competition.views import (ArchiveView, LatestSemesterView,
-                               SemesterDetailView, SemesterProblemsView,
-                               SemesterResultsView, SemesterResultsLatexView,
-                               SeriesProblemsView, SeriesResultsView,
-                               SeriesResultsLatexView)
+from competition.views import (ArchiveView, LatestSeriesProblemsView,
+                               SemesterResultsLatexView, SemesterResultsView,
+                               SeriesProblemsView, SeriesResultsLatexView,
+                               SeriesResultsView)
 
 app_name = 'competition'
 
 urlpatterns = [
-    path('semester/latest/', LatestSemesterView.as_view(),
-         name='latest-semester-view'),
-    path('semester/<int:pk>/problems/', SemesterProblemsView.as_view(),
-         name='semester-problems-detail'),
-    path('semester/<int:pk>/', SemesterDetailView.as_view(),
-         name='semester-detail'),
-
-    path('series/<int:pk>/', SeriesProblemsView.as_view(),
+    path('series/<int:pk>/problems', SeriesProblemsView.as_view(),
          name='series-problems-detail'),
+    path('series/latest-problems', LatestSeriesProblemsView.as_view(),
+         name='latest-series-problems'),
+    path('series/<int:pk>/results', SeriesResultsView.as_view(),
+         name='series-results'),
+    path('series/<int:pk>/results/latex', SeriesResultsLatexView.as_view(),
+         name='series-results-latex'),
+
+    path('semester/<int:pk>/results', SemesterResultsView.as_view(),
+         name='semester-results'),
+    path('semester/<int:pk>/results/latex', SemesterResultsLatexView.as_view(),
+         name='semester-results-latex'),
 
     path('archive/', ArchiveView.as_view(),
          name='archive-view'),
-    
-    path('semester/<int:pk>/results',SemesterResultsView.as_view(),
-         name='semester-results'),
-
-    path('semester/<int:pk>/results/latex',SemesterResultsLatexView.as_view(),
-         name='semester-results-latex'),
-
-    path('series/<int:pk>/results',SeriesResultsView.as_view(),
-         name='semester-results'),
-
-    path('series/<int:pk>/results/latex',SeriesResultsLatexView.as_view(),
-         name='semester-results-latex'),
 ]
