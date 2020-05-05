@@ -210,6 +210,7 @@ class Series(models.Model):
 
         
         results.sort(key=lambda x: x['total'], reverse=True)
+        results = utils.rank_results(results)
         return results
 
 
