@@ -26,7 +26,7 @@ def rank_results(results):
         if last_points != res['total']:
             current_rank = n_teams
             last_points = res['total']
-        res['rank_lower'] = current_rank
+        res['rank_start'] = current_rank
         n_teams += 1
 
     # Horná hranica
@@ -37,7 +37,7 @@ def rank_results(results):
         if last_points != res['total']:
             current_rank = n_teams
             last_points = res['total']
-        res['rank_lower'] = current_rank
+        res['rank_end'] = current_rank
         n_teams -= 1
     return results
         
