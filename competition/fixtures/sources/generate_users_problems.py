@@ -4,9 +4,9 @@ import random
 #######################################
 current_registration_id = 0
 current_solution_id = 0
-schools = ["000598071", "000160997", "000160971", "017337101", "037956230", "710261519","017080720", "710234341"]
+schools = ["000598071", "000160997", "000160971", "017337101",
+           "037956230", "710261519", "017080720", "710234341"]
 #######################################
-
 
 
 def generate_user(pk):
@@ -14,7 +14,8 @@ def generate_user(pk):
         "model": "user.user",
         "pk": pk,
         "fields": {
-            "password": "pbkdf2_sha256$180000$UQCtl76TyAYT$y7KcapcAcpnZ5P2cOP75RnzM9dsZAFPGSwsFvzG+YsA=",
+            "password":
+                "pbkdf2_sha256$180000$UQCtl76TyAYT$y7KcapcAcpnZ5P2cOP75RnzM9dsZAFPGSwsFvzG+YsA=",
             "last_login": "2020-04-07T21:00:28.430Z",
             "date_joined": "2020-04-07T20:43:01.351Z",
             "is_superuser": False,
@@ -27,7 +28,8 @@ def generate_user(pk):
         }
     }
 
-def generate_profile(pk,user,year,school):
+
+def generate_profile(pk, user, year, school):
     return {
         "model": "user.profile",
         "pk": pk,
@@ -43,7 +45,8 @@ def generate_profile(pk,user,year,school):
         }
     }
 
-def generate_event_reg(user,school,grade,event):
+
+def generate_event_reg(user, school, grade, event):
     global current_registration_id
     d = {
         "model": "competition.UserEventRegistration",
@@ -55,12 +58,11 @@ def generate_event_reg(user,school,grade,event):
             "event": event
         }
     }
-    current_registration_id+=1
-    return d,current_registration_id-1
+    current_registration_id += 1
+    return d, current_registration_id-1
 
 
-
-def generate_solution(eventreg_pk,problem,points=None):
+def generate_solution(eventreg_pk, problem, points=None):
     global current_solution_id
     d = {
         "model": "competition.Solution",
@@ -73,50 +75,51 @@ def generate_solution(eventreg_pk,problem,points=None):
             "is_online": False
         }
     }
-    current_solution_id+=1
+    current_solution_id += 1
     return d
 
-def generate_participation_for_user(user_pk,event_pks):
+
+def generate_participation_for_user(user_pk, event_pks):
     regs = []
     problems = []
     for event in event_pks:
         school = random.choice(schools)
-        grade = random.randint(8,12)
-        r,r_pk = generate_event_reg(user_pk,school,grade,event)
+        grade = random.randint(8, 12)
+        r, r_pk = generate_event_reg(user_pk, school, grade, event)
         regs.append(r)
-        for prob in range(event*12,(event+1)*12):
-            points = random.randint(-9,15)
+        for prob in range(event*12, (event+1)*12):
+            points = random.randint(-9, 15)
             if points <= 9:
-                if points>=0:
-                    problems.append(generate_solution(r_pk,prob,points))
+                if points >= 0:
+                    problems.append(generate_solution(r_pk, prob, points))
                 else:
-                    problems.append(generate_solution(r_pk,prob))
-    return regs,problems
+                    problems.append(generate_solution(r_pk, prob))
+    return regs, problems
 
 
-
-def generate_users(pks,profile_pks):
-    years = range(2020,2030)
-    events = range(6) # allowed events
+def generate_users(pks, profile_pks):
+    years = range(2020, 2030)
+    events = range(6)  # allowed events
     users = []
     profiles = []
     user_regs = []
     solutions = []
-    for pk,prof_pk in zip(pks,profile_pks):
+    for pk, prof_pk in zip(pks, profile_pks):
         users.append(generate_user(pk))
         year = random.choice(years)
         school = random.choice(schools)
-        event_pks = random.sample(events,k=4)
-        profiles.append(generate_profile(prof_pk,pk,year,school))
-        regs,sols = generate_participation_for_user(pk,event_pks)
-        user_regs+=regs
-        solutions+=sols
-    return users,profiles,user_regs,solutions
+        event_pks = random.sample(events, k=4)
+        profiles.append(generate_profile(prof_pk, pk, year, school))
+        regs, sols = generate_participation_for_user(pk, event_pks)
+        user_regs += regs
+        solutions += sols
+    return users, profiles, user_regs, solutions
 
-if __name__=="__main__":
 
-    user_pks = range(48,78)
-    users,profiles,user_regs,solutions = generate_users(user_pks,user_pks)
+if __name__ == "__main__":
+
+    user_pks = range(48, 78)
+    users, profiles, user_regs, solutions = generate_users(user_pks, user_pks)
     with open('users_generic.json', 'w') as f:
         json.dump(users, f, indent=4)
     with open('profiles_generic.json', 'w') as f:

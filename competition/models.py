@@ -173,16 +173,16 @@ class Series(models.Model):
 
     def _create_user_dict(self, sum_func, user, user_solutions):
         return {
-                'rank_start':0,
-                'rank_end':0,
-                'rank_changed':True,
-                'name': user.user.profile, #TODO: FullName
-                'school': user.school,
-                'grade': user.class_level.tag,
-                'points': utils.solutions_to_list_of_points_pretty(user_solutions),
-                'total': sum_func(user_solutions,user),
-                'solutions': user_solutions
-            }
+            'rank_start': 0,
+            'rank_end': 0,
+            'rank_changed': True,
+            'name': user.user.profile,  # TODO: FullName
+            'school': user.school,
+            'grade': user.class_level.tag,
+            'points': utils.solutions_to_list_of_points_pretty(user_solutions),
+            'total': sum_func(user_solutions, user),
+            'solutions': user_solutions
+        }
 
     def results(self):
         sum_func = getattr(utils, self.sum_method or '',

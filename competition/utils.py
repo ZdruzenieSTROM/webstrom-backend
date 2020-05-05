@@ -17,7 +17,6 @@ def get_school_year_by_date(date=None) -> str:
 
 
 def rank_results(results):
-    
     # Spodná hranica
     current_rank = 1
     n_teams = 1
@@ -43,7 +42,7 @@ def rank_results(results):
         res['rank_end'] = current_rank
         n_teams -= 1
     return results
-        
+
 
 # Súčtové metódy pre semináre
 
