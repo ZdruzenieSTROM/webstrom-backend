@@ -52,5 +52,6 @@ class Command(BaseCommand):
 
         load_fixture('sites', 'flatpages')
         load_fixture('counties', 'districts', 'schools', 'schools_custom')
-        load_fixture('competitions', 'semesters', 'grade', 'late_tags')
         load_fixture('superuser', 'users', 'profiles')
+        load_fixture('competitions', 'semesters', 'grade', 'late_tags', 'user_solutions_data')
+        load_fixture('users_generic','profiles_generic','regs_generic','solutions_generic')
