@@ -37,6 +37,9 @@ def rank_results(results):
         if last_points != res['total']:
             current_rank = n_teams
             last_points = res['total']
+            res['rank_changed'] = True
+        else:
+            res['rank_changed'] = False
         res['rank_end'] = current_rank
         n_teams -= 1
     return results

@@ -174,7 +174,7 @@ class Series(models.Model):
                 'rank_start':0,
                 'rank_end':0,
                 'rank_changed':True,
-                'name': f'{user.user.profile.first_name} ', #TODO: FullName
+                'name': user.user.profile, #TODO: FullName
                 'school': user.school,
                 'grade': user.class_level.tag,
                 'points': utils.solutions_to_list_of_points_pretty(user_solutions),
