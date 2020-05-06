@@ -23,7 +23,7 @@
         {% else %}
         <td></td>
         {% endif %}
-        <td>{{ result_row.name }}</td>
+        <td>{{ result_row.user }}</td>
         <td>{{ result_row.school }}</td>
         <td>{{ result_row.grade }}</td>
         {%for score in result_row.points %}
@@ -34,4 +34,5 @@
     {% endfor %}
 </table>
 {{ histograms }}
+{{semester_results}}
 {% endblock content %}

@@ -59,6 +59,7 @@ class SeriesResultsView(DetailView):
         context['histograms'] = []
         for problem in self.object.problem_set.all():
             context['histograms'].append(problem.get_stats())
+        context['semester_results'] = self.object.semester.results_with_ranking()
         return context
 
 
