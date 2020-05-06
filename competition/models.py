@@ -3,6 +3,7 @@ import datetime
 import pdf2image
 from django.contrib.sites.models import Site
 from django.db import models
+from django.db.models import Count
 from django.shortcuts import get_object_or_404
 from django.utils.functional import cached_property
 from django.utils.timezone import now
@@ -216,6 +217,10 @@ class Series(models.Model):
             results.append(self._create_user_dict(
                 sum_func, current_user, user_solutions))
 
+        return results
+
+    def results_with_ranking(self):
+        results = self.results()
         results.sort(key=lambda x: x['total'], reverse=True)
         results = utils.rank_results(results)
         return results
@@ -240,8 +245,20 @@ class Problem(models.Model):
         return f'{self.series.semester.competition.name}-{self.series.semester.year}' \
             f'-{self.series.semester.season[0]}S-S{self.series.order} - {self.order}. úloha'
 
-    def get_mean_point(self):
-        pass
+    def get_stats(self):
+        stats = {}
+        stats['histogram'] = []
+        total_solutions = 0
+        total_points = 0
+        for score in range(10):
+            count = self.solution_set.filter(score=score).count()
+            total_solutions+=count
+            total_points+=count*score
+            stats['histogram'].append({'score': score, 'count': count})
+        stats['num_solutions'] = total_solutions
+
+        stats['mean'] = total_points/total_solutions if total_solutions else '?'
+        return stats
 
 
 class Grade(models.Model):

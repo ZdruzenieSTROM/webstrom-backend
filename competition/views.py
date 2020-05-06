@@ -55,7 +55,10 @@ class SeriesResultsView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['results'] = self.object.results()
+        context['results'] = self.object.results_with_ranking()
+        context['histograms'] = []
+        for problem in self.object.problem_set.all():
+            context['histograms'].append(problem.get_stats())
         return context
 
 
