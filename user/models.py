@@ -66,6 +66,7 @@ class School(models.Model):
 
         return self.name
 
+    @property
     def stitok(self):
         return f'\\stitok{{{ self.name }}}{{{ self.city }}}' \
                f'{{{ self.zip_code }}}{{{ self.street }}}'
