@@ -7,7 +7,6 @@ from django.db.models import Count
 from django.shortcuts import get_object_or_404
 from django.utils.functional import cached_property
 from django.utils.timezone import now
-
 import competition.utils as utils
 from base.validators import school_year_validator
 from user.models import User
@@ -154,7 +153,7 @@ class Semester(Event):
 
 
     def _merge_results(self,current_results,series_results,problems_in_current,problems_in_series):
-        
+        #Zmerguje riadky výsledkov. Predpokladá že obe results su usporiadané podľa usera
         if current_results:
             merged_results = []
             i,j = 0,0
@@ -193,8 +192,12 @@ class Semester(Event):
         current_results = utils.rank_results(current_results)
         return current_results
 
-    def generate_post_labels(self):
+    def get_schools(self):
+        #TODO: vysporiadat sa s cyklickým importom
+        #return apps.get_model('user.School').objects.filter('school.usereventregistration_set__semester=self.pk').distinct().all()
         pass
+
+        
 
         
 
