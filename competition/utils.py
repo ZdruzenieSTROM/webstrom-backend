@@ -113,6 +113,7 @@ def series_STROM_4problems_sum(solutions, user_registration):
             weights = [1, 1, 2, 1]
     return series_general_weighted_sum(solutions, weights)
 
+
 SERIES_SUM_METHODS = [
     ('series_simple_sum', 'Súčet bodov'),
     ('series_Malynar_sum', 'Súčet bodov + bonifikácia Malynár'),
@@ -120,5 +121,3 @@ SERIES_SUM_METHODS = [
     ('series_STROM_sum', 'Súčet bodov + bonifikácia STROM'),
     ('series_STROM_4problems_sum', 'Súčet bodov + bonifikácia STROM (ročníky XXXX-YYYY)')
 ]
-
-

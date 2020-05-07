@@ -7,6 +7,7 @@ from django.db.models import Count
 from django.shortcuts import get_object_or_404
 from django.utils.functional import cached_property
 from django.utils.timezone import now
+
 import competition.utils as utils
 from base.validators import school_year_validator
 from user.models import User
@@ -132,74 +133,81 @@ class Semester(Event):
     def __str__(self):
         return f'{self.competition.name}, {self.year}. ročník - {self.season} semester'
 
-    def _merge_user(self,old,new,problems_in_old,problems_in_new):
+    def _merge_user(self, old, new, problems_in_old, problems_in_new):
         if not old:
-            new['solutions']=[None]*problems_in_old+new['solutions']
-            new['points']=['-']*problems_in_old+new['points']
+            new['solutions'] = [None]*problems_in_old+new['solutions']
+            new['points'] = ['-']*problems_in_old+new['points']
             new['subtotal'].append(0)
             return new
         elif not new:
-            old['solutions']+=[None]*problems_in_new
-            old['points']+=['-']*problems_in_new
+            old['solutions'] += [None]*problems_in_new
+            old['points'] += ['-']*problems_in_new
             old['subtotal'].append(0)
             return old
 
         else:
-            old['solutions']+=new['solutions']
-            old['points']+=new['points']
+            old['solutions'] += new['solutions']
+            old['points'] += new['points']
             old['subtotal'].append(new['total'])
             old['total'] = sum(old['subtotal'])
             return old
 
-
-    def _merge_results(self,current_results,series_results,problems_in_current,problems_in_series):
-        #Zmerguje riadky výsledkov. Predpokladá že obe results su usporiadané podľa usera
+    def _merge_results(
+            self,
+            current_results,
+            series_results,
+            problems_in_current,
+            problems_in_series):
+        # Zmerguje riadky výsledkov. Predpokladá že obe results su usporiadané podľa usera
         if current_results:
             merged_results = []
-            i,j = 0,0
-            while i<len(current_results) and j<len(series_results):
-                if current_results[i]['user']==series_results[j]['user']:
-                    merged_results.append(self._merge_user(current_results[i],series_results[j],problems_in_current,problems_in_series))
-                    i+=1
-                    j+=1
-                elif current_results[i]['user']>series_results[j]['user']:
-                    merged_results.append(self._merge_user(None,series_results[j],problems_in_current,problems_in_series))
-                    j+=1
+            i, j = 0, 0
+            while i < len(current_results) and j < len(series_results):
+                if current_results[i]['user'] == series_results[j]['user']:
+                    merged_results.append(self._merge_user(
+                        current_results[i], series_results[j],
+                        problems_in_current, problems_in_series))
+                    i += 1
+                    j += 1
+                elif current_results[i]['user'] > series_results[j]['user']:
+                    merged_results.append(self._merge_user(
+                        None, series_results[j], problems_in_current, problems_in_series))
+                    j += 1
                 else:
-                    merged_results.append(self._merge_user(current_results[i],None,problems_in_current,problems_in_series))
-                    i+=1
-            while i<len(current_results):
-                merged_results.append(self._merge_user(current_results[i],None,problems_in_current,problems_in_series))
-                i+=1
-            while j<len(series_results):
-                merged_results.append(self._merge_user(None,series_results[j],problems_in_current,problems_in_series))
-                j+=1
+                    merged_results.append(self._merge_user(
+                        current_results[i], None, problems_in_current, problems_in_series))
+                    i += 1
+            while i < len(current_results):
+                merged_results.append(self._merge_user(
+                    current_results[i], None, problems_in_current, problems_in_series))
+                i += 1
+            while j < len(series_results):
+                merged_results.append(self._merge_user(
+                    None, series_results[j], problems_in_current, problems_in_series))
+                j += 1
             return merged_results
 
         else:
             return series_results
-        
 
-    def results_with_ranking(self,show_only_last_series_points=False):
+    def results_with_ranking(self, show_only_last_series_points=False):
         current_results = None
         curent_number_of_problems = 0
         for series in self.series_set.all():
             series_result = series.results()
             count = series.num_problems
-            current_results = self._merge_results(current_results,series_result,curent_number_of_problems,count)
+            current_results = self._merge_results(
+                current_results, series_result, curent_number_of_problems, count)
             curent_number_of_problems += count
         current_results.sort(key=lambda x: x['total'], reverse=True)
         current_results = utils.rank_results(current_results)
         return current_results
 
     def get_schools(self):
-        #TODO: vysporiadat sa s cyklickým importom
-        #return apps.get_model('user.School').objects.filter('school.usereventregistration_set__semester=self.pk').distinct().all()
+        # TODO: vysporiadat sa s cyklickým importom
+        # return apps.get_model('user.School').objects\
+        # .filter('school.usereventregistration_set__semester=self.pk').distinct().all()
         pass
-
-        
-
-        
 
 
 class Series(models.Model):
@@ -243,17 +251,23 @@ class Series(models.Model):
     # Generuje jeden riadok poradia ako slovn9k atribútov
     def _create_user_dict(self, sum_func, user, user_solutions):
         return {
-                'rank_start':0,                 # Poradie - horná hranica, v prípade deleného miesto(napr. 1.-3.) ide o nižšie miesto(1)
-                'rank_end':0,                   # Poradie - dolná hranica, v prípade deleného miesto(napr. 1.-3.) ide o vyššie miesto(3)
-                'rank_changed':True,            # Indikuje či sa zmenilo poradie od minulej priečky, slúži na delené miesta
-                'user': user.user.profile,      # Profil riešiteľa
-                'school': user.school,          # Škola
-                'grade': user.class_level.tag,  # Značka stupňa
-                'points': utils.solutions_to_list_of_points_pretty(user_solutions),
-                'subtotal': [sum_func(user_solutions,user)], # Súčty bodov po sériách
-                'total': sum_func(user_solutions,user),     # Celkový súčet za danú entitu
-                'solutions': user_solutions     # zoznam riešení, aby ich bolo možné prelinkovať z poradia do admina
-            }
+            # Poradie - horná hranica, v prípade deleného miesto(napr. 1.-3.) ide o nižšie miesto(1)
+            'rank_start': 0,
+            # Poradie - dolná hranica, v prípade deleného miesto(napr. 1.-3.) ide o vyššie miesto(3)
+            'rank_end': 0,
+            # Indikuje či sa zmenilo poradie od minulej priečky, slúži na delené miesta
+            'rank_changed': True,
+            'user': user.user.profile,      # Profil riešiteľa
+            'school': user.school,          # Škola
+            'grade': user.class_level.tag,  # Značka stupňa
+            'points': utils.solutions_to_list_of_points_pretty(user_solutions),
+            # Súčty bodov po sériách
+            'subtotal': [sum_func(user_solutions, user)],
+            # Celkový súčet za danú entitu
+            'total': sum_func(user_solutions, user),
+            # zoznam riešení, aby ich bolo možné prelinkovať z poradia do admina
+            'solutions': user_solutions
+        }
 
     def results(self):
         sum_func = getattr(utils, self.sum_method or '',
@@ -322,12 +336,13 @@ class Problem(models.Model):
         total_points = 0
         for score in range(10):
             count = self.solution_set.filter(score=score).count()
-            total_solutions+=count
-            total_points+=count*score
+            total_solutions += count
+            total_points += count*score
             stats['histogram'].append({'score': score, 'count': count})
         stats['num_solutions'] = total_solutions
 
-        stats['mean'] = total_points/total_solutions if total_solutions else '?'
+        stats['mean'] = total_points / \
+            total_solutions if total_solutions else '?'
         return stats
 
 
@@ -447,5 +462,4 @@ class Publication(models.Model):
 #     source_path = instance.get_publication_path()
 #     dest_path = instance.get_thumbnail_path()
 #     pdf2image.convert_from_path(source_path)
-
 # """
