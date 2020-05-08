@@ -25,8 +25,10 @@ def register(request):
 
             send_verification_email(user)
             messages.info(request, 'Odoslali sme ti overovací email')
-
             return redirect('user:login')
+        elif user_form.has_error('email', code='unique'):
+            messages.error(
+                request, render_to_string('user/messages/email_exists.html'))
     else:
         user_form = UserCreationForm()
         profile_form = ProfileCreationForm()
