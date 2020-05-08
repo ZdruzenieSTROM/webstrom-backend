@@ -22,26 +22,26 @@ urlpatterns = [
     path('password-reset/',
          PasswordResetView.as_view(
              template_name='user/password_reset.html',
-             success_url=reverse_lazy('user:password_reset_done'),
+             success_url=reverse_lazy('user:password-reset-done'),
              email_template_name='emails/password_reset.html'
          ),
-         name='password_reset'),
+         name='password-reset'),
     path('password-reset-confirm/<uidb64>/<token>/',
          PasswordResetConfirmView.as_view(
              template_name='user/password_reset_confirm.html',
-             success_url=reverse_lazy('user:password_reset_complete'),
+             success_url=reverse_lazy('user:password-reset-complete'),
          ),
-         name='password_reset_confirm'),
+         name='password-reset-confirm'),
     path('password-reset/done/',
          PasswordResetDoneView.as_view(
              template_name='user/password_reset_done.html'
          ),
-         name='password_reset_done'),
+         name='password-reset-done'),
     path('password-reset-complete/',
          PasswordResetCompleteView.as_view(
              template_name='user/password_reset_complete.html'
          ),
-         name='password_reset_complete'),
+         name='password-reset-complete'),
     path('password-change/',
          PasswordChangeView.as_view(
              template_name='user/password_change.html',
@@ -52,8 +52,8 @@ urlpatterns = [
          PasswordChangeDoneView.as_view(
              template_name='user/password_change_done.html'
          ),
-         name='password_change_done'),
+         name='password-change-done'),
 
-    path('district/<int:pk>/', district_by_county, name='filter_district'),
-    path('school/<int:pk>/', school_by_district, name='filter_school'),
+    path('district/<int:pk>/', district_by_county, name='filter-district'),
+    path('school/<int:pk>/', school_by_district, name='filter-school'),
 ]
