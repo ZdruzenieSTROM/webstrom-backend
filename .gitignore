@@ -3,7 +3,7 @@ __pycache__
 # Django veci
 db.sqlite3
 db.sqlite3-journal
-emails
+/emails
 
 */migrations/*
 !*/migrations/__init__.py
