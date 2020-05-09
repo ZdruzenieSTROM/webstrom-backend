@@ -423,6 +423,21 @@ class Solution(models.Model):
         verbose_name='internetové riešenie'
     )
 
+    def get_link(self):
+        text = self.score
+        if not text:
+            text = '?'
+
+        html = "<a>banan</a>"
+        #.format(
+        #            reverse('admin:{}_{}_change'.format(obj._meta.app_label, obj._meta.model_name),
+        #            args=(solution.pk,)), solution.score)
+             
+        if display_text:
+            return display_text
+        return "-"
+
+
     def __str__(self):
         return f'Riešiteľ: {self.user_semester_registration} - úloha: {self.problem}'
 
