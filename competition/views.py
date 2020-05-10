@@ -67,6 +67,17 @@ class SemesterResultsView(DetailView):
         context['results_type'] = 'semester'
         return context
 
-class SemesterResultsLatexView(DetailView):
-    model = Semester
-    context_object_name = 'semester'
+class SeriesResultsLatexView(SeriesResultsView):
+    template_name = 'competition/results_latex.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['histograms'] = []
+        for problem in self.object.problem_set.all():
+            context['histograms'].append(problem.get_stats())
+        return context
+        
+
+class SemesterResultsLatexView(SemesterResultsView):
+    template_name = 'competition/results_latex.html'
+    

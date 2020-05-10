@@ -10,7 +10,7 @@
     {% if active_site == 'results' %}
     <li class="nav-item">
         <a class="nav-link {% if active_series == 3 %} active {% endif %}" 
-            href="{% url 'competition:semester-results' pk=semester.pk %}">finálne poradie</a>
+            href="{% url 'competition:semester-results' pk=semester.pk %}">celkové poradie</a>
     </li>
     {% endif %}
 </ul>
