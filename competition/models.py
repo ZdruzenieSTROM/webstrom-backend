@@ -146,7 +146,17 @@ class Semester(Event):
             return old
 
         else:
-            old['solutions'] += new['solutions']
+            # mergnutie dvoch zip 
+            solutions0 = []
+            solutions1 = []
+            for a in old['solutions']:
+                solutions0.append(a[0])
+                solutions1.append(a[1])
+            for a in new['solutions']:
+                solutions0.append(a[0])
+                solutions1.append(a[1])
+            old['solutions'] = zip(solutions0, solutions1)
+
             old['points'] += new['points']
             old['subtotal'].append(new['total'])
             old['total'] = sum(old['subtotal'])
