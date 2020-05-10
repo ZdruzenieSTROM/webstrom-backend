@@ -10,6 +10,7 @@
     {% include 'competition/semester_header/header.html' with active_site='results' active_series=3 series=semester.series_set.first %}
 {% endif %}
 
+
 <table class="table table-striped table-borderless table-sm">
     <thead class="thead-dark">
         <tr>
@@ -47,11 +48,14 @@
             <td>{{ result_row.school }}</td>
             <td>{{ result_row.grade }}</td>
             {%for solution in result_row.solutions %}
+
             <td>
-                {% if solution %}
-                        <a {% if user.is_staff %} href="{% url 'admin:competition_solution_change' solution.pk %}" {% endif %}>{{solution|score_pretty}}</a>
+                {% if solution.0 %}
+                        <a {% if user.is_staff %} href="{% url 'admin:competition_solution_change' solution.0.pk %}" {% endif %}>{{solution.0|score_pretty}}</a>
                 {% else %}
-                    -
+                        <a {% if user.is_staff %} 
+                                href="{% url 'admin:competition_solution_add' %}?user_semester_registration={{ result_row.userSemesterRegistrationPk }}&problem={{ solution.1 }}"
+                            {% endif %}>-</a>
                 {% endif %}
             </td>
             {%endfor%}

@@ -55,12 +55,6 @@ class SeriesResultsView(DetailView):
         #context['semester_results'] = self.object.semester.results_with_ranking()
         return context
 
-
-class SeriesResultsLatexView(DetailView):
-    model = Series
-    context_object_name = 'series'
-
-
 class SemesterResultsView(DetailView):
     model = Semester
     context_object_name = 'semester'

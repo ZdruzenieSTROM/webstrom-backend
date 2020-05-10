@@ -248,8 +248,13 @@ class Series(models.Model):
     def num_problems(self):
         return self.problem_set.count()
 
-    # Generuje jeden riadok poradia ako slovn9k atribútov
+    # Generuje jeden riadok poradia ako slovník atribútov
     def _create_user_dict(self, sum_func, user, user_solutions):
+        # list primary keys uloh v aktualnom semestri
+        problems_pk_list = []
+        for problem in self.problem_set.all():
+            problems_pk_list.append(problem.pk)
+                    
         return {
             # Poradie - horná hranica, v prípade deleného miesto(napr. 1.-3.) ide o nižšie miesto(1)
             'rank_start': 0,
@@ -257,16 +262,17 @@ class Series(models.Model):
             'rank_end': 0,
             # Indikuje či sa zmenilo poradie od minulej priečky, slúži na delené miesta
             'rank_changed': True,
-            'user': user.user.profile,      # Profil riešiteľa
-            'school': user.school,          # Škola
-            'grade': user.class_level.tag,  # Značka stupňa
+            'userSemesterRegistrationPk' : user.pk, # primary key riešiteľovej registrácie do semestra
+            'user': user.user.profile,              # Profil riešiteľa
+            'school': user.school,                  # Škola
+            'grade': user.class_level.tag,          # Značka stupňa
             'points': utils.solutions_to_list_of_points_pretty(user_solutions),
             # Súčty bodov po sériách
             'subtotal': [sum_func(user_solutions, user)],
             # Celkový súčet za danú entitu
             'total': sum_func(user_solutions, user),
-            # zoznam riešení, aby ich bolo možné prelinkovať z poradia do admina
-            'solutions': user_solutions
+            # zipnutý zoznam riešení a pk príslušných problémov, aby ich bolo možné prelinkovať z poradia do admina a získať pk problému pri none riešení
+            'solutions': zip(user_solutions, problems_pk_list)
         }
 
     def results(self):
