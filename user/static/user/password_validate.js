@@ -6,25 +6,24 @@ jQuery.validator.addMethod("secondPassword", function (value, element) {
     return this.optional(element) || !value || value == $('#id_new_password1').val();
 }, "Heslá sa nezhodujú.");
 
-var password_validator = $("form").validate({
-    rules: {
-        new_password1: {
-            required: true,
-            firstPassword: true
-        },
-        new_password2: {
-            required: true,
-            secondPassword: true
-        },
-    }
+if (!validator) {
+    var validator = $("form").validate();
+}
+
+$('#id_new_password1').rules("add", {
+    required: true,
+    firstPassword: true
+});
+$('#id_new_password2').rules("add", {
+    required: true,
+    secondPassword: true
 });
 
 $('#id_new_password1, #id_new_password2').change(function (element) {
-    password_validator.element(element);
+    validator.element(element);
 });
 
 $('#id_new_password1').change(function (element) {
     // run validation on new_password2 again
-    password_validator.element($("#id_new_password2"));
-    $("#id_new_password2").valid();
+    validator.element($("#id_new_password2"));
 });
