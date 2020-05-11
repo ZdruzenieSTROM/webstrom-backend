@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -107,6 +108,7 @@ class UserProfileView(DetailView):
     context_object_name = 'profile'
 
 
+@login_required
 def profile_update(request):
     profile = request.user.profile
     if request.method == 'POST':
