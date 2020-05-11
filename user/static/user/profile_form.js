@@ -11,36 +11,58 @@ $(document).ready(function () {
     selectedDistrict = $('#id_district').val();
     selectedSchool = $('#id_school').val();
     selectedSchoolName = $('#id_school_name').val();
-    if (selectedDistrict) {
-        $('#id_county').change();
-    } else {
-        $("#id_district").prop('disabled', true);
-        $("#id_school_name").prop('disabled', true);
-        $("#id_school_not_found").prop('disabled', true);
-    }
-    if ($('#id_school_not').is(":checked")) {
+    if ($('#id_school').val() === "1") {    // without school
+        $('#id_school_not').prop('checked', true);
         $("#id_school_not").change();
+        selectedSchool = null;
+        selectedSchoolName = null;
     } else {
         $('#id_grade option[value="13"]').attr('disabled', true);
+
+        if ($('#id_school').val() === "0") { // school not found
+            $('#id_school_not_found').prop('checked', true);
+            $("#id_school_not_found").change();
+            selectedSchool = null;
+            selectedSchoolName = null;
+        } else {
+            if (selectedDistrict) {
+                $('#id_county').change();
+            } else {
+                $("#id_district").prop('disabled', true);
+                $("#id_school_name").prop('disabled', true);
+                $("#id_school_not_found").prop('disabled', true);
+            }
+        }
     }
 });
 
 $("#id_school_not").change(function () {
     if ($(this).is(":checked")) {
         $('#div_id_school_info').hide();
+
+        $("#id_county").val(null);
+        $("#id_county").prop('disabled', true);
+
+        $("#id_district").val(0);
+        $("#id_district").prop('disabled', true);
+
         $("#id_school").val(1);
+        $("#id_school_name").val('Bez školy');
+        $("#id_school_name").prop('disabled', true);
+        $("#id_school_not_found").prop('disabled', true);
+
         $('#id_grade option[value="13"]').attr('disabled', false);
         $("#id_grade").val(13);
-        $("#id_school_name").val('Bez školy');
-        $("#id_county").prop('disabled', true);
-        $("#id_district").prop('disabled', true);
-        $("#id_school_name").prop('disabled', true);
         $('#id_grade option:not(:selected)').attr('disabled', true);
     } else {
         $('#div_id_school_info').hide();
+
+        $("#id_county").prop('disabled', false);
+
         $("#id_school").val(null);
         $("#id_school_name").val(null);
-        $("#id_school_name").prop('disabled', false);
+        $("#id_school_name").prop('disabled', true);
+
         $('#id_grade option:not(:selected)').attr('disabled', false);
         $('#id_grade option[value="13"]').attr('disabled', true);
         $("#id_grade").val(null);
@@ -207,11 +229,13 @@ $("#id_school_not_found").change(function () {
         $("#id_school").val(0);
         $("#id_school_name").val('Iná škola');
         $("#id_school_name").prop('disabled', true);
+        $("#id_school_not").prop('disabled', true);
     } else {
         $('#div_id_school_info').hide();
         $("#id_school").val(null);
         $("#id_school_name").val(null);
         $("#id_school_name").prop('disabled', false);
+        $("#id_school_not").prop('disabled', false);
     }
 })
 
