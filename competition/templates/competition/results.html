@@ -1,13 +1,80 @@
 {% extends "base.html" %}
 
-{% load static %}
-{% load crispy_forms_tags %}
-
 {% block content %}
 
-{% include 'competition/semester_header/header.html' with active='results' semester=series.semester %}
+{% load competition_extras %}
+
+{% if results_type == 'series' %}
+{% include 'competition/semester_header/header.html' with active_site='results' active_series=series.order semester=series.semester%}
+{% elif results_type == 'semester' %}
+{% include 'competition/semester_header/header.html' with active_site='results' active_series=3 series=semester.series_set.first %}
+{% endif %}
 
 <div>
-    tu by malo byt poradie {{series}} eventualne...
+    {% if user.is_staff %}
+    <a class="btn btn-primary" href="
+        {% if results_type == 'series' %}
+            {% url 'competition:series-results-latex' pk=series.pk %}
+        {% elif results_type == 'semester' %}
+            {% url 'competition:semester-results-latex' pk=semester.pk %}
+        {% endif %}
+        "> generuj latex </a>
+    {% endif %}
 </div>
+
+<table class="table table-striped table-borderless table-sm">
+    <thead class="thead-dark">
+        <tr>
+            <th>Miesto</th>
+            <th>Meno</th>
+            <th>Škola</th>
+            <th>Ročník</th>
+            {% if results_type == 'series' %}
+            {% for problem in series.problem_set.all %}
+            <th>{{ problem.order }}</th>
+            {% endfor %}
+            {% elif results_type == 'semester' %}
+            {% for series in semester.series_set.all %}
+            {% for problem in series.problem_set.all %}
+            <th>{{ problem.order }}</th>
+            {% endfor %}
+            {% endfor %}
+            {% endif %}
+            <th>Spolu</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for result_row in results %}
+        <tr>
+            {% if result_row.rank_changed %}
+            {% if result_row.rank_start is result_row.rank_end %}
+            <td>{{ result_row.rank_start }}.</td>
+            {% else %}
+            <td>{{ result_row.rank_start }}. - {{ result_row.rank_end }}.</td>
+            {% endif %}
+            {% else %}
+            <td></td>
+            {% endif %}
+            <td>{{ result_row.user }}</td>
+            <td>{{ result_row.grade }}</td>
+            <td>{{ result_row.school }}</td>
+            {%for solution in result_row.solutions %}
+
+            <td>
+                {% if solution.0 %}
+                <a {% if user.is_staff %} href="{% url 'admin:competition_solution_change' solution.0.pk %}"
+                    {% endif %}>{{solution.0|score_pretty}}</a>
+                {% else %}
+                <a {% if user.is_staff %}
+                    href="{% url 'admin:competition_solution_add' %}?user_semester_registration={{ result_row.user_semester_registration_pk }}&problem={{ solution.1 }}"
+                    {% endif %}>-</a>
+                {% endif %}
+            </td>
+            {%endfor%}
+            <td>{{ result_row.total }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
 {% endblock content %}

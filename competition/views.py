@@ -16,13 +16,6 @@ class LatestSeriesProblemsView(SeriesProblemsView):
             .order_by('-end').first().series_set.first()
 
 
-# TODO: iba placeholder aby to nieco zobrazovalo, ofc model nebude series
-class ResultsView(DetailView):
-    template_name = 'competition/results.html'
-    model = Series
-    context_object_name = 'series'
-
-
 class ArchiveView(ListView):
     # TODO: toto prerobím keď pribudne model ročník
     template_name = 'competition/archive.html'
@@ -50,29 +43,39 @@ class ArchiveView(ListView):
 class SeriesResultsView(DetailView):
     model = Series
     context_object_name = 'series'
-    # TODO: mergnut series_result.html do results.html a zmeniť template_name
-    template_name = 'competition/series_result.html'
+    template_name = 'competition/results.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
         context['results'] = self.object.results_with_ranking()
-        context['histograms'] = []
-        for problem in self.object.problem_set.all():
-            context['histograms'].append(problem.get_stats())
-        context['semester_results'] = self.object.semester.results_with_ranking()
+        context['results_type'] = 'series'
+
         return context
-
-
-class SeriesResultsLatexView(DetailView):
-    model = Series
-    context_object_name = 'series'
 
 
 class SemesterResultsView(DetailView):
     model = Semester
     context_object_name = 'semester'
+    template_name = 'competition/results.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['results'] = self.object.results_with_ranking()
+        context['results_type'] = 'semester'
+        return context
 
 
-class SemesterResultsLatexView(DetailView):
-    model = Semester
-    context_object_name = 'semester'
+class SeriesResultsLatexView(SeriesResultsView):
+    template_name = 'competition/results_latex.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['histograms'] = []
+        for problem in self.object.problem_set.all():
+            context['histograms'].append(problem.get_stats())
+        return context
+
+
+class SemesterResultsLatexView(SemesterResultsView):
+    template_name = 'competition/results_latex.html'

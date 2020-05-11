@@ -21,7 +21,7 @@ class UsersManagersTests(TestCase):
         with self.assertRaises(ValueError):
             User.objects.create_user(email='')
         with self.assertRaises(ValueError):
-            User.objects.create_user(email='', password="foo")
+            User.objects.create_user(email='', password='foo')
         with self.assertRaises(IntegrityError):
             User.objects.create_user('normal@user.com', password='whatever')
 
