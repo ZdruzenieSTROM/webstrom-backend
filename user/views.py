@@ -14,6 +14,7 @@ from user.tokens import email_verification_token_generator
 
 from competition.models import Grade
 
+
 def register(request):
     # TODO: presmerovať prihlásených preč, asi na zmenu profilu
     if request.method == 'POST':
@@ -78,6 +79,18 @@ def district_by_county(request, pk):
     return JsonResponse(list(queryset), safe=False)
 
 
+def school_by_county(request, pk):
+    county = get_object_or_404(County, pk=pk)
+    querysetSchools = District.objects.filter(
+        county=county).values('pk', 'name')
+    queryset = School.objects.filter(district__in=querysetSchools.values('pk'))
+
+    values = [{'value': school.pk, 'label': str(school)}
+              for school in queryset]
+
+    return JsonResponse(values, safe=False)
+
+
 def school_by_district(request, pk):
     district = get_object_or_404(District, pk=pk)
     queryset = School.objects.filter(district=district)
@@ -112,6 +125,7 @@ def profile_update(request):
         form.fields['county'].initial = profile.school.district.county
         form.fields['district'].initial = profile.school.district
         form.fields['school_name'].initial = str(profile.school)
-        form.fields['grade'].initial = Grade.get_grade_by_year_of_graduation(year_of_graduation=profile.year_of_graduation).id
+        form.fields['grade'].initial = Grade.get_grade_by_year_of_graduation(
+            year_of_graduation=profile.year_of_graduation).id
 
     return render(request, 'user/profile_update.html', {'form': form})

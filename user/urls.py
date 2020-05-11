@@ -11,6 +11,7 @@ from django.urls import path, reverse_lazy
 
 from user.views import (
     district_by_county,
+    school_by_county,
     school_by_district,
     register,
     verify,
@@ -32,8 +33,12 @@ urlpatterns = [
     path('profile/<int:pk>/', UserProfileView.as_view(), name='profile-detail'),
 
     # Filtrovanie v registračnom formulári
-    path('district/<int:pk>/', district_by_county, name='filter-district'),
-    path('school/<int:pk>/', school_by_district, name='filter-school'),
+    path('district-by-county/<int:pk>/', district_by_county,
+         name='filter-district-by-county'),
+    path('school-by-county/<int:pk>/', school_by_county,
+         name='filter-school-by-county'),
+    path('school-by-district/<int:pk>/', school_by_district,
+         name='filter-school-by-district'),
 
     # Obnovenie hesla
     path('password-reset/',
