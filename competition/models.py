@@ -386,6 +386,10 @@ class Grade(models.Model):
     def get_year_of_graduation_by_date(self, date=None):
         return utils.get_school_year_end_by_date(date) + self.years_until_graduation
 
+    def get_grade_by_year_of_graduation(year_of_graduation, date=None):
+        years_until_graduation = year_of_graduation - utils.get_school_year_end_by_date(date)
+        return Grade.objects.get(years_until_graduation=years_until_graduation)
+
     def __str__(self):
         return self.name
 

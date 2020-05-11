@@ -5,9 +5,6 @@ from django.db import models
 from base.validators import phone_number_validator
 from base.managers import UnspecifiedValueManager
 
-from competition.utils import get_school_year_end_by_date
-from competition.models import Grade
-
 
 class County(models.Model):
     class Meta:
@@ -166,10 +163,6 @@ class Profile(models.Model):
 
     gdpr = models.BooleanField(
         verbose_name='súhlas so spracovaním osobných údajov', default=False)
-
-    def grade(cls, date=None):
-        years_until_graduation = cls.year_of_graduation - get_school_year_end_by_date(date)
-        return Grade.objects.get(years_until_graduation=years_until_graduation)
 
     def __str__(self):
         return f'{self.first_name} {self.last_name}'

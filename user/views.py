@@ -12,6 +12,7 @@ from user.forms import ProfileCreationForm, UserCreationForm, ProfileUpdateForm
 from user.models import County, District, School, User, Profile
 from user.tokens import email_verification_token_generator
 
+from competition.models import Grade
 
 def register(request):
     # TODO: presmerovať prihlásených preč, asi na zmenu profilu
@@ -111,6 +112,6 @@ def profile_update(request):
         form.fields['county'].initial = profile.school.district.county
         form.fields['district'].initial = profile.school.district
         form.fields['school_name'].initial = str(profile.school)
-        form.fields['grade'].initial = profile.grade().id
+        form.fields['grade'].initial = Grade.get_grade_by_year_of_graduation(year_of_graduation=profile.year_of_graduation).id
 
     return render(request, 'user/profile_update.html', {'form': form})
