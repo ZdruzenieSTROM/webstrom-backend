@@ -268,14 +268,6 @@ var validator = $("form").validate({
             required: true,
             email: true
         },
-        password1: {
-            required: true,
-            firstPassword: true
-        },
-        password2: {
-            required: true,
-            secondPassword: true
-        },
         phone: {
             required: false,
             phone: true
@@ -290,13 +282,8 @@ var validator = $("form").validate({
     }
 });
 
-$('#id_email, #id_password1, #id_password2, #id_phone, #id_parent_phone').change(function (element) {
+$('#id_email, #id_phone, #id_parent_phone').change(function (element) {
     validator.element(element);
-});
-
-$('#id_password1').change(function (element) {
-    // run validation on password2 again
-    $("#id_password2").valid();
 });
 
 $('form').on("submit", function () {

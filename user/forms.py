@@ -10,25 +10,25 @@ class UserCreationForm(forms.ModelForm):
         model = User
         fields = ('email',)
 
-    password1 = forms.CharField(label='Heslo', widget=forms.PasswordInput)
-    password2 = forms.CharField(
+    new_password1 = forms.CharField(label='Heslo', widget=forms.PasswordInput)
+    new_password2 = forms.CharField(
         label='Potvrdenie hesla', widget=forms.PasswordInput)
 
-    def clean_password1(self):
-        password1 = self.cleaned_data['password1']
-        validate_password(password1)
-        return password1
+    def clean_new_password1(self):
+        new_password1 = self.cleaned_data['new_password1']
+        validate_password(new_password1)
+        return new_password1
 
-    def clean_password2(self):
-        password1 = self.cleaned_data.get('password1')
-        password2 = self.cleaned_data.get('password2')
-        if password1 and password2 and password1 != password2:
+    def clean_new_password2(self):
+        new_password1 = self.cleaned_data.get('new_password1')
+        new_password2 = self.cleaned_data.get('new_password2')
+        if new_password1 and new_password2 and new_password1 != new_password2:
             raise forms.ValidationError('Heslá sa nezhodujú')
-        return password2
+        return new_password2
 
     def save(self, commit=True):
         user = super(UserCreationForm, self).save(commit=False)
-        user.set_password(self.cleaned_data['password1'])
+        user.set_password(self.cleaned_data['new_password1'])
 
         if commit:
             user.save()
