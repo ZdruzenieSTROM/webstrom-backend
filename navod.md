@@ -31,7 +31,11 @@ Nainštaluj potrebné balíky:
 pip install -r requirements.txt
 ```
 
-**Package `pdf2image` používa externé programy, zariaď, aby si ich mal nainštalované ([dokumentácia](https://pypi.org/project/pdf2image/))**
+**Package `pdf2image` a `python-magic` používajú externé knižnice, zariaď, aby si ich mal nainštalované**
+
+**Dokumentácie**
+* [pdf2image](https://pypi.org/project/pdf2image/)
+* [python-magic](https://pypi.org/project/python-magic/)
 
 Vytvor a naplň databázu:
 
