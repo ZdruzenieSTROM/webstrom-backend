@@ -197,8 +197,7 @@ class Semester(Event):
                 j += 1
             return merged_results
 
-        else:
-            return series_results
+        return series_results
 
     def results_with_ranking(self, show_only_last_series_points=False):
         current_results = None
@@ -273,7 +272,7 @@ class Series(models.Model):
             # Indikuje či sa zmenilo poradie od minulej priečky, slúži na delené miesta
             'rank_changed': True,
             # primary key riešiteľovej registrácie do semestra
-            'userSemesterRegistrationPk': user.pk,
+            'user_semester_registration_pk': user.pk,
             'user': user.user.profile,              # Profil riešiteľa
             'school': user.school,                  # Škola
             'grade': user.class_level.tag,          # Značka stupňa
@@ -282,7 +281,9 @@ class Series(models.Model):
             'subtotal': [sum_func(user_solutions, user)],
             # Celkový súčet za danú entitu
             'total': sum_func(user_solutions, user),
-            # zipnutý zoznam riešení a pk príslušných problémov, aby ich bolo možné prelinkovať z poradia do admina a získať pk problému pri none riešení
+            # zipnutý zoznam riešení a pk príslušných problémov,
+            # aby ich bolo možné prelinkovať z poradia do admina
+            # a získať pk problému pri none riešení
             'solutions': zip(user_solutions, problems_pk_list)
         }
 
@@ -439,20 +440,6 @@ class Solution(models.Model):
     is_online = models.BooleanField(
         verbose_name='internetové riešenie'
     )
-
-    def get_link(self):
-        text = self.score
-        if not text:
-            text = '?'
-
-        html = "<a>banan</a>"
-        # .format(
-        #            reverse('admin:{}_{}_change'.format(obj._meta.app_label, obj._meta.model_name),
-        #            args=(solution.pk,)), solution.score)
-
-        if display_text:
-            return display_text
-        return "-"
 
     def __str__(self):
         return f'Riešiteľ: {self.user_semester_registration} - úloha: {self.problem}'
