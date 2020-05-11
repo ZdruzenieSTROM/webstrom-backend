@@ -146,7 +146,7 @@ class Semester(Event):
             return old
 
         else:
-            # mergnutie dvoch zip 
+            # mergnutie dvoch zip
             solutions0 = []
             solutions1 = []
             for a in old['solutions']:
@@ -264,7 +264,7 @@ class Series(models.Model):
         problems_pk_list = []
         for problem in self.problem_set.all():
             problems_pk_list.append(problem.pk)
-                    
+
         return {
             # Poradie - horná hranica, v prípade deleného miesto(napr. 1.-3.) ide o nižšie miesto(1)
             'rank_start': 0,
@@ -272,7 +272,8 @@ class Series(models.Model):
             'rank_end': 0,
             # Indikuje či sa zmenilo poradie od minulej priečky, slúži na delené miesta
             'rank_changed': True,
-            'userSemesterRegistrationPk' : user.pk, # primary key riešiteľovej registrácie do semestra
+            # primary key riešiteľovej registrácie do semestra
+            'userSemesterRegistrationPk': user.pk,
             'user': user.user.profile,              # Profil riešiteľa
             'school': user.school,                  # Škola
             'grade': user.class_level.tag,          # Značka stupňa
@@ -445,14 +446,13 @@ class Solution(models.Model):
             text = '?'
 
         html = "<a>banan</a>"
-        #.format(
+        # .format(
         #            reverse('admin:{}_{}_change'.format(obj._meta.app_label, obj._meta.model_name),
         #            args=(solution.pk,)), solution.score)
-             
+
         if display_text:
             return display_text
         return "-"
-
 
     def __str__(self):
         return f'Riešiteľ: {self.user_semester_registration} - úloha: {self.problem}'

@@ -15,6 +15,7 @@ class LatestSeriesProblemsView(SeriesProblemsView):
         return Competition.get_seminar_by_current_site().semester_set\
             .order_by('-end').first().series_set.first()
 
+
 class ArchiveView(ListView):
     # TODO: toto prerobím keď pribudne model ročník
     template_name = 'competition/archive.html'
@@ -42,7 +43,6 @@ class ArchiveView(ListView):
 class SeriesResultsView(DetailView):
     model = Series
     context_object_name = 'series'
-    # TODO: mergnut series_result.html do results.html a zmeniť template_name
     template_name = 'competition/results.html'
 
     def get_context_data(self, **kwargs):
@@ -50,15 +50,15 @@ class SeriesResultsView(DetailView):
         context['results'] = self.object.results_with_ranking()
         context['results_type'] = 'series'
         #context['histograms'] = []
-        #for problem in self.object.problem_set.all():
+        # for problem in self.object.problem_set.all():
         #    context['histograms'].append(problem.get_stats())
         #context['semester_results'] = self.object.semester.results_with_ranking()
         return context
 
+
 class SemesterResultsView(DetailView):
     model = Semester
     context_object_name = 'semester'
-    # TODO: mergnut series_result.html do results.html a zmeniť template_name
     template_name = 'competition/results.html'
 
     def get_context_data(self, **kwargs):
@@ -66,6 +66,7 @@ class SemesterResultsView(DetailView):
         context['results'] = self.object.results_with_ranking()
         context['results_type'] = 'semester'
         return context
+
 
 class SeriesResultsLatexView(SeriesResultsView):
     template_name = 'competition/results_latex.html'
@@ -76,8 +77,7 @@ class SeriesResultsLatexView(SeriesResultsView):
         for problem in self.object.problem_set.all():
             context['histograms'].append(problem.get_stats())
         return context
-        
+
 
 class SemesterResultsLatexView(SemesterResultsView):
     template_name = 'competition/results_latex.html'
-    

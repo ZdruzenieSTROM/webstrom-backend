@@ -5,14 +5,14 @@
 {% load competition_extras %}
 
 {% if results_type == 'series' %}
-    {% include 'competition/semester_header/header.html' with active_site='results' active_series=series.order semester=series.semester%}
+{% include 'competition/semester_header/header.html' with active_site='results' active_series=series.order semester=series.semester%}
 {% elif results_type == 'semester' %}
-    {% include 'competition/semester_header/header.html' with active_site='results' active_series=3 series=semester.series_set.first %}
+{% include 'competition/semester_header/header.html' with active_site='results' active_series=3 series=semester.series_set.first %}
 {% endif %}
 
 <div>
     {% if user.is_staff %}
-        <a class="btn btn-primary" href="
+    <a class="btn btn-primary" href="
         {% if results_type == 'series' %}
             {% url 'competition:series-results-latex' pk=series.pk %}
         {% elif results_type == 'semester' %}
@@ -30,15 +30,15 @@
             <th>Škola</th>
             <th>Ročník</th>
             {% if results_type == 'series' %}
-                {% for problem in series.problem_set.all %}
-                <th>{{ problem.order }}</th>
-                {% endfor %}
+            {% for problem in series.problem_set.all %}
+            <th>{{ problem.order }}</th>
+            {% endfor %}
             {% elif results_type == 'semester' %}
-                {% for series in semester.series_set.all %}
-                    {% for problem in series.problem_set.all %}
-                        <th>{{ problem.order }}</th>
-                    {% endfor %}
-                {% endfor %}
+            {% for series in semester.series_set.all %}
+            {% for problem in series.problem_set.all %}
+            <th>{{ problem.order }}</th>
+            {% endfor %}
+            {% endfor %}
             {% endif %}
             <th>Spolu</th>
         </tr>
@@ -62,11 +62,12 @@
 
             <td>
                 {% if solution.0 %}
-                        <a {% if user.is_staff %} href="{% url 'admin:competition_solution_change' solution.0.pk %}" {% endif %}>{{solution.0|score_pretty}}</a>
+                <a {% if user.is_staff %} href="{% url 'admin:competition_solution_change' solution.0.pk %}"
+                    {% endif %}>{{solution.0|score_pretty}}</a>
                 {% else %}
-                        <a {% if user.is_staff %} 
-                                href="{% url 'admin:competition_solution_add' %}?user_semester_registration={{ result_row.userSemesterRegistrationPk }}&problem={{ solution.1 }}"
-                            {% endif %}>-</a>
+                <a {% if user.is_staff %}
+                    href="{% url 'admin:competition_solution_add' %}?user_semester_registration={{ result_row.userSemesterRegistrationPk }}&problem={{ solution.1 }}"
+                    {% endif %}>-</a>
                 {% endif %}
             </td>
             {%endfor%}
