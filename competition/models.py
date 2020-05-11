@@ -400,7 +400,7 @@ class UserEventRegistration(models.Model):
         'user.School', on_delete=models.SET_NULL, null=True)
     class_level = models.ForeignKey(Grade, on_delete=models.CASCADE)
     event = models.ForeignKey(Semester, on_delete=models.CASCADE)
-
+    votes = models.SmallIntegerField(default=0,verbose_name='hlasy')
     def __str__(self):
         return f'{self.user} v {self.event}'
 
