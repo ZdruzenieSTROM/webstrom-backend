@@ -1,14 +1,20 @@
 import datetime
+import os
+from io import BytesIO
 
 import pdf2image
 from django.contrib.sites.models import Site
+from django.core.files.base import ContentFile
 from django.db import models
-from django.db.models import Count
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.shortcuts import get_object_or_404
 from django.utils.functional import cached_property
 from django.utils.timezone import now
 
 import competition.utils as utils
+from base.models import RestrictedFileField
+from base.utils import mime_type
 from base.validators import school_year_validator
 from user.models import User
 
@@ -426,40 +432,58 @@ class Solution(models.Model):
     def __str__(self):
         return f'Riešiteľ: {self.user_semester_registration} - úloha: {self.problem}'
 
-# Časopisy, brožúry, pozvánky, výsledkové listiny ...
-
 
 class Publication(models.Model):
+    """
+    Reprezentuje časopis, výsledky, brožúrku alebo akýkoľvek materiál
+    zverejnený k nejakému Eventu
+    """
     class Meta:
         verbose_name = 'publikácia'
         verbose_name_plural = 'publikácie'
 
     event = models.ForeignKey(Event, null=True, on_delete=models.SET_NULL)
-    pdf_file = models.FileField(
-        upload_to='publications/'
-    )
-    order = models.PositiveSmallIntegerField()
-    # TODO: Premyslieť ukladanie
-    @property
-    def get_thumbnail_path(self):
-        return f'publications/thumbnails/{self.file_name}'
+    order = models.PositiveSmallIntegerField(unique=True)
 
-    @property
-    def get_publication_path(self):
-        return f'publications/{self.file_name}'
+    file = RestrictedFileField(
+        upload_to='publications/%Y',
+        content_types=['application/pdf', 'application/zip'],
+        verbose_name='súbor')
+    thumbnail = models.ImageField(
+        upload_to='publications/thumbnails/%Y',
+        blank=True,
+        verbose_name='náhľad')
 
-    @property
-    def file_name(self):
-        return f'{self.event.competition}-{self.event.year}-{self.order}-{self.pk}.pdf'
+    def generate_thumbnail(self, forced=False):
+        if mime_type(self.file) != 'application/pdf':
+            return
+
+        if self.thumbnail and not forced:
+            return
+
+        with self.file.open(mode='rb') as file:
+            pil_image = pdf2image.convert_from_bytes(
+                file.read(), first_page=1, last_page=1)[0]
+
+        png_image_bytes = BytesIO()
+        pil_image.save(png_image_bytes, format='png')
+        png_image_bytes.seek(0)
+
+        thumbnail_filename = os.path.splitext(
+            os.path.basename(self.file.name))[0] + '.png'
+
+        if self.thumbnail:
+            self.thumbnail.delete()
+
+        self.thumbnail.save(
+            thumbnail_filename, ContentFile(png_image_bytes.read()))
 
     def __str__(self):
         return f'{self.event.competition}-{self.event.year}-{self.order}'
 
 
-# """
-# @receiver(post_save, sender=Publication)
-# def generate_leaflet_thumbnail(sender, instance, created, **kwargs):
-#     source_path = instance.get_publication_path()
-#     dest_path = instance.get_thumbnail_path()
-#     pdf2image.convert_from_path(source_path)
-# """
+@receiver(post_save, sender=Publication)
+def make_thumbnail_on_creation(sender, instance, created, **kwargs):
+    # pylint: disable=unused-argument
+    if created:
+        instance.generate_thumbnail()
