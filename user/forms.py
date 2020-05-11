@@ -39,8 +39,10 @@ class UserCreationForm(forms.ModelForm):
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ('first_name', 'last_name', 'nickname', 'school_not', 'county', 'district', 'school',
-                  'school_name', 'school_not_found', 'school_info', 'grade', 'phone', 'parent_phone', 'gdpr')
+        fields = ['first_name', 'last_name', 'nickname',
+                  'school_not', 'county', 'district', 'school',
+                  'school_name', 'school_not_found', 'school_info',
+                  'grade', 'phone', 'parent_phone', 'gdpr', ]
 
     grade = forms.ModelChoiceField(
         queryset=Grade.objects.filter(is_active=True),

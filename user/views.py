@@ -27,8 +27,10 @@ def register(request):
 
             send_verification_email(user)
             messages.info(request, 'Odoslali sme ti overovací email')
-
             return redirect('user:login')
+        elif user_form.has_error('email', code='unique'):
+            messages.error(
+                request, render_to_string('user/messages/email_exists.html'))
     else:
         user_form = UserCreationForm()
         profile_form = ProfileCreationForm()
@@ -43,13 +45,11 @@ def register(request):
 def send_verification_email(user):
     # Nie je mi úplne jasné, na čo je dobré user id zakódovať do base64,
     # ale používa to aj reset hesla tak prečo nie
-    message = render_to_string('user/email/email_verification.html', {
+    message = render_to_string('user/emails/email_verification.html', {
         'uidb64': urlsafe_base64_encode(force_bytes(user.pk)),
-        'token': email_verification_token_generator.make_token(user)
-    })
+        'token': email_verification_token_generator.make_token(user)})
 
-    send_mail('Overovací email', message,
-              'web@strom.sk', [user.email])
+    send_mail('Overovací email', message, 'web@strom.sk', [user.email, ])
 
 
 def verify(request, uidb64, token):
@@ -79,10 +79,10 @@ def district_by_county(request, pk):
 
 def school_by_district(request, pk):
     district = get_object_or_404(District, pk=pk)
-    queryset = School.objects.filter(
-        district=district)
+    queryset = School.objects.filter(district=district)
 
-    values = [{'value': school.pk, 'label': str(school)} for school in queryset]
+    values = [{'value': school.pk, 'label': str(school)}
+              for school in queryset]
 
     return JsonResponse(values, safe=False)
 

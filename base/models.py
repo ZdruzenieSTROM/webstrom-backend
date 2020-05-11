@@ -1,3 +1,27 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 
-# Create your models here.
+from base.utils import mime_type
+
+
+class RestrictedFileField(models.FileField):
+    """Nadstavba FileFieldu ktorá si stráži povolené typy súborov a maximálnu veľkosť"""
+
+    def __init__(self, *args, **kwargs):
+        self.content_types = kwargs.pop('content_types', None)
+        self.max_size = kwargs.pop('max_size', None)
+
+        super(RestrictedFileField, self).__init__(*args, **kwargs)
+
+    def clean(self, *args, **kwargs):
+        file = super(RestrictedFileField, self).clean(*args, *kwargs)
+
+        if self.max_size and file.size > self.max_size:
+            raise ValidationError(
+                'Prekročená maximálna povolená veľkosť súboru')
+
+        if self.content_types and mime_type(file) not in self.content_types:
+            raise ValidationError(
+                'Nepovolený typ súboru')
+
+        return file

@@ -4,11 +4,8 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-9">
-        <h1>{{ series }}</h1>
-    </div>
-</div>
+
+{% include 'competition/semester_header/header.html' with active_site='problems' active_series=series.order semester=series.semester%}
 
 <p>Termín odovzdania série: {{ series.deadline }}</p>
 

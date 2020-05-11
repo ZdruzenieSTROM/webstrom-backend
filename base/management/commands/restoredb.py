@@ -51,6 +51,11 @@ class Command(BaseCommand):
         load_fixture = partial(call_command, 'loaddata')
 
         load_fixture('sites', 'flatpages')
+
         load_fixture('counties', 'districts', 'schools', 'schools_custom')
-        load_fixture('competitions', 'semesters', 'grade', 'late_tags')
         load_fixture('superuser', 'users', 'profiles')
+        load_fixture('users_random', 'profiles_random')
+
+        load_fixture('competitions', 'grades', 'late_tags')
+        load_fixture('semesters', 'event_registrations')
+        load_fixture('event_registrations_random', 'solutions_random')

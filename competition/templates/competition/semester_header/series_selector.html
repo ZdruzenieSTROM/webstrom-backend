@@ -1,0 +1,16 @@
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link {% if active_series == 1 %} active {% endif %}"
+            href="{% url current_url pk=semester.series_set.first.pk %}">1. séria</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {% if active_series == 2 %} active {% endif %}"
+            href="{% url current_url pk=semester.series_set.last.pk %}">2. séria</a>
+    </li>
+    {% if active_site == 'results' %}
+    <li class="nav-item">
+        <a class="nav-link {% if active_series == 3 %} active {% endif %}" 
+            href="{% url 'competition:semester-results' pk=semester.pk %}">celkové poradie</a>
+    </li>
+    {% endif %}
+</ul>

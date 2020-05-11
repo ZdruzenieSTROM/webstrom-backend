@@ -3,14 +3,15 @@ __pycache__
 # Django veci
 db.sqlite3
 db.sqlite3-journal
-emails
+/emails
+/media
 
-*/migrations/*
-!*/migrations/__init__.py
+migrations
+!migrations/__init__.py
 
-*/fixtures/sources/*
-!*/fixtures/sources/*.py
-!*/fixtures/sources/requirements.txt
+fixtures/sources
+!fixtures/sources/*.py
+!fixtures/sources/requirements.txt
 
 # Environmenty
 env

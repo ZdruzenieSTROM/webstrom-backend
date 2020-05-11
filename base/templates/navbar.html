@@ -26,6 +26,7 @@
             </ul>
             <ul class="navbar-nav ml-auto">
                 {% if user.is_authenticated %}
+
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">
                         Profil<span class="caret"></span>
@@ -33,7 +34,7 @@
                     <ul class="dropdown-menu">
                         <li><a class="nav-link" href="{% url 'user:profile-detail' user.profile.id %}">Zobraziť profil</a></li>
                         <li><a class="nav-link" href="{% url 'user:profile-update' %}">Upraviť profil</a></li>
-                        <li><a class="nav-link" href="{% url 'user:password_change' %}">Zmeniť heslo</a></li>
+                        <li><a class="nav-link" href="{% url 'user:password-change' %}">Zmeniť heslo</a></li>
                     </ul>
                 </li>
                 <li class="nav-item"><a class="nav-link" href="{% url 'user:logout' %}">Odhlásiť sa</a></li>
