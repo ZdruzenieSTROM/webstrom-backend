@@ -34,8 +34,9 @@
     </div>
 
     <script>
-        var filter_district_url = "{% url 'user:filter-district' 0 %}";
-        var filter_school_url = "{% url 'user:filter-school' 0 %}";
+        var filter_district_by_county_url = "{% url 'user:filter-district-by-county' 0 %}";
+        var filter_school_by_county_url = "{% url 'user:filter-school-by-county' 0 %}";
+        var filter_school_by_district_url = "{% url 'user:filter-school-by-district' 0 %}";
     </script>
     <script src="{% static 'vendor/js/jquery-3.4.1.min.js' %}"></script>
     <script src="{% static 'vendor/js/bootstrap.bundle.min.js' %}"></script>

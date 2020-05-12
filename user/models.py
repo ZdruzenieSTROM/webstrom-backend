@@ -151,6 +151,7 @@ class Profile(models.Model):
         verbose_name='telefónne číslo',
         help_text='Telefonné číslo v medzinárodnom formáte (napr. +421 123 456 789).'
     )
+
     parent_phone = models.CharField(
         max_length=32,
         blank=True,

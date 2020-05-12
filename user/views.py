@@ -1,13 +1,16 @@
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+from django.views.generic.detail import DetailView
 
-from user.forms import ProfileCreationForm, UserCreationForm
-from user.models import County, District, School, User
+from competition.models import Grade
+from user.forms import ProfileCreationForm, ProfileUpdateForm, UserCreationForm
+from user.models import County, District, Profile, School, User
 from user.tokens import email_verification_token_generator
 
 
@@ -75,6 +78,18 @@ def district_by_county(request, pk):
     return JsonResponse(list(queryset), safe=False)
 
 
+def school_by_county(request, pk):
+    county = get_object_or_404(County, pk=pk)
+    querysetSchools = District.objects.filter(
+        county=county).values('pk', 'name')
+    queryset = School.objects.filter(district__in=querysetSchools.values('pk'))
+
+    values = [{'value': school.pk, 'label': str(school)}
+              for school in queryset]
+
+    return JsonResponse(values, safe=False)
+
+
 def school_by_district(request, pk):
     district = get_object_or_404(District, pk=pk)
     queryset = School.objects.filter(district=district)
@@ -83,3 +98,34 @@ def school_by_district(request, pk):
               for school in queryset]
 
     return JsonResponse(values, safe=False)
+
+
+class UserProfileView(DetailView):
+    template_name = 'user/profile_view.html'
+    model = Profile
+    context_object_name = 'profile'
+
+
+@login_required
+def profile_update(request):
+    profile = request.user.profile
+    if request.method == 'POST':
+        form = ProfileUpdateForm(request.POST, instance=profile)
+
+        if form.is_valid():
+            upd_profile = form.save(commit=False)
+            upd_profile.user = profile.user
+            upd_profile.save()
+
+            messages.info(request, 'Zmeny boli uložené.')
+            return redirect('user:profile-detail', upd_profile.id)
+    else:
+        form = ProfileUpdateForm(instance=profile)
+
+        form.fields['county'].initial = profile.school.district.county
+        form.fields['district'].initial = profile.school.district
+        form.fields['school_name'].initial = str(profile.school)
+        form.fields['grade'].initial = Grade.get_grade_by_year_of_graduation(
+            year_of_graduation=profile.year_of_graduation).id
+
+    return render(request, 'user/profile_update.html', {'form': form})

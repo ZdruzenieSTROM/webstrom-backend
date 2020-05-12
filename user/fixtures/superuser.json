@@ -9,5 +9,16 @@
             "is_superuser": true,
             "is_staff": true
         }
+    },
+    {
+        "model": "user.Profile",
+        "pk": 1,
+        "fields": {
+            "user": 1,
+            "first_name": "Webmaster",
+            "last_name": "Strom",
+            "school": 1,
+            "year_of_graduation": 2000
+        }
     }
 ]

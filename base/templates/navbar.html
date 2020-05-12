@@ -1,7 +1,5 @@
 {% load static %}
 <nav class="navbar navbar-expand-md navbar-light bg-light fixed-top">
-    {# Tu budú asi linky na stránky, zatiaľ len takto ručne #}
-    {# neskôr aj s detekciou aktuálnej stránky #}
     <div class="container">
         <a class="navbar-brand" href="/">
             <img src="{% static 'favicon/favicon.svg' %}" width="30" height="30" class="d-inline-block align-top"
@@ -26,7 +24,17 @@
             </ul>
             <ul class="navbar-nav ml-auto">
                 {% if user.is_authenticated %}
-                <li class="nav-item"><a class="nav-link" href="{% url 'user:password-change' %}">Zmeniť heslo</a>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">
+                        Profil<span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="nav-link" href="{% url 'user:profile-detail' user.profile.id %}">Zobraziť profil</a></li>
+                        <li><a class="nav-link" href="{% url 'user:profile-update' %}">Upraviť profil</a></li>
+                        <li><a class="nav-link" href="{% url 'user:password-change' %}">Zmeniť heslo</a></li>
+                    </ul>
+                </li>
                 <li class="nav-item"><a class="nav-link" href="{% url 'user:logout' %}">Odhlásiť sa</a></li>
                 {% else %}
                 <li class="nav-item"><a class="nav-link" href="{% url 'user:login' %}">Prihlásenie</a></li>

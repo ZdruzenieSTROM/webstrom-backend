@@ -4,6 +4,7 @@
 {% load crispy_forms_tags %}
 
 {% block css %}
+<link rel="stylesheet" type="text/css" href="{% static 'vendor/css/jquery-ui.min.css' %}" />
 <link rel="stylesheet" type="text/css" href="{% static 'user/profile_form.css' %}" />
 {% endblock css %}
 
@@ -11,11 +12,12 @@
 <form method="post">
     {% csrf_token %}
     {{ form|crispy }}
-    <input type="submit" class="btn btn-primary" value="Zmeniť heslo">
+    <input id="submit_button" class="btn btn-primary" type="submit" value="Uložiť">
 </form>
-{% endblock %}
+{% endblock content %}
 
 {% block javascript %}
+<script src="{% static 'vendor/js/jquery-ui.min.js' %}"></script>
 <script src="{% static 'vendor/js/jquery.validate.min.js' %}"></script>
-<script src="{% static 'user/password_validate.js' %}"></script>
+<script src="{% static 'user/profile_form.js' %}"></script>
 {% endblock javascript %}

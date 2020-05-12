@@ -10,25 +10,25 @@ class UserCreationForm(forms.ModelForm):
         model = User
         fields = ('email',)
 
-    password1 = forms.CharField(label='Heslo', widget=forms.PasswordInput)
-    password2 = forms.CharField(
+    new_password1 = forms.CharField(label='Heslo', widget=forms.PasswordInput)
+    new_password2 = forms.CharField(
         label='Potvrdenie hesla', widget=forms.PasswordInput)
 
-    def clean_password1(self):
-        password1 = self.cleaned_data['password1']
-        validate_password(password1)
-        return password1
+    def clean_new_password1(self):
+        new_password1 = self.cleaned_data['new_password1']
+        validate_password(new_password1)
+        return new_password1
 
-    def clean_password2(self):
-        password1 = self.cleaned_data.get('password1')
-        password2 = self.cleaned_data.get('password2')
-        if password1 and password2 and password1 != password2:
+    def clean_new_password2(self):
+        new_password1 = self.cleaned_data.get('new_password1')
+        new_password2 = self.cleaned_data.get('new_password2')
+        if new_password1 and new_password2 and new_password1 != new_password2:
             raise forms.ValidationError('Heslá sa nezhodujú')
-        return password2
+        return new_password2
 
     def save(self, commit=True):
         user = super(UserCreationForm, self).save(commit=False)
-        user.set_password(self.cleaned_data['password1'])
+        user.set_password(self.cleaned_data['new_password1'])
 
         if commit:
             user.save()
@@ -36,7 +36,7 @@ class UserCreationForm(forms.ModelForm):
         return user
 
 
-class ProfileCreationForm(forms.ModelForm):
+class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ['first_name', 'last_name', 'nickname',
@@ -49,15 +49,19 @@ class ProfileCreationForm(forms.ModelForm):
         label='Ročník',
         help_text='V prípade, že je leto, zadaj ročník, '
         'ktorý končíš (školský rok začína septembrom).')
+
     school_not = forms.BooleanField(
         required=False,
         label='Už nie som študent základnej ani strednej školy.')
+
     school_name = forms.CharField(
         required=False,
         label='Škola*')
+
     school_not_found = forms.BooleanField(
         required=False,
         label='Moja škola sa v zozname nenachádza.')
+
     school_info = forms.CharField(
         required=False,
         widget=forms.Textarea,
@@ -67,13 +71,14 @@ class ProfileCreationForm(forms.ModelForm):
         required=False,
         queryset=County.objects,
         label='Kraj školy')
+
     district = forms.ModelChoiceField(
         required=False,
         queryset=District.objects,
         label='Okres školy')
 
     def __init__(self, *args, **kwargs):
-        super(ProfileCreationForm, self).__init__(*args, **kwargs)
+        super(ProfileForm, self).__init__(*args, **kwargs)
 
         self.fields['county'].queryset = County.objects.all_except_unspecified()
         self.fields['school'].widget = forms.HiddenInput()
@@ -88,7 +93,7 @@ class ProfileCreationForm(forms.ModelForm):
         return gdpr
 
     def save(self, commit=True):
-        profile = super(ProfileCreationForm, self).save(commit=False)
+        profile = super(ProfileForm, self).save(commit=False)
 
         profile.year_of_graduation = \
             self.cleaned_data['grade'].get_year_of_graduation_by_date()
@@ -97,3 +102,21 @@ class ProfileCreationForm(forms.ModelForm):
             profile.save()
 
         return profile
+
+
+class ProfileCreationForm(ProfileForm):
+    class Meta:
+        model = Profile
+        fields = ['first_name', 'last_name', 'nickname',
+                  'school_not', 'county', 'district', 'school',
+                  'school_name', 'school_not_found', 'school_info',
+                  'grade', 'phone', 'parent_phone', 'gdpr', ]
+
+
+class ProfileUpdateForm(ProfileForm):
+    class Meta:
+        model = Profile
+        fields = ['first_name', 'last_name', 'nickname',
+                  'school_not', 'county', 'district', 'school',
+                  'school_name', 'school_not_found', 'school_info',
+                  'grade', 'phone', 'parent_phone', ]
