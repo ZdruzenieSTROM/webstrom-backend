@@ -14,14 +14,7 @@ class Post(models.Model):
         verbose_name='nadpis'
     )
     text = models.TextField(
-        verbose_name='text príspevku'
-    )
-    img_url = models.URLField(
-        verbose_name='adresa obrázku',
-        blank=True
-    )
-    post_template = models.FileField(
-        verbose_name='šablóna príspevku'
+        verbose_name='text príspevku v markdowne'
     )
 
     published = models.BooleanField(
@@ -55,3 +48,17 @@ class Post(models.Model):
 
     def __str__(self):
         return self.title
+
+class ClickableImage(models.Model):
+    img_url = models.URLField(
+        verbose_name='adresa obrázku',
+        null=True
+    )
+    hyperlink = models.URLField(
+        verbose_name='Link kam ťa presmeruje po kliknutí na obrázok',
+        null=True
+    )
+    post = models.ForeignKey(
+        Post,
+        verbose_name='Príspevok v ktorom sa obrázok zobrazí'
+    )
