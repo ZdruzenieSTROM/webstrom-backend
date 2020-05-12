@@ -20,7 +20,7 @@ class UserChangeForm(forms.ModelForm):
 
     password = ReadOnlyPasswordHashField()
 
-    def clean_new_password(self):
+    def clean_password(self):
         return self.initial['password']
 
 

@@ -1,23 +1,14 @@
-from django.contrib.auth.views import (
-    LoginView, LogoutView,
-    PasswordChangeDoneView,
-    PasswordChangeView,
-    PasswordResetCompleteView,
-    PasswordResetConfirmView,
-    PasswordResetDoneView,
-    PasswordResetView,
-)
+from django.contrib.auth.views import (LoginView, LogoutView,
+                                       PasswordChangeDoneView,
+                                       PasswordChangeView,
+                                       PasswordResetCompleteView,
+                                       PasswordResetConfirmView,
+                                       PasswordResetDoneView,
+                                       PasswordResetView)
 from django.urls import path, reverse_lazy
 
-from user.views import (
-    district_by_county,
-    school_by_county,
-    school_by_district,
-    register,
-    verify,
-    profile_update,
-    UserProfileView,
-)
+from user.views import (UserProfileView, district_by_county, profile_update,
+                        register, school_by_county, school_by_district, verify)
 
 app_name = 'user'
 
