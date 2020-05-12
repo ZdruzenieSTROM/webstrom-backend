@@ -1,5 +1,5 @@
-from django.db import models
 from django.contrib.sites.models import Site
+from django.db import models
 
 
 class Post(models.Model):
@@ -48,6 +48,7 @@ class Post(models.Model):
 
     def __str__(self):
         return self.title
+
 
 class ClickableImage(models.Model):
     img_url = models.URLField(
