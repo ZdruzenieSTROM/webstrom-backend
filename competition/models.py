@@ -264,7 +264,7 @@ class Series(models.Model):
         return self.problem_set.count()
 
     # Generuje jeden riadok poradia ako slovník atribútov
-    def _create_user_dict(self, sum_func, user, user_solutions):
+    def _create_user_dict(self, sum_func, user_semester_registration, user_solutions):
         # list primary keys uloh v aktualnom semestri
         problems_pk_list = []
         for problem in self.problem_set.all():
@@ -278,15 +278,15 @@ class Series(models.Model):
             # Indikuje či sa zmenilo poradie od minulej priečky, slúži na delené miesta
             'rank_changed': True,
             # primary key riešiteľovej registrácie do semestra
-            'user_semester_registration_pk': user.pk,
-            'user': user.user.profile,              # Profil riešiteľa
-            'school': user.school,                  # Škola
-            'grade': user.class_level.tag,          # Značka stupňa
+            'user_semester_registration_pk': user_semester_registration.pk,
+            'user': user_semester_registration.user.profile,              # Profil riešiteľa
+            'school': user_semester_registration.school,                  # Škola
+            'grade': user_semester_registration.class_level.tag,          # Značka stupňa
             'points': utils.solutions_to_list_of_points_pretty(user_solutions),
             # Súčty bodov po sériách
-            'subtotal': [sum_func(user_solutions, user)],
+            'subtotal': [sum_func(user_solutions, user_semester_registration)],
             # Celkový súčet za danú entitu
-            'total': sum_func(user_solutions, user),
+            'total': sum_func(user_solutions, user_semester_registration),
             # zipnutý zoznam riešení a pk príslušných problémov,
             # aby ich bolo možné prelinkovať z poradia do admina
             # a získať pk problému pri none riešení
@@ -400,6 +400,7 @@ class UserEventRegistration(models.Model):
         'user.School', on_delete=models.SET_NULL, null=True)
     class_level = models.ForeignKey(Grade, on_delete=models.CASCADE)
     event = models.ForeignKey(Semester, on_delete=models.CASCADE)
+    votes = models.SmallIntegerField(default=0, verbose_name='hlasy')
 
     def __str__(self):
         return f'{self.user} v {self.event}'
