@@ -3,6 +3,8 @@
         "model": "user.user",
         "pk": 48,
         "fields": {
+            "first_name": "Ucastnik ",
+            "last_name": "Priezvisko48",
             "password": "pbkdf2_sha256$180000$UQCtl76TyAYT$y7KcapcAcpnZ5P2cOP75RnzM9dsZAFPGSwsFvzG+YsA=",
             "last_login": "2020-04-07T21:00:28.430Z",
             "date_joined": "2020-04-07T20:43:01.351Z",
@@ -19,6 +21,8 @@
         "model": "user.user",
         "pk": 49,
         "fields": {
+            "first_name": "Ucastnik ",
+            "last_name": "Priezvisko49",
             "password": "pbkdf2_sha256$180000$UQCtl76TyAYT$y7KcapcAcpnZ5P2cOP75RnzM9dsZAFPGSwsFvzG+YsA=",
             "last_login": "2020-04-07T21:00:28.430Z",
             "date_joined": "2020-04-07T20:43:01.351Z",
@@ -35,6 +39,8 @@
         "model": "user.user",
         "pk": 50,
         "fields": {
+            "first_name": "Ucastnik ",
+            "last_name": "Priezvisko50",
             "password": "pbkdf2_sha256$180000$UQCtl76TyAYT$y7KcapcAcpnZ5P2cOP75RnzM9dsZAFPGSwsFvzG+YsA=",
             "last_login": "2020-04-07T21:00:28.430Z",
             "date_joined": "2020-04-07T20:43:01.351Z",
@@ -51,6 +57,8 @@
         "model": "user.user",
         "pk": 51,
         "fields": {
+            "first_name": "Ucastnik ",
+            "last_name": "Priezvisko51",
             "password": "pbkdf2_sha256$180000$UQCtl76TyAYT$y7KcapcAcpnZ5P2cOP75RnzM9dsZAFPGSwsFvzG+YsA=",
             "last_login": "2020-04-07T21:00:28.430Z",
             "date_joined": "2020-04-07T20:43:01.351Z",
@@ -67,6 +75,8 @@
         "model": "user.user",
         "pk": 52,
         "fields": {
+            "first_name": "Ucastnik ",
+            "last_name": "Priezvisko52",
             "password": "pbkdf2_sha256$180000$UQCtl76TyAYT$y7KcapcAcpnZ5P2cOP75RnzM9dsZAFPGSwsFvzG+YsA=",
             "last_login": "2020-04-07T21:00:28.430Z",
             "date_joined": "2020-04-07T20:43:01.351Z",
@@ -83,6 +93,8 @@
         "model": "user.user",
         "pk": 53,
         "fields": {
+            "first_name": "Ucastnik ",
+            "last_name": "Priezvisko53",
             "password": "pbkdf2_sha256$180000$UQCtl76TyAYT$y7KcapcAcpnZ5P2cOP75RnzM9dsZAFPGSwsFvzG+YsA=",
             "last_login": "2020-04-07T21:00:28.430Z",
             "date_joined": "2020-04-07T20:43:01.351Z",
@@ -99,6 +111,8 @@
         "model": "user.user",
         "pk": 54,
         "fields": {
+            "first_name": "Ucastnik ",
+            "last_name": "Priezvisko54",
             "password": "pbkdf2_sha256$180000$UQCtl76TyAYT$y7KcapcAcpnZ5P2cOP75RnzM9dsZAFPGSwsFvzG+YsA=",
             "last_login": "2020-04-07T21:00:28.430Z",
             "date_joined": "2020-04-07T20:43:01.351Z",
@@ -115,6 +129,8 @@
         "model": "user.user",
         "pk": 55,
         "fields": {
+            "first_name": "Ucastnik ",
+            "last_name": "Priezvisko55",
             "password": "pbkdf2_sha256$180000$UQCtl76TyAYT$y7KcapcAcpnZ5P2cOP75RnzM9dsZAFPGSwsFvzG+YsA=",
             "last_login": "2020-04-07T21:00:28.430Z",
             "date_joined": "2020-04-07T20:43:01.351Z",
@@ -131,6 +147,8 @@
         "model": "user.user",
         "pk": 56,
         "fields": {
+            "first_name": "Ucastnik ",
+            "last_name": "Priezvisko56",
             "password": "pbkdf2_sha256$180000$UQCtl76TyAYT$y7KcapcAcpnZ5P2cOP75RnzM9dsZAFPGSwsFvzG+YsA=",
             "last_login": "2020-04-07T21:00:28.430Z",
             "date_joined": "2020-04-07T20:43:01.351Z",
@@ -147,6 +165,8 @@
         "model": "user.user",
         "pk": 57,
         "fields": {
+            "first_name": "Ucastnik ",
+            "last_name": "Priezvisko57",
             "password": "pbkdf2_sha256$180000$UQCtl76TyAYT$y7KcapcAcpnZ5P2cOP75RnzM9dsZAFPGSwsFvzG+YsA=",
             "last_login": "2020-04-07T21:00:28.430Z",
             "date_joined": "2020-04-07T20:43:01.351Z",
@@ -163,6 +183,8 @@
         "model": "user.user",
         "pk": 58,
         "fields": {
+            "first_name": "Ucastnik ",
+            "last_name": "Priezvisko58",
             "password": "pbkdf2_sha256$180000$UQCtl76TyAYT$y7KcapcAcpnZ5P2cOP75RnzM9dsZAFPGSwsFvzG+YsA=",
             "last_login": "2020-04-07T21:00:28.430Z",
             "date_joined": "2020-04-07T20:43:01.351Z",
@@ -179,6 +201,8 @@
         "model": "user.user",
         "pk": 59,
         "fields": {
+            "first_name": "Ucastnik ",
+            "last_name": "Priezvisko59",
             "password": "pbkdf2_sha256$180000$UQCtl76TyAYT$y7KcapcAcpnZ5P2cOP75RnzM9dsZAFPGSwsFvzG+YsA=",
             "last_login": "2020-04-07T21:00:28.430Z",
             "date_joined": "2020-04-07T20:43:01.351Z",
@@ -195,6 +219,8 @@
         "model": "user.user",
         "pk": 60,
         "fields": {
+            "first_name": "Ucastnik ",
+            "last_name": "Priezvisko60",
             "password": "pbkdf2_sha256$180000$UQCtl76TyAYT$y7KcapcAcpnZ5P2cOP75RnzM9dsZAFPGSwsFvzG+YsA=",
             "last_login": "2020-04-07T21:00:28.430Z",
             "date_joined": "2020-04-07T20:43:01.351Z",
@@ -211,6 +237,8 @@
         "model": "user.user",
         "pk": 61,
         "fields": {
+            "first_name": "Ucastnik ",
+            "last_name": "Priezvisko61",
             "password": "pbkdf2_sha256$180000$UQCtl76TyAYT$y7KcapcAcpnZ5P2cOP75RnzM9dsZAFPGSwsFvzG+YsA=",
             "last_login": "2020-04-07T21:00:28.430Z",
             "date_joined": "2020-04-07T20:43:01.351Z",
@@ -227,6 +255,8 @@
         "model": "user.user",
         "pk": 62,
         "fields": {
+            "first_name": "Ucastnik ",
+            "last_name": "Priezvisko62",
             "password": "pbkdf2_sha256$180000$UQCtl76TyAYT$y7KcapcAcpnZ5P2cOP75RnzM9dsZAFPGSwsFvzG+YsA=",
             "last_login": "2020-04-07T21:00:28.430Z",
             "date_joined": "2020-04-07T20:43:01.351Z",
@@ -243,6 +273,8 @@
         "model": "user.user",
         "pk": 63,
         "fields": {
+            "first_name": "Ucastnik ",
+            "last_name": "Priezvisko63",
             "password": "pbkdf2_sha256$180000$UQCtl76TyAYT$y7KcapcAcpnZ5P2cOP75RnzM9dsZAFPGSwsFvzG+YsA=",
             "last_login": "2020-04-07T21:00:28.430Z",
             "date_joined": "2020-04-07T20:43:01.351Z",
@@ -259,6 +291,8 @@
         "model": "user.user",
         "pk": 64,
         "fields": {
+            "first_name": "Ucastnik ",
+            "last_name": "Priezvisko64",
             "password": "pbkdf2_sha256$180000$UQCtl76TyAYT$y7KcapcAcpnZ5P2cOP75RnzM9dsZAFPGSwsFvzG+YsA=",
             "last_login": "2020-04-07T21:00:28.430Z",
             "date_joined": "2020-04-07T20:43:01.351Z",
@@ -275,6 +309,8 @@
         "model": "user.user",
         "pk": 65,
         "fields": {
+            "first_name": "Ucastnik ",
+            "last_name": "Priezvisko65",
             "password": "pbkdf2_sha256$180000$UQCtl76TyAYT$y7KcapcAcpnZ5P2cOP75RnzM9dsZAFPGSwsFvzG+YsA=",
             "last_login": "2020-04-07T21:00:28.430Z",
             "date_joined": "2020-04-07T20:43:01.351Z",
@@ -291,6 +327,8 @@
         "model": "user.user",
         "pk": 66,
         "fields": {
+            "first_name": "Ucastnik ",
+            "last_name": "Priezvisko66",
             "password": "pbkdf2_sha256$180000$UQCtl76TyAYT$y7KcapcAcpnZ5P2cOP75RnzM9dsZAFPGSwsFvzG+YsA=",
             "last_login": "2020-04-07T21:00:28.430Z",
             "date_joined": "2020-04-07T20:43:01.351Z",
@@ -307,6 +345,8 @@
         "model": "user.user",
         "pk": 67,
         "fields": {
+            "first_name": "Ucastnik ",
+            "last_name": "Priezvisko67",
             "password": "pbkdf2_sha256$180000$UQCtl76TyAYT$y7KcapcAcpnZ5P2cOP75RnzM9dsZAFPGSwsFvzG+YsA=",
             "last_login": "2020-04-07T21:00:28.430Z",
             "date_joined": "2020-04-07T20:43:01.351Z",
@@ -323,6 +363,8 @@
         "model": "user.user",
         "pk": 68,
         "fields": {
+            "first_name": "Ucastnik ",
+            "last_name": "Priezvisko68",
             "password": "pbkdf2_sha256$180000$UQCtl76TyAYT$y7KcapcAcpnZ5P2cOP75RnzM9dsZAFPGSwsFvzG+YsA=",
             "last_login": "2020-04-07T21:00:28.430Z",
             "date_joined": "2020-04-07T20:43:01.351Z",
@@ -339,6 +381,8 @@
         "model": "user.user",
         "pk": 69,
         "fields": {
+            "first_name": "Ucastnik ",
+            "last_name": "Priezvisko69",
             "password": "pbkdf2_sha256$180000$UQCtl76TyAYT$y7KcapcAcpnZ5P2cOP75RnzM9dsZAFPGSwsFvzG+YsA=",
             "last_login": "2020-04-07T21:00:28.430Z",
             "date_joined": "2020-04-07T20:43:01.351Z",
@@ -355,6 +399,8 @@
         "model": "user.user",
         "pk": 70,
         "fields": {
+            "first_name": "Ucastnik ",
+            "last_name": "Priezvisko70",
             "password": "pbkdf2_sha256$180000$UQCtl76TyAYT$y7KcapcAcpnZ5P2cOP75RnzM9dsZAFPGSwsFvzG+YsA=",
             "last_login": "2020-04-07T21:00:28.430Z",
             "date_joined": "2020-04-07T20:43:01.351Z",
@@ -371,6 +417,8 @@
         "model": "user.user",
         "pk": 71,
         "fields": {
+            "first_name": "Ucastnik ",
+            "last_name": "Priezvisko71",
             "password": "pbkdf2_sha256$180000$UQCtl76TyAYT$y7KcapcAcpnZ5P2cOP75RnzM9dsZAFPGSwsFvzG+YsA=",
             "last_login": "2020-04-07T21:00:28.430Z",
             "date_joined": "2020-04-07T20:43:01.351Z",
@@ -387,6 +435,8 @@
         "model": "user.user",
         "pk": 72,
         "fields": {
+            "first_name": "Ucastnik ",
+            "last_name": "Priezvisko72",
             "password": "pbkdf2_sha256$180000$UQCtl76TyAYT$y7KcapcAcpnZ5P2cOP75RnzM9dsZAFPGSwsFvzG+YsA=",
             "last_login": "2020-04-07T21:00:28.430Z",
             "date_joined": "2020-04-07T20:43:01.351Z",
@@ -403,6 +453,8 @@
         "model": "user.user",
         "pk": 73,
         "fields": {
+            "first_name": "Ucastnik ",
+            "last_name": "Priezvisko73",
             "password": "pbkdf2_sha256$180000$UQCtl76TyAYT$y7KcapcAcpnZ5P2cOP75RnzM9dsZAFPGSwsFvzG+YsA=",
             "last_login": "2020-04-07T21:00:28.430Z",
             "date_joined": "2020-04-07T20:43:01.351Z",
@@ -419,6 +471,8 @@
         "model": "user.user",
         "pk": 74,
         "fields": {
+            "first_name": "Ucastnik ",
+            "last_name": "Priezvisko74",
             "password": "pbkdf2_sha256$180000$UQCtl76TyAYT$y7KcapcAcpnZ5P2cOP75RnzM9dsZAFPGSwsFvzG+YsA=",
             "last_login": "2020-04-07T21:00:28.430Z",
             "date_joined": "2020-04-07T20:43:01.351Z",
@@ -435,6 +489,8 @@
         "model": "user.user",
         "pk": 75,
         "fields": {
+            "first_name": "Ucastnik ",
+            "last_name": "Priezvisko75",
             "password": "pbkdf2_sha256$180000$UQCtl76TyAYT$y7KcapcAcpnZ5P2cOP75RnzM9dsZAFPGSwsFvzG+YsA=",
             "last_login": "2020-04-07T21:00:28.430Z",
             "date_joined": "2020-04-07T20:43:01.351Z",
@@ -451,6 +507,8 @@
         "model": "user.user",
         "pk": 76,
         "fields": {
+            "first_name": "Ucastnik ",
+            "last_name": "Priezvisko76",
             "password": "pbkdf2_sha256$180000$UQCtl76TyAYT$y7KcapcAcpnZ5P2cOP75RnzM9dsZAFPGSwsFvzG+YsA=",
             "last_login": "2020-04-07T21:00:28.430Z",
             "date_joined": "2020-04-07T20:43:01.351Z",
@@ -467,6 +525,8 @@
         "model": "user.user",
         "pk": 77,
         "fields": {
+            "first_name": "Ucastnik ",
+            "last_name": "Priezvisko77",
             "password": "pbkdf2_sha256$180000$UQCtl76TyAYT$y7KcapcAcpnZ5P2cOP75RnzM9dsZAFPGSwsFvzG+YsA=",
             "last_login": "2020-04-07T21:00:28.430Z",
             "date_joined": "2020-04-07T20:43:01.351Z",

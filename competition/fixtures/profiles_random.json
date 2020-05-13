@@ -1,11 +1,9 @@
 [
     {
-        "model": "user.profile",
+        "model": "competition.profile",
         "pk": 48,
         "fields": {
             "user": 48,
-            "first_name": "Ucastnik ",
-            "last_name": "Priezvisko48",
             "nickname": "Prezyvka48",
             "school": "000160997",
             "year_of_graduation": 2022,
@@ -14,12 +12,10 @@
         }
     },
     {
-        "model": "user.profile",
+        "model": "competition.profile",
         "pk": 49,
         "fields": {
             "user": 49,
-            "first_name": "Ucastnik ",
-            "last_name": "Priezvisko49",
             "nickname": "Prezyvka49",
             "school": "000160997",
             "year_of_graduation": 2025,
@@ -28,12 +24,10 @@
         }
     },
     {
-        "model": "user.profile",
+        "model": "competition.profile",
         "pk": 50,
         "fields": {
             "user": 50,
-            "first_name": "Ucastnik ",
-            "last_name": "Priezvisko50",
             "nickname": "Prezyvka50",
             "school": "000160997",
             "year_of_graduation": 2028,
@@ -42,12 +36,10 @@
         }
     },
     {
-        "model": "user.profile",
+        "model": "competition.profile",
         "pk": 51,
         "fields": {
             "user": 51,
-            "first_name": "Ucastnik ",
-            "last_name": "Priezvisko51",
             "nickname": "Prezyvka51",
             "school": "000160997",
             "year_of_graduation": 2025,
@@ -56,12 +48,10 @@
         }
     },
     {
-        "model": "user.profile",
+        "model": "competition.profile",
         "pk": 52,
         "fields": {
             "user": 52,
-            "first_name": "Ucastnik ",
-            "last_name": "Priezvisko52",
             "nickname": "Prezyvka52",
             "school": "000160997",
             "year_of_graduation": 2024,
@@ -70,12 +60,10 @@
         }
     },
     {
-        "model": "user.profile",
+        "model": "competition.profile",
         "pk": 53,
         "fields": {
             "user": 53,
-            "first_name": "Ucastnik ",
-            "last_name": "Priezvisko53",
             "nickname": "Prezyvka53",
             "school": "000160997",
             "year_of_graduation": 2025,
@@ -84,12 +72,10 @@
         }
     },
     {
-        "model": "user.profile",
+        "model": "competition.profile",
         "pk": 54,
         "fields": {
             "user": 54,
-            "first_name": "Ucastnik ",
-            "last_name": "Priezvisko54",
             "nickname": "Prezyvka54",
             "school": "000160997",
             "year_of_graduation": 2027,
@@ -98,12 +84,10 @@
         }
     },
     {
-        "model": "user.profile",
+        "model": "competition.profile",
         "pk": 55,
         "fields": {
             "user": 55,
-            "first_name": "Ucastnik ",
-            "last_name": "Priezvisko55",
             "nickname": "Prezyvka55",
             "school": "000160997",
             "year_of_graduation": 2022,
@@ -112,12 +96,10 @@
         }
     },
     {
-        "model": "user.profile",
+        "model": "competition.profile",
         "pk": 56,
         "fields": {
             "user": 56,
-            "first_name": "Ucastnik ",
-            "last_name": "Priezvisko56",
             "nickname": "Prezyvka56",
             "school": "000160997",
             "year_of_graduation": 2021,
@@ -126,12 +108,10 @@
         }
     },
     {
-        "model": "user.profile",
+        "model": "competition.profile",
         "pk": 57,
         "fields": {
             "user": 57,
-            "first_name": "Ucastnik ",
-            "last_name": "Priezvisko57",
             "nickname": "Prezyvka57",
             "school": "000160997",
             "year_of_graduation": 2029,
@@ -140,12 +120,10 @@
         }
     },
     {
-        "model": "user.profile",
+        "model": "competition.profile",
         "pk": 58,
         "fields": {
             "user": 58,
-            "first_name": "Ucastnik ",
-            "last_name": "Priezvisko58",
             "nickname": "Prezyvka58",
             "school": "000160997",
             "year_of_graduation": 2022,
@@ -154,12 +132,10 @@
         }
     },
     {
-        "model": "user.profile",
+        "model": "competition.profile",
         "pk": 59,
         "fields": {
             "user": 59,
-            "first_name": "Ucastnik ",
-            "last_name": "Priezvisko59",
             "nickname": "Prezyvka59",
             "school": "000160997",
             "year_of_graduation": 2021,
@@ -168,12 +144,10 @@
         }
     },
     {
-        "model": "user.profile",
+        "model": "competition.profile",
         "pk": 60,
         "fields": {
             "user": 60,
-            "first_name": "Ucastnik ",
-            "last_name": "Priezvisko60",
             "nickname": "Prezyvka60",
             "school": "000160997",
             "year_of_graduation": 2024,
@@ -182,12 +156,10 @@
         }
     },
     {
-        "model": "user.profile",
+        "model": "competition.profile",
         "pk": 61,
         "fields": {
             "user": 61,
-            "first_name": "Ucastnik ",
-            "last_name": "Priezvisko61",
             "nickname": "Prezyvka61",
             "school": "000160997",
             "year_of_graduation": 2020,
@@ -196,12 +168,10 @@
         }
     },
     {
-        "model": "user.profile",
+        "model": "competition.profile",
         "pk": 62,
         "fields": {
             "user": 62,
-            "first_name": "Ucastnik ",
-            "last_name": "Priezvisko62",
             "nickname": "Prezyvka62",
             "school": "000160997",
             "year_of_graduation": 2024,
@@ -210,12 +180,10 @@
         }
     },
     {
-        "model": "user.profile",
+        "model": "competition.profile",
         "pk": 63,
         "fields": {
             "user": 63,
-            "first_name": "Ucastnik ",
-            "last_name": "Priezvisko63",
             "nickname": "Prezyvka63",
             "school": "000160997",
             "year_of_graduation": 2026,
@@ -224,12 +192,10 @@
         }
     },
     {
-        "model": "user.profile",
+        "model": "competition.profile",
         "pk": 64,
         "fields": {
             "user": 64,
-            "first_name": "Ucastnik ",
-            "last_name": "Priezvisko64",
             "nickname": "Prezyvka64",
             "school": "000160997",
             "year_of_graduation": 2029,
@@ -238,12 +204,10 @@
         }
     },
     {
-        "model": "user.profile",
+        "model": "competition.profile",
         "pk": 65,
         "fields": {
             "user": 65,
-            "first_name": "Ucastnik ",
-            "last_name": "Priezvisko65",
             "nickname": "Prezyvka65",
             "school": "000160997",
             "year_of_graduation": 2028,
@@ -252,12 +216,10 @@
         }
     },
     {
-        "model": "user.profile",
+        "model": "competition.profile",
         "pk": 66,
         "fields": {
             "user": 66,
-            "first_name": "Ucastnik ",
-            "last_name": "Priezvisko66",
             "nickname": "Prezyvka66",
             "school": "000160997",
             "year_of_graduation": 2025,
@@ -266,12 +228,10 @@
         }
     },
     {
-        "model": "user.profile",
+        "model": "competition.profile",
         "pk": 67,
         "fields": {
             "user": 67,
-            "first_name": "Ucastnik ",
-            "last_name": "Priezvisko67",
             "nickname": "Prezyvka67",
             "school": "000160997",
             "year_of_graduation": 2025,
@@ -280,12 +240,10 @@
         }
     },
     {
-        "model": "user.profile",
+        "model": "competition.profile",
         "pk": 68,
         "fields": {
             "user": 68,
-            "first_name": "Ucastnik ",
-            "last_name": "Priezvisko68",
             "nickname": "Prezyvka68",
             "school": "000160997",
             "year_of_graduation": 2023,
@@ -294,12 +252,10 @@
         }
     },
     {
-        "model": "user.profile",
+        "model": "competition.profile",
         "pk": 69,
         "fields": {
             "user": 69,
-            "first_name": "Ucastnik ",
-            "last_name": "Priezvisko69",
             "nickname": "Prezyvka69",
             "school": "000160997",
             "year_of_graduation": 2024,
@@ -308,12 +264,10 @@
         }
     },
     {
-        "model": "user.profile",
+        "model": "competition.profile",
         "pk": 70,
         "fields": {
             "user": 70,
-            "first_name": "Ucastnik ",
-            "last_name": "Priezvisko70",
             "nickname": "Prezyvka70",
             "school": "000160997",
             "year_of_graduation": 2028,
@@ -322,12 +276,10 @@
         }
     },
     {
-        "model": "user.profile",
+        "model": "competition.profile",
         "pk": 71,
         "fields": {
             "user": 71,
-            "first_name": "Ucastnik ",
-            "last_name": "Priezvisko71",
             "nickname": "Prezyvka71",
             "school": "000160997",
             "year_of_graduation": 2025,
@@ -336,12 +288,10 @@
         }
     },
     {
-        "model": "user.profile",
+        "model": "competition.profile",
         "pk": 72,
         "fields": {
             "user": 72,
-            "first_name": "Ucastnik ",
-            "last_name": "Priezvisko72",
             "nickname": "Prezyvka72",
             "school": "000160997",
             "year_of_graduation": 2025,
@@ -350,12 +300,10 @@
         }
     },
     {
-        "model": "user.profile",
+        "model": "competition.profile",
         "pk": 73,
         "fields": {
             "user": 73,
-            "first_name": "Ucastnik ",
-            "last_name": "Priezvisko73",
             "nickname": "Prezyvka73",
             "school": "000160997",
             "year_of_graduation": 2020,
@@ -364,12 +312,10 @@
         }
     },
     {
-        "model": "user.profile",
+        "model": "competition.profile",
         "pk": 74,
         "fields": {
             "user": 74,
-            "first_name": "Ucastnik ",
-            "last_name": "Priezvisko74",
             "nickname": "Prezyvka74",
             "school": "000160997",
             "year_of_graduation": 2024,
@@ -378,12 +324,10 @@
         }
     },
     {
-        "model": "user.profile",
+        "model": "competition.profile",
         "pk": 75,
         "fields": {
             "user": 75,
-            "first_name": "Ucastnik ",
-            "last_name": "Priezvisko75",
             "nickname": "Prezyvka75",
             "school": "000160997",
             "year_of_graduation": 2023,
@@ -392,12 +336,10 @@
         }
     },
     {
-        "model": "user.profile",
+        "model": "competition.profile",
         "pk": 76,
         "fields": {
             "user": 76,
-            "first_name": "Ucastnik ",
-            "last_name": "Priezvisko76",
             "nickname": "Prezyvka76",
             "school": "000160997",
             "year_of_graduation": 2022,
@@ -406,12 +348,10 @@
         }
     },
     {
-        "model": "user.profile",
+        "model": "competition.profile",
         "pk": 77,
         "fields": {
             "user": 77,
-            "first_name": "Ucastnik ",
-            "last_name": "Priezvisko77",
             "nickname": "Prezyvka77",
             "school": "000160997",
             "year_of_graduation": 2029,
