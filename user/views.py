@@ -1,21 +1,24 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
-from django.views.generic.detail import DetailView
+from django.views.generic import TemplateView
 
 from competition.forms import ProfileCreationForm, ProfileUpdateForm
 from competition.models import County, District, Grade, Profile, School
-from user.forms import UserCreationForm
+from user.forms import NameUpdateForm, UserCreationForm
 from user.models import User
 from user.tokens import email_verification_token_generator
 
 
 def register(request):
-    # TODO: presmerovať prihlásených preč, asi na zmenu profilu
+    if request.user.is_authenticated:
+        return redirect('user:profile-update')
+
     if request.method == 'POST':
         user_form = UserCreationForm(request.POST)
         profile_form = ProfileCreationForm(request.POST)
@@ -71,6 +74,35 @@ def verify(request, uidb64, token):
     return redirect('/')
 
 
+@login_required
+def profile_update(request):
+    profile = request.user.profile
+
+    if request.method == 'POST':
+        user_form = NameUpdateForm(request.POST, instance=request.user)
+        profile_form = ProfileUpdateForm(request.POST, instance=profile)
+
+        if user_form.is_valid() and profile_form.is_valid():
+            messages.info(request, 'Zmeny boli uložené.')
+            return redirect('user:profile-detail', profile_form.save().pk)
+    else:
+        user_form = NameUpdateForm(instance=request.user)
+        profile_form = ProfileUpdateForm(instance=profile)
+
+        profile_form.fields['county'].initial = profile.school.district.county
+        profile_form.fields['district'].initial = profile.school.district
+        profile_form.fields['school_name'].initial = str(profile.school)
+        profile_form.fields['grade'].initial = Grade.get_grade_by_year_of_graduation(
+            year_of_graduation=profile.year_of_graduation).id
+
+    return render(request, 'user/profile_update.html',
+                  {'user_form': user_form, 'profile_form': profile_form})
+
+
+class UserProfileView(TemplateView, LoginRequiredMixin):
+    template_name = 'user/profile_view.html'
+
+
 def district_by_county(request, pk):
     county = get_object_or_404(County, pk=pk)
     queryset = District.objects.filter(county=county).values('pk', 'name')
@@ -98,34 +130,3 @@ def school_by_district(request, pk):
               for school in queryset]
 
     return JsonResponse(values, safe=False)
-
-
-class UserProfileView(DetailView):
-    template_name = 'user/profile_view.html'
-    model = Profile
-    context_object_name = 'profile'
-
-
-@login_required
-def profile_update(request):
-    profile = request.user.profile
-    if request.method == 'POST':
-        form = ProfileUpdateForm(request.POST, instance=profile)
-
-        if form.is_valid():
-            upd_profile = form.save(commit=False)
-            upd_profile.user = profile.user
-            upd_profile.save()
-
-            messages.info(request, 'Zmeny boli uložené.')
-            return redirect('user:profile-detail', upd_profile.id)
-    else:
-        form = ProfileUpdateForm(instance=profile)
-
-        form.fields['county'].initial = profile.school.district.county
-        form.fields['district'].initial = profile.school.district
-        form.fields['school_name'].initial = str(profile.school)
-        form.fields['grade'].initial = Grade.get_grade_by_year_of_graduation(
-            year_of_graduation=profile.year_of_graduation).id
-
-    return render(request, 'user/profile_update.html', {'form': form})

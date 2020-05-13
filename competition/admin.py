@@ -2,7 +2,7 @@ from django.contrib import admin, messages
 from django.http import HttpResponseRedirect
 
 from competition.models import (Competition, Event, EventRegistration, Grade,
-                                LateTag, Problem, Profile, Publication, School,
+                                LateTag, Problem, Publication, School,
                                 Semester, Series, Solution)
 
 
@@ -35,4 +35,3 @@ admin.site.register(EventRegistration)
 admin.site.register(Solution)
 admin.site.register(LateTag)
 admin.site.register(School)
-admin.site.register(Profile)

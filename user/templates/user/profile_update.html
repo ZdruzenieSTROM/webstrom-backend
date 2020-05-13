@@ -11,7 +11,8 @@
 {% block content %}
 <form method="post">
     {% csrf_token %}
-    {{ form|crispy }}
+    {{ user_form|crispy }}
+    {{ profile_form|crispy }}
     <input id="submit_button" class="btn btn-primary" type="submit" value="Uložiť">
 </form>
 {% endblock content %}
