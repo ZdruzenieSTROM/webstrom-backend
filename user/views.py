@@ -50,7 +50,7 @@ def send_verification_email(user):
         'uidb64': urlsafe_base64_encode(force_bytes(user.pk)),
         'token': email_verification_token_generator.make_token(user)})
 
-    send_mail('Overovací email', message, 'web@strom.sk', [user.email, ])
+    user.email_user('Overovací email', message)
 
 
 def verify(request, uidb64, token):

@@ -5,10 +5,6 @@ from user.models import User
 
 
 class UserCreationForm(forms.ModelForm):
-    """
-    Vykradnutý django.contrib.auth.forms.UserCreationForm,
-    preložený a nalinkovaný na náš User Model
-    """
     error_messages = {
         'password_mismatch': 'Zadané heslá sa nezhodujú'
     }
@@ -41,14 +37,11 @@ class UserCreationForm(forms.ModelForm):
         if password1 and password2 and password1 != password2:
             raise forms.ValidationError(
                 self.error_messages['password_mismatch'],
-                code='password_mismatch',
-            )
+                code='password_mismatch')
         return password2
 
     def _post_clean(self):
         super()._post_clean()
-        # Validate the password after self.instance is updated with form data
-        # by super().
         password = self.cleaned_data.get('new_password2')
         if password:
             try:
