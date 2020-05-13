@@ -39,7 +39,7 @@ LOCAL_APPS = [
     'base.apps.BaseConfig',
     'competition.apps.CompetitionConfig',
     'user.apps.UserConfig',
-    'post.apps.PostConfig'
+    # 'post.apps.PostConfig'
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -102,6 +102,8 @@ PASSWORD_RESET_TIMEOUT_DAYS = 3
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
+
+AUTH_USER_MODEL = 'user.User'
 
 AUTH_PASSWORD_VALIDATORS = [
     {

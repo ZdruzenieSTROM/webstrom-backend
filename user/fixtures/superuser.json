@@ -3,20 +3,19 @@
         "model": "user.User",
         "pk": 1,
         "fields": {
+            "first_name": "Webmaster",
+            "last_name": "Strom",
             "email": "webmaster@strom.sk",
             "password": "pbkdf2_sha256$180000$NyzwabHNPn2K$sTirqoFPMkLZpnUHkCpzUFZnAsbGM7Bp2+EoN8sOuQA=",
-            "date_joined": "2020-04-07T20:43:01.351Z",
             "is_superuser": true,
             "is_staff": true
         }
     },
     {
-        "model": "user.Profile",
+        "model": "competition.Profile",
         "pk": 1,
         "fields": {
             "user": 1,
-            "first_name": "Webmaster",
-            "last_name": "Strom",
             "school": 1,
             "year_of_graduation": 2000
         }

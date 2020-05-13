@@ -8,9 +8,9 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.views.generic.detail import DetailView
 
-from competition.models import Grade
-from user.forms import ProfileCreationForm, ProfileUpdateForm, UserCreationForm
-from user.models import County, District, Profile, School, User
+from competition.forms import ProfileCreationForm, ProfileUpdateForm
+from competition.models import County, District, Grade, Profile, School, User
+from user.forms import UserCreationForm
 from user.tokens import email_verification_token_generator
 
 

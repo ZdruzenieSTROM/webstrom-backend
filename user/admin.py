@@ -4,8 +4,9 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.contrib.auth.models import Permission
 
-from user.models import County, District, School, User, Profile
+from competition.models import Profile
 from user.forms import UserCreationForm
+from user.models import User
 
 
 class ProfileInline(admin.StackedInline):
@@ -29,7 +30,7 @@ class UserAdmin(BaseUserAdmin):
     form = UserChangeForm
     add_form = UserCreationForm
 
-    list_display = ('email', 'is_staff',)
+    # list_display = ('email', 'is_staff',)
     list_filter = ('is_active', 'is_staff', 'is_superuser', 'groups',)
     search_fields = ('email',)
     ordering = ('email',)
@@ -64,6 +65,3 @@ class UserAdmin(BaseUserAdmin):
 
 
 admin.site.register(Permission)
-admin.site.register(County)
-admin.site.register(District)
-admin.site.register(School)
