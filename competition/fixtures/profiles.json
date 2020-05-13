@@ -1,6 +1,6 @@
 [
     {
-        "model": "user.profile",
+        "model": "competition.profile",
         "pk": 4,
         "fields": {
             "user": 4,
@@ -12,7 +12,7 @@
         }
     },
     {
-        "model": "user.profile",
+        "model": "competition.profile",
         "pk": 5,
         "fields": {
             "user": 47,
@@ -24,7 +24,7 @@
         }
     },
     {
-        "model": "user.profile",
+        "model": "competition.profile",
         "pk": 6,
         "fields": {
             "user": 42,
@@ -36,7 +36,7 @@
         }
     },
     {
-        "model": "user.profile",
+        "model": "competition.profile",
         "pk": 7,
         "fields": {
             "user": 3,
@@ -48,7 +48,7 @@
         }
     },
     {
-        "model": "user.profile",
+        "model": "competition.profile",
         "pk": 8,
         "fields": {
             "user": 5,
@@ -60,7 +60,7 @@
         }
     },
     {
-        "model": "user.profile",
+        "model": "competition.profile",
         "pk": 9,
         "fields": {
             "user": 6,
@@ -72,7 +72,7 @@
         }
     },
     {
-        "model": "user.profile",
+        "model": "competition.profile",
         "pk": 10,
         "fields": {
             "user": 7,
@@ -84,7 +84,7 @@
         }
     },
     {
-        "model": "user.profile",
+        "model": "competition.profile",
         "pk": 11,
         "fields": {
             "user": 8,
@@ -96,7 +96,7 @@
         }
     },
     {
-        "model": "user.profile",
+        "model": "competition.profile",
         "pk": 12,
         "fields": {
             "user": 9,
@@ -108,7 +108,7 @@
         }
     },
     {
-        "model": "user.profile",
+        "model": "competition.profile",
         "pk": 13,
         "fields": {
             "user": 10,
@@ -120,7 +120,7 @@
         }
     },
     {
-        "model": "user.profile",
+        "model": "competition.profile",
         "pk": 14,
         "fields": {
             "user": 11,
@@ -131,7 +131,7 @@
         }
     },
     {
-        "model": "user.profile",
+        "model": "competition.profile",
         "pk": 15,
         "fields": {
             "user": 12,
