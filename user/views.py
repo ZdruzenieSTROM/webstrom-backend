@@ -80,9 +80,9 @@ def district_by_county(request, pk):
 
 def school_by_county(request, pk):
     county = get_object_or_404(County, pk=pk)
-    querysetSchools = District.objects.filter(
+    districts = District.objects.filter(
         county=county).values('pk', 'name')
-    queryset = School.objects.filter(district__in=querysetSchools.values('pk'))
+    queryset = School.objects.filter(district__in=districts.values('pk'))
 
     values = [{'value': school.pk, 'label': str(school)}
               for school in queryset]

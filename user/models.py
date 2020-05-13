@@ -8,7 +8,7 @@ class User(AbstractUser):
         verbose_name_plural = 'používatelia'
 
     username = models.CharField(
-        max_length=255, default='dummy_username')
+        max_length=8, default='not_used')
     email = models.EmailField(
         unique=True, max_length=255, verbose_name='email')
     verified_email = models.BooleanField(
