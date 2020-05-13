@@ -1,6 +1,7 @@
 import datetime
 import os
 from io import BytesIO
+from operator import itemgetter
 
 import pdf2image
 from django.conf import settings
@@ -13,12 +14,11 @@ from django.shortcuts import get_object_or_404
 from django.utils.functional import cached_property
 from django.utils.timezone import now
 
-import competition.utils as utils
 from base.managers import UnspecifiedValueManager
 from base.models import RestrictedFileField
 from base.utils import mime_type
 from base.validators import phone_number_validator, school_year_validator
-from user.models import User
+from competition import utils
 
 
 class County(models.Model):
@@ -26,8 +26,8 @@ class County(models.Model):
         verbose_name = 'kraj'
         verbose_name_plural = 'kraje'
 
-    code = models.AutoField(primary_key=True, verbose_name='kód')
-    name = models.CharField(max_length=30, verbose_name='názov')
+    code = models.AutoField(verbose_name='kód', primary_key=True)
+    name = models.CharField(verbose_name='názov', max_length=30)
 
     objects = UnspecifiedValueManager(unspecified_value_pk=0)
 
@@ -40,13 +40,13 @@ class District(models.Model):
         verbose_name = 'okres'
         verbose_name_plural = 'okresy'
 
-    code = models.AutoField(primary_key=True, verbose_name='kód')
-    name = models.CharField(max_length=30, verbose_name='názov')
-    abbreviation = models.CharField(max_length=2, verbose_name='skratka')
+    code = models.AutoField(verbose_name='kód', primary_key=True)
+    name = models.CharField(verbose_name='názov', max_length=30)
+    abbreviation = models.CharField(verbose_name='skratka', max_length=2)
 
     county = models.ForeignKey(
-        County, on_delete=models.SET(County.objects.get_unspecified_value),
-        verbose_name='kraj')
+        County, verbose_name='kraj',
+        on_delete=models.SET(County.objects.get_unspecified_value))
 
     objects = UnspecifiedValueManager(unspecified_value_pk=0)
 
@@ -59,26 +59,24 @@ class School(models.Model):
         verbose_name = 'škola'
         verbose_name_plural = 'školy'
 
-    code = models.AutoField(primary_key=True, verbose_name='kód')
-    name = models.CharField(max_length=100, verbose_name='názov')
-    abbreviation = models.CharField(max_length=10, verbose_name='skratka')
+    code = models.AutoField(verbose_name='kód', primary_key=True)
+    name = models.CharField(verbose_name='názov', max_length=100)
+    abbreviation = models.CharField(verbose_name='skratka', max_length=10)
 
-    street = models.CharField(max_length=100, verbose_name='ulica')
-    city = models.CharField(max_length=100, verbose_name='obec')
-    zip_code = models.CharField(max_length=6, verbose_name='PSČ')
-    email = models.CharField(max_length=50, verbose_name='email', null=True)
+    street = models.CharField(verbose_name='ulica', max_length=100)
+    city = models.CharField(verbose_name='obec', max_length=100)
+    zip_code = models.CharField(verbose_name='PSČ', max_length=6)
+    email = models.CharField(verbose_name='email', max_length=50, blank=True)
 
     district = models.ForeignKey(
-        District, on_delete=models.SET(
-            District.objects.get_unspecified_value),
-        verbose_name='okres')
+        District, verbose_name='okres',
+        on_delete=models.SET(District.objects.get_unspecified_value))
 
     objects = UnspecifiedValueManager(unspecified_value_pk=0)
 
     def __str__(self):
         if self.street and self.city:
             return f'{ self.name }, { self.street }, { self.city }'
-
         return self.name
 
     @property
@@ -96,7 +94,7 @@ class Profile(models.Model):
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     nickname = models.CharField(
-        max_length=32, blank=True, null=True, verbose_name='prezývka')
+        verbose_name='prezývka', max_length=32, blank=True, )
 
     school = models.ForeignKey(
         School, on_delete=models.SET(School.objects.get_unspecified_value),
@@ -106,22 +104,14 @@ class Profile(models.Model):
         verbose_name='rok maturity')
 
     phone = models.CharField(
-        max_length=32,
-        blank=True,
-        null=True,
+        verbose_name='telefónne číslo', max_length=32, blank=True,
         validators=[phone_number_validator],
-        verbose_name='telefónne číslo',
-        help_text='Telefonné číslo v medzinárodnom formáte (napr. +421 123 456 789).'
-    )
+        help_text='Telefonné číslo v medzinárodnom formáte (napr. +421 123 456 789).')
 
     parent_phone = models.CharField(
-        max_length=32,
-        blank=True,
-        null=True,
+        verbose_name='telefónne číslo na rodiča', max_length=32, blank=True,
         validators=[phone_number_validator],
-        verbose_name='telefónne číslo na rodiča',
-        help_text='Telefonné číslo v medzinárodnom formáte (napr. +421 123 456 789).'
-    )
+        help_text='Telefonné číslo v medzinárodnom formáte (napr. +421 123 456 789).')
 
     gdpr = models.BooleanField(
         verbose_name='súhlas so spracovaním osobných údajov', default=False)
@@ -135,33 +125,31 @@ class Competition(models.Model):
         verbose_name = 'súťaž'
         verbose_name_plural = 'súťaže'
 
-    name = models.CharField(
-        max_length=50,
-        verbose_name='názov'
-    )
+    COMPETITION_TYPE_CHOICES = [
+        (0, 'Seminár'),
+        (1, 'Jednodňová súťaž'),
+        (2, 'Iné'),
+    ]
 
+    name = models.CharField(verbose_name='názov', max_length=50)
     start_year = models.PositiveSmallIntegerField(
-        verbose_name='rok prvého ročníka súťaže',
-        blank=True
-    )
+        verbose_name='rok prvého ročníka súťaže', blank=True)
+
     sites = models.ManyToManyField(Site)
+
     competition_type = models.PositiveSmallIntegerField(
-        choices=[(0, 'Seminar'), (1, 'Single day competition'), (2, 'Other')],
-        verbose_name='typ súťaže'
-    )
+        verbose_name='typ súťaže', choices=COMPETITION_TYPE_CHOICES)
+
     min_years_until_graduation = models.PositiveSmallIntegerField(
-        verbose_name='Minimálny počet rokov do maturity',
+        verbose_name='Minimálny počet rokov do maturity', null=True,
         help_text='Horná hranica na účasť v súťaži. '
         'Zadáva sa v počte rokov do maturity. '
-        'Ak najstraší, kto môže riešiť súťaž je deviatak, zadá sa 4.',
-        null=True
-    )
+        'Ak najstraší, kto môže riešiť súťaž je deviatak, zadá sa 4.')
 
     def can_user_participate(self, user):
         if self.min_years_until_graduation:
             return user.profile.year_of_graduation-utils.get_school_year_start_by_date() \
                 >= self.min_years_until_graduation
-
         return True
 
     def __str__(self):
@@ -186,7 +174,7 @@ class LateTag(models.Model):
         verbose_name_plural = 'omeškanie'
 
     name = models.CharField(
-        max_length=50, verbose_name='označenie štítku pre riešiteľa')
+        verbose_name='označenie štítku pre riešiteľa', max_length=50)
     upper_bound = models.DurationField(
         verbose_name='maximálna dĺžka omeškania')
     comment = models.TextField(verbose_name='komentár pre opravovateľa')
@@ -204,22 +192,25 @@ class Event(models.Model):
 
     competition = models.ForeignKey(
         Competition, null=True, on_delete=models.CASCADE)
-    year = models.PositiveSmallIntegerField(blank=True, verbose_name='ročník')
+
+    year = models.PositiveSmallIntegerField(verbose_name='ročník', blank=True)
     school_year = models.CharField(
-        max_length=10, blank=True, verbose_name='školský rok', validators=[school_year_validator])
+        verbose_name='školský rok', max_length=10, blank=True,
+        validators=[school_year_validator])
+
     start = models.DateTimeField(verbose_name='dátum začiatku súťaže')
     end = models.DateTimeField(verbose_name='dátum konca súťaže')
 
     @cached_property
     def is_active(self):
-        return self.semester.series_set.filter(complete=False).count() > 0
+        return self.semester.series_set.filter(complete=False).exists()
 
-    def is_user_registered(self, user_id):
-        return UserEventRegistration.objects.filter(event=self.pk, user=user_id).count() > 0
+    def is_user_registered(self, user):
+        return EventRegistration.objects.filter(event=self.pk, user=user).exists()
 
     @property
-    def registered_users(self):
-        return User.objects.filter(usereventregistration_set__event=self.pk).all()
+    def registered_profiles(self):
+        return Profile.objects.filter(eventregistration_set__event=self.pk)
 
     def __str__(self):
         if self.semester:
@@ -232,13 +223,12 @@ class Semester(Event):
     class Meta:
         verbose_name = 'semester'
         verbose_name_plural = 'semestre'
+        ordering = ['-year', 'season_code', ]
 
-        ordering = ['-year', 'season_code']
-
-    SEASON_CHOICES = (
+    SEASON_CHOICES = [
         (0, 'Zimný'),
         (1, 'Letný'),
-    )
+    ]
 
     season_code = models.PositiveSmallIntegerField(choices=SEASON_CHOICES)
     late_tags = models.ManyToManyField(LateTag, verbose_name='', blank=True)
@@ -250,7 +240,7 @@ class Semester(Event):
     def __str__(self):
         return f'{self.competition.name}, {self.year}. ročník - {self.season} semester'
 
-    def _merge_user(self, old, new, problems_in_old, problems_in_new):
+    def _merge_profile(self, old, new, problems_in_old, problems_in_new):
         if not old:
             new['solutions'] = [None]*problems_in_old+new['solutions']
             new['points'] = ['-']*problems_in_old+new['points']
@@ -290,26 +280,26 @@ class Semester(Event):
             merged_results = []
             i, j = 0, 0
             while i < len(current_results) and j < len(series_results):
-                if current_results[i]['user'] == series_results[j]['user']:
-                    merged_results.append(self._merge_user(
+                if current_results[i]['profile'] == series_results[j]['profile']:
+                    merged_results.append(self._merge_profile(
                         current_results[i], series_results[j],
                         problems_in_current, problems_in_series))
                     i += 1
                     j += 1
-                elif current_results[i]['user'] > series_results[j]['user']:
-                    merged_results.append(self._merge_user(
+                elif current_results[i]['profile'] > series_results[j]['profile']:
+                    merged_results.append(self._merge_profile(
                         None, series_results[j], problems_in_current, problems_in_series))
                     j += 1
                 else:
-                    merged_results.append(self._merge_user(
+                    merged_results.append(self._merge_profile(
                         current_results[i], None, problems_in_current, problems_in_series))
                     i += 1
             while i < len(current_results):
-                merged_results.append(self._merge_user(
+                merged_results.append(self._merge_profile(
                     current_results[i], None, problems_in_current, problems_in_series))
                 i += 1
             while j < len(series_results):
-                merged_results.append(self._merge_user(
+                merged_results.append(self._merge_profile(
                     None, series_results[j], problems_in_current, problems_in_series))
                 j += 1
             return merged_results
@@ -325,14 +315,15 @@ class Semester(Event):
             current_results = self._merge_results(
                 current_results, series_result, curent_number_of_problems, count)
             curent_number_of_problems += count
-        current_results.sort(key=lambda x: x['total'], reverse=True)
+        current_results.sort(key=itemgetter('total'), reverse=True)
         current_results = utils.rank_results(current_results)
         return current_results
 
     def get_schools(self):
         # TODO: vysporiadat sa s cyklickým importom
+        # tento kód by nefungoval ani bez cyklického importu
         # return apps.get_model('user.School').objects\
-        # .filter('school.usereventregistration_set__semester=self.pk').distinct().all()
+        # .filter('school.eventregistration_set__semester=self.pk').distinct().all()
         pass
 
 
@@ -340,19 +331,18 @@ class Series(models.Model):
     class Meta:
         verbose_name = 'séria'
         verbose_name_plural = 'série'
-
         ordering = ['semester', 'order', ]
 
-    semester = models.ForeignKey(Semester, on_delete=models.CASCADE)
+    semester = models.ForeignKey(
+        Semester, verbose_name='semster', on_delete=models.CASCADE)
     order = models.PositiveSmallIntegerField(verbose_name='poradie série')
+
     deadline = models.DateTimeField(verbose_name='termín série')
     complete = models.BooleanField(verbose_name='séria uzavretá')
-    sum_method = models.CharField(max_length=50,
-                                  blank=True,
-                                  null=True,
-                                  verbose_name='Súčtová metóda',
-                                  choices=utils.SERIES_SUM_METHODS
-                                  )
+
+    sum_method = models.CharField(
+        verbose_name='Súčtová metóda', max_length=50, blank=True,
+        choices=utils.SERIES_SUM_METHODS)
 
     def __str__(self):
         return f'{self.semester} - {self.order}. séria'
@@ -375,7 +365,7 @@ class Series(models.Model):
         return self.problem_set.count()
 
     # Generuje jeden riadok poradia ako slovník atribútov
-    def _create_user_dict(self, sum_func, user_semester_registration, user_solutions):
+    def _create_profile_dict(self, sum_func, semester_registration, profile_solutions):
         # list primary keys uloh v aktualnom semestri
         problems_pk_list = []
         for problem in self.problem_set.all():
@@ -389,19 +379,19 @@ class Series(models.Model):
             # Indikuje či sa zmenilo poradie od minulej priečky, slúži na delené miesta
             'rank_changed': True,
             # primary key riešiteľovej registrácie do semestra
-            'user_semester_registration_pk': user_semester_registration.pk,
-            'user': user_semester_registration.user.profile,              # Profil riešiteľa
-            'school': user_semester_registration.school,                  # Škola
-            'grade': user_semester_registration.class_level.tag,          # Značka stupňa
-            'points': utils.solutions_to_list_of_points_pretty(user_solutions),
+            'semester_registration_pk': semester_registration.pk,
+            'profile': semester_registration.profile,                # Profil riešiteľa
+            'school': semester_registration.school,                  # Škola
+            'grade': semester_registration.grade.tag,          # Značka stupňa
+            'points': utils.solutions_to_list_of_points_pretty(profile_solutions),
             # Súčty bodov po sériách
-            'subtotal': [sum_func(user_solutions, user_semester_registration)],
+            'subtotal': [sum_func(profile_solutions, semester_registration)],
             # Celkový súčet za danú entitu
-            'total': sum_func(user_solutions, user_semester_registration),
+            'total': sum_func(profile_solutions, semester_registration),
             # zipnutý zoznam riešení a pk príslušných problémov,
             # aby ich bolo možné prelinkovať z poradia do admina
             # a získať pk problému pri none riešení
-            'solutions': zip(user_solutions, problems_pk_list)
+            'solutions': zip(profile_solutions, problems_pk_list)
         }
 
     def results(self):
@@ -409,38 +399,38 @@ class Series(models.Model):
                            utils.series_simple_sum)
         results = []
 
-        solutions = Solution.objects.only('user_semester_registration', 'problem', 'score')\
+        solutions = Solution.objects.only('semester_registration', 'problem', 'score')\
             .filter(problem__series=self.pk)\
-            .order_by('user_semester_registration', 'problem')\
-            .select_related('user_semester_registration', 'problem')
+            .order_by('semester_registration', 'problem')\
+            .select_related('semester_registration', 'problem')
 
-        current_user = None
-        user_solutions = [None] * self.num_problems
+        current_profile = None
+        profile_solutions = [None] * self.num_problems
 
         for solution in solutions:
-            if current_user != solution.user_semester_registration:
-                if current_user:
+            if current_profile != solution.semester_registration:
+                if current_profile:
                     # Bolo dokončené spracovanie jedného usera
                     # Zbali usera a a nahodi ho do vysledkov
-                    results.append(self._create_user_dict(
-                        sum_func, current_user, user_solutions))
+                    results.append(self._create_profile_dict(
+                        sum_func, current_profile, profile_solutions))
                 # vytvori prazdny list s riešeniami
-                current_user = solution.user_semester_registration
-                user_solutions = [None] * self.num_problems
+                current_profile = solution.semester_registration
+                profile_solutions = [None] * self.num_problems
 
             # Spracuj riešenie
-            user_solutions[solution.problem.order - 1] = solution
+            profile_solutions[solution.problem.order - 1] = solution
 
         # Uloz posledneho usera
-        if current_user:
-            results.append(self._create_user_dict(
-                sum_func, current_user, user_solutions))
+        if current_profile:
+            results.append(self._create_profile_dict(
+                sum_func, current_profile, profile_solutions))
 
         return results
 
     def results_with_ranking(self):
         results = self.results()
-        results.sort(key=lambda x: x['total'], reverse=True)
+        results.sort(key=itemgetter('total'), reverse=True)
         results = utils.rank_results(results)
         return results
 
@@ -453,12 +443,9 @@ class Problem(models.Model):
         ordering = ['series', 'order', ]
 
     text = models.TextField(verbose_name='znenie úlohy')
-    series = models.ForeignKey(
-        Series,
-        on_delete=models.CASCADE,
-        verbose_name='úloha zaradená do série'
-    )
     order = models.PositiveSmallIntegerField(verbose_name='poradie v sérii')
+    series = models.ForeignKey(
+        Series, verbose_name='úloha zaradená do série', on_delete=models.CASCADE,)
 
     def __str__(self):
         return f'{self.series.semester.competition.name}-{self.series.semester.year}' \
@@ -487,8 +474,8 @@ class Grade(models.Model):
         verbose_name_plural = 'ročníky účastníka'
         ordering = ['years_until_graduation', ]
 
-    name = models.CharField(max_length=32, verbose_name='názov ročníku')
-    tag = models.CharField(max_length=2, unique=True, verbose_name='skratka')
+    name = models.CharField(verbose_name='názov ročníku', max_length=32)
+    tag = models.CharField(verbose_name='skratka', max_length=2, unique=True)
     years_until_graduation = models.SmallIntegerField(
         verbose_name='počet rokov do maturity')
     is_active = models.BooleanField(
@@ -516,20 +503,23 @@ class Grade(models.Model):
         return self.name
 
 
-class UserEventRegistration(models.Model):
+class EventRegistration(models.Model):
     class Meta:
         verbose_name = 'registrácia užívateľa na akciu'
         verbose_name_plural = 'registrácie užívateľov na akcie'
 
-    user = models.ForeignKey('user.User', on_delete=models.CASCADE)
+    profile = models.ForeignKey(
+        Profile, verbose_name='profil', on_delete=models.CASCADE)
     school = models.ForeignKey(
-        School, on_delete=models.SET_NULL, null=True)
-    class_level = models.ForeignKey(Grade, on_delete=models.CASCADE)
-    event = models.ForeignKey(Semester, on_delete=models.CASCADE)
-    votes = models.SmallIntegerField(default=0, verbose_name='hlasy')
+        School, verbose_name='škola', on_delete=models.SET_NULL, null=True)
+    grade = models.ForeignKey(
+        Grade, verbose_name='ročník', on_delete=models.CASCADE)
+    event = models.ForeignKey(
+        Semester, verbose_name='semester', on_delete=models.CASCADE)
+    votes = models.SmallIntegerField(verbose_name='hlasy', default=0)
 
     def __str__(self):
-        return f'{self.user} v {self.event}'
+        return f'{ self.profile.user.get_full_name() } @ { self.event }'
 
 
 class Solution(models.Model):
@@ -538,44 +528,29 @@ class Solution(models.Model):
         verbose_name_plural = 'riešenia'
 
     problem = models.ForeignKey(Problem, on_delete=models.CASCADE)
-    user_semester_registration = models.ForeignKey(
-        UserEventRegistration,
-        on_delete=models.CASCADE
-    )
-    solution_path = models.FileField(
-        upload_to='solutions/',
-        verbose_name='účastnícke riešenie',
-        null=True,
-        blank=True
-    )
+    semester_registration = models.ForeignKey(
+        EventRegistration, on_delete=models.CASCADE)
 
-    corrected_solution_path = models.FileField(
-        upload_to='solutions/corrected/',
-        verbose_name='opravené riešenie',
-        null=True,
-        blank=True
-    )
+    solution = models.FileField(
+        verbose_name='účastnícke riešenie', blank=True, upload_to='solutions/')
+    corrected_solution = models.FileField(
+        verbose_name='opravené riešenie', blank=True, upload_to='solutions/corrected/')
 
     score = models.PositiveSmallIntegerField(
-        verbose_name='body', null=True, blank=True)
+        verbose_name='body', null=True)
 
     uploaded_at = models.DateTimeField(
-        auto_now=True, verbose_name='nahrané dňa')
+        verbose_name='dátum pridania', auto_now_add=True)
 
     # V prípade, že riešenie prišlo po termíne nastaví sa na príslušný tag
     late_tag = models.ForeignKey(
-        LateTag,
-        on_delete=models.SET_NULL,
-        verbose_name='',
-        null=True,
-        blank=True)
+        LateTag, verbose_name='',
+        on_delete=models.SET_NULL, null=True)
 
-    is_online = models.BooleanField(
-        verbose_name='internetové riešenie'
-    )
+    is_online = models.BooleanField(verbose_name='internetové riešenie')
 
     def __str__(self):
-        return f'Riešiteľ: {self.user_semester_registration} - úloha: {self.problem}'
+        return f'Riešiteľ: { self.semester_registration } - úloha { self.problem }'
 
 
 class Publication(models.Model):

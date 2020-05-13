@@ -1,1201 +1,1201 @@
 [
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 0,
         "fields": {
-            "user": 48,
+            "profile": 48,
             "school": "000598071",
-            "class_level": 10,
+            "grade": 10,
             "event": 2
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 1,
         "fields": {
-            "user": 48,
+            "profile": 48,
             "school": "710234341",
-            "class_level": 10,
+            "grade": 10,
             "event": 1
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 2,
         "fields": {
-            "user": 48,
+            "profile": 48,
             "school": "017337101",
-            "class_level": 8,
+            "grade": 8,
             "event": 3
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 3,
         "fields": {
-            "user": 48,
+            "profile": 48,
             "school": "037956230",
-            "class_level": 9,
+            "grade": 9,
             "event": 5
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 4,
         "fields": {
-            "user": 49,
+            "profile": 49,
             "school": "000160971",
-            "class_level": 9,
+            "grade": 9,
             "event": 5
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 5,
         "fields": {
-            "user": 49,
+            "profile": 49,
             "school": "710234341",
-            "class_level": 11,
+            "grade": 11,
             "event": 1
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 6,
         "fields": {
-            "user": 49,
+            "profile": 49,
             "school": "000598071",
-            "class_level": 11,
+            "grade": 11,
             "event": 0
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 7,
         "fields": {
-            "user": 49,
+            "profile": 49,
             "school": "710234341",
-            "class_level": 10,
+            "grade": 10,
             "event": 2
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 8,
         "fields": {
-            "user": 50,
+            "profile": 50,
             "school": "000598071",
-            "class_level": 12,
+            "grade": 12,
             "event": 4
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 9,
         "fields": {
-            "user": 50,
+            "profile": 50,
             "school": "000598071",
-            "class_level": 12,
+            "grade": 12,
             "event": 5
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 10,
         "fields": {
-            "user": 50,
+            "profile": 50,
             "school": "710234341",
-            "class_level": 8,
+            "grade": 8,
             "event": 3
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 11,
         "fields": {
-            "user": 50,
+            "profile": 50,
             "school": "710234341",
-            "class_level": 8,
+            "grade": 8,
             "event": 0
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 12,
         "fields": {
-            "user": 51,
+            "profile": 51,
             "school": "710261519",
-            "class_level": 12,
+            "grade": 12,
             "event": 2
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 13,
         "fields": {
-            "user": 51,
+            "profile": 51,
             "school": "017080720",
-            "class_level": 11,
+            "grade": 11,
             "event": 3
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 14,
         "fields": {
-            "user": 51,
+            "profile": 51,
             "school": "037956230",
-            "class_level": 11,
+            "grade": 11,
             "event": 5
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 15,
         "fields": {
-            "user": 51,
+            "profile": 51,
             "school": "017337101",
-            "class_level": 10,
+            "grade": 10,
             "event": 4
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 16,
         "fields": {
-            "user": 52,
+            "profile": 52,
             "school": "017337101",
-            "class_level": 12,
+            "grade": 12,
             "event": 1
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 17,
         "fields": {
-            "user": 52,
+            "profile": 52,
             "school": "017337101",
-            "class_level": 9,
+            "grade": 9,
             "event": 5
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 18,
         "fields": {
-            "user": 52,
+            "profile": 52,
             "school": "000160971",
-            "class_level": 10,
+            "grade": 10,
             "event": 4
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 19,
         "fields": {
-            "user": 52,
+            "profile": 52,
             "school": "017080720",
-            "class_level": 10,
+            "grade": 10,
             "event": 0
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 20,
         "fields": {
-            "user": 53,
+            "profile": 53,
             "school": "710234341",
-            "class_level": 11,
+            "grade": 11,
             "event": 4
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 21,
         "fields": {
-            "user": 53,
+            "profile": 53,
             "school": "710261519",
-            "class_level": 8,
+            "grade": 8,
             "event": 2
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 22,
         "fields": {
-            "user": 53,
+            "profile": 53,
             "school": "000598071",
-            "class_level": 9,
+            "grade": 9,
             "event": 5
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 23,
         "fields": {
-            "user": 53,
+            "profile": 53,
             "school": "710261519",
-            "class_level": 12,
+            "grade": 12,
             "event": 0
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 24,
         "fields": {
-            "user": 54,
+            "profile": 54,
             "school": "000160971",
-            "class_level": 8,
+            "grade": 8,
             "event": 4
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 25,
         "fields": {
-            "user": 54,
+            "profile": 54,
             "school": "710261519",
-            "class_level": 12,
+            "grade": 12,
             "event": 0
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 26,
         "fields": {
-            "user": 54,
+            "profile": 54,
             "school": "017080720",
-            "class_level": 9,
+            "grade": 9,
             "event": 1
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 27,
         "fields": {
-            "user": 54,
+            "profile": 54,
             "school": "000160997",
-            "class_level": 8,
+            "grade": 8,
             "event": 3
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 28,
         "fields": {
-            "user": 55,
+            "profile": 55,
             "school": "017337101",
-            "class_level": 8,
+            "grade": 8,
             "event": 3
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 29,
         "fields": {
-            "user": 55,
+            "profile": 55,
             "school": "710234341",
-            "class_level": 12,
+            "grade": 12,
             "event": 1
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 30,
         "fields": {
-            "user": 55,
+            "profile": 55,
             "school": "000160997",
-            "class_level": 9,
+            "grade": 9,
             "event": 5
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 31,
         "fields": {
-            "user": 55,
+            "profile": 55,
             "school": "000598071",
-            "class_level": 9,
+            "grade": 9,
             "event": 0
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 32,
         "fields": {
-            "user": 56,
+            "profile": 56,
             "school": "710261519",
-            "class_level": 10,
+            "grade": 10,
             "event": 1
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 33,
         "fields": {
-            "user": 56,
+            "profile": 56,
             "school": "000160971",
-            "class_level": 8,
+            "grade": 8,
             "event": 4
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 34,
         "fields": {
-            "user": 56,
+            "profile": 56,
             "school": "710261519",
-            "class_level": 10,
+            "grade": 10,
             "event": 3
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 35,
         "fields": {
-            "user": 56,
+            "profile": 56,
             "school": "000160997",
-            "class_level": 10,
+            "grade": 10,
             "event": 5
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 36,
         "fields": {
-            "user": 57,
+            "profile": 57,
             "school": "710234341",
-            "class_level": 12,
+            "grade": 12,
             "event": 3
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 37,
         "fields": {
-            "user": 57,
+            "profile": 57,
             "school": "017080720",
-            "class_level": 8,
+            "grade": 8,
             "event": 1
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 38,
         "fields": {
-            "user": 57,
+            "profile": 57,
             "school": "710234341",
-            "class_level": 9,
+            "grade": 9,
             "event": 5
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 39,
         "fields": {
-            "user": 57,
+            "profile": 57,
             "school": "000160971",
-            "class_level": 10,
+            "grade": 10,
             "event": 4
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 40,
         "fields": {
-            "user": 58,
+            "profile": 58,
             "school": "710261519",
-            "class_level": 11,
+            "grade": 11,
             "event": 4
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 41,
         "fields": {
-            "user": 58,
+            "profile": 58,
             "school": "037956230",
-            "class_level": 12,
+            "grade": 12,
             "event": 1
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 42,
         "fields": {
-            "user": 58,
+            "profile": 58,
             "school": "000160971",
-            "class_level": 11,
+            "grade": 11,
             "event": 0
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 43,
         "fields": {
-            "user": 58,
+            "profile": 58,
             "school": "000160971",
-            "class_level": 12,
+            "grade": 12,
             "event": 3
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 44,
         "fields": {
-            "user": 59,
+            "profile": 59,
             "school": "710261519",
-            "class_level": 12,
+            "grade": 12,
             "event": 2
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 45,
         "fields": {
-            "user": 59,
+            "profile": 59,
             "school": "037956230",
-            "class_level": 11,
+            "grade": 11,
             "event": 1
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 46,
         "fields": {
-            "user": 59,
+            "profile": 59,
             "school": "017337101",
-            "class_level": 8,
+            "grade": 8,
             "event": 4
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 47,
         "fields": {
-            "user": 59,
+            "profile": 59,
             "school": "017080720",
-            "class_level": 12,
+            "grade": 12,
             "event": 0
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 48,
         "fields": {
-            "user": 60,
+            "profile": 60,
             "school": "710234341",
-            "class_level": 11,
+            "grade": 11,
             "event": 2
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 49,
         "fields": {
-            "user": 60,
+            "profile": 60,
             "school": "037956230",
-            "class_level": 11,
+            "grade": 11,
             "event": 1
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 50,
         "fields": {
-            "user": 60,
+            "profile": 60,
             "school": "710234341",
-            "class_level": 10,
+            "grade": 10,
             "event": 4
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 51,
         "fields": {
-            "user": 60,
+            "profile": 60,
             "school": "037956230",
-            "class_level": 10,
+            "grade": 10,
             "event": 3
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 52,
         "fields": {
-            "user": 61,
+            "profile": 61,
             "school": "000598071",
-            "class_level": 11,
+            "grade": 11,
             "event": 2
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 53,
         "fields": {
-            "user": 61,
+            "profile": 61,
             "school": "710261519",
-            "class_level": 11,
+            "grade": 11,
             "event": 3
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 54,
         "fields": {
-            "user": 61,
+            "profile": 61,
             "school": "000160997",
-            "class_level": 11,
+            "grade": 11,
             "event": 1
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 55,
         "fields": {
-            "user": 61,
+            "profile": 61,
             "school": "000160997",
-            "class_level": 8,
+            "grade": 8,
             "event": 0
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 56,
         "fields": {
-            "user": 62,
+            "profile": 62,
             "school": "017080720",
-            "class_level": 10,
+            "grade": 10,
             "event": 3
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 57,
         "fields": {
-            "user": 62,
+            "profile": 62,
             "school": "000160997",
-            "class_level": 9,
+            "grade": 9,
             "event": 0
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 58,
         "fields": {
-            "user": 62,
+            "profile": 62,
             "school": "017080720",
-            "class_level": 10,
+            "grade": 10,
             "event": 4
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 59,
         "fields": {
-            "user": 62,
+            "profile": 62,
             "school": "000160971",
-            "class_level": 12,
+            "grade": 12,
             "event": 2
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 60,
         "fields": {
-            "user": 63,
+            "profile": 63,
             "school": "710234341",
-            "class_level": 10,
+            "grade": 10,
             "event": 1
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 61,
         "fields": {
-            "user": 63,
+            "profile": 63,
             "school": "000160971",
-            "class_level": 12,
+            "grade": 12,
             "event": 5
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 62,
         "fields": {
-            "user": 63,
+            "profile": 63,
             "school": "710261519",
-            "class_level": 10,
+            "grade": 10,
             "event": 4
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 63,
         "fields": {
-            "user": 63,
+            "profile": 63,
             "school": "037956230",
-            "class_level": 10,
+            "grade": 10,
             "event": 2
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 64,
         "fields": {
-            "user": 64,
+            "profile": 64,
             "school": "037956230",
-            "class_level": 10,
+            "grade": 10,
             "event": 4
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 65,
         "fields": {
-            "user": 64,
+            "profile": 64,
             "school": "710261519",
-            "class_level": 9,
+            "grade": 9,
             "event": 0
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 66,
         "fields": {
-            "user": 64,
+            "profile": 64,
             "school": "710234341",
-            "class_level": 9,
+            "grade": 9,
             "event": 5
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 67,
         "fields": {
-            "user": 64,
+            "profile": 64,
             "school": "000160971",
-            "class_level": 12,
+            "grade": 12,
             "event": 2
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 68,
         "fields": {
-            "user": 65,
+            "profile": 65,
             "school": "710261519",
-            "class_level": 9,
+            "grade": 9,
             "event": 4
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 69,
         "fields": {
-            "user": 65,
+            "profile": 65,
             "school": "017337101",
-            "class_level": 12,
+            "grade": 12,
             "event": 5
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 70,
         "fields": {
-            "user": 65,
+            "profile": 65,
             "school": "710261519",
-            "class_level": 8,
+            "grade": 8,
             "event": 1
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 71,
         "fields": {
-            "user": 65,
+            "profile": 65,
             "school": "000598071",
-            "class_level": 12,
+            "grade": 12,
             "event": 3
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 72,
         "fields": {
-            "user": 66,
+            "profile": 66,
             "school": "017337101",
-            "class_level": 8,
+            "grade": 8,
             "event": 3
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 73,
         "fields": {
-            "user": 66,
+            "profile": 66,
             "school": "017080720",
-            "class_level": 8,
+            "grade": 8,
             "event": 1
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 74,
         "fields": {
-            "user": 66,
+            "profile": 66,
             "school": "017080720",
-            "class_level": 12,
+            "grade": 12,
             "event": 0
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 75,
         "fields": {
-            "user": 66,
+            "profile": 66,
             "school": "017080720",
-            "class_level": 10,
+            "grade": 10,
             "event": 4
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 76,
         "fields": {
-            "user": 67,
+            "profile": 67,
             "school": "000598071",
-            "class_level": 8,
+            "grade": 8,
             "event": 1
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 77,
         "fields": {
-            "user": 67,
+            "profile": 67,
             "school": "037956230",
-            "class_level": 12,
+            "grade": 12,
             "event": 4
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 78,
         "fields": {
-            "user": 67,
+            "profile": 67,
             "school": "017337101",
-            "class_level": 11,
+            "grade": 11,
             "event": 0
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 79,
         "fields": {
-            "user": 67,
+            "profile": 67,
             "school": "017337101",
-            "class_level": 9,
+            "grade": 9,
             "event": 5
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 80,
         "fields": {
-            "user": 68,
+            "profile": 68,
             "school": "000160971",
-            "class_level": 12,
+            "grade": 12,
             "event": 2
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 81,
         "fields": {
-            "user": 68,
+            "profile": 68,
             "school": "017080720",
-            "class_level": 11,
+            "grade": 11,
             "event": 4
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 82,
         "fields": {
-            "user": 68,
+            "profile": 68,
             "school": "710234341",
-            "class_level": 9,
+            "grade": 9,
             "event": 1
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 83,
         "fields": {
-            "user": 68,
+            "profile": 68,
             "school": "710234341",
-            "class_level": 12,
+            "grade": 12,
             "event": 5
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 84,
         "fields": {
-            "user": 69,
+            "profile": 69,
             "school": "710261519",
-            "class_level": 9,
+            "grade": 9,
             "event": 1
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 85,
         "fields": {
-            "user": 69,
+            "profile": 69,
             "school": "710234341",
-            "class_level": 10,
+            "grade": 10,
             "event": 3
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 86,
         "fields": {
-            "user": 69,
+            "profile": 69,
             "school": "710261519",
-            "class_level": 8,
+            "grade": 8,
             "event": 0
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 87,
         "fields": {
-            "user": 69,
+            "profile": 69,
             "school": "710261519",
-            "class_level": 9,
+            "grade": 9,
             "event": 4
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 88,
         "fields": {
-            "user": 70,
+            "profile": 70,
             "school": "037956230",
-            "class_level": 11,
+            "grade": 11,
             "event": 3
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 89,
         "fields": {
-            "user": 70,
+            "profile": 70,
             "school": "017080720",
-            "class_level": 12,
+            "grade": 12,
             "event": 4
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 90,
         "fields": {
-            "user": 70,
+            "profile": 70,
             "school": "000160971",
-            "class_level": 9,
+            "grade": 9,
             "event": 2
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 91,
         "fields": {
-            "user": 70,
+            "profile": 70,
             "school": "710234341",
-            "class_level": 11,
+            "grade": 11,
             "event": 1
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 92,
         "fields": {
-            "user": 71,
+            "profile": 71,
             "school": "710261519",
-            "class_level": 9,
+            "grade": 9,
             "event": 3
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 93,
         "fields": {
-            "user": 71,
+            "profile": 71,
             "school": "000598071",
-            "class_level": 8,
+            "grade": 8,
             "event": 4
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 94,
         "fields": {
-            "user": 71,
+            "profile": 71,
             "school": "037956230",
-            "class_level": 12,
+            "grade": 12,
             "event": 2
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 95,
         "fields": {
-            "user": 71,
+            "profile": 71,
             "school": "000160997",
-            "class_level": 11,
+            "grade": 11,
             "event": 5
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 96,
         "fields": {
-            "user": 72,
+            "profile": 72,
             "school": "037956230",
-            "class_level": 12,
+            "grade": 12,
             "event": 5
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 97,
         "fields": {
-            "user": 72,
+            "profile": 72,
             "school": "710234341",
-            "class_level": 8,
+            "grade": 8,
             "event": 0
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 98,
         "fields": {
-            "user": 72,
+            "profile": 72,
             "school": "017337101",
-            "class_level": 10,
+            "grade": 10,
             "event": 1
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 99,
         "fields": {
-            "user": 72,
+            "profile": 72,
             "school": "000598071",
-            "class_level": 10,
+            "grade": 10,
             "event": 4
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 100,
         "fields": {
-            "user": 73,
+            "profile": 73,
             "school": "000598071",
-            "class_level": 9,
+            "grade": 9,
             "event": 2
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 101,
         "fields": {
-            "user": 73,
+            "profile": 73,
             "school": "710261519",
-            "class_level": 9,
+            "grade": 9,
             "event": 4
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 102,
         "fields": {
-            "user": 73,
+            "profile": 73,
             "school": "037956230",
-            "class_level": 9,
+            "grade": 9,
             "event": 1
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 103,
         "fields": {
-            "user": 73,
+            "profile": 73,
             "school": "017337101",
-            "class_level": 11,
+            "grade": 11,
             "event": 5
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 104,
         "fields": {
-            "user": 74,
+            "profile": 74,
             "school": "710234341",
-            "class_level": 12,
+            "grade": 12,
             "event": 2
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 105,
         "fields": {
-            "user": 74,
+            "profile": 74,
             "school": "000160997",
-            "class_level": 10,
+            "grade": 10,
             "event": 0
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 106,
         "fields": {
-            "user": 74,
+            "profile": 74,
             "school": "000160971",
-            "class_level": 9,
+            "grade": 9,
             "event": 1
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 107,
         "fields": {
-            "user": 74,
+            "profile": 74,
             "school": "710234341",
-            "class_level": 9,
+            "grade": 9,
             "event": 3
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 108,
         "fields": {
-            "user": 75,
+            "profile": 75,
             "school": "000160971",
-            "class_level": 10,
+            "grade": 10,
             "event": 5
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 109,
         "fields": {
-            "user": 75,
+            "profile": 75,
             "school": "000598071",
-            "class_level": 11,
+            "grade": 11,
             "event": 3
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 110,
         "fields": {
-            "user": 75,
+            "profile": 75,
             "school": "017337101",
-            "class_level": 10,
+            "grade": 10,
             "event": 4
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 111,
         "fields": {
-            "user": 75,
+            "profile": 75,
             "school": "710234341",
-            "class_level": 10,
+            "grade": 10,
             "event": 0
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 112,
         "fields": {
-            "user": 76,
+            "profile": 76,
             "school": "710234341",
-            "class_level": 11,
+            "grade": 11,
             "event": 5
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 113,
         "fields": {
-            "user": 76,
+            "profile": 76,
             "school": "000160971",
-            "class_level": 11,
+            "grade": 11,
             "event": 1
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 114,
         "fields": {
-            "user": 76,
+            "profile": 76,
             "school": "000160997",
-            "class_level": 10,
+            "grade": 10,
             "event": 4
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 115,
         "fields": {
-            "user": 76,
+            "profile": 76,
             "school": "710261519",
-            "class_level": 12,
+            "grade": 12,
             "event": 2
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 116,
         "fields": {
-            "user": 77,
+            "profile": 77,
             "school": "017080720",
-            "class_level": 12,
+            "grade": 12,
             "event": 3
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 117,
         "fields": {
-            "user": 77,
+            "profile": 77,
             "school": "000160997",
-            "class_level": 10,
+            "grade": 10,
             "event": 4
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 118,
         "fields": {
-            "user": 77,
+            "profile": 77,
             "school": "000160971",
-            "class_level": 12,
+            "grade": 12,
             "event": 2
         }
     },
     {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.eventregistration",
         "pk": 119,
         "fields": {
-            "user": 77,
+            "profile": 77,
             "school": "017080720",
-            "class_level": 9,
+            "grade": 9,
             "event": 1
         }
     }

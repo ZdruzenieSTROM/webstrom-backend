@@ -55,7 +55,7 @@
             {% else %}
             <td></td>
             {% endif %}
-            <td>{{ result_row.user }}</td>
+            <td>{{ result_row.profile.user.get_full_name }}</td>
             <td>{{ result_row.grade }}</td>
             <td>{{ result_row.school }}</td>
             {%for solution in result_row.solutions %}

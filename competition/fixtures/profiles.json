@@ -16,7 +16,6 @@
         "pk": 5,
         "fields": {
             "user": 47,
-            "nickname": null,
             "school": 160997,
             "year_of_graduation": 47,
             "phone": "00474747832147",
@@ -28,11 +27,10 @@
         "pk": 6,
         "fields": {
             "user": 42,
-            "nickname": null,
+            "nickname": "",
             "school": 598071,
             "year_of_graduation": 42,
-            "phone": "00420420420420",
-            "parent_phone": null
+            "phone": "00420420420420"
         }
     },
     {
@@ -43,8 +41,7 @@
             "nickname": "\ud83d\ude75////////\ud83d\ude75\ud83d\ude7f\ud83d\ude7f\ud83d\ude7f\ud83d\ude7f\ud83d\ude7f\ud83d\ude7f\ud83d\ude7f\ud83d\ude7f\ud83d\ude7f\ud83d\ude7f\ud83d\ude7f\ud83d\ude75",
             "school": 36080501,
             "year_of_graduation": 0,
-            "phone": "\ud83d\ude3d",
-            "parent_phone": null
+            "phone": "\ud83d\ude3d"
         }
     },
     {
@@ -52,7 +49,6 @@
         "pk": 8,
         "fields": {
             "user": 5,
-            "nickname": null,
             "school": 160997,
             "year_of_graduation": 2021,
             "phone": "+421912345678",
@@ -64,7 +60,6 @@
         "pk": 9,
         "fields": {
             "user": 6,
-            "nickname": null,
             "school": 160997,
             "year_of_graduation": 2022,
             "phone": "+421912345678",
@@ -76,7 +71,6 @@
         "pk": 10,
         "fields": {
             "user": 7,
-            "nickname": null,
             "school": "000598071",
             "year_of_graduation": 2023,
             "phone": "+421912345678",
@@ -88,7 +82,6 @@
         "pk": 11,
         "fields": {
             "user": 8,
-            "nickname": null,
             "school": "000160997",
             "year_of_graduation": 2024,
             "phone": "+421912345678",
@@ -100,7 +93,6 @@
         "pk": 12,
         "fields": {
             "user": 9,
-            "nickname": null,
             "school": "000160997",
             "year_of_graduation": 2025,
             "phone": "+421912345678",
@@ -112,7 +104,6 @@
         "pk": 13,
         "fields": {
             "user": 10,
-            "nickname": null,
             "school": "000160997",
             "year_of_graduation": 2022,
             "phone": "+421912345678",

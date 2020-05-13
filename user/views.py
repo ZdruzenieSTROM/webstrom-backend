@@ -1,6 +1,5 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.core.mail import send_mail
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
@@ -9,8 +8,9 @@ from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.views.generic.detail import DetailView
 
 from competition.forms import ProfileCreationForm, ProfileUpdateForm
-from competition.models import County, District, Grade, Profile, School, User
+from competition.models import County, District, Grade, Profile, School
 from user.forms import UserCreationForm
+from user.models import User
 from user.tokens import email_verification_token_generator
 
 

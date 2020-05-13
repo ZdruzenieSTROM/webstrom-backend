@@ -6872,7 +6872,6 @@
             "street": "Jakubov 276",
             "city": "Jakubov",
             "zip_code": "90063",
-            "email": null,
             "abbreviation": "ZJa276MA"
         }
     },
@@ -7444,7 +7443,6 @@
             "street": "Javorov\u00e1 alej 1",
             "city": "Chorv\u00e1tsky Grob",
             "zip_code": "90025",
-            "email": null,
             "abbreviation": "ZJavo1SC"
         }
     },
@@ -16128,7 +16126,6 @@
             "street": "\u017dih\u00e1rec 2",
             "city": "\u017dih\u00e1rec",
             "zip_code": "92583",
-            "email": null,
             "abbreviation": "ZZiha2SA"
         }
     },
@@ -26710,7 +26707,6 @@
             "street": "Hubo\u0161ovce 56",
             "city": "Hubo\u0161ovce",
             "zip_code": "08266",
-            "email": null,
             "abbreviation": "ZHub56SB"
         }
     },
@@ -32859,7 +32855,6 @@
             "street": "Ostredkov\u00e1 10",
             "city": "Bratislava-Ru\u017einov",
             "zip_code": "82102",
-            "email": null,
             "abbreviation": "SOst10BA"
         }
     },
@@ -33457,7 +33452,6 @@
             "street": "J\u00e1na Bottu 31",
             "city": "Trnava",
             "zip_code": "91701",
-            "email": null,
             "abbreviation": "GJan31TT"
         }
     },

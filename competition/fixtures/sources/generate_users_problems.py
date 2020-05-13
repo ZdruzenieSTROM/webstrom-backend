@@ -51,7 +51,7 @@ def generate_profile(pk, user, year, school):
 def generate_event_reg(user, school, grade, event):
     global current_registration_id
     d = {
-        "model": "competition.UserEventRegistration",
+        "model": "competition.EventRegistration",
         "pk": current_registration_id,
         "fields": {
             "user": user,
