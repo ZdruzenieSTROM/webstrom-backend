@@ -74,6 +74,10 @@ class School(models.Model):
 
     objects = UnspecifiedValueManager(unspecified_value_pk=0)
 
+    @property
+    def printable_zip_code(self):
+        return self.zip_code[:3]+' '+self.zip_code[3:]
+
     def __str__(self):
         if self.street and self.city:
             return f'{ self.name }, { self.street }, { self.city }'
@@ -82,7 +86,7 @@ class School(models.Model):
     @property
     def stitok(self):
         return f'\\stitok{{{ self.name }}}{{{ self.city }}}' \
-               f'{{{ self.zip_code }}}{{{ self.street }}}'
+               f'{{{ self.printable_zip_code }}}{{{ self.street }}}'
 
 
 class Profile(models.Model):
@@ -320,11 +324,8 @@ class Semester(Event):
         return current_results
 
     def get_schools(self):
-        # TODO: vysporiadat sa s cyklickým importom
-        # tento kód by nefungoval ani bez cyklického importu
-        # return apps.get_model('user.School').objects\
-        # .filter('school.eventregistration_set__semester=self.pk').distinct().all()
-        pass
+        return School.objects.filter(eventregistration__event=self.pk).distinct().order_by('city','street').all()
+        
 
 
 class Series(models.Model):

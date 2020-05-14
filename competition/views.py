@@ -50,6 +50,7 @@ class SeriesResultsView(DetailView):
 
         context['results'] = self.object.results_with_ranking()
         context['results_type'] = 'series'
+        context['schools'] = self.object.semester.get_schools()
 
         return context
 
@@ -63,6 +64,7 @@ class SemesterResultsView(DetailView):
         context = super().get_context_data(**kwargs)
         context['results'] = self.object.results_with_ranking()
         context['results_type'] = 'semester'
+        context['schools'] = self.object.get_schools()
         return context
 
 
