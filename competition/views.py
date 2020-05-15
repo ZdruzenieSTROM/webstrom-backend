@@ -1,7 +1,8 @@
 from django.views.generic import DetailView, ListView
 
 from competition.models import Competition, Semester, Series
-
+from competition.utils import generate_praticipant_invitations
+from operator import itemgetter
 
 class SeriesProblemsView(DetailView):
     template_name = 'competition/series.html'
@@ -81,3 +82,31 @@ class SeriesResultsLatexView(SeriesResultsView):
 
 class SemesterResultsLatexView(SemesterResultsView):
     template_name = 'competition/results_latex.html'
+
+class SemesterInvitationsLatexView(DetailView):
+    model = Semester
+    context_object_name = 'semester'
+    template_name = 'competition/invitations_latex.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['application_deadline'] = 'NIKDY'
+        
+        participants = generate_praticipant_invitations(
+            self.object.results_with_ranking(),
+            self.kwargs.get('num_participants',32),
+            self.kwargs.get('num_substitutes',20),
+            )
+        participants.sort(key=itemgetter('first_name'))
+        participants.sort(key=itemgetter('last_name'))
+        context['participants'] = participants
+       
+        schools = {}
+        for participant in participants:
+            if participant['school'] in schools:
+                schools[participant['school']].append(participant)
+            else:
+                schools[participant['school']] = [participant]
+        context['schools'] = schools
+
+        return context

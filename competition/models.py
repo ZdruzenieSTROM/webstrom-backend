@@ -241,6 +241,10 @@ class Semester(Event):
     def season(self):
         return self.get_season_code_display()
 
+    @cached_property
+    def season_short(self):
+        return self.get_season_code_display()[:3].lower()
+
     def __str__(self):
         return f'{self.competition.name}, {self.year}. ročník - {self.season} semester'
 

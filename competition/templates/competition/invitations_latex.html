@@ -1,0 +1,47 @@
+<b>Pozvánka pre účastníkov</b>
+<br>
+\documentclass[a4paper,11pt]{article}
+<br>
+<br>
+\input makra.tex
+<br>
+<br>
+\terminprihlasky    {10.~januára~2020} <br>
+\zaciatok           {26.~januára~2020} <br>
+\koniec             {31.~januára~2020} <br>
+\miesto             {v~UVZ Danišovce} <br>
+\rocnik             {{'{'}}{{semester.year}}{{'}'}} <br>
+\semester           {{'{'}}{{semester.season_short}}{{'}'}} <br>
+\seminar            {{'{'}}{{semester.competition.name}}{{'}'}} <br>
+<br>
+{% for participant in participants %}
+    {% if participant.is_participant %}
+        \ucastnik{{'{'}}{{participant.first_name}} {{participant.last_name}}{{'}'}} <br>
+    {% else%}
+        \nahradnik{{'{'}}{{participant.first_name}} {{participant.last_name}}{{'}'}} <br>
+    {% endif %}
+    
+{% endfor %}
+
+<hr>
+<b>Pozvánka pre školy</b>
+<br>
+<br>
+
+{%for school,particpants in schools.items%}
+    \hlavicka <br>
+    {{'\stitok{}{}{Kabinet matematiky}{'}}{{school.name}}{{'}{'}}{{school.street}}{{'}{'}}{{school.printable_zip_code}} \ {{school.city}}{{'}{}'}} <br>
+    \nadtextikskole <br>
+    {% for participant in participants %}
+        {% if participant.is_participant %}
+            \ucastnik{{'{'}}{{participant.first_name}} {{participant.last_name}}{{'}'}} <br>
+        {% else %}
+            \ucastnik{{'{'}}{{participant.first_name}} {{participant.last_name}}, náhradník} <br>
+        {% endif %}
+
+    {% endfor %}
+    \podtextikskole <br>
+    \pata   <br>
+    \newpage    <br>
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% <br>
+{% endfor %}
