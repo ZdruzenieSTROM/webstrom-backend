@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block content %}
+
+<div class="example-element">
+  This content will be replaced by an actual app.
+</div>
+<div class="example-element">
+  This content will be replaced by an actual app.
+</div>
+<div class="example-element">
+  This content will be replaced by an actual app.
+</div>
+
+{% endblock content %}
+
+{% block javascript %}
+  <script src="{% static 'js/main.js' %}"></script>
+{% endblock javascript %}

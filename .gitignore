@@ -21,3 +21,6 @@ django-env
 
 # Bordel od IDE
 .vscode
+
+# React veci
+node_modules
