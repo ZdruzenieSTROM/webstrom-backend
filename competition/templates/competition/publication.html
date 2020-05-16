@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+
+{% load competition_extras %}
+
+{% include 'competition/semester_header/header.html' with active_site='publications' series=semester.series_set.all.first %}
+<br>
+
+<div class="row">
+{% for publication_batch in semester.publication_set.all|batch:3 %}
+    {% for publication in publication_batch %}
+        <div class="col-4">
+            {{ publication }}
+            {{ publication.file}}
+            <img src="/media/{{ publication.thumbnail }}" alt="{{publication}}" class="img-fluid img-thumbnail">
+        </div>
+    {% endfor %}
+    </div>
+    <div class="row">
+{% endfor %}
+</div>
+{% endblock content %}}
