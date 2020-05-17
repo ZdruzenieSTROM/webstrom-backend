@@ -11,8 +11,9 @@
     {% for publication in publication_batch %}
         <div class="col-4">
             {{ publication }}
-            {{ publication.file}}
-            <img src="/media/{{ publication.thumbnail }}" alt="{{publication}}" class="img-fluid img-thumbnail">
+            <a href="/media/{{ publication.file }}">
+                <img src="/media/{{ publication.thumbnail }}" alt="{{publication}}" class="img-fluid img-thumbnail">
+            </a>
         </div>
     {% endfor %}
     </div>
