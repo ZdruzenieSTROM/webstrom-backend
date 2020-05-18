@@ -28,9 +28,7 @@ class ArchiveView(ListView):
         years = {}
 
         for sem in Semester.objects.filter(competition=site_competition).order_by('-year'):
-            try:
-                years[sem.year]
-            except KeyError:
+            if not sem.year in years:
                 years[sem.year] = []
             years[sem.year].append(sem)
 
