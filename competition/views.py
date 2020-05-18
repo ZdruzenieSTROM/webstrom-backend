@@ -1,8 +1,10 @@
 from django.contrib import messages
-from django.views.generic import DetailView, ListView
+from django.shortcuts import redirect
+from django.views.generic import DetailView, ListView, View
 
 from competition.forms import SeriesSolutionForm
-from competition.models import Competition, EventRegistration, Problem, Semester, Series, Solution
+from competition.models import (Competition, EventRegistration, Grade,
+                                Problem, Semester, Series, Solution)
 
 
 class SeriesProblemsView(DetailView):
@@ -131,3 +133,25 @@ class SeriesResultsLatexView(SeriesResultsView):
 
 class SemesterResultsLatexView(SemesterResultsView):
     template_name = 'competition/results_latex.html'
+
+
+class SemesterRegistrationView(View):
+    def get(self, request, pk, series, **kwargs):
+        try:
+            profile = self.request.user.profile
+            semester = Semester.objects.get(pk=pk)
+            assert not EventRegistration.objects.filter(profile=profile, event=semester)
+            EventRegistration(
+                profile=profile, school=profile.school,
+                grade=Grade.get_grade_by_year_of_graduation(profile.year_of_graduation),
+                event=semester).save()
+        except AssertionError:
+            messages.info(request, 'Do tohto semestra už si zaregistrovaný')
+        except AttributeError:
+            messages.error(request, 'Na odovzdávanie riešení je potrebné byť prihlásený')
+        else:
+            messages.success(
+                request,
+                f'{Semester.objects.get(pk=pk)}: Registrácia do semestra prebehla úspešne.')
+        
+        return redirect('competition:series-problems-detail', pk=series)
