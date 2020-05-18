@@ -115,10 +115,10 @@ class ProfileUpdateForm(ProfileForm):
 
 
 class SeriesSolutionForm(forms.Form):
-    class Meta:
-        fields = ['solution', 'problem']
-    
     def __init__(self, series, *args, **kwargs):
         super(SeriesSolutionForm, self).__init__(*args, **kwargs)
+        
         for problem in series.problem_set.all():
-            self.fields[f's{problem.pk}'] = forms.FileField(label='Tvoje riešenie')
+            self.fields[str(problem.pk)] = forms.FileField(
+                label='Tvoje riešenie',
+                required=False)

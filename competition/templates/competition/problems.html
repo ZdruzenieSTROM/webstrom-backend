@@ -1,6 +1,6 @@
 {% load crispy_forms_tags %}
 
-<form method="post">
+<form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {% for problem, form_field in problems %}
     <h3>{{ problem.order }}. úloha</h3>

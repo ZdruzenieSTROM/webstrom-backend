@@ -1,7 +1,8 @@
+from django.contrib import messages
 from django.views.generic import DetailView, ListView
 
 from competition.forms import SeriesSolutionForm
-from competition.models import Competition, EventRegistration, Semester, Series
+from competition.models import Competition, EventRegistration, Problem, Semester, Series, Solution
 
 
 class SeriesProblemsView(DetailView):
@@ -18,8 +19,40 @@ class SeriesProblemsView(DetailView):
         context['problems'] = zip(self.object.problem_set.all(), form)
         return context
 
-    def post(self, request):
-        form = SeriesSolutionForm(self.object, data=request.POST)
+    def post(self, request, pk=None, **kwargs):
+        form = SeriesSolutionForm(
+            Series.objects.get(pk=pk),
+            data=request.POST,
+            files=request.FILES)
+
+        try:
+            registration = EventRegistration.objects.get(
+                event=Series.objects.get(pk=pk).semester,
+                profile=self.request.user.profile)
+            assert form.is_valid()
+        except (EventRegistration.DoesNotExist, AssertionError):
+            messages.error(request, 'Odovzdávanie riešení zlyhalo')
+        else:
+            for field in form.fields:
+                if field in request.FILES:
+                    problem = Problem.objects.get(pk=int(field))
+                    try:
+                        solution = Solution.objects.get(
+                            semester_registration=registration,
+                            problem=problem)
+                        messages.debug(request, 'Riešenie existovalo')
+                    except Solution.DoesNotExist:
+                        solution = Solution(
+                            semester_registration=registration,
+                            problem=problem)
+                        messages.debug(request, 'Riešenie neexistovalo')
+                    
+                    solution.solution = request.FILES[field]
+                    solution.is_online = True
+                    solution.save()
+
+                    messages.success(
+                        request, f'{problem.pk}: Riešenie bolo úspešne odovzdané')
         
         return self.get(request)
 
