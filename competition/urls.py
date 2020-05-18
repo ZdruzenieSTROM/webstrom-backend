@@ -4,7 +4,7 @@ from competition.views import (ArchiveView, LatestSeriesProblemsView,
                                SemesterPublicationView,
                                SemesterResultsLatexView, SemesterResultsView,
                                SeriesProblemsView, SeriesResultsLatexView,
-                               SeriesResultsView)
+                               SeriesResultsView, semester_create)
 
 app_name = 'competition'
 
@@ -24,6 +24,8 @@ urlpatterns = [
          name='semester-results'),
     path('semester/<int:pk>/results/latex', SemesterResultsLatexView.as_view(),
          name='semester-results-latex'),
+    path('semester/create', semester_create,
+         name='semester-create'),
 
     # Publikácie
     path('semester/<int:pk>/publications',

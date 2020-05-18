@@ -1,2 +1,3 @@
 // Every custom element should be imported here
-import ExampleElement from "./components/ExampleElement";
+import {} from "./components/ExampleElement";
+import {} from "./components/LatexElement";
