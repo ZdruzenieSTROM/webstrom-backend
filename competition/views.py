@@ -15,12 +15,12 @@ class SeriesProblemsView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        try:
-            context['registration'] = EventRegistration.objects.filter(
-                event=self.object.semester,
-                profile=self.request.user.profile)
-        except AttributeError:
-           context['registration']  = None
+        if "profile" in dir(self.request.user):
+            context['profile'] = self.request.user.profile
+            context['registration'] = EventRegistration.get_registration_by_profile_and_event(
+                self.request.user.profile, self.object.semester)
+        else:
+            context['profile'] = context['registration'] = None
 
         context['form'] = form = SeriesSolutionForm(self.object)
         context['problems'] = zip(self.object.problem_set.all(), form)
@@ -33,9 +33,8 @@ class SeriesProblemsView(DetailView):
             files=request.FILES)
 
         try:
-            registration = EventRegistration.objects.get(
-                event=self.get_object().semester,
-                profile=self.request.user.profile)
+            registration = EventRegistration.get_registration_by_profile_and_event(
+                self.request.user.profile, self.object.semester)
             assert form.is_valid()
         except AttributeError:
             messages.error(request, 'Na odovzdávanie riešení je potrebné sa prihlásiť')
@@ -104,6 +103,13 @@ class SeriesResultsView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
+        if "profile" in dir(self.request.user):
+            context['profile'] = self.request.user.profile
+            context['registration'] = EventRegistration.get_registration_by_profile_and_event(
+                self.request.user.profile, self.object.semester)
+        else:
+            context['profile'] = context['registration'] = None
+
         context['results'] = self.object.results_with_ranking()
         context['results_type'] = 'series'
 
@@ -116,8 +122,17 @@ class SemesterResultsView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        if "profile" in dir(self.request.user):
+            context['profile'] = self.request.user.profile
+            context['registration'] = EventRegistration.get_registration_by_profile_and_event(
+                self.request.user.profile, self.object)
+        else:
+            context['profile'] = context['registration'] = None
+
         context['results'] = self.object.results_with_ranking()
         context['results_type'] = 'semester'
+
         return context
 
 
@@ -141,7 +156,7 @@ class SemesterRegistrationView(View):
         try:
             profile = self.request.user.profile
             semester = Semester.objects.get(pk=pk)
-            assert not EventRegistration.objects.filter(profile=profile, event=semester)
+            assert not EventRegistration.get_registration_by_profile_and_event(profile, semester)
             EventRegistration(
                 profile=profile, school=profile.school,
                 grade=Grade.get_grade_by_year_of_graduation(profile.year_of_graduation),
