@@ -22,5 +22,10 @@ django-env
 # Bordel od IDE
 .vscode
 
-# React veci
+# React
 node_modules
+
+# Sass
+*.css.map
+*.sass.map
+*.scss.map
