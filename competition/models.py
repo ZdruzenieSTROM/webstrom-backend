@@ -561,10 +561,11 @@ class Publication(models.Model):
     class Meta:
         verbose_name = 'publikácia'
         verbose_name_plural = 'publikácie'
+        unique_together = ['event', 'order']
 
     name = models.CharField(max_length = 30, blank=True)
     event = models.ForeignKey(Event, null=True, on_delete=models.SET_NULL)
-    order = models.PositiveSmallIntegerField(unique=True)
+    order = models.PositiveSmallIntegerField()
 
     file = RestrictedFileField(
         upload_to='publications/%Y',
@@ -608,8 +609,7 @@ class Publication(models.Model):
         
     def __str__(self):
         return self.name
-        #return f'{self.event.competition}-{self.event.year}-{self.order}'
-
+        
 
 @receiver(post_save, sender=Publication)
 def make_thumbnail_on_creation(sender, instance, created, **kwargs):
