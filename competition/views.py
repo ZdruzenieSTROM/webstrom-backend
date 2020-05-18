@@ -19,7 +19,6 @@ class ArchiveView(ListView):
     # TODO: toto prerobím keď pribudne model ročník
     template_name = 'competition/archive.html'
     model = Semester
-    context_object_name = 'context'
 
     def get_queryset(self):
         site_competition = Competition.get_seminar_by_current_site()

@@ -15,6 +15,6 @@ class ExampleElement extends Component {
 
 const appElements = Array.from(document.getElementsByClassName("example-element"));
 
-appElements.map((element) => {
+appElements.forEach((element) => {
   ReactDOM.render(<ExampleElement />, element);
 });
