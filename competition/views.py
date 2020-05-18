@@ -48,9 +48,7 @@ class SeriesResultsView(DetailView):
         context = super().get_context_data(**kwargs)
 
         context['results'] = self.object.results_with_ranking()
-        context['results_type'] = 'series'
-        context['schools'] = self.object.semester.get_schools()
-
+        context['results_type'] = 'series'        
         return context
 
 
@@ -62,7 +60,6 @@ class SemesterResultsView(DetailView):
         context = super().get_context_data(**kwargs)
         context['results'] = self.object.results_with_ranking()
         context['results_type'] = 'semester'
-        context['schools'] = self.object.get_schools()
         return context
 
 
@@ -74,11 +71,17 @@ class SeriesResultsLatexView(SeriesResultsView):
         context['histograms'] = []
         for problem in self.object.problem_set.all():
             context['histograms'].append(problem.get_stats())
+        context['schools'] = self.object.semester.get_schools()
         return context
 
 
 class SemesterResultsLatexView(SemesterResultsView):
     template_name = 'competition/results_latex.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['schools'] = self.object.get_schools()
+        return context
 
 class SemesterInvitationsLatexView(DetailView):
     model = Semester
