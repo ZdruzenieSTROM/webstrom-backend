@@ -4,7 +4,7 @@ from competition.views import (ArchiveView, LatestSeriesProblemsView,
                                SemesterPublicationView,
                                SemesterResultsLatexView, SemesterResultsView,
                                SeriesProblemsView, SeriesResultsLatexView,
-                               SeriesResultsView, semester_create)
+                               SeriesResultsView)
 
 app_name = 'competition'
 
