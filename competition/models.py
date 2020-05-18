@@ -205,10 +205,6 @@ class Event(models.Model):
     start = models.DateTimeField(verbose_name='dátum začiatku súťaže')
     end = models.DateTimeField(verbose_name='dátum konca súťaže')
 
-    @cached_property
-    def is_active(self):
-        return self.semester.series_set.filter(complete=False).exists()
-
     def is_user_registered(self, user):
         return EventRegistration.objects.filter(event=self.pk, user=user).exists()
 
@@ -244,6 +240,10 @@ class Semester(Event):
     @cached_property
     def season_short(self):
         return self.get_season_code_display()[:3].lower()
+
+    @cached_property
+    def is_active(self):
+        return self.semester.series_set.filter(complete=False).exists()
 
     def __str__(self):
         return f'{self.competition.name}, {self.year}. ročník - {self.season} semester'
