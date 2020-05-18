@@ -26,7 +26,7 @@ urlpatterns = [
          name='semester-results-latex'),
     
     # Registrácia do semestra
-    path('semester/<int:pk>/register/<int:series>', SemesterRegistrationView.as_view(),
+    path('semester/<int:pk>/register/<path:cont>', SemesterRegistrationView.as_view(),
          name='semester-registration'),
 
     # Archív

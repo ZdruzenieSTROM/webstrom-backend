@@ -1,3 +1,4 @@
+import time
 from django.contrib import messages
 from django.shortcuts import redirect
 from django.views.generic import DetailView, ListView, View
@@ -136,7 +137,7 @@ class SemesterResultsLatexView(SemesterResultsView):
 
 
 class SemesterRegistrationView(View):
-    def get(self, request, pk, series, **kwargs):
+    def get(self, request, pk, cont, **kwargs):
         try:
             profile = self.request.user.profile
             semester = Semester.objects.get(pk=pk)
@@ -154,4 +155,4 @@ class SemesterRegistrationView(View):
                 request,
                 f'{Semester.objects.get(pk=pk)}: Registrácia do semestra prebehla úspešne')
         
-        return redirect('competition:series-problems-detail', pk=series)
+        return redirect(cont)
