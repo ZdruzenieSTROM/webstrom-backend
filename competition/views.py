@@ -1,6 +1,4 @@
 from django.views.generic import DetailView, ListView
-from django.shortcuts import render
-import json
 
 from competition.models import Competition, Semester, Series
 
@@ -8,7 +6,6 @@ from competition.models import Competition, Semester, Series
 class SeriesProblemsView(DetailView):
     template_name = 'competition/series.html'
     model = Series
-    context_object_name = 'series'
 
 
 class LatestSeriesProblemsView(SeriesProblemsView):
@@ -22,7 +19,6 @@ class ArchiveView(ListView):
     # TODO: toto prerobím keď pribudne model ročník
     template_name = 'competition/archive.html'
     model = Semester
-    context_object_name = 'context'
 
     def get_queryset(self):
         site_competition = Competition.get_seminar_by_current_site()
@@ -44,7 +40,6 @@ class ArchiveView(ListView):
 
 class SeriesResultsView(DetailView):
     model = Series
-    context_object_name = 'series'
     template_name = 'competition/results.html'
 
     def get_context_data(self, **kwargs):
@@ -58,7 +53,6 @@ class SeriesResultsView(DetailView):
 
 class SemesterResultsView(DetailView):
     model = Semester
-    context_object_name = 'semester'
     template_name = 'competition/results.html'
 
     def get_context_data(self, **kwargs):
@@ -81,16 +75,3 @@ class SeriesResultsLatexView(SeriesResultsView):
 
 class SemesterResultsLatexView(SemesterResultsView):
     template_name = 'competition/results_latex.html'
-
-
-def semester_create(request):
-
-    competitions = [{'id': competition.id, 'name': competition.name} for competition in Competition.objects.filter(
-        competition_type=0)]
-
-    form_content = {
-        'competitions': competitions,
-    }
-    content = {'form_content': json.dumps(
-        form_content, ensure_ascii=False)}
-    return render(request, 'competition/semester_create.html', content)
