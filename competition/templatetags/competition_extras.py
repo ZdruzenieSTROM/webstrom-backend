@@ -8,7 +8,7 @@ def score_pretty(solution):
     return '?' if solution.score is None else solution.score
 
 @register.filter
-def batch(iterable, n=1):
-    l = len(iterable)
+def batch(queryset, n=1):
+    l = len(queryset)
     for ndx in range(0, l, n):
-        yield iterable[ndx:min(ndx + n, l)]
+        yield queryset[ndx:min(ndx + n, l)]

@@ -3,7 +3,7 @@ from django.urls import path
 from competition.views import (ArchiveView, LatestSeriesProblemsView,
                                SemesterResultsLatexView, SemesterResultsView,
                                SeriesProblemsView, SeriesResultsLatexView,
-                               SeriesResultsView, PublicationView, SemesterPublicationView)
+                               SeriesResultsView, SemesterPublicationView)
 
 app_name = 'competition'
 
@@ -26,8 +26,7 @@ urlpatterns = [
 
     # Publikácie
     path('semester/<int:pk>/publications', SemesterPublicationView.as_view(), name='semester-publications'),
-    path('publication/<int:pk>', PublicationView.as_view(), name='publication'),
-
+    
     # Archív
     path('archive/', ArchiveView.as_view(),
          name='archive-view'),

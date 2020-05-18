@@ -80,9 +80,3 @@ class SemesterResultsLatexView(SemesterResultsView):
 class SemesterPublicationView(DetailView):
     model = Semester
     template_name = 'competition/publication.html'
-
-# TODO
-class PublicationView(DetailView):
-    model = Publication
-    template = 'competition/publication.html'
-   

@@ -616,4 +616,9 @@ def make_thumbnail_on_creation(sender, instance, created, **kwargs):
     # pylint: disable=unused-argument
     if created:
         instance.generate_thumbnail()
+
+@receiver(post_save, sender=Publication)
+def make_name_on_creation(sender, instance, created, **kwargs):
+    # pylint: disable=unused-argument
+    if created:
         instance.generate_name()
