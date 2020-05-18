@@ -563,7 +563,7 @@ class Publication(models.Model):
         verbose_name_plural = 'publikácie'
         unique_together = ['event', 'order']
 
-    name = models.CharField(max_length = 30, blank=True)
+    name = models.CharField(max_length=30, blank=True)
     event = models.ForeignKey(Event, null=True, on_delete=models.SET_NULL)
     order = models.PositiveSmallIntegerField()
 
@@ -579,8 +579,8 @@ class Publication(models.Model):
     def generate_name(self, forced=False):
         if self.name and not forced:
             return
-        
-        self.name=f'{self.event.competition}-{self.event.year}-{self.order}'
+
+        self.name = f'{self.event.competition}-{self.event.year}-{self.order}'
         self.save()
 
     def generate_thumbnail(self, forced=False):
@@ -606,16 +606,17 @@ class Publication(models.Model):
 
         self.thumbnail.save(
             thumbnail_filename, ContentFile(png_image_bytes.read()))
-        
+
     def __str__(self):
         return self.name
-        
+
 
 @receiver(post_save, sender=Publication)
 def make_thumbnail_on_creation(sender, instance, created, **kwargs):
     # pylint: disable=unused-argument
     if created:
         instance.generate_thumbnail()
+
 
 @receiver(post_save, sender=Publication)
 def make_name_on_creation(sender, instance, created, **kwargs):

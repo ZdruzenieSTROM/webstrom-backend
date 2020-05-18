@@ -1,6 +1,6 @@
 from django.views.generic import DetailView, ListView
 
-from competition.models import Competition, Semester, Series, Publication
+from competition.models import Competition, Semester, Series
 
 
 class SeriesProblemsView(DetailView):
@@ -76,6 +76,7 @@ class SeriesResultsLatexView(SeriesResultsView):
 
 class SemesterResultsLatexView(SemesterResultsView):
     template_name = 'competition/results_latex.html'
+
 
 class SemesterPublicationView(DetailView):
     model = Semester
