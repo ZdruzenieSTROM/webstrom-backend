@@ -1,12 +1,11 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
-from django.views.generic import TemplateView
+from django.views.generic import DetailView
 
 from competition.forms import ProfileCreationForm, ProfileUpdateForm
 from competition.models import County, District, Grade, Profile, School
@@ -25,9 +24,7 @@ def register(request):
 
         if user_form.is_valid() and profile_form.is_valid():
             user = user_form.save()
-            profile = profile_form.save(commit=False)
-            profile.user = user
-            profile.save()
+            profile_form.save(user)
 
             send_verification_email(user)
             messages.info(request, 'Odoslali sme ti overovací email')
@@ -49,11 +46,17 @@ def register(request):
 def send_verification_email(user):
     # Nie je mi úplne jasné, na čo je dobré user id zakódovať do base64,
     # ale používa to aj reset hesla tak prečo nie
-    message = render_to_string('user/emails/email_verification.html', {
-        'uidb64': urlsafe_base64_encode(force_bytes(user.pk)),
-        'token': email_verification_token_generator.make_token(user)})
+    uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
+    token = email_verification_token_generator.make_token(user)
 
-    user.email_user('Overovací email', message)
+    message = render_to_string(
+        'user/emails/email_verification.txt',
+        {'uidb64': uidb64, 'token': token})
+    html_message = render_to_string(
+        'user/emails/email_verification.html',
+        {'uidb64': uidb64, 'token': token})
+
+    user.email_user('Overovací email', message, html_message=html_message)
 
 
 def verify(request, uidb64, token):
@@ -76,17 +79,18 @@ def verify(request, uidb64, token):
 
 @login_required
 def profile_update(request):
+    user = request.user
     profile = request.user.profile
 
     if request.method == 'POST':
-        user_form = NameUpdateForm(request.POST, instance=request.user)
+        user_form = NameUpdateForm(request.POST, instance=user)
         profile_form = ProfileUpdateForm(request.POST, instance=profile)
 
         if user_form.is_valid() and profile_form.is_valid():
             messages.info(request, 'Zmeny boli uložené.')
             return redirect('user:profile-detail', profile_form.save().pk)
     else:
-        user_form = NameUpdateForm(instance=request.user)
+        user_form = NameUpdateForm(instance=user)
         profile_form = ProfileUpdateForm(instance=profile)
 
         profile_form.fields['county'].initial = profile.school.district.county
@@ -99,11 +103,13 @@ def profile_update(request):
                   {'user_form': user_form, 'profile_form': profile_form})
 
 
-class UserProfileView(TemplateView, LoginRequiredMixin):
+class UserProfileView(DetailView):
     template_name = 'user/profile_view.html'
+    model = Profile
 
 
 def district_by_county(request, pk):
+    # pylint: disable=invalid-name
     county = get_object_or_404(County, pk=pk)
     queryset = District.objects.filter(county=county).values('pk', 'name')
 
@@ -111,6 +117,7 @@ def district_by_county(request, pk):
 
 
 def school_by_county(request, pk):
+    # pylint: disable=invalid-name
     county = get_object_or_404(County, pk=pk)
     districts = District.objects.filter(
         county=county).values('pk', 'name')
@@ -123,6 +130,7 @@ def school_by_county(request, pk):
 
 
 def school_by_district(request, pk):
+    # pylint: disable=invalid-name
     district = get_object_or_404(District, pk=pk)
     queryset = School.objects.filter(district=district)
 

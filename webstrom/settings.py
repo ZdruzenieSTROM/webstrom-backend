@@ -148,6 +148,8 @@ EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'emails')
 
 EMAIL_VERIFICATION_TIMEOUT = 86400
 
+MANAGERS = [('Web', 'web@strom.sk'), ]
+
 # Crispy forms
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'

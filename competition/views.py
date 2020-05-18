@@ -6,7 +6,6 @@ from competition.models import Competition, Semester, Series, Publication
 class SeriesProblemsView(DetailView):
     template_name = 'competition/series.html'
     model = Series
-    context_object_name = 'series'
 
 
 class LatestSeriesProblemsView(SeriesProblemsView):
@@ -42,7 +41,6 @@ class ArchiveView(ListView):
 
 class SeriesResultsView(DetailView):
     model = Series
-    context_object_name = 'series'
     template_name = 'competition/results.html'
 
     def get_context_data(self, **kwargs):
@@ -56,7 +54,6 @@ class SeriesResultsView(DetailView):
 
 class SemesterResultsView(DetailView):
     model = Semester
-    context_object_name = 'semester'
     template_name = 'competition/results.html'
 
     def get_context_data(self, **kwargs):

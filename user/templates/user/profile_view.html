@@ -3,7 +3,7 @@
 {% block content %}
 <div class="row">
     <div class="col-md-9">
-        <h1>{{ user.get_full_name }}</h1>
+        <h1>{{ profile.user.get_full_name }}</h1>
     </div>
 </div>
 <div class="row">
@@ -11,15 +11,15 @@
         <table style="width:100%">
             <tr>
                 <td>email</td>
-                <td>{{ user.profile.user.email }}</td>
+                <td>{{ profile.user.email }}</td>
             </tr>
             <tr>
                 <td>prezývka</td>
-                <td>{{ user.profile.nickname }}</td>
+                <td>{{ profile.nickname }}</td>
             </tr>
             <tr>
                 <td>škola</td>
-                <td>{{ user.profile.school }}</td>
+                <td>{{ profile.school }}</td>
             </tr>
         </table>
     </div>
