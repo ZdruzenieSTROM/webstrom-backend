@@ -114,11 +114,11 @@ class ProfileUpdateForm(ProfileForm):
                   'grade', 'phone', 'parent_phone', ]
 
 
-class SolutionForm(forms.ModelForm):
+class SeriesSolutionForm(forms.Form):
     class Meta:
-        model = Solution
         fields = ['solution', 'problem']
     
-    problem = forms.ModelChoiceField(
-        queryset=Problem.objects,
-        widget=forms.HiddenInput)
+    def __init__(self, series, *args, **kwargs):
+        super(SeriesSolutionForm, self).__init__(*args, **kwargs)
+        for problem in series.problem_set.all():
+            self.fields[f's{problem.pk}'] = forms.FileField(label='Tvoje riešenie')

@@ -1,13 +1,13 @@
 {% load crispy_forms_tags %}
 
-{% for problem, form in problems %}
-<h3>{{ problem.order }}. úloha</h3>
-<p>
-    {{ problem.text|safe }}
-</p>
 <form method="post">
     {% csrf_token %}
-    {{ form|crispy }}
+    {% for problem, form_field in problems %}
+    <h3>{{ problem.order }}. úloha</h3>
+    <p>
+        {{ problem.text|safe }}
+    </p>
+    {{ form_field }}
+    {% endfor %}
     <input type="submit" class="btn btn-primary" value="Odovzdať">
 </form>
-{% endfor %}

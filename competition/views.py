@@ -1,6 +1,6 @@
 from django.views.generic import DetailView, ListView
 
-from competition.forms import SolutionForm
+from competition.forms import SeriesSolutionForm
 from competition.models import Competition, Semester, Series
 
 
@@ -10,13 +10,12 @@ class SeriesProblemsView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['problems'] = \
-            [(problem, SolutionForm(initial={'problem': problem}))
-            for problem in self.object.problem_set.all()]
+        context['form'] = form = SeriesSolutionForm(self.object)
+        context['problems'] = zip(self.object.problem_set.all(), form)
         return context
 
     def post(self, request):
-        form = SolutionForm(data=request.POST)
+        form = SeriesSolutionForm(self.object, data=request.POST)
         
         return self.get(request)
 
