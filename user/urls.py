@@ -36,7 +36,8 @@ urlpatterns = [
          PasswordResetView.as_view(
              template_name='user/password_reset.html',
              success_url=reverse_lazy('user:password-reset-done'),
-             email_template_name='user/emails/password_reset.html'),
+             email_template_name='user/emails/password_reset.txt',
+             html_email_template_name='user/emails/password_reset.html'),
          name='password-reset'),
 
     path('password-reset-confirm/<uidb64>/<token>/',

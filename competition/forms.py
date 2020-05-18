@@ -1,6 +1,8 @@
 from django import forms
+from django.core.mail import mail_managers
+from django.template.loader import render_to_string
 
-from competition.models import County, District, Grade, Profile
+from competition.models import County, District, Grade, Profile, School
 
 
 class ProfileForm(forms.ModelForm):
@@ -59,16 +61,15 @@ class ProfileForm(forms.ModelForm):
 
         return gdpr
 
-    def save(self, commit=True):
-        profile = super(ProfileForm, self).save(commit=False)
+    def clean_school_info(self):
+        school = self.cleaned_data['school']
+        school_info = self.cleaned_data['school_info']
 
-        profile.year_of_graduation = \
-            self.cleaned_data['grade'].get_year_of_graduation_by_date()
+        if school == School.objects.get_unspecified_value() and not school_info:
+            raise forms.ValidationError(
+                'Ak si nenašiel svoju školu, napíš nám na akú školu chodíš')
 
-        if commit:
-            profile.save()
-
-        return profile
+        return school_info
 
 
 class ProfileCreationForm(ProfileForm):
@@ -78,6 +79,30 @@ class ProfileCreationForm(ProfileForm):
                   'school_not', 'county', 'district', 'school',
                   'school_name', 'school_not_found', 'school_info',
                   'grade', 'phone', 'parent_phone', 'gdpr', ]
+
+    def save(self, user, commit=True):
+        profile = super(ProfileCreationForm, self).save(commit=False)
+        profile.user = user
+
+        profile.year_of_graduation = \
+            self.cleaned_data['grade'].get_year_of_graduation_by_date()
+
+        school_county = self.cleaned_data['county']
+        school_info = self.cleaned_data['school_info']
+
+        if self.cleaned_data['school_info']:
+            mail_managers(
+                'Požiadavka na pridanie školy do databázy',
+                render_to_string(
+                    'competition/emails/new_school_request.txt',
+                    {'user': profile.user, 'school': school_info,
+                     'school_county': school_county})
+            )
+
+        if commit:
+            profile.save()
+
+        return profile
 
 
 class ProfileUpdateForm(ProfileForm):
