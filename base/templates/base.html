@@ -40,6 +40,27 @@
     </script>
     <script src="{% static 'vendor/js/jquery-3.4.1.min.js' %}"></script>
     <script src="{% static 'vendor/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+    <script type="text/x-mathjax-config">
+        $('body').addClass("no-mathjax");
+        window.MathJax.Hub.Config({
+            tex2jax: {
+            inlineMath: [
+                ["$", "$"],
+                ["\\(", "\\)"],
+            ],
+            displayMath: [
+                ["$$", "$$"],
+                ["\\[", "\\]"],
+            ],
+            processClass: "mathjax",
+            ignoreClass: "no-mathjax",
+            },
+            showMathMenu: false,
+            messageStyle: "none",
+        });
+    </script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     {% block javascript %}
     {% endblock javascript %}
 </body>

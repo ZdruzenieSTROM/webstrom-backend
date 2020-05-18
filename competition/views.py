@@ -77,7 +77,6 @@ class SeriesResultsLatexView(SeriesResultsView):
 
 class SemesterResultsLatexView(SemesterResultsView):
     template_name = 'competition/results_latex.html'
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['schools'] = self.object.get_schools()
@@ -110,3 +109,7 @@ class SemesterInvitationsLatexView(DetailView):
         context['schools'] = schools
 
         return context
+
+class SemesterPublicationView(DetailView):
+    model = Semester
+    template_name = 'competition/publication.html'

@@ -2,6 +2,7 @@ from django.urls import path
 
 from competition.views import (ArchiveView, LatestSeriesProblemsView,
                                SemesterInvitationsLatexView,
+                               SemesterPublicationView,
                                SemesterResultsLatexView, SemesterResultsView,
                                SeriesProblemsView, SeriesResultsLatexView,
                                SeriesResultsView)
@@ -25,9 +26,12 @@ urlpatterns = [
     path('semester/<int:pk>/results/latex', SemesterResultsLatexView.as_view(),
          name='semester-results-latex'),
 
-     #Pozvánky
-     path('semester/<int:pk>/invitations/<int:num_participants>/<int:num_substitutes>', SemesterInvitationsLatexView.as_view(),
+    # Pozvánky
+    path('semester/<int:pk>/invitations/<int:num_participants>/<int:num_substitutes>', SemesterInvitationsLatexView.as_view(),
           name='semester-invitations-latex'),
+    # Publikácie
+    path('semester/<int:pk>/publications',
+         SemesterPublicationView.as_view(), name='semester-publications'),
 
     # Archív
     path('archive/', ArchiveView.as_view(),

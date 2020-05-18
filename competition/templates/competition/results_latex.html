@@ -9,41 +9,40 @@
 , výsledky - TeX table</b>
 <br>
 {% for result_row in results %}
-    <tr>
-        {% if result_row.rank_changed %}
-            {% if result_row.rank_start is result_row.rank_end %}
-                {{ result_row.rank_start }}.
-            {% else %}
-                {{ result_row.rank_start }}. - {{ result_row.rank_end }}.
-            {% endif %}
+    {% if result_row.rank_changed %}
+        {% if result_row.rank_start is result_row.rank_end %}
+            {{ result_row.rank_start }}.
         {% else %}
-            
+            {{ result_row.rank_start }}. - {{ result_row.rank_end }}.
         {% endif %}
-        &
-        {{ result_row.profile.user.get_full_name }} 
-        &
-        {{ result_row.grade }} 
-        &
-        {{ result_row.school.abbreviation }} 
-        &
+    {% else %}
         
-        {% if results_type == 'semester' %}
-            {{ result_row.subtotal.0 }}
+    {% endif %}
+    &
+    {{ result_row.profile.user.get_full_name }} 
+    &
+    {{ result_row.grade }} 
+    &
+    {{ result_row.school.abbreviation }} 
+    &
+    
+    {% if results_type == 'semester' %}
+        {{ result_row.subtotal.0 }}
+        &
+    {% endif %}
+
+    {%for solution in result_row.solutions %}
+        {% if results_type == 'series' or forloop.counter > 6 %}
+            {% if solution.0 %}
+                    {{solution.0|score_pretty}}
+            {% else %}
+                    -
+            {% endif %}
             &
         {% endif %}
-
-        {%for solution in result_row.solutions %}
-            {% if results_type == 'series' or forloop.counter > 6 %}
-                {% if solution.0 %}
-                        {{solution.0|score_pretty}}
-                {% else %}
-                        -
-                {% endif %}
-                &
-            {% endif %}
-        {% endfor %}
-        {{ result_row.total }}
-        \\
+    {% endfor %}
+    {{ result_row.total }}
+    \\
     <br>
 {% endfor %}
 <br>
