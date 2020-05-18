@@ -4,9 +4,9 @@
     {% csrf_token %}
     {% for problem, form_field in problems %}
     <h3>{{ problem.order }}. úloha</h3>
-    <p>
+    <div class="latex-element">
         {{ problem.text|safe }}
-    </p>
+    </div>
     {% if registration %}
         {{ form_field }}
     {% endif %}

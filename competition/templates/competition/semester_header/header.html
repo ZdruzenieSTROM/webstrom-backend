@@ -14,7 +14,7 @@
             href="{% url 'competition:series-results' pk=series.pk %}">Výsledky</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link {% if active_site == 'publications' %} active {% endif %}" href="#">#Časopisy</a>
+        <a class="nav-link {% if active_site == 'publications' %} active {% endif %}" href="{% url 'competition:semester-publications' pk=semester.pk %}">Časopisy</a>
     </li>
     <li class="nav-item">
         <a class="nav-link {% if active_site == 'events' %} active {% endif %}" href="#">#Akcie</a>

@@ -171,3 +171,8 @@ class SemesterRegistrationView(View):
                 f'{Semester.objects.get(pk=pk)}: Registrácia do semestra prebehla úspešne')
         
         return redirect(cont)
+
+        
+class SemesterPublicationView(DetailView):
+    model = Semester
+    template_name = 'competition/publication.html'

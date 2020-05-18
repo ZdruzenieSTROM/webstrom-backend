@@ -18,8 +18,8 @@
             <a class="btn col-auto border bg-white" href="{# stranka sustredenia #}">
                 #sústredenie
             </a>
-            <a class="btn col-auto border bg-white" href="{# 1.casopis #}">
-                #časopis
+            <a class="btn col-auto border bg-white" href="{% url 'competition:semester-publications' pk=semester.pk %}">
+                časopisy
             </a>
         </div>
 
@@ -35,10 +35,6 @@
             <a class="btn border col-auto" href="{% url 'competition:series-results' series.pk %}">
                 výsledky
             </a>
-            <a class="btn border col-auto" href="{# casopis so vzorakmi (?) #}">
-                #časopis
-            </a>
-
         </div>
         {% endfor %}
         {% endfor %}
