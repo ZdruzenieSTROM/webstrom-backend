@@ -25,15 +25,15 @@ class SeriesProblemsView(DetailView):
         context['problems'] = zip(self.object.problem_set.all(), form)
         return context
 
-    def post(self, request, pk=None, **kwargs):
+    def post(self, request, **kwargs):
         form = SeriesSolutionForm(
-            Series.objects.get(pk=pk),
+            self.get_object(),
             data=request.POST,
             files=request.FILES)
 
         try:
             registration = EventRegistration.objects.get(
-                event=Series.objects.get(pk=pk).semester,
+                event=self.get_object().semester,
                 profile=self.request.user.profile)
             assert form.is_valid()
         except AttributeError:
@@ -152,6 +152,6 @@ class SemesterRegistrationView(View):
         else:
             messages.success(
                 request,
-                f'{Semester.objects.get(pk=pk)}: Registrácia do semestra prebehla úspešne.')
+                f'{Semester.objects.get(pk=pk)}: Registrácia do semestra prebehla úspešne')
         
         return redirect('competition:series-problems-detail', pk=series)
