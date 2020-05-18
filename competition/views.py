@@ -38,7 +38,7 @@ class SeriesProblemsView(DetailView):
                 profile=self.request.user.profile)
             assert form.is_valid()
         except AttributeError:
-            messages.error(request, 'Na odovzdávanie riešení je potrebné byť prihlásený')
+            messages.error(request, 'Na odovzdávanie riešení je potrebné sa prihlásiť')
         except (EventRegistration.DoesNotExist, AssertionError):
             messages.error(request, 'Odovzdávanie riešení zlyhalo')
         else:
@@ -147,9 +147,9 @@ class SemesterRegistrationView(View):
                 grade=Grade.get_grade_by_year_of_graduation(profile.year_of_graduation),
                 event=semester).save()
         except AssertionError:
-            messages.info(request, 'Do tohto semestra už si zaregistrovaný')
+            messages.info(request, 'Do semestra sa dá registrovať iba jedenkrát')
         except AttributeError:
-            messages.error(request, 'Na odovzdávanie riešení je potrebné byť prihlásený')
+            messages.error(request, 'Na registráciu je potrebné sa prihlásiť')
         else:
             messages.success(
                 request,
