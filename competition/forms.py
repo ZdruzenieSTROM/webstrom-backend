@@ -2,7 +2,7 @@ from django import forms
 from django.core.mail import mail_managers
 from django.template.loader import render_to_string
 
-from competition.models import County, District, Grade, Profile, School
+from competition.models import County, District, Grade, Profile, School, Solution, Problem
 
 
 class ProfileForm(forms.ModelForm):
@@ -112,3 +112,13 @@ class ProfileUpdateForm(ProfileForm):
                   'school_not', 'county', 'district', 'school',
                   'school_name', 'school_not_found', 'school_info',
                   'grade', 'phone', 'parent_phone', ]
+
+
+class SolutionForm(forms.ModelForm):
+    class Meta:
+        model = Solution
+        fields = ['solution', 'problem']
+    
+    problem = forms.ModelChoiceField(
+        queryset=Problem.objects,
+        widget=forms.HiddenInput)

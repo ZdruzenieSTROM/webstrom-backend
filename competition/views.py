@@ -1,11 +1,24 @@
 from django.views.generic import DetailView, ListView
 
+from competition.forms import SolutionForm
 from competition.models import Competition, Semester, Series
 
 
 class SeriesProblemsView(DetailView):
     template_name = 'competition/series.html'
     model = Series
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['problems'] = \
+            [(problem, SolutionForm(initial={'problem': problem}))
+            for problem in self.object.problem_set.all()]
+        return context
+
+    def post(self, request):
+        form = SolutionForm(data=request.POST)
+        
+        return self.get(request)
 
 
 class LatestSeriesProblemsView(SeriesProblemsView):
