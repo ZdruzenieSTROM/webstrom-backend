@@ -11,6 +11,17 @@ class PublicationAdmin(admin.ModelAdmin):
     change_form_template = 'competition/admin/publication_change.html'
 
     def response_change(self, request, obj):
+        if 'generate-name' in request.POST:
+            obj.generate_name(forced=True)
+
+            if obj.name:
+                self.message_user(request, 'Meno bolo vygenerované')
+            else:
+                self.message_user(
+                    request, 'Meno sa nepodarilo vygenerovať', level=messages.ERROR)
+
+            return HttpResponseRedirect('.')
+
         if 'generate-thumbnail' in request.POST:
             obj.generate_thumbnail(forced=True)
 
