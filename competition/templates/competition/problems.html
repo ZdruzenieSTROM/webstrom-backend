@@ -7,7 +7,11 @@
     <p>
         {{ problem.text|safe }}
     </p>
-    {{ form_field }}
+    {% if registration %}
+        {{ form_field }}
+    {% endif %}
     {% endfor %}
-    <input type="submit" class="btn btn-primary" value="Odovzdať">
+    {% if registration %}
+        <input type="submit" class="btn btn-primary" value="Odovzdať">
+    {% endif %}
 </form>

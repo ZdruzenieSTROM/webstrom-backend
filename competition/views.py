@@ -1,7 +1,7 @@
 from django.views.generic import DetailView, ListView
 
 from competition.forms import SeriesSolutionForm
-from competition.models import Competition, Semester, Series
+from competition.models import Competition, EventRegistration, Semester, Series
 
 
 class SeriesProblemsView(DetailView):
@@ -10,6 +10,10 @@ class SeriesProblemsView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        context['registration'] = EventRegistration.objects.filter(
+            event=self.object.semester,
+            profile=self.request.user.profile)
         context['form'] = form = SeriesSolutionForm(self.object)
         context['problems'] = zip(self.object.problem_set.all(), form)
         return context
