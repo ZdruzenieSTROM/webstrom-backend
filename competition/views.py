@@ -12,9 +12,13 @@ class SeriesProblemsView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        context['registration'] = EventRegistration.objects.filter(
-            event=self.object.semester,
-            profile=self.request.user.profile)
+        try:
+            context['registration'] = EventRegistration.objects.filter(
+                event=self.object.semester,
+                profile=self.request.user.profile)
+        except AttributeError:
+           context['registration']  = None
+
         context['form'] = form = SeriesSolutionForm(self.object)
         context['problems'] = zip(self.object.problem_set.all(), form)
         return context
@@ -30,6 +34,8 @@ class SeriesProblemsView(DetailView):
                 event=Series.objects.get(pk=pk).semester,
                 profile=self.request.user.profile)
             assert form.is_valid()
+        except AttributeError:
+            messages.error(request, 'Na odovzdávanie riešení je potrebné byť prihlásený')
         except (EventRegistration.DoesNotExist, AssertionError):
             messages.error(request, 'Odovzdávanie riešení zlyhalo')
         else:
