@@ -507,6 +507,7 @@ class EventRegistration(models.Model):
     class Meta:
         verbose_name = 'registrácia užívateľa na akciu'
         verbose_name_plural = 'registrácie užívateľov na akcie'
+        unique_together = ['profile', 'event']
 
     profile = models.ForeignKey(
         Profile, verbose_name='profil', on_delete=models.CASCADE)
@@ -517,6 +518,16 @@ class EventRegistration(models.Model):
     event = models.ForeignKey(
         Semester, verbose_name='semester', on_delete=models.CASCADE)
     votes = models.SmallIntegerField(verbose_name='hlasy', default=0)
+
+    @staticmethod
+    def get_registration_by_profile_and_event(profile, event):
+        try:
+            registration = EventRegistration.objects.get(
+                profile=profile, event=event)
+        except EventRegistration.DoesNotExist:
+            registration = None
+        
+        return registration
 
     def __str__(self):
         return f'{ self.profile.user.get_full_name() } @ { self.event }'
