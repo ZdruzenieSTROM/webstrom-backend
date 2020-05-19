@@ -245,6 +245,13 @@ class Semester(Event):
     def is_active(self):
         return self.semester.series_set.filter(complete=False).exists()
 
+    @property
+    def is_at_least_one_series_open(self):
+        for s in self.series_set.all():
+            if s.can_submit:
+                return True
+        return False
+
     def __str__(self):
         return f'{self.competition.name}, {self.year}. ročník - {self.season} semester'
 
@@ -364,6 +371,21 @@ class Series(models.Model):
             return datetime.timedelta(0)
         else:
             return remaining_time
+
+    @property
+    def can_submit(self):
+        max_late_tag_value = self.semester.late_tags.aggregate(models.Max('upper_bound'))['upper_bound__max']
+        if not max_late_tag_value:
+            max_late_tag_value = 0
+        return now() < self.deadline + max_late_tag_value
+
+    def get_actual_late_flag(self):
+        if not self.is_past_deadline:
+            return None
+        if not self.can_submit:
+            return None
+        return self.semester.late_tags.filter(upper_bound__gte=now()-self.deadline).order_by('upper_bound').all()[0]
+
 
     @property
     def num_problems(self):
