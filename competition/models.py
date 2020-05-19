@@ -231,7 +231,7 @@ class Semester(Event):
     ]
 
     season_code = models.PositiveSmallIntegerField(choices=SEASON_CHOICES)
-    late_tags = models.ManyToManyField(LateTag, verbose_name='', blank=True)
+    late_tags = models.ManyToManyField(LateTag, verbose_name='Stavy omeškania', blank=True)
 
     @cached_property
     def season(self):
@@ -376,7 +376,7 @@ class Series(models.Model):
     def can_submit(self):
         max_late_tag_value = self.semester.late_tags.aggregate(models.Max('upper_bound'))['upper_bound__max']
         if not max_late_tag_value:
-            max_late_tag_value = 0
+            max_late_tag_value = datetime.timedelta(0)
         return now() < self.deadline + max_late_tag_value
 
     def get_actual_late_flag(self):
@@ -571,7 +571,7 @@ class Solution(models.Model):
 
     # V prípade, že riešenie prišlo po termíne nastaví sa na príslušný tag
     late_tag = models.ForeignKey(
-        LateTag, verbose_name='',
+        LateTag, verbose_name='Stavy omeškania',
         on_delete=models.SET_NULL, null=True)
 
     is_online = models.BooleanField(verbose_name='internetové riešenie')
