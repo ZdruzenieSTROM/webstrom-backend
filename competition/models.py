@@ -653,3 +653,7 @@ def make_name_on_creation(sender, instance, created, **kwargs):
     # pylint: disable=unused-argument
     if created:
         instance.generate_name()
+
+
+class SemesterPublication(Publication):
+    
