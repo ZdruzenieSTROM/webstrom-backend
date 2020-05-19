@@ -89,7 +89,6 @@ class SemesterInvitationsLatexView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['application_deadline'] = 'NIKDY'
         
         participants = generate_praticipant_invitations(
             self.object.results_with_ranking(),
