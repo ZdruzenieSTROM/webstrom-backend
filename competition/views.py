@@ -70,6 +70,7 @@ class SeriesResultsLatexView(SeriesResultsView):
         for problem in self.object.problem_set.all():
             context['histograms'].append(problem.get_stats())
         context['schools'] = self.object.semester.get_schools()
+        context['schools_offline'] = self.object.semester.get_schools(offline_users_only=True)
         return context
 
 
@@ -78,6 +79,7 @@ class SemesterResultsLatexView(SemesterResultsView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['schools'] = self.object.get_schools()
+        context['schools_offline'] = self.object.get_schools(offline_users_only=True)
         return context
 
 class SemesterInvitationsLatexView(DetailView):

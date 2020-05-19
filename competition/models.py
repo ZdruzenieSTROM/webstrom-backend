@@ -334,8 +334,11 @@ class Semester(Event):
         current_results = utils.rank_results(current_results)
         return current_results
 
-    def get_schools(self):
-        return School.objects.filter(eventregistration__event=self.pk).distinct().order_by('city','street').all()
+    def get_schools(self,offline_users_only=False):
+        if offline_users_only:
+            return School.objects.filter(eventregistration__event=self.pk).filter(eventregistration__solution__is_online=False).distinct().order_by('city','street').all()
+        else:
+            return School.objects.filter(eventregistration__event=self.pk).distinct().order_by('city','street').all()
         
 
 

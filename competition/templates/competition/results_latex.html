@@ -78,3 +78,11 @@
         {{ school.stitok }}
         <br>
     {% endfor %}
+
+<br>
+<b>Poštové štítky - iba školy z papierovými riešiteľmi</b>
+<br>
+    {% for school in schools_offline %}
+        {{ school.stitok }}
+        <br>
+    {% endfor %}
