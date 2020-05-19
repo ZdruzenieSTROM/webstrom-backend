@@ -1,0 +1,34 @@
+@charset "UTF-8";
+
+// Colors
+@import "components/color-variables";
+
+// Variables
+
+// Reset
+
+// Components
+
+// @import "components/color-classes";
+
+@import "components/general";
+@import "components/menu-top";
+@import "components/menu-top";
+@import "components/footer";
+@import "components/actions";
+@import "components/posts";
+
+// Test css
+
+@import "components/test";
+
+.accent-bg {
+  background-color: #a40;
+}
+.accent-text {
+  color: #a40;
+}
+
+.accent {
+  color: #a40;
+}

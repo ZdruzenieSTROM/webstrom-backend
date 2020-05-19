@@ -1,0 +1,16 @@
+#menu-side a {
+  background-color: #636363;
+  color: #fafafa;
+  font-weight: 500;
+}
+#menu-side a:hover {
+  background-color: #212121;
+}
+#menu-side a.active {
+  background-color: #a40;
+}
+#menu-side a.active:hover {
+  /* background-color: #820; */
+  background-color: #212121;
+  color: #fafafa;
+}

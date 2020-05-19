@@ -2,10 +2,10 @@
   "name": "react_src",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "main.js",
   "scripts": {
-    "dev": "webpack --mode development ./index.js --output ../static/js/main.js",
-    "build": "webpack --mode production ./index.js --output ../static/js/main.js"
+    "dev": "webpack --mode development ./index.js --output ../../base/static/js/main.js",
+    "build": "webpack --mode production ./index.js --output ../../base/static/js/main.js"
   },
   "keywords": [],
   "author": "",

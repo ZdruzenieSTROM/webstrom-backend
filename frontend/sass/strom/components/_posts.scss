@@ -1,0 +1,30 @@
+.post .carousel {
+  height: 220px;
+}
+.post .carousel .carousel-item {
+  height: 210px;
+  width: 400px;
+  overflow: hidden;
+}
+.post .carousel .carousel-item > img {
+  border: 5px solid #424242;
+  height: 200px;
+  width: auto;
+}
+.post .card-content {
+  padding: 15px 25px 5px 25px;
+}
+.post .card-title {
+  padding-bottom: 5px;
+  border-bottom: 1px solid #949494;
+  font-weight: 600;
+}
+.post .card-action {
+  background-color: #636363;
+  color: #fafafa;
+}
+.card-action > a {
+  text-transform: none;
+  font-weight: 500;
+  color: white;
+}
