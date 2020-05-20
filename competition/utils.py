@@ -44,25 +44,27 @@ def rank_results(results):
     return results
 
 
-def generate_praticipant_invitations(results_with_ranking,number_of_participants,number_of_substitues):
+def generate_praticipant_invitations(
+        results_with_ranking,
+        number_of_participants,
+        number_of_substitues):
     invited_users = []
-    for i,result_row in enumerate(results_with_ranking):
-        if i<number_of_participants:
+    for i, result_row in enumerate(results_with_ranking):
+        if i < number_of_participants:
             invited_users.append({
                 'first_name': result_row['profile'].user.first_name,
                 'last_name': result_row['profile'].user.last_name,
                 'school': result_row['school'],
-                'is_participant': True}
-                )
-        elif i<number_of_participants+number_of_substitues: 
+                'is_participant': True
+            })
+        elif i < number_of_participants+number_of_substitues:
             invited_users.append({
                 'first_name': result_row['profile'].user.first_name,
                 'last_name': result_row['profile'].user.last_name,
                 'school': result_row['school'],
-                'is_participant': False}
-                )
+                'is_participant': False
+            })
     return invited_users
-
 
 
 # Súčtové metódy pre semináre

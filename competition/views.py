@@ -1,16 +1,75 @@
-from django.views.generic import DetailView, ListView
+from django.contrib import messages
+from django.views.generic import DetailView, ListView, View
 from django.shortcuts import get_object_or_404, redirect, render
 from django.http import HttpResponse
-from competition.models import Competition, LateTag, Semester, Series, Problem
+from competition.forms import SeriesSolutionForm
+from competition.models import (Competition, EventRegistration, Grade, LateTag, Problem,
+                                Semester, Series, Solution)
+
 from competition.utils import generate_praticipant_invitations, get_school_year_by_date, SERIES_SUM_METHODS
 from operator import itemgetter
 import json
 import datetime
+from operator import itemgetter
 
 
 class SeriesProblemsView(DetailView):
     template_name = 'competition/series.html'
     model = Series
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # TODO: táto logika sa opakuje na viacerých miestach
+        if hasattr(self.request.user, 'profile'):
+            context['profile'] = self.request.user.profile
+            context['registration'] = EventRegistration.get_registration_by_profile_and_event(
+                self.request.user.profile, self.object.semester)
+        else:
+            context['profile'] = context['registration'] = None
+
+        context['form'] = form = SeriesSolutionForm(self.object)
+        context['problems'] = zip(self.object.problem_set.all(), form)
+        return context
+
+    def post(self, request, **kwargs):
+        # pylint: disable=unused-argument
+        self.object = self.get_object()
+
+        form = SeriesSolutionForm(
+            self.object,
+            data=request.POST,
+            files=request.FILES)
+
+        try:
+            registration = EventRegistration.get_registration_by_profile_and_event(
+                self.request.user.profile, self.object.semester)
+            assert form.is_valid()
+        except AttributeError:
+            messages.error(
+                request, 'Na odovzdávanie riešení je potrebné sa prihlásiť')
+        except (EventRegistration.DoesNotExist, AssertionError):
+            messages.error(request, 'Odovzdávanie riešení zlyhalo')
+        else:
+            for field in form.fields:
+                if field not in request.FILES:
+                    continue
+
+                problem = Problem.objects.get(pk=int(field))
+
+                solution, _ = Solution.objects.get_or_create(
+                    semester_registration=registration,
+                    problem=problem
+                )
+
+                solution.solution = request.FILES[field]
+                solution.is_online = True
+                solution.save()
+
+                messages.success(
+                    request, f'{problem.pk}: Riešenie bolo úspešne odovzdané')
+
+        return self.get(request)
 
 
 class LatestSeriesProblemsView(SeriesProblemsView):
@@ -49,6 +108,13 @@ class SeriesResultsView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
+        if "profile" in dir(self.request.user):
+            context['profile'] = self.request.user.profile
+            context['registration'] = EventRegistration.get_registration_by_profile_and_event(
+                self.request.user.profile, self.object.semester)
+        else:
+            context['profile'] = context['registration'] = None
+
         context['results'] = self.object.results_with_ranking()
         context['results_type'] = 'series'
         return context
@@ -60,8 +126,17 @@ class SemesterResultsView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        if "profile" in dir(self.request.user):
+            context['profile'] = self.request.user.profile
+            context['registration'] = EventRegistration.get_registration_by_profile_and_event(
+                self.request.user.profile, self.object)
+        else:
+            context['profile'] = context['registration'] = None
+
         context['results'] = self.object.results_with_ranking()
         context['results_type'] = 'semester'
+
         return context
 
 
@@ -92,7 +167,6 @@ class SemesterResultsLatexView(SemesterResultsView):
 
 class SemesterInvitationsLatexView(DetailView):
     model = Semester
-    context_object_name = 'semester'
     template_name = 'competition/invitations_latex.html'
 
     def get_context_data(self, **kwargs):
@@ -116,6 +190,32 @@ class SemesterInvitationsLatexView(DetailView):
         context['schools'] = schools
 
         return context
+
+
+class SemesterRegistrationView(View):
+    def get(self, request, pk, cont, **kwargs):
+        # pylint: disable=unused-argument
+        try:
+            profile = self.request.user.profile
+            semester = Semester.objects.get(pk=pk)
+            assert not EventRegistration.get_registration_by_profile_and_event(
+                profile, semester)
+            EventRegistration(
+                profile=profile, school=profile.school,
+                grade=Grade.get_grade_by_year_of_graduation(
+                    profile.year_of_graduation),
+                event=semester).save()
+        except AssertionError:
+            messages.info(
+                request, 'Do semestra sa dá registrovať iba jedenkrát')
+        except AttributeError:
+            messages.error(request, 'Na registráciu je potrebné sa prihlásiť')
+        else:
+            messages.success(
+                request,
+                f'{Semester.objects.get(pk=pk)}: Registrácia do semestra prebehla úspešne')
+
+        return redirect(cont)
 
 
 class SemesterPublicationView(DetailView):

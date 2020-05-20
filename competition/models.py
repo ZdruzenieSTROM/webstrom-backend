@@ -161,7 +161,7 @@ class Competition(models.Model):
 
     @cached_property
     def semester_set(self):
-        return Semester.objects.filter(competition=self.pk).all()
+        return Semester.objects.filter(competition=self.pk)
 
     @classmethod
     def get_seminar_by_site(cls, site):
@@ -231,7 +231,8 @@ class Semester(Event):
     ]
 
     season_code = models.PositiveSmallIntegerField(choices=SEASON_CHOICES)
-    late_tags = models.ManyToManyField(LateTag, verbose_name='Stavy omeškania', blank=True)
+    late_tags = models.ManyToManyField(
+        LateTag, verbose_name='Stavy omeškania', blank=True)
 
     @cached_property
     def season(self):
@@ -243,14 +244,11 @@ class Semester(Event):
 
     @cached_property
     def is_active(self):
-        return self.semester.series_set.filter(complete=False).exists()
+        return self.series_set.filter(complete=False).exists()
 
     @property
     def is_at_least_one_series_open(self):
-        for s in self.series_set.all():
-            if s.can_submit:
-                return True
-        return False
+        return self.series_set.filter(can_submit=True).exists()
 
     def __str__(self):
         return f'{self.competition.name}, {self.year}. ročník - {self.season} semester'
@@ -334,12 +332,16 @@ class Semester(Event):
         current_results = utils.rank_results(current_results)
         return current_results
 
-    def get_schools(self,offline_users_only=False):
+    def get_schools(self, offline_users_only=False):
         if offline_users_only:
-            return School.objects.filter(eventregistration__event=self.pk).filter(eventregistration__solution__is_online=False).distinct().order_by('city','street').all()
+            return School.objects.filter(eventregistration__event=self.pk)\
+                .filter(eventregistration__solution__is_online=False)\
+                .distinct()\
+                .order_by('city', 'street')
         else:
-            return School.objects.filter(eventregistration__event=self.pk).distinct().order_by('city','street').all()
-        
+            return School.objects.filter(eventregistration__event=self.pk)\
+                .distinct()\
+                .order_by('city', 'street')
 
 
 class Series(models.Model):
@@ -377,7 +379,8 @@ class Series(models.Model):
 
     @property
     def can_submit(self):
-        max_late_tag_value = self.semester.late_tags.aggregate(models.Max('upper_bound'))['upper_bound__max']
+        max_late_tag_value = self.semester.late_tags.aggregate(
+            models.Max('upper_bound'))['upper_bound__max']
         if not max_late_tag_value:
             max_late_tag_value = datetime.timedelta(0)
         return now() < self.deadline + max_late_tag_value
@@ -387,8 +390,9 @@ class Series(models.Model):
             return None
         if not self.can_submit:
             return None
-        return self.semester.late_tags.filter(upper_bound__gte=now()-self.deadline).order_by('upper_bound').all()[0]
-
+        return self.semester.late_tags.filter(upper_bound__gte=now()-self.deadline)\
+            .order_by('upper_bound')\
+            .first()
 
     @property
     def num_problems(self):
@@ -537,6 +541,7 @@ class EventRegistration(models.Model):
     class Meta:
         verbose_name = 'registrácia užívateľa na akciu'
         verbose_name_plural = 'registrácie užívateľov na akcie'
+        unique_together = ['profile', 'event']
 
     profile = models.ForeignKey(
         Profile, verbose_name='profil', on_delete=models.CASCADE)
@@ -547,6 +552,16 @@ class EventRegistration(models.Model):
     event = models.ForeignKey(
         Semester, verbose_name='semester', on_delete=models.CASCADE)
     votes = models.SmallIntegerField(verbose_name='hlasy', default=0)
+
+    @staticmethod
+    def get_registration_by_profile_and_event(profile, event):
+        try:
+            registration = EventRegistration.objects.get(
+                profile=profile, event=event)
+        except EventRegistration.DoesNotExist:
+            registration = None
+
+        return registration
 
     def __str__(self):
         return f'{ self.profile.user.get_full_name() } @ { self.event }'
@@ -577,7 +592,8 @@ class Solution(models.Model):
         LateTag, verbose_name='Stavy omeškania',
         on_delete=models.SET_NULL, null=True)
 
-    is_online = models.BooleanField(verbose_name='internetové riešenie')
+    is_online = models.BooleanField(
+        verbose_name='internetové riešenie', default=False)
 
     def __str__(self):
         return f'Riešiteľ: { self.semester_registration } - úloha { self.problem }'

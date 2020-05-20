@@ -4,6 +4,7 @@ from competition.views import (ArchiveView, LatestSeriesProblemsView,
                                load_semester_data,
                                SemesterInvitationsLatexView,
                                SemesterPublicationView,
+                               SemesterRegistrationView,
                                SemesterResultsLatexView, SemesterResultsView,
                                SeriesProblemsView, SeriesResultsLatexView,
                                SeriesResultsView)
@@ -27,8 +28,13 @@ urlpatterns = [
     path('semester/<int:pk>/results/latex', SemesterResultsLatexView.as_view(),
          name='semester-results-latex'),
 
+    # Registrácia do semestra
+    path('semester/<int:pk>/register/<path:cont>', SemesterRegistrationView.as_view(),
+         name='semester-registration'),
+
     # Pozvánky
-    path('semester/<int:pk>/invitations/<int:num_participants>/<int:num_substitutes>', SemesterInvitationsLatexView.as_view(),
+    path('semester/<int:pk>/invitations/<int:num_participants>/<int:num_substitutes>',
+         SemesterInvitationsLatexView.as_view(),
          name='semester-invitations-latex'),
     # Publikácie
     path('semester/<int:pk>/publications',
