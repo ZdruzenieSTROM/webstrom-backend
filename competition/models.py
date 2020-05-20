@@ -526,7 +526,7 @@ class EventRegistration(models.Model):
                 profile=profile, event=event)
         except EventRegistration.DoesNotExist:
             registration = None
-        
+
         return registration
 
     def __str__(self):

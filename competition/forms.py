@@ -2,7 +2,7 @@ from django import forms
 from django.core.mail import mail_managers
 from django.template.loader import render_to_string
 
-from competition.models import County, District, Grade, Profile, School, Solution, Problem
+from competition.models import County, District, Grade, Profile, School
 
 
 class ProfileForm(forms.ModelForm):
@@ -81,6 +81,7 @@ class ProfileCreationForm(ProfileForm):
                   'grade', 'phone', 'parent_phone', 'gdpr', ]
 
     def save(self, user, commit=True):
+        # pylint: disable=arguments-differ
         profile = super(ProfileCreationForm, self).save(commit=False)
         profile.user = user
 
@@ -117,7 +118,7 @@ class ProfileUpdateForm(ProfileForm):
 class SeriesSolutionForm(forms.Form):
     def __init__(self, series, *args, **kwargs):
         super(SeriesSolutionForm, self).__init__(*args, **kwargs)
-        
+
         for problem in series.problem_set.all():
             self.fields[str(problem.pk)] = forms.FileField(
                 label='Tvoje riešenie',
