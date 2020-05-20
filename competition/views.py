@@ -125,10 +125,8 @@ def load_semester_data(request):
     if not request.user.is_staff:
         return HttpResponse('Toto nie je pre tvoje oči')
 
-    if request.method == 'GET':
-        #semester_data = json.loads(request.body)
-        with open('sem.json', 'r',encoding='utf-8') as f:
-            semester_data = json.load(f)
+    if request.method == 'POST':
+        semester_data = json.loads(request.body)
 
         # Checks
         if not validate_load_semester_input(semester_data):
