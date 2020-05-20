@@ -2,7 +2,7 @@ from django.views.generic import DetailView, ListView
 from django.shortcuts import get_object_or_404, redirect, render
 from django.http import HttpResponse
 from competition.models import Competition, LateTag, Semester, Series, Problem
-from competition.utils import generate_praticipant_invitations, get_school_year_by_date
+from competition.utils import generate_praticipant_invitations, get_school_year_by_date, SERIES_SUM_METHODS
 from operator import itemgetter
 import json
 import datetime
@@ -174,5 +174,26 @@ def load_semester_data(request):
         return HttpResponse('OK')
     else:
         # GET response - form
+        context = {}
+
+        # Semestre
+        context['seminars'] = Competition.objects.filter(competition_type=0).all()
+        context['late_tags'] = LateTag.objects.all()
+        context['season_choices'] = Semester.SEASON_CHOICES
+        context['sum_methods'] = SERIES_SUM_METHODS
+        context['seminar_defaults'] = {}
+        for seminar in context['seminars']:
+            semester = Semester.objects.filter(competition=seminar).order_by('-end').first()
+            if not semester:
+                continue
+            if semester.season_code == 0:
+                year = semester.year
+            else:
+                year = semester.year + 1
+            context['seminar_defaults'][seminar] = {
+                'year': year,
+                'late_tags': semester.late_tags.all(),
+                'sum_method': semester.series_set.first().sum_method
+            }
         # Vyber posledné nastavenia súťaží
-        return HttpResponse('Toto nie je pre tvoje očhi')
+        return render(request,template_name='competition/semester_load.html',context={'json_data':context})
