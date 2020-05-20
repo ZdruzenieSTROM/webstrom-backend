@@ -1,6 +1,7 @@
 from django.urls import path
 
 from competition.views import (ArchiveView, LatestSeriesProblemsView,
+                               load_semester_data,
                                SemesterInvitationsLatexView,
                                SemesterPublicationView,
                                SemesterResultsLatexView, SemesterResultsView,
@@ -32,6 +33,9 @@ urlpatterns = [
     # Publikácie
     path('semester/<int:pk>/publications',
          SemesterPublicationView.as_view(), name='semester-publications'),
+
+    #Vedúcovské funkcie
+    path('load/semester',load_semester_data,name='load-semester-data')
 
     # Archív
     path('archive/', ArchiveView.as_view(),

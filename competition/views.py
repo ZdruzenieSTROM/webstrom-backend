@@ -1,8 +1,10 @@
 from django.views.generic import DetailView, ListView
-
-from competition.models import Competition, Semester, Series
-from competition.utils import generate_praticipant_invitations
+from django.shortcuts import get_object_or_404, redirect, render
+from competition.models import Competition, Semester, Series, Problem
+from competition.utils import generate_praticipant_invitations, get_school_year_by_date
 from operator import itemgetter
+import json
+
 
 class SeriesProblemsView(DetailView):
     template_name = 'competition/series.html'
@@ -112,3 +114,43 @@ class SemesterInvitationsLatexView(DetailView):
 class SemesterPublicationView(DetailView):
     model = Semester
     template_name = 'competition/publication.html'
+
+
+def load_semester_data(request):
+    if request.user.is_authenticated:
+        return redirect('user:profile-update')
+
+    if request.method == 'POST':
+        semester_data = json.loads(request.body)
+
+    
+    # Create semester
+    season_code = Semester.SEASON_CHOICES[semester_data['season']]
+    school_year = get_school_year_by_date(date=None)
+    new_semester = Semester.objects.create(
+        competition=semester_data['seminar'],
+        year=semester_data['year'],
+        school_year=school_year,
+        start=semester_data['semester_start'],
+        end=semester_data['semester_end'],
+        season_code=season_code,
+        late_tags=semester_data['late_tags']
+    )
+
+    # Create Series
+    for s in semester_data['series']:
+        new_series = Series.objects.create(
+            semester=new_semester,
+            order=s['order'],
+            deadline=s['deadline'],
+            complete=False,
+            sum_method=semester_data['sum_method']
+        )
+
+        #Create problems
+        for problem in s['problems']:
+            Problem.objects.create(
+                text=problem['text'],
+                order=problem['order'],
+                series=new_series
+            )
