@@ -1,8 +1,10 @@
+from operator import itemgetter
+
 from django.views.generic import DetailView, ListView
 
 from competition.models import Competition, Semester, Series
 from competition.utils import generate_praticipant_invitations
-from operator import itemgetter
+
 
 class SeriesProblemsView(DetailView):
     template_name = 'competition/series.html'
@@ -46,7 +48,7 @@ class SeriesResultsView(DetailView):
         context = super().get_context_data(**kwargs)
 
         context['results'] = self.object.results_with_ranking()
-        context['results_type'] = 'series'        
+        context['results_type'] = 'series'
         return context
 
 
@@ -70,17 +72,21 @@ class SeriesResultsLatexView(SeriesResultsView):
         for problem in self.object.problem_set.all():
             context['histograms'].append(problem.get_stats())
         context['schools'] = self.object.semester.get_schools()
-        context['schools_offline'] = self.object.semester.get_schools(offline_users_only=True)
+        context['schools_offline'] = self.object.semester.get_schools(
+            offline_users_only=True)
         return context
 
 
 class SemesterResultsLatexView(SemesterResultsView):
     template_name = 'competition/results_latex.html'
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['schools'] = self.object.get_schools()
-        context['schools_offline'] = self.object.get_schools(offline_users_only=True)
+        context['schools_offline'] = self.object.get_schools(
+            offline_users_only=True)
         return context
+
 
 class SemesterInvitationsLatexView(DetailView):
     model = Semester
@@ -89,16 +95,16 @@ class SemesterInvitationsLatexView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        
+
         participants = generate_praticipant_invitations(
             self.object.results_with_ranking(),
-            self.kwargs.get('num_participants',32),
-            self.kwargs.get('num_substitutes',20),
-            )
+            self.kwargs.get('num_participants', 32),
+            self.kwargs.get('num_substitutes', 20),
+        )
         participants.sort(key=itemgetter('first_name'))
         participants.sort(key=itemgetter('last_name'))
         context['participants'] = participants
-       
+
         schools = {}
         for participant in participants:
             if participant['school'] in schools:
@@ -108,6 +114,7 @@ class SemesterInvitationsLatexView(DetailView):
         context['schools'] = schools
 
         return context
+
 
 class SemesterPublicationView(DetailView):
     model = Semester

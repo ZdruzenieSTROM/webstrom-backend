@@ -27,8 +27,9 @@ urlpatterns = [
          name='semester-results-latex'),
 
     # Pozvánky
-    path('semester/<int:pk>/invitations/<int:num_participants>/<int:num_substitutes>', SemesterInvitationsLatexView.as_view(),
-          name='semester-invitations-latex'),
+    path('semester/<int:pk>/invitations/<int:num_participants>/<int:num_substitutes>',
+         SemesterInvitationsLatexView.as_view(),
+         name='semester-invitations-latex'),
     # Publikácie
     path('semester/<int:pk>/publications',
          SemesterPublicationView.as_view(), name='semester-publications'),
