@@ -1,9 +1,11 @@
 from django.views.generic import DetailView, ListView
 from django.shortcuts import get_object_or_404, redirect, render
-from competition.models import Competition, Semester, Series, Problem
+from django.http import HttpResponse
+from competition.models import Competition, LateTag, Semester, Series, Problem
 from competition.utils import generate_praticipant_invitations, get_school_year_by_date
 from operator import itemgetter
 import json
+import datetime
 
 
 class SeriesProblemsView(DetailView):
@@ -116,41 +118,63 @@ class SemesterPublicationView(DetailView):
     template_name = 'competition/publication.html'
 
 
+def validate_load_semester_input(input):
+    return True
+
 def load_semester_data(request):
-    if request.user.is_authenticated:
-        return redirect('user:profile-update')
+    if not request.user.is_staff:
+        return HttpResponse('Toto nie je pre tvoje oči')
 
-    if request.method == 'POST':
-        semester_data = json.loads(request.body)
+    if request.method == 'GET':
+        #semester_data = json.loads(request.body)
+        with open('sem.json', 'r',encoding='utf-8') as f:
+            semester_data = json.load(f)
 
-    
-    # Create semester
-    season_code = Semester.SEASON_CHOICES[semester_data['season']]
-    school_year = get_school_year_by_date(date=None)
-    new_semester = Semester.objects.create(
-        competition=semester_data['seminar'],
-        year=semester_data['year'],
-        school_year=school_year,
-        start=semester_data['semester_start'],
-        end=semester_data['semester_end'],
-        season_code=season_code,
-        late_tags=semester_data['late_tags']
-    )
+        # Checks
+        if not validate_load_semester_input(semester_data):
+            return HttpResponse('Nesprávny vstup')
 
-    # Create Series
-    for s in semester_data['series']:
-        new_series = Series.objects.create(
-            semester=new_semester,
-            order=s['order'],
-            deadline=s['deadline'],
-            complete=False,
-            sum_method=semester_data['sum_method']
+        # Create semester
+        sem_start = datetime.datetime.strptime(semester_data['semester_start'], '%Y-%m-%dT%H:%M:%S.%fZ')
+        sem_end = datetime.datetime.strptime(semester_data['semester_end'], '%Y-%m-%dT%H:%M:%S.%fZ')
+        mid_semester =  sem_start + (sem_end - sem_start)/2
+        season_code = Semester.SEASON_CHOICES[semester_data['season']]
+        school_year = get_school_year_by_date(date=mid_semester)
+        competition = Competition.objects.get(pk=semester_data['seminar'])
+        new_semester = Semester.objects.create(
+            competition=competition,
+            year=semester_data['year'],
+            school_year=school_year,
+            start=semester_data['semester_start'],
+            end=semester_data['semester_end'],
+            season_code=semester_data['season']
         )
 
-        #Create problems
-        for problem in s['problems']:
-            Problem.objects.create(
-                text=problem['text'],
-                order=problem['order'],
-                series=new_series
+        # Add late tags
+        for late_tag_id in semester_data['late_tags']:
+            late_tag = LateTag.objects.get(pk=late_tag_id)
+            new_semester.late_tags.add(late_tag)
+        new_semester.save()
+
+        # Create Series
+        for s in semester_data['series']:
+            new_series = Series.objects.create(
+                semester=new_semester,
+                order=s['order'],
+                deadline=s['deadline'],
+                complete=False,
+                sum_method=s['sum_method']
             )
+
+            #Create problems
+            for problem in s['problems']:
+                Problem.objects.create(
+                    text=problem['text'],
+                    order=problem['order'],
+                    series=new_series
+                )
+        return HttpResponse('OK')
+    else:
+        # GET response - form
+        # Vyber posledné nastavenia súťaží
+        return HttpResponse('Toto nie je pre tvoje očhi')

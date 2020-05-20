@@ -35,7 +35,7 @@ urlpatterns = [
          SemesterPublicationView.as_view(), name='semester-publications'),
 
     #Vedúcovské funkcie
-    path('load/semester',load_semester_data,name='load-semester-data')
+    path('load/semester',load_semester_data,name='load-semester-data'),
 
     # Archív
     path('archive/', ArchiveView.as_view(),
