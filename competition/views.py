@@ -50,7 +50,7 @@ class SeriesResultsView(DetailView):
         context = super().get_context_data(**kwargs)
 
         context['results'] = self.object.results_with_ranking()
-        context['results_type'] = 'series'        
+        context['results_type'] = 'series'
         return context
 
 
@@ -74,17 +74,21 @@ class SeriesResultsLatexView(SeriesResultsView):
         for problem in self.object.problem_set.all():
             context['histograms'].append(problem.get_stats())
         context['schools'] = self.object.semester.get_schools()
-        context['schools_offline'] = self.object.semester.get_schools(offline_users_only=True)
+        context['schools_offline'] = self.object.semester.get_schools(
+            offline_users_only=True)
         return context
 
 
 class SemesterResultsLatexView(SemesterResultsView):
     template_name = 'competition/results_latex.html'
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['schools'] = self.object.get_schools()
-        context['schools_offline'] = self.object.get_schools(offline_users_only=True)
+        context['schools_offline'] = self.object.get_schools(
+            offline_users_only=True)
         return context
+
 
 class SemesterInvitationsLatexView(DetailView):
     model = Semester
@@ -93,16 +97,16 @@ class SemesterInvitationsLatexView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        
+
         participants = generate_praticipant_invitations(
             self.object.results_with_ranking(),
-            self.kwargs.get('num_participants',32),
-            self.kwargs.get('num_substitutes',20),
-            )
+            self.kwargs.get('num_participants', 32),
+            self.kwargs.get('num_substitutes', 20),
+        )
         participants.sort(key=itemgetter('first_name'))
         participants.sort(key=itemgetter('last_name'))
         context['participants'] = participants
-       
+
         schools = {}
         for participant in participants:
             if participant['school'] in schools:
@@ -113,6 +117,7 @@ class SemesterInvitationsLatexView(DetailView):
 
         return context
 
+
 class SemesterPublicationView(DetailView):
     model = Semester
     template_name = 'competition/publication.html'
@@ -120,6 +125,7 @@ class SemesterPublicationView(DetailView):
 
 def validate_load_semester_input(input):
     return True
+
 
 def load_semester_data(request):
     if not request.user.is_staff:
@@ -133,9 +139,11 @@ def load_semester_data(request):
             return HttpResponse('Nesprávny vstup')
 
         # Create semester
-        sem_start = datetime.datetime.strptime(semester_data['semester_start'], '%Y-%m-%dT%H:%M:%S.%fZ')
-        sem_end = datetime.datetime.strptime(semester_data['semester_end'], '%Y-%m-%dT%H:%M:%S.%fZ')
-        mid_semester =  sem_start + (sem_end - sem_start)/2
+        sem_start = datetime.datetime.strptime(
+            semester_data['semester_start'], '%Y-%m-%dT%H:%M:%S.%fZ')
+        sem_end = datetime.datetime.strptime(
+            semester_data['semester_end'], '%Y-%m-%dT%H:%M:%S.%fZ')
+        mid_semester = sem_start + (sem_end - sem_start)/2
         season_code = Semester.SEASON_CHOICES[semester_data['season']]
         school_year = get_school_year_by_date(date=mid_semester)
         competition = Competition.objects.get(pk=semester_data['seminar'])
@@ -164,7 +172,7 @@ def load_semester_data(request):
                 sum_method=s['sum_method']
             )
 
-            #Create problems
+            # Create problems
             for problem in s['problems']:
                 Problem.objects.create(
                     text=problem['text'],
@@ -177,13 +185,15 @@ def load_semester_data(request):
         context = {}
 
         # Semestre
-        context['seminars'] = Competition.objects.filter(competition_type=0).all()
+        context['seminars'] = Competition.objects.filter(
+            competition_type=0).all()
         context['late_tags'] = LateTag.objects.all()
         context['season_choices'] = Semester.SEASON_CHOICES
         context['sum_methods'] = SERIES_SUM_METHODS
         context['seminar_defaults'] = {}
         for seminar in context['seminars']:
-            semester = Semester.objects.filter(competition=seminar).order_by('-end').first()
+            semester = Semester.objects.filter(
+                competition=seminar).order_by('-end').first()
             if not semester:
                 continue
             if semester.season_code == 0:
@@ -196,4 +206,4 @@ def load_semester_data(request):
                 'sum_method': semester.series_set.first().sum_method
             }
         # Vyber posledné nastavenia súťaží
-        return render(request,template_name='competition/semester_load.html',context={'json_data':context})
+        return render(request, template_name='competition/semester_load.html', context={'json_data': context})
