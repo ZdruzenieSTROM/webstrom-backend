@@ -81,6 +81,7 @@ class ProfileCreationForm(ProfileForm):
                   'grade', 'phone', 'parent_phone', 'gdpr', ]
 
     def save(self, user, commit=True):
+        # pylint: disable=arguments-differ
         profile = super(ProfileCreationForm, self).save(commit=False)
         profile.user = user
 
@@ -112,3 +113,13 @@ class ProfileUpdateForm(ProfileForm):
                   'school_not', 'county', 'district', 'school',
                   'school_name', 'school_not_found', 'school_info',
                   'grade', 'phone', 'parent_phone', ]
+
+
+class SeriesSolutionForm(forms.Form):
+    def __init__(self, series, *args, **kwargs):
+        super(SeriesSolutionForm, self).__init__(*args, **kwargs)
+
+        for problem in series.problem_set.all():
+            self.fields[str(problem.pk)] = forms.FileField(
+                label='Tvoje riešenie',
+                required=False)

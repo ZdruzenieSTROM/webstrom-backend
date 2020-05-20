@@ -19,6 +19,14 @@
     <li class="nav-item">
         <a class="nav-link {% if active_site == 'events' %} active {% endif %}" href="#">#Akcie</a>
     </li>
+    {% if profile and not registration %}
+    <li class="nav-item">
+        <a class="btn btn-primary"
+            href="{% url 'competition:semester-registration' pk=semester.pk cont=request.path %}">
+            Registrovať sa do semestra
+        </a>
+    </li>
+    {% endif %}
 </ul>
 
 {% if active_site == 'problems'%}

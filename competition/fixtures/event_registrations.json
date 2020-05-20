@@ -51,16 +51,6 @@
     },
     {
         "model": "competition.eventregistration",
-        "pk": 5,
-        "fields": {
-            "profile": 8,
-            "school": "000598071",
-            "grade": 9,
-            "event": 0
-        }
-    },
-    {
-        "model": "competition.eventregistration",
         "pk": 6,
         "fields": {
             "profile": 8,

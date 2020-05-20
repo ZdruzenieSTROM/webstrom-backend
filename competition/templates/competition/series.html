@@ -5,7 +5,7 @@
 
 {% block content %}
 
-{% include 'competition/semester_header/header.html' with active_site='problems' active_series=series.order semester=series.semester%}
+{% include 'competition/semester_header/header.html' with active_site='problems' active_series=series.order semester=series.semester %}
 
 <p>Termín odovzdania série: {{ series.deadline }}</p>
 
@@ -15,6 +15,3 @@ Do termínu zostáva: {{ series.time_to_deadline }}
 
 {% include 'competition/problems.html' %}
 {% endblock content %}
-
-{% block javascript %}
-{% endblock javascript %}

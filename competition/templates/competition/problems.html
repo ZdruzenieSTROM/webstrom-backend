@@ -1,6 +1,17 @@
-{% for problem in series.problem_set.all %}
-<h3>{{ problem.order }}. úloha</h3>
-<div class="latex-element">
-    {{ problem.text|safe }}
-</div>
-{% endfor %}
+{% load crispy_forms_tags %}
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% for problem, form_field in problems %}
+    <h3>{{ problem.order }}. úloha</h3>
+    <div class="latex-element">
+        {{ problem.text|safe }}
+    </div>
+    {% if registration %}
+        {{ form_field }}
+    {% endif %}
+    {% endfor %}
+    {% if registration %}
+        <input type="submit" class="btn btn-primary" value="Odovzdať">
+    {% endif %}
+</form>
