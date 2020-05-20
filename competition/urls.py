@@ -29,13 +29,13 @@ urlpatterns = [
 
     # Pozvánky
     path('semester/<int:pk>/invitations/<int:num_participants>/<int:num_substitutes>', SemesterInvitationsLatexView.as_view(),
-          name='semester-invitations-latex'),
+         name='semester-invitations-latex'),
     # Publikácie
     path('semester/<int:pk>/publications',
          SemesterPublicationView.as_view(), name='semester-publications'),
 
-    #Vedúcovské funkcie
-    path('load/semester',load_semester_data,name='load-semester-data'),
+    # Vedúcovské funkcie
+    path('load/semester', load_semester_data, name='load-semester-data'),
 
     # Archív
     path('archive/', ArchiveView.as_view(),
