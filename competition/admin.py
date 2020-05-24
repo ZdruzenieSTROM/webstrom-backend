@@ -142,10 +142,8 @@ class PublicationAdmin(admin.ModelAdmin):
 
     def competition(self, obj):
         return obj.event.competition
-    competition.__name__ = 'competition'
     competition.admin_order_field = 'event__competition'
-    #comp.admin_filter_field = 'event__competition'
-
+    
 
     def thumb(self, obj):
         return format_html("<a href='{}'><img src='{}' height='100' /></a>", obj.thumbnail.url, obj.thumbnail.url)
