@@ -164,7 +164,7 @@ class SemesterResultsLatexView(SemesterResultsView):
 
 class SemesterInvitationsLatexView(DetailView):
     model = Semester
-    template_name = 'competition/invitations_latex.html'
+    template_name = 'competition/invitations_latex/invitations_latex.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
