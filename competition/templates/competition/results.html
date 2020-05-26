@@ -27,8 +27,8 @@
         <tr>
             <th>Miesto</th>
             <th>Meno</th>
-            <th>Škola</th>
             <th>Ročník</th>
+            <th>Škola</th>
             {% if results_type == 'series' %}
             {% for problem in series.problem_set.all %}
             <th>{{ problem.order }}</th>
