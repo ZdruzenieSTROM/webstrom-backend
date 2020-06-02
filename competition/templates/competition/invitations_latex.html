@@ -21,11 +21,11 @@
 <br>
 <br>
 
-{%for school,particpants in schools.items%}
+{%for school,school_participants in schools.items%}
     \hlavicka <br>
     {{'\stitok{}{}{Kabinet matematiky}{'}}{{school.name}}{{'}{'}}{{school.street}}{{'}{'}}{{school.printable_zip_code}} \ {{school.city}}{{'}{}'}} <br>
     \nadtextikskole <br>
-    {% for participant in participants %}
+    {% for participant in school_participants %}
         {% if participant.is_participant %}
             \ucastnik{{'{'}}{{participant.first_name}} {{participant.last_name}}{{'}'}} <br>
         {% else %}
