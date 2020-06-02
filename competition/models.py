@@ -8,6 +8,7 @@ from django.conf import settings
 from django.contrib.sites.models import Site
 from django.core.files.base import ContentFile
 from django.db import models
+from django.db.models.constraints import UniqueConstraint
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.shortcuts import get_object_or_404
@@ -541,7 +542,10 @@ class EventRegistration(models.Model):
     class Meta:
         verbose_name = 'registrácia užívateľa na akciu'
         verbose_name_plural = 'registrácie užívateľov na akcie'
-        unique_together = ['profile', 'event']
+        constraints = [
+            UniqueConstraint(fields=['profile', 'event'],
+                             name='single_registration_in_event'),
+        ]
 
     profile = models.ForeignKey(
         Profile, verbose_name='profil', on_delete=models.CASCADE)
@@ -604,10 +608,14 @@ class Publication(models.Model):
     Reprezentuje časopis, výsledky, brožúrku alebo akýkoľvek materiál
     zverejnený k nejakému Eventu
     """
+
     class Meta:
         verbose_name = 'publikácia'
         verbose_name_plural = 'publikácie'
-        unique_together = ['event', 'order']
+        constraints = [
+            UniqueConstraint(fields=['event', 'order'],
+                             name='unique_order_in_event')
+        ]
 
     name = models.CharField(max_length=30, blank=True)
     event = models.ForeignKey(Event, null=True, on_delete=models.SET_NULL)
