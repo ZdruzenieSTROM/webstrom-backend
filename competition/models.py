@@ -10,6 +10,7 @@ from django.core.files.base import ContentFile
 from django.core.validators import ValidationError
 from django.db import models
 from django.db.models import Q
+from django.db.models.constraints import UniqueConstraint
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.shortcuts import get_object_or_404
@@ -163,7 +164,7 @@ class Competition(models.Model):
 
     @cached_property
     def semester_set(self):
-        return Semester.objects.filter(competition=self.pk).all()
+        return Semester.objects.filter(competition=self.pk)
 
     @classmethod
     def get_seminar_by_site(cls, site):
@@ -225,7 +226,7 @@ class Semester(Event):
     class Meta:
         verbose_name = 'semester'
         verbose_name_plural = 'semestre'
-        ordering = ['-year', 'season_code', ]
+        ordering = ['-year', '-season_code', ]
 
     SEASON_CHOICES = [
         (0, 'Zimný'),
@@ -246,14 +247,11 @@ class Semester(Event):
 
     @cached_property
     def is_active(self):
-        return self.semester.series_set.filter(complete=False).exists()
+        return self.series_set.filter(complete=False).exists()
 
     @property
     def is_at_least_one_series_open(self):
-        for s in self.series_set.all():
-            if s.can_submit:
-                return True
-        return False
+        return self.series_set.filter(can_submit=True).exists()
 
     def __str__(self):
         return f'{self.competition.name}, {self.year}. ročník - {self.season} semester'
@@ -339,19 +337,24 @@ class Semester(Event):
 
     def get_schools(self, offline_users_only=False):
         if offline_users_only:
-            return School.objects.filter(eventregistration__event=self.pk).filter(eventregistration__solution__is_online=False).distinct().order_by('city', 'street').all()
+            return School.objects.filter(eventregistration__event=self.pk)\
+                .filter(eventregistration__solution__is_online=False)\
+                .distinct()\
+                .order_by('city', 'street')
         else:
-            return School.objects.filter(eventregistration__event=self.pk).distinct().order_by('city', 'street').all()
+            return School.objects.filter(eventregistration__event=self.pk)\
+                .distinct()\
+                .order_by('city', 'street')
 
 
 class Series(models.Model):
     class Meta:
         verbose_name = 'séria'
         verbose_name_plural = 'série'
-        ordering = ['semester', 'order', ]
+        ordering = ['semester', '-order', ]
 
     semester = models.ForeignKey(
-        Semester, verbose_name='semster', on_delete=models.CASCADE)
+        Semester, verbose_name='semester', on_delete=models.CASCADE)
     order = models.PositiveSmallIntegerField(verbose_name='poradie série')
 
     deadline = models.DateTimeField(verbose_name='termín série')
@@ -390,7 +393,9 @@ class Series(models.Model):
             return None
         if not self.can_submit:
             return None
-        return self.semester.late_tags.filter(upper_bound__gte=now()-self.deadline).order_by('upper_bound').all()[0]
+        return self.semester.late_tags.filter(upper_bound__gte=now()-self.deadline)\
+            .order_by('upper_bound')\
+            .first()
 
     @property
     def num_problems(self):
@@ -539,6 +544,10 @@ class EventRegistration(models.Model):
     class Meta:
         verbose_name = 'registrácia užívateľa na akciu'
         verbose_name_plural = 'registrácie užívateľov na akcie'
+        constraints = [
+            UniqueConstraint(fields=['profile', 'event'],
+                             name='single_registration_in_event'),
+        ]
 
     profile = models.ForeignKey(
         Profile, verbose_name='profil', on_delete=models.CASCADE)
@@ -549,6 +558,16 @@ class EventRegistration(models.Model):
     event = models.ForeignKey(
         Semester, verbose_name='semester', on_delete=models.CASCADE)
     votes = models.SmallIntegerField(verbose_name='hlasy', default=0)
+
+    @staticmethod
+    def get_registration_by_profile_and_event(profile, event):
+        try:
+            registration = EventRegistration.objects.get(
+                profile=profile, event=event)
+        except EventRegistration.DoesNotExist:
+            registration = None
+
+        return registration
 
     def __str__(self):
         return f'{ self.profile.user.get_full_name() } @ { self.event }'
@@ -579,7 +598,8 @@ class Solution(models.Model):
         LateTag, verbose_name='Stavy omeškania',
         on_delete=models.SET_NULL, null=True)
 
-    is_online = models.BooleanField(verbose_name='internetové riešenie')
+    is_online = models.BooleanField(
+        verbose_name='internetové riešenie', default=False)
 
     def __str__(self):
         return f'Riešiteľ: { self.semester_registration } - úloha { self.problem }'
@@ -591,6 +611,7 @@ class Publication(models.Model):
     zverejnený k nejakému Eventu. Časopisy vyčleňujeme
     do špeciálnej podtriedy SemesterPublication
     """
+
     class Meta:
         verbose_name = 'publikácia'
         verbose_name_plural = 'publikácie'

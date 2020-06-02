@@ -36,6 +36,7 @@ class UserManager(BaseUserManager):
 
     def with_perm(self, perm, is_active=True, include_superusers=True, backend=None, obj=None):
         if backend is None:
+            # pylint: disable=protected-access
             backends = auth._get_backends(return_tuples=True)
             if len(backends) == 1:
                 backend, _ = backends[0]
