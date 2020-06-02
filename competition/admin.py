@@ -3,12 +3,13 @@ from django.http import HttpResponseRedirect
 
 from competition.models import (Competition, Event, EventRegistration, Grade,
                                 LateTag, Problem, Publication, School,
-                                Semester, Series, Solution)
+                                Semester, SemesterPublication, Series, Solution,
+                                UnspecifiedPublication)
 
 
-@admin.register(Publication)
-class PublicationAdmin(admin.ModelAdmin):
-    change_form_template = 'competition/admin/publication_change.html'
+@admin.register(SemesterPublication)
+class SemesterPublicationAdmin(admin.ModelAdmin):
+    change_form_template = 'competition/admin/semesterpublication_change.html'
 
     def response_change(self, request, obj):
         if 'generate-name' in request.POST:
@@ -33,7 +34,26 @@ class PublicationAdmin(admin.ModelAdmin):
 
             return HttpResponseRedirect('.')
 
-        return super(PublicationAdmin, self).response_change(request, obj)
+        return super(SemesterPublicationAdmin, self).response_change(request, obj)
+
+
+@admin.register(UnspecifiedPublication)
+class UnspecifiedPublicationAdmin(admin.ModelAdmin):
+    change_form_template = 'competition/admin/unspecifiedpublication_change.html'
+
+    def response_change(self, request, obj):
+        if 'generate-name' in request.POST:
+            obj.generate_name(forced=True)
+
+            if obj.name:
+                self.message_user(request, 'Meno bolo vygenerované')
+            else:
+                self.message_user(
+                    request, 'Meno sa nepodarilo vygenerovať', level=messages.ERROR)
+
+            return HttpResponseRedirect('.')
+
+        return super(UnspecifiedPublicationAdmin, self).response_change(request, obj)
 
 
 admin.site.register(Competition)
