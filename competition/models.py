@@ -223,7 +223,7 @@ class Semester(Event):
     class Meta:
         verbose_name = 'semester'
         verbose_name_plural = 'semestre'
-        ordering = ['-year', 'season_code', ]
+        ordering = ['-year', '-season_code', ]
 
     SEASON_CHOICES = [
         (0, 'Zimný'),
@@ -348,10 +348,10 @@ class Series(models.Model):
     class Meta:
         verbose_name = 'séria'
         verbose_name_plural = 'série'
-        ordering = ['semester', 'order', ]
+        ordering = ['semester', '-order', ]
 
     semester = models.ForeignKey(
-        Semester, verbose_name='semster', on_delete=models.CASCADE)
+        Semester, verbose_name='semester', on_delete=models.CASCADE)
     order = models.PositiveSmallIntegerField(verbose_name='poradie série')
 
     deadline = models.DateTimeField(verbose_name='termín série')
