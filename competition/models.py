@@ -7,7 +7,9 @@ import pdf2image
 from django.conf import settings
 from django.contrib.sites.models import Site
 from django.core.files.base import ContentFile
+from django.core.validators import ValidationError
 from django.db import models
+from django.db.models import Q
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.shortcuts import get_object_or_404
@@ -231,7 +233,8 @@ class Semester(Event):
     ]
 
     season_code = models.PositiveSmallIntegerField(choices=SEASON_CHOICES)
-    late_tags = models.ManyToManyField(LateTag, verbose_name='Stavy omeškania', blank=True)
+    late_tags = models.ManyToManyField(
+        LateTag, verbose_name='Stavy omeškania', blank=True)
 
     @cached_property
     def season(self):
@@ -334,12 +337,11 @@ class Semester(Event):
         current_results = utils.rank_results(current_results)
         return current_results
 
-    def get_schools(self,offline_users_only=False):
+    def get_schools(self, offline_users_only=False):
         if offline_users_only:
-            return School.objects.filter(eventregistration__event=self.pk).filter(eventregistration__solution__is_online=False).distinct().order_by('city','street').all()
+            return School.objects.filter(eventregistration__event=self.pk).filter(eventregistration__solution__is_online=False).distinct().order_by('city', 'street').all()
         else:
-            return School.objects.filter(eventregistration__event=self.pk).distinct().order_by('city','street').all()
-        
+            return School.objects.filter(eventregistration__event=self.pk).distinct().order_by('city', 'street').all()
 
 
 class Series(models.Model):
@@ -377,7 +379,8 @@ class Series(models.Model):
 
     @property
     def can_submit(self):
-        max_late_tag_value = self.semester.late_tags.aggregate(models.Max('upper_bound'))['upper_bound__max']
+        max_late_tag_value = self.semester.late_tags.aggregate(
+            models.Max('upper_bound'))['upper_bound__max']
         if not max_late_tag_value:
             max_late_tag_value = datetime.timedelta(0)
         return now() < self.deadline + max_late_tag_value
@@ -388,7 +391,6 @@ class Series(models.Model):
         if not self.can_submit:
             return None
         return self.semester.late_tags.filter(upper_bound__gte=now()-self.deadline).order_by('upper_bound').all()[0]
-
 
     @property
     def num_problems(self):
@@ -585,33 +587,35 @@ class Solution(models.Model):
 
 class Publication(models.Model):
     """
-    Reprezentuje časopis, výsledky, brožúrku alebo akýkoľvek materiál
-    zverejnený k nejakému Eventu
+    Reprezentuje výsledky, brožúrku alebo akýkoľvek materiál
+    zverejnený k nejakému Eventu. Časopisy vyčleňujeme
+    do špeciálnej podtriedy SemesterPublication
     """
     class Meta:
         verbose_name = 'publikácia'
         verbose_name_plural = 'publikácie'
-        unique_together = ['event', 'order']
 
     name = models.CharField(max_length=30, blank=True)
     event = models.ForeignKey(Event, null=True, on_delete=models.SET_NULL)
-    order = models.PositiveSmallIntegerField()
 
+    def __str__(self):
+        return self.name
+
+
+class SemesterPublication(Publication):
+    class Meta:
+        verbose_name = 'časopis'
+        verbose_name_plural = 'časopisy'
+
+    order = models.PositiveSmallIntegerField()
     file = RestrictedFileField(
-        upload_to='publications/%Y',
-        content_types=['application/pdf', 'application/zip'],
+        upload_to='publications/semester_publication/%Y',
+        content_types=['application/pdf'],
         verbose_name='súbor')
     thumbnail = models.ImageField(
         upload_to='publications/thumbnails/%Y',
         blank=True,
         verbose_name='náhľad')
-
-    def generate_name(self, forced=False):
-        if self.name and not forced:
-            return
-
-        self.name = f'{self.event.competition}-{self.event.year}-{self.order}'
-        self.save()
 
     def generate_thumbnail(self, forced=False):
         if mime_type(self.file) != 'application/pdf':
@@ -640,20 +644,61 @@ class Publication(models.Model):
     def __str__(self):
         return self.name
 
+    def generate_name(self, forced=False):
+        if self.name and not forced:
+            return
 
-@receiver(post_save, sender=Publication)
-def make_thumbnail_on_creation(sender, instance, created, **kwargs):
-    # pylint: disable=unused-argument
-    if created:
-        instance.generate_thumbnail()
+        self.name = f'{self.event.competition}-{self.event.year}-{self.order}'
+        self.save()
+
+    def validate_unique(self, *args, **kwargs):
+        super(SemesterPublication, self).validate_unique(*args, **kwargs)
+        e = self.event
+        if Publication.objects.filter(event=e, semesterpublication__isnull=False) \
+                .filter(~Q(semesterpublication=self.pk), semesterpublication__order=self.order) \
+                .exists():
+            raise ValidationError({
+                'order': 'Časopis s týmto číslom už v danom semestri existuje',
+            })
 
 
-@receiver(post_save, sender=Publication)
+@receiver(post_save, sender=SemesterPublication)
 def make_name_on_creation(sender, instance, created, **kwargs):
     # pylint: disable=unused-argument
     if created:
         instance.generate_name()
 
 
-class SemesterPublication(Publication):
-    
+@receiver(post_save, sender=SemesterPublication)
+def make_thumbnail_on_creation(sender, instance, created, **kwargs):
+    # pylint: disable=unused-argument
+    if created:
+        instance.generate_thumbnail()
+
+
+class UnspecifiedPublication(Publication):
+    class Meta:
+        verbose_name = 'iná publikácia'
+        verbose_name_plural = 'iné publikácie'
+
+    file = RestrictedFileField(
+        upload_to='publications/%Y',
+        content_types=['application/pdf', 'application/zip'],
+        verbose_name='súbor')
+
+    def generate_name(self, forced=False):
+        if self.name and not forced:
+            return
+
+        self.name = f'{self.event.competition}-{self.event.year}'
+        self.save()
+
+    def __str__(self):
+        return self.name
+
+
+@receiver(post_save, sender=UnspecifiedPublication)
+def make_name_on_creation(sender, instance, created, **kwargs):
+    # pylint: disable=unused-argument
+    if created:
+        instance.generate_name()
