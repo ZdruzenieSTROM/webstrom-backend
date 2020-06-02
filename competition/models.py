@@ -612,7 +612,7 @@ class Publication(models.Model):
     name = models.CharField(max_length=30, blank=True)
     event = models.ForeignKey(Event, null=True, on_delete=models.SET_NULL)
     order = models.PositiveSmallIntegerField()
-
+    
     file = RestrictedFileField(
         upload_to='publications/%Y',
         content_types=['application/pdf', 'application/zip'],

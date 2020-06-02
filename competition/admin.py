@@ -136,6 +136,12 @@ class PublicationAdmin(admin.ModelAdmin):
         'event__competition',
     )
 
+    def get_changeform_initial_data(self, request):
+        return {
+            'event': Event.objects.all().first(),
+            'order': Event.objects.all().first().publication_set.count() + 1,
+        }
+
     def school_year(self, obj):
         return obj.event.school_year
     school_year.admin_order_field = 'event__school_year'
@@ -146,7 +152,7 @@ class PublicationAdmin(admin.ModelAdmin):
     
 
     def thumb(self, obj):
-        return format_html("<a href='{}'><img src='{}' height='100' /></a>", obj.thumbnail.url, obj.thumbnail.url)
+        return format_html("<a href='{}'><img src='{}' height='100' /></a>", obj.file.url, obj.thumbnail.url)
     
     def response_change(self, request, obj):
         if 'generate-name' in request.POST:
