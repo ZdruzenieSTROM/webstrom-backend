@@ -1,40 +1,41 @@
-<div class="modal fade" id="invitationsPopup" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Generuj pozvánky</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <form onsubmit="return processFormData();" >
-          <div class="form-group">
-            <label for="recipient-name" class="col-form-label">Počet účastníkov:</label>
-            <input type="number" class="form-control" id="participants" value=32>
-          </div>
-          <div class="form-group">
-            <label for="message-text" class="col-form-label">Počet náhradníkov:</label>
-            <input type="number" class="form-control" id="substitutes" value=10>
-          </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-danger" data-dismiss="modal">Zavri</button>
-            <button type="submit" class="btn btn-primary">Generuj</button>
-          </div>
-        </form>
+<div class="modal fade" id="invitationsPopup" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Generuj pozvánky</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form onsubmit="return processFormData();">
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Počet účastníkov:</label>
+                        <input type="number" class="form-control" id="participants" value=32>
+                    </div>
+                    <div class="form-group">
+                        <label for="message-text" class="col-form-label">Počet náhradníkov:</label>
+                        <input type="number" class="form-control" id="substitutes" value=10>
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Zavri</button>
+                <button type="submit" class="btn btn-primary">Generuj</button>
+            </div>
+            </form>
+        </div>
     </div>
-  </div>
 </div>
 
 <script language="javascript" type="text/javascript">
-  function processFormData(){
-    var parts = document.getElementById('participants').value;
-    var subs = document.getElementById('substitutes').value;
-    var redirect_url = "{% url 'competition:semester-invitations-latex' pk=semester.pk num_participants=1234567890 num_substitutes=123456789 %}";
-    redirect_url = redirect_url.replace(/1234567890/, parts);
-    redirect_url = redirect_url.replace(/123456789/, subs);
-    window.location.href = redirect_url
-    return false;
-  }
+    function processFormData() {
+        var parts = document.getElementById('participants').value;
+        var subs = document.getElementById('substitutes').value;
+        var redirect_url = "{% url 'competition:semester-invitations-latex' pk=semester.pk num_participants=1234567890 num_substitutes=123456789 %}";
+        redirect_url = redirect_url.replace(/1234567890/, parts);
+        redirect_url = redirect_url.replace(/123456789/, subs);
+        window.location.href = redirect_url
+        return false;
+    }
 </script>

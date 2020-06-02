@@ -63,7 +63,7 @@
             <td>{{ result_row.profile.user.get_full_name }}</td>
             <td>{{ result_row.grade }}</td>
             <td>{{ result_row.school }}</td>
-            {%for solution in result_row.solutions %}
+            {% for solution in result_row.solutions %}
 
             <td>
                 {% if solution.0 %}
@@ -75,7 +75,7 @@
                     {% endif %}>-</a>
                 {% endif %}
             </td>
-            {%endfor%}
+            {% endfor %}
             <td>{{ result_row.total }}</td>
         </tr>
         {% endfor %}

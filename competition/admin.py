@@ -1,11 +1,11 @@
 from django.contrib import admin, messages
 from django.http import HttpResponseRedirect
 from django.utils.html import format_html
-from django.db.models import Value, CharField, F
 
-from competition.models import (Competition, Event, EventRegistration, Grade,
-                                LateTag, Problem, Publication, School,
-                                Semester, Series, Solution)
+from competition.models import (Event, Problem, Publication, School, Semester,
+                                Series, Solution)
+
+
 @admin.register(Series)
 class SeriesAdmin(admin.ModelAdmin):
     list_display = (
@@ -23,11 +23,13 @@ class SeriesAdmin(admin.ModelAdmin):
         'complete',
     )
 
-    def active(self, obj):
+    @staticmethod
+    def active(obj):
         return not obj.is_past_deadline
     active.boolean = True
 
-    def competition(self, obj):
+    @staticmethod
+    def competition(obj):
         return obj.semester.competition
     active.admin_order_field = 'semester__competition'
 
@@ -67,12 +69,13 @@ class SemesterAdmin(admin.ModelAdmin):
         'season_code',
     )
 
+
 @admin.register(School)
 class SchoolAdmin(admin.ModelAdmin):
     list_display = (
-        'name', 
-        'street', 
-        'city', 
+        'name',
+        'street',
+        'city',
         'abbreviation',
     )
 
@@ -80,80 +83,94 @@ class SchoolAdmin(admin.ModelAdmin):
 @admin.register(Problem)
 class ProblemAdmin(admin.ModelAdmin):
     list_display = (
-        '__str__', 
-        'order', 
-        'series', 
+        '__str__',
+        'order',
+        'series',
         'get_text',
     )
-    def get_text(self, obj):
-        return obj.text[:70]+'...'
+
+    @staticmethod
+    def get_text(obj):
+        return obj.text[:70] + '...'
+
 
 @admin.register(Solution)
 class SolutionAdmin(admin.ModelAdmin):
-    
     list_display = (
-        'solutionName', 
-        'problem', 
-        'semester_registration', 
-        'uploaded_at', 
-        'late_tag', 
-        'is_online', 
-        'score'
+        'solution_name',
+        'problem',
+        'semester_registration',
+        'uploaded_at',
+        'late_tag',
+        'is_online',
+        'score',
     )
-    list_editable = ('score',)
+
+    list_editable = ('score', )
 
     list_filter = (
-        'semester_registration__event__competition', 
-        'late_tag', 
-        'is_online', 
+        'semester_registration__event__competition',
+        'late_tag',
+        'is_online',
         'score',
     )
 
     date_hierarchy = 'uploaded_at'
 
-    def solutionName(self, obj):
-        return str(obj.semester_registration.profile.user.get_full_name())+' | '+str(obj.problem.order)
+    @staticmethod
+    def solution_name(obj):
+        return obj.semester_registration.profile.user.get_full_name()\
+            + ' | ' + str(obj.problem.order)
+
 
 @admin.register(Publication)
 class PublicationAdmin(admin.ModelAdmin):
     change_form_template = 'competition/admin/publication_change.html'
 
     list_display = (
-        'name', 
-        'thumb', 
-        'competition', 
-        'event', 
-        'order', 
+        'name',
+        'thumbnail_list_preview',
+        'competition',
+        'event',
+        'order',
         'school_year',
     )
+
     ordering = (
-        'event', 
+        'event',
         '-order',
     )
 
     list_filter = (
-        'event__school_year', 
+        'event__school_year',
         'event__competition',
     )
 
     def get_changeform_initial_data(self, request):
+        # TODO: doplniť výber súťaže
         return {
-            'event': Event.objects.all().first(),
-            'order': Event.objects.all().first().publication_set.count() + 1,
+            'event': Event.objects.first(),
+            'order': Event.objects.first().publication_set.count() + 1,
         }
 
-    def school_year(self, obj):
+    @staticmethod
+    def school_year(obj):
         return obj.event.school_year
     school_year.admin_order_field = 'event__school_year'
 
-    def competition(self, obj):
+    @staticmethod
+    def competition(obj):
         return obj.event.competition
     competition.admin_order_field = 'event__competition'
-    
 
-    def thumb(self, obj):
-        return format_html("<a href='{}'><img src='{}' height='100' /></a>", obj.file.url, obj.thumbnail.url)
-    
+    @staticmethod
+    def thumbnail_list_preview(obj):
+        return format_html(
+            '<a href="{}"><img src="{}" height="100" /></a>',
+            obj.file.url,
+            obj.thumbnail.url
+        )
+
     def response_change(self, request, obj):
         if 'generate-name' in request.POST:
             obj.generate_name(forced=True)
@@ -178,9 +195,3 @@ class PublicationAdmin(admin.ModelAdmin):
             return HttpResponseRedirect('.')
 
         return super(PublicationAdmin, self).response_change(request, obj)
-
-
-#admin.site.register(EventRegistration)
-#admin.site.register(Competition)
-#admin.site.register(Grade)
-#admin.site.register(LateTag)
