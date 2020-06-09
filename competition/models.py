@@ -235,6 +235,12 @@ class Semester(Event):
     late_tags = models.ManyToManyField(
         LateTag, verbose_name='Stavy omeškania', blank=True)
 
+    def get_first_series(self):
+        return self.series_set.filter(order = 1).first()
+
+    def get_second_series(self):
+        return self.series_set.filter(order = 2).first()
+
     @cached_property
     def season(self):
         return self.get_season_code_display()
