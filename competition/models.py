@@ -7,7 +7,9 @@ import pdf2image
 from django.conf import settings
 from django.contrib.sites.models import Site
 from django.core.files.base import ContentFile
+from django.core.validators import ValidationError
 from django.db import models
+from django.db.models import Q
 from django.db.models.constraints import UniqueConstraint
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -611,37 +613,42 @@ class Solution(models.Model):
 
 class Publication(models.Model):
     """
-    Reprezentuje časopis, výsledky, brožúrku alebo akýkoľvek materiál
-    zverejnený k nejakému Eventu
+    Reprezentuje výsledky, brožúrku alebo akýkoľvek materiál
+    zverejnený k nejakému Eventu. Časopisy vyčleňujeme
+    do špeciálnej podtriedy SemesterPublication
     """
 
     class Meta:
         verbose_name = 'publikácia'
         verbose_name_plural = 'publikácie'
-        constraints = [
-            UniqueConstraint(fields=['event', 'order'],
-                             name='unique_order_in_event')
-        ]
 
     name = models.CharField(max_length=30, blank=True)
     event = models.ForeignKey(Event, null=True, on_delete=models.SET_NULL)
-    order = models.PositiveSmallIntegerField()
 
+    def __str__(self):
+        return self.name
+
+
+class SemesterPublication(Publication):
+    class Meta:
+        verbose_name = 'časopis'
+        verbose_name_plural = 'časopisy'
+        constraints = [
+            UniqueConstraint(
+                name='unique_order_in_semester',
+                fields=['event', 'order']
+            )
+        ]
+
+    order = models.PositiveSmallIntegerField()
     file = RestrictedFileField(
-        upload_to='publications/%Y',
-        content_types=['application/pdf', 'application/zip'],
+        upload_to='publications/semester_publication/%Y',
+        content_types=['application/pdf'],
         verbose_name='súbor')
     thumbnail = models.ImageField(
         upload_to='publications/thumbnails/%Y',
         blank=True,
         verbose_name='náhľad')
-
-    def generate_name(self, forced=False):
-        if self.name and not forced:
-            return
-
-        self.name = f'{self.event.competition}-{self.event.year}-{self.order}'
-        self.save()
 
     def generate_thumbnail(self, forced=False):
         if mime_type(self.file) != 'application/pdf':
@@ -670,15 +677,44 @@ class Publication(models.Model):
     def __str__(self):
         return self.name
 
+    def generate_name(self, forced=False):
+        if self.name and not forced:
+            return
 
-@receiver(post_save, sender=Publication)
+        self.name = f'{self.event.competition}-{self.event.year}-{self.order}'
+        self.save()
+
+
+class UnspecifiedPublication(Publication):
+    class Meta:
+        verbose_name = 'iná publikácia'
+        verbose_name_plural = 'iné publikácie'
+
+    file = RestrictedFileField(
+        upload_to='publications/%Y',
+        content_types=['application/pdf', 'application/zip'],
+        verbose_name='súbor')
+
+    def generate_name(self, forced=False):
+        if self.name and not forced:
+            return
+
+        self.name = f'{self.event.competition}-{self.event.year}'
+        self.save()
+
+    def __str__(self):
+        return self.name
+
+
+@receiver(post_save, sender=SemesterPublication)
 def make_thumbnail_on_creation(sender, instance, created, **kwargs):
     # pylint: disable=unused-argument
     if created:
         instance.generate_thumbnail()
 
 
-@receiver(post_save, sender=Publication)
+@receiver(post_save, sender=SemesterPublication)
+@receiver(post_save, sender=UnspecifiedPublication)
 def make_name_on_creation(sender, instance, created, **kwargs):
     # pylint: disable=unused-argument
     if created:
