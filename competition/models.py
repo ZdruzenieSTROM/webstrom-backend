@@ -236,10 +236,10 @@ class Semester(Event):
         LateTag, verbose_name='Stavy omeškania', blank=True)
 
     def get_first_series(self):
-        return self.series_set.filter(order = 1).first()
+        return self.series_set.get(order=1)
 
     def get_second_series(self):
-        return self.series_set.filter(order = 2).first()
+        return self.series_set.get(order=2)
 
     @cached_property
     def season(self):
