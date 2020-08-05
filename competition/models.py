@@ -627,6 +627,12 @@ class SemesterPublication(Publication):
     class Meta:
         verbose_name = 'časopis'
         verbose_name_plural = 'časopisy'
+        constraints = [
+            UniqueConstraint(
+                name='unique_order_in_semester',
+                fields=['event', 'order']
+            )
+        ]
 
     order = models.PositiveSmallIntegerField()
     file = RestrictedFileField(
@@ -672,30 +678,6 @@ class SemesterPublication(Publication):
         self.name = f'{self.event.competition}-{self.event.year}-{self.order}'
         self.save()
 
-    def validate_unique(self, *args, **kwargs):
-        super(SemesterPublication, self).validate_unique(*args, **kwargs)
-        e = self.event
-        if Publication.objects.filter(event=e, semesterpublication__isnull=False) \
-                .filter(~Q(semesterpublication=self.pk), semesterpublication__order=self.order) \
-                .exists():
-            raise ValidationError({
-                'order': 'Časopis s týmto číslom už v danom semestri existuje',
-            })
-
-
-@receiver(post_save, sender=SemesterPublication)
-def make_name_on_creation(sender, instance, created, **kwargs):
-    # pylint: disable=unused-argument
-    if created:
-        instance.generate_name()
-
-
-@receiver(post_save, sender=SemesterPublication)
-def make_thumbnail_on_creation(sender, instance, created, **kwargs):
-    # pylint: disable=unused-argument
-    if created:
-        instance.generate_thumbnail()
-
 
 class UnspecifiedPublication(Publication):
     class Meta:
@@ -718,6 +700,14 @@ class UnspecifiedPublication(Publication):
         return self.name
 
 
+@receiver(post_save, sender=SemesterPublication)
+def make_thumbnail_on_creation(sender, instance, created, **kwargs):
+    # pylint: disable=unused-argument
+    if created:
+        instance.generate_thumbnail()
+
+
+@receiver(post_save, sender=SemesterPublication)
 @receiver(post_save, sender=UnspecifiedPublication)
 def make_name_on_creation(sender, instance, created, **kwargs):
     # pylint: disable=unused-argument

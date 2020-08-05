@@ -2,9 +2,8 @@ from django.contrib import admin, messages
 from django.http import HttpResponseRedirect
 from django.utils.html import format_html
 
-from competition.models import (Competition, Event, EventRegistration, Grade,
-                                LateTag, Problem, Publication, School,
-                                Semester, SemesterPublication, Series, Solution,
+from competition.models import (Event, Problem, School, Semester,
+                                SemesterPublication, Series, Solution,
                                 UnspecifiedPublication)
 
 
@@ -124,6 +123,8 @@ class SolutionAdmin(admin.ModelAdmin):
         return obj.semester_registration.profile.user.get_full_name()\
             + ' | ' + str(obj.problem.order)
 
+# TODO: duplikátny kód v SemesterPublicationAdmin a UnspecifiedPublicationAdmin
+
 
 @admin.register(SemesterPublication)
 class SemesterPublicationAdmin(admin.ModelAdmin):
@@ -216,4 +217,3 @@ class UnspecifiedPublicationAdmin(admin.ModelAdmin):
             return HttpResponseRedirect('.')
 
         return super(UnspecifiedPublicationAdmin, self).response_change(request, obj)
-
