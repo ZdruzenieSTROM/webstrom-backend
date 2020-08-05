@@ -7,9 +7,7 @@ import pdf2image
 from django.conf import settings
 from django.contrib.sites.models import Site
 from django.core.files.base import ContentFile
-from django.core.validators import ValidationError
 from django.db import models
-from django.db.models import Q
 from django.db.models.constraints import UniqueConstraint
 from django.db.models.signals import post_save
 from django.dispatch import receiver

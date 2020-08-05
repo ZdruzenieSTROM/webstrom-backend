@@ -30,7 +30,7 @@ class SeriesProblemsView(DetailView):
         return context
 
     def post(self, request, **kwargs):
-        # pylint: disable=unused-argument
+        # pylint: disable=unused-argument, attribute-defined-outside-init
         self.object = self.get_object()
 
         form = SeriesSolutionForm(
@@ -191,7 +191,7 @@ class SemesterInvitationsLatexView(DetailView):
 
 class SemesterRegistrationView(View):
     def get(self, request, pk, cont, **kwargs):
-        # pylint: disable=unused-argument
+        # pylint: disable=unused-argument, invalid-name
         try:
             profile = self.request.user.profile
             semester = Semester.objects.get(pk=pk)
