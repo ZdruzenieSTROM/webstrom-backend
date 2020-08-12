@@ -6,8 +6,10 @@ from operator import itemgetter
 import pdf2image
 from django.conf import settings
 from django.contrib.sites.models import Site
+from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
 from django.db import models
+from django.db.models import Q
 from django.db.models.constraints import UniqueConstraint
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -631,12 +633,6 @@ class SemesterPublication(Publication):
     class Meta:
         verbose_name = 'časopis'
         verbose_name_plural = 'časopisy'
-        constraints = [
-            UniqueConstraint(
-                name='unique_order_in_semester',
-                fields=['event', 'order']
-            )
-        ]
 
     order = models.PositiveSmallIntegerField()
     file = RestrictedFileField(
@@ -647,6 +643,16 @@ class SemesterPublication(Publication):
         upload_to='publications/thumbnails/%Y',
         blank=True,
         verbose_name='náhľad')
+
+    def validate_unique(self, *args, **kwargs):
+        super(SemesterPublication, self).validate_unique(*args, **kwargs)
+        e = self.event
+        if Publication.objects.filter(event=e, semesterpublication__isnull=False) \
+                .filter(~Q(semesterpublication=self.pk), semesterpublication__order=self.order) \
+                .exists():
+            raise ValidationError({
+                'order': 'Časopis s týmto číslom už v danom semestri existuje',
+            })
 
     def generate_thumbnail(self, forced=False):
         if mime_type(self.file) != 'application/pdf':
