@@ -2,8 +2,9 @@ from django.contrib import admin, messages
 from django.http import HttpResponseRedirect
 from django.utils.html import format_html
 
-from competition.models import (Event, Problem, Publication, School, Semester,
-                                Series, Solution)
+from competition.models import (Event, Problem, School, Semester,
+                                SemesterPublication, Series, Solution,
+                                UnspecifiedPublication)
 
 
 @admin.register(Series)
@@ -122,10 +123,12 @@ class SolutionAdmin(admin.ModelAdmin):
         return obj.semester_registration.profile.user.get_full_name()\
             + ' | ' + str(obj.problem.order)
 
+# TODO: duplikátny kód v SemesterPublicationAdmin a UnspecifiedPublicationAdmin
 
-@admin.register(Publication)
-class PublicationAdmin(admin.ModelAdmin):
-    change_form_template = 'competition/admin/publication_change.html'
+
+@admin.register(SemesterPublication)
+class SemesterPublicationAdmin(admin.ModelAdmin):
+    change_form_template = 'competition/admin/semesterpublication_change.html'
 
     list_display = (
         'name',
@@ -194,4 +197,23 @@ class PublicationAdmin(admin.ModelAdmin):
 
             return HttpResponseRedirect('.')
 
-        return super(PublicationAdmin, self).response_change(request, obj)
+        return super(SemesterPublicationAdmin, self).response_change(request, obj)
+
+
+@admin.register(UnspecifiedPublication)
+class UnspecifiedPublicationAdmin(admin.ModelAdmin):
+    change_form_template = 'competition/admin/unspecifiedpublication_change.html'
+
+    def response_change(self, request, obj):
+        if 'generate-name' in request.POST:
+            obj.generate_name(forced=True)
+
+            if obj.name:
+                self.message_user(request, 'Meno bolo vygenerované')
+            else:
+                self.message_user(
+                    request, 'Meno sa nepodarilo vygenerovať', level=messages.ERROR)
+
+            return HttpResponseRedirect('.')
+
+        return super(UnspecifiedPublicationAdmin, self).response_change(request, obj)

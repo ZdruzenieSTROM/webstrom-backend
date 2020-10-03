@@ -38,8 +38,7 @@ THIRD_PARTY_APPS = [
 LOCAL_APPS = [
     'base.apps.BaseConfig',
     'competition.apps.CompetitionConfig',
-    'user.apps.UserConfig',
-    # 'post.apps.PostConfig'
+    'user.apps.UserConfig'
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS

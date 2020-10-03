@@ -49,6 +49,7 @@ class EmailVerificationTokenGenerator:
         return str(user.pk) + str(user.verified_email) + str(timestamp)
 
     def _num_seconds(self, dt):
+        # pylint: disable=invalid-name
         return int((dt - datetime(2001, 1, 1)).total_seconds())
 
     def _now(self):
