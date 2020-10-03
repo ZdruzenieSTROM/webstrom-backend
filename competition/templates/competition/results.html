@@ -71,7 +71,7 @@
                     {% endif %}>{{solution.0|score_pretty}}</a>
                 {% else %}
                 <a {% if user.is_staff %}
-                    href="{% url 'admin:competition_solution_add' %}?user_semester_registration={{ result_row.user_semester_registration_pk }}&problem={{ solution.1 }}"
+                    href="{% url 'admin:competition_solution_add' %}?semester_registration={{ result_row.semester_registration_pk }}&problem={{ solution.1 }}"
                     {% endif %}>-</a>
                 {% endif %}
             </td>
