@@ -10,7 +10,7 @@ from cms.permissions import UserPermission
 
 class PostViewSet(viewsets.ModelViewSet):
     """
-    Obsluhuje API endpoint pre Posty
+    Obsluhuje API endpoint pre Príspevky
     """
     queryset = Post.objects.all()
     serializer_class = PostSerializer
@@ -20,13 +20,5 @@ class PostViewSet(viewsets.ModelViewSet):
     def visible(self, request, *args, **kwargs):
         posts = Post.objects.all()
         posts = [p for p in posts if p.is_visible]
-        serializer = PostSerializer(posts, many=True)
-        return Response(serializer.data)
-
-    @action(detail=True)
-    def retrieve_visible(self, request, *args, **kwargs):
-        post = Post.objects.filter(pk=pk).first()
-        if not post.is_visible:
-            raise PermissionDenied()
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data)
