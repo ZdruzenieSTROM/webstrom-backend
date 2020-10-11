@@ -1,0 +1,56 @@
+[
+    {
+        "model": "cms.PostLink",
+        "pk": 0,
+        "fields": {
+            "post": 0,
+            "caption": "Prihlásenie",
+            "url": "https://seminar.strom.sk/sk/prispevky/"
+        }
+    },
+    {
+        "model": "cms.PostLink",
+        "pk": 1,
+        "fields": {
+            "post": 1,
+            "caption": "Prihlásenie",
+            "url": "https://seminar.strom.sk/sk/prispevky/"
+        }
+    },
+    {
+        "model": "cms.PostLink",
+        "pk": 2,
+        "fields": {
+            "post": 3,
+            "caption": "Prihlásenie",
+            "url": "https://seminar.strom.sk/sk/prispevky/"
+        }
+    },
+    {
+        "model": "cms.PostLink",
+        "pk": 3,
+        "fields": {
+            "post": 3,
+            "caption": "Pozvánka",
+            "url": "https://seminar.strom.sk/media/uploads/tmm/pozvankaucastniktmm2020.pdf"
+        }
+    },
+    {
+        "model": "cms.PostLink",
+        "pk": 4,
+        "fields": {
+            "post": 3,
+            "caption": "Výsledky",
+            "url": "/competition/semester/current/results"
+        }
+    },
+    {
+        "model": "cms.PostLink",
+        "pk": 5,
+        "fields": {
+            "post": 4,
+            "caption": "Záznam galavečera",
+            "url": "https://www.youtube.com/watch?v=QfGve0V7B2g&ab_channel=tvkasino"
+        }
+    }
+]
