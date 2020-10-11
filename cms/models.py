@@ -40,6 +40,7 @@ class PostLink(models.Model):
     post = models.ForeignKey(
         Post,
         verbose_name='Relevantný príspevok',
+        related_name='links',
         on_delete=models.CASCADE)
     caption = models.CharField(
         verbose_name='názov',
