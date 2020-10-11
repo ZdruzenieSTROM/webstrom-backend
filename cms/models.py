@@ -6,6 +6,7 @@ class Post(models.Model):
     class Meta:
         verbose_name = 'príspevok'
         verbose_name_plural = 'príspevky'
+        ordering = ['-added_at', ]
 
     caption = models.CharField(verbose_name='nadpis', max_length=50)
     short_text = models.CharField(
@@ -42,10 +43,10 @@ class PostLink(models.Model):
         on_delete=models.CASCADE)
     caption = models.CharField(
         verbose_name='názov',
-        help_text='URL stránky kam má preklik viesť',
+        help_text='Nápis, ktorý po kliknutí presmeruje na link. Maximálne 2 slová.',
         max_length=25)
     url = models.URLField(verbose_name='URL',
                           help_text='URL stránky kam má preklik viesť')
 
     def __str__(self):
-        return f'{self.post}-{caption}'
+        return f'{self.post}-{self.caption}'
