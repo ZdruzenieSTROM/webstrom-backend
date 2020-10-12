@@ -16,7 +16,6 @@ class PostSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def create(self, validated_data):
-        print(validated_data)
         post_links_data = validated_data.pop('links')
         post = models.Post.objects.create(**validated_data)
         for post_link_data in post_links_data:
