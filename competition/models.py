@@ -236,12 +236,19 @@ class Semester(Event):
     season_code = models.PositiveSmallIntegerField(choices=SEASON_CHOICES)
     late_tags = models.ManyToManyField(
         LateTag, verbose_name='Stavy omeškania', blank=True)
+    freezed_results = models.TextField(
+        null=True,
+        blank=True,
+        default=None)
 
     def get_first_series(self):
         return self.series_set.get(order=1)
 
     def get_second_series(self):
         return self.series_set.get(order=2)
+
+    def freeze_results(self):
+        self.freezed_results = self.results_with_ranking
 
     @cached_property
     def season(self):
@@ -328,7 +335,9 @@ class Semester(Event):
 
         return series_results
 
-    def results_with_ranking(self, show_only_last_series_points=False):
+    def results_with_ranking(self):
+        if self.freezed_results is not None:
+            return self.freezed_results
         current_results = None
         curent_number_of_problems = 0
         for series in self.series_set.all():
@@ -341,6 +350,7 @@ class Semester(Event):
         current_results = utils.rank_results(current_results)
         return current_results
 
+    # Túto metódu vyberme do view
     def get_schools(self, offline_users_only=False):
         if offline_users_only:
             return School.objects.filter(eventregistration__event=self.pk)\
@@ -369,6 +379,10 @@ class Series(models.Model):
     sum_method = models.CharField(
         verbose_name='Súčtová metóda', max_length=50, blank=True,
         choices=utils.SERIES_SUM_METHODS)
+    freezed_results = models.TextField(
+        null=True,
+        blank=True,
+        default=None)
 
     def __str__(self):
         return f'{self.semester} - {self.order}. séria'
@@ -402,6 +416,9 @@ class Series(models.Model):
         return self.semester.late_tags.filter(upper_bound__gte=now()-self.deadline)\
             .order_by('upper_bound')\
             .first()
+
+    def freeze_results(self):
+        self.freezed_results = self.results_with_ranking
 
     @property
     def num_problems(self):
@@ -472,6 +489,8 @@ class Series(models.Model):
         return results
 
     def results_with_ranking(self):
+        if self.freezed_results is not None:
+            return self.freezed_results
         results = self.results()
         results.sort(key=itemgetter('total'), reverse=True)
         results = utils.rank_results(results)
@@ -644,8 +663,8 @@ class SemesterPublication(Publication):
         blank=True,
         verbose_name='náhľad')
 
-    def validate_unique(self, *args, **kwargs):
-        super(SemesterPublication, self).validate_unique(*args, **kwargs)
+    def validate_unique(self, exclude=None):
+        super(SemesterPublication, self).validate_unique(exclude)
         e = self.event
         if Publication.objects.filter(event=e, semesterpublication__isnull=False) \
                 .filter(~Q(semesterpublication=self.pk), semesterpublication__order=self.order) \
