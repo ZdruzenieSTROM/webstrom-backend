@@ -39,6 +39,7 @@ THIRD_PARTY_APPS = [
 LOCAL_APPS = [
     'base.apps.BaseConfig',
     'competition.apps.CompetitionConfig',
+    'cms.apps.CmsConfig',
     'user.apps.UserConfig'
 ]
 
