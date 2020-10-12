@@ -14,13 +14,9 @@ class PostAdmin(admin.ModelAdmin):
         'is_visible'
     )
 
-    list_filter = (
-        'caption',
-    )
-
 
 @admin.register(PostLink)
-class PostAdmin(admin.ModelAdmin):
+class PostLinkAdmin(admin.ModelAdmin):
     list_display = (
         '__str__',
         'caption',
