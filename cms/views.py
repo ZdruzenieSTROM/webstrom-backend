@@ -1,6 +1,4 @@
-from django.shortcuts import render
-from django.core.exceptions import PermissionDenied
-from rest_framework import permissions, renderers, status, viewsets
+from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from cms.models import Post
@@ -17,7 +15,7 @@ class PostViewSet(viewsets.ModelViewSet):
     permission_classes = (UserPermission,)
 
     @action(detail=False)
-    def visible(self, request, *args, **kwargs):
+    def visible(self, request):
         posts = Post.objects.all()
         posts = [p for p in posts if p.is_visible]
         serializer = PostSerializer(posts, many=True)
