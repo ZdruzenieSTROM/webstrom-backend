@@ -16,7 +16,8 @@ class MenuItemViewSet(viewsets.ModelViewSet):
 
     @action(methods=['get'], detail=False, url_path=r'on_site/(?P<site_id>\d+)')
     def on_site(self, request, site_id):
-        items = MenuItem.objects.filter(sites=site_id).all()
+        items = MenuItem.objects.filter(
+            sites=site_id).order_by('-priority').all()
         serializer = MenuItemShortSerializer(items, many=True)
         return Response(serializer.data)
 

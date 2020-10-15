@@ -58,6 +58,7 @@ class MenuItem(models.Model):
     class Meta:
         verbose_name = 'položka v menu'
         verbose_name_plural = 'položky v menu'
+        ordering = ['-priority', ]
 
     caption = models.CharField(
         verbose_name='názov',
@@ -69,3 +70,5 @@ class MenuItem(models.Model):
         verbose_name='priorita',
         help_text='Priorita, čím väčšie, tým vyššie v menu.')
     sites = models.ManyToManyField(Site)
+
+    # TODO: Pridať oprávnenia a umožniť tak vedúcovské položky v menu ... zobrazované aj možno niekde inde
