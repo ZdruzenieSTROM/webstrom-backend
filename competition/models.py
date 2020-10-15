@@ -236,7 +236,7 @@ class Semester(Event):
     season_code = models.PositiveSmallIntegerField(choices=SEASON_CHOICES)
     late_tags = models.ManyToManyField(
         LateTag, verbose_name='Stavy omeškania', blank=True)
-    freezed_results = models.TextField(
+    frozen_results = models.TextField(
         null=True,
         blank=True,
         default=None)
@@ -248,7 +248,7 @@ class Semester(Event):
         return self.series_set.get(order=2)
 
     def freeze_results(self):
-        self.freezed_results = self.results_with_ranking
+        self.frozen_results = self.results_with_ranking()
 
     @cached_property
     def season(self):
@@ -336,8 +336,8 @@ class Semester(Event):
         return series_results
 
     def results_with_ranking(self):
-        if self.freezed_results is not None:
-            return self.freezed_results
+        if self.frozen_results is not None:
+            return self.frozen_results
         current_results = None
         curent_number_of_problems = 0
         for series in self.series_set.all():
@@ -379,7 +379,7 @@ class Series(models.Model):
     sum_method = models.CharField(
         verbose_name='Súčtová metóda', max_length=50, blank=True,
         choices=utils.SERIES_SUM_METHODS)
-    freezed_results = models.TextField(
+    frozen_results = models.TextField(
         null=True,
         blank=True,
         default=None)
@@ -418,7 +418,7 @@ class Series(models.Model):
             .first()
 
     def freeze_results(self):
-        self.freezed_results = self.results_with_ranking
+        self.frozen_results = self.results_with_ranking()
 
     @property
     def num_problems(self):
@@ -489,8 +489,8 @@ class Series(models.Model):
         return results
 
     def results_with_ranking(self):
-        if self.freezed_results is not None:
-            return self.freezed_results
+        if self.frozen_results is not None:
+            return self.frozen_results
         results = self.results()
         results.sort(key=itemgetter('total'), reverse=True)
         results = utils.rank_results(results)
