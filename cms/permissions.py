@@ -1,7 +1,13 @@
 from rest_framework import permissions
+from rest_framework.permissions import SAFE_METHODS
 
 
-class UserPermission(permissions.BasePermission):
+class ReadOnly(permissions.BasePermission):
+    def has_permission(self, request, view):
+        return request.method in SAFE_METHODS
+
+
+class PostPermission(permissions.BasePermission):
     # Prístup k objektom má iba staff, výnimkou je retrieve viditeľných objektov
 
     def has_permission(self, request, view):
