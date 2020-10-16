@@ -1,10 +1,5 @@
-asgiref==3.2.10
-Django==3.1.1
-django-crispy-forms==1.9.2
-djangorestframework==3.12.1
-django-filter==2.4.0
-pdf2image==1.14.0
-Pillow==7.2.0
-python-magic==0.4.18
-pytz==2020.1
-sqlparse==0.3.1
+-r prod-requirements.txt
+
+pylint==2.6.0
+pylint-django==2.3.0
+autopep8==1.5.4
