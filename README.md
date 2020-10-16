@@ -31,6 +31,14 @@ Nainštaluj potrebné balíky:
 pip install -r requirements.txt
 ```
 
+Pre production stačí
+
+```shell
+pip install -r prod-requirements.txt
+```
+
+(bez linteru a formátovaču a podobne).
+
 **Package `pdf2image` a `python-magic` používajú externé knižnice, zariaď, aby si ich mal nainštalované**
 
 **Dokumentácie**
@@ -53,7 +61,7 @@ python manage.py runserver
 
 ## Linter
 
-VSCode python extension podporuje viacero linterov, medzi nimi aj `pylint`. Aby si ho mohol používať, potrebuješ mať **vo vnútri virtual environmentu** nainštalovaný package `pylint` a `pylint-django`. Ďalej treba VSCodu povedať, aby pri spustení linteru načítal djangový plugin, teda do workspace settings (`${workspaceFolder}/.vscode/settings.json`) treba pridať
+VSCode python extension podporuje viacero linterov, medzi nimi aj `pylint`. Aby si ho mohol používať, treba VSCodu povedať, aby pri spustení linteru načítal djangový plugin, teda do workspace settings (`${workspaceFolder}/.vscode/settings.json`) treba pridať
 
 ```json
 "python.linting.pylintArgs": [
@@ -66,4 +74,8 @@ Teraz ak nemáš nejak veľmi zle nastavený globálny config, mal by ťa linter
 
 ## Formátovač
 
-Nainštaluj si (opäť, vo vnútri svojho virtual environmentu) package `autopep8`. Okrem toho potrebuješ zapnúť `editor.formatOnSave` (defaultne je vypnuté), buď v globálnom configu alebo len lokálne vo projekte (odporúčam globálne).
+Nainštaluj si (opäť, vo vnútri svojho virtual environmentu) package `autopep8`. Okrem toho potrebuješ zapnúť `editor.formatOnSave` (defaultne je vypnuté), buď v globálnom configu alebo len lokálne vo projekte.Odporúčam globálne - pridaj do svojho `settings.json` suboru (VSCode) tento riadok
+
+```
+"editor.formatOnSave": true,
+```
