@@ -1,5 +1,6 @@
 from django.urls import path
-
+from rest_framework.routers import DefaultRouter
+from competition import views
 from competition.views import (ArchiveView, LatestSeriesProblemsView,
                                SemesterInvitationsLatexView,
                                SemesterPublicationView,
@@ -9,6 +10,11 @@ from competition.views import (ArchiveView, LatestSeriesProblemsView,
                                SeriesResultsView)
 
 app_name = 'competition'
+
+router = DefaultRouter()
+router.register(r'problem', views.ProblemViewSet)
+router.register(r'series', views.SeriesViewSet)
+
 
 urlpatterns = [
     # Úlohy
@@ -43,3 +49,5 @@ urlpatterns = [
     path('archive/', ArchiveView.as_view(),
          name='archive-view'),
 ]
+
+urlpatterns += router.urls
