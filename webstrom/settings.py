@@ -29,18 +29,20 @@ DJANGO_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'django.contrib.flatpages',
-    'rest_framework'
 ]
 
 THIRD_PARTY_APPS = [
     'crispy_forms',
+    'rest_framework',
+    'django_filters',
 ]
 
 LOCAL_APPS = [
     'base.apps.BaseConfig',
     'competition.apps.CompetitionConfig',
     'cms.apps.CmsConfig',
-    'user.apps.UserConfig'
+    'user.apps.UserConfig',
+    'school.apps.SchoolConfig',
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -86,6 +88,10 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
+}
+
+REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
 }
 
 # User model

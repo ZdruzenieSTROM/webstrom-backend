@@ -1,6 +1,6 @@
 [
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 0,
         "fields": {
             "name": "Neur\u010den\u00fd okres",
@@ -9,7 +9,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 101,
         "fields": {
             "name": "Bratislava I",
@@ -18,7 +18,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 102,
         "fields": {
             "name": "Bratislava II",
@@ -27,7 +27,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 103,
         "fields": {
             "name": "Bratislava III",
@@ -36,7 +36,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 104,
         "fields": {
             "name": "Bratislava IV",
@@ -45,7 +45,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 105,
         "fields": {
             "name": "Bratislava V",
@@ -54,7 +54,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 106,
         "fields": {
             "name": "Malacky",
@@ -63,7 +63,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 107,
         "fields": {
             "name": "Pezinok",
@@ -72,7 +72,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 108,
         "fields": {
             "name": "Senec",
@@ -81,7 +81,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 201,
         "fields": {
             "name": "Dunajsk\u00e1 Streda",
@@ -90,7 +90,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 202,
         "fields": {
             "name": "Galanta",
@@ -99,7 +99,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 203,
         "fields": {
             "name": "Hlohovec",
@@ -108,7 +108,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 204,
         "fields": {
             "name": "Pie\u0161\u0165any",
@@ -117,7 +117,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 205,
         "fields": {
             "name": "Senica",
@@ -126,7 +126,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 206,
         "fields": {
             "name": "Skalica",
@@ -135,7 +135,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 207,
         "fields": {
             "name": "Trnava",
@@ -144,7 +144,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 301,
         "fields": {
             "name": "B\u00e1novce nad Bebravou",
@@ -153,7 +153,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 302,
         "fields": {
             "name": "Ilava",
@@ -162,7 +162,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 303,
         "fields": {
             "name": "Myjava",
@@ -171,7 +171,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 304,
         "fields": {
             "name": "Nov\u00e9 Mesto nad V\u00e1hom",
@@ -180,7 +180,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 305,
         "fields": {
             "name": "Partiz\u00e1nske",
@@ -189,7 +189,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 306,
         "fields": {
             "name": "Pova\u017esk\u00e1 Bystrica",
@@ -198,7 +198,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 307,
         "fields": {
             "name": "Prievidza",
@@ -207,7 +207,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 308,
         "fields": {
             "name": "P\u00fachov",
@@ -216,7 +216,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 309,
         "fields": {
             "name": "Tren\u010d\u00edn",
@@ -225,7 +225,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 401,
         "fields": {
             "name": "Kom\u00e1rno",
@@ -234,7 +234,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 402,
         "fields": {
             "name": "Levice",
@@ -243,7 +243,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 403,
         "fields": {
             "name": "Nitra",
@@ -252,7 +252,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 404,
         "fields": {
             "name": "Nov\u00e9 Z\u00e1mky",
@@ -261,7 +261,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 405,
         "fields": {
             "name": "\u0160a\u013ea",
@@ -270,7 +270,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 406,
         "fields": {
             "name": "Topo\u013e\u010dany",
@@ -279,7 +279,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 407,
         "fields": {
             "name": "Zlat\u00e9 Moravce",
@@ -288,7 +288,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 501,
         "fields": {
             "name": "Byt\u010da",
@@ -297,7 +297,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 502,
         "fields": {
             "name": "\u010cadca",
@@ -306,7 +306,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 503,
         "fields": {
             "name": "Doln\u00fd Kub\u00edn",
@@ -315,7 +315,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 504,
         "fields": {
             "name": "Kysuck\u00e9 Nov\u00e9 Mesto",
@@ -324,7 +324,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 505,
         "fields": {
             "name": "Liptovsk\u00fd Mikul\u00e1\u0161",
@@ -333,7 +333,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 506,
         "fields": {
             "name": "Martin",
@@ -342,7 +342,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 507,
         "fields": {
             "name": "N\u00e1mestovo",
@@ -351,7 +351,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 508,
         "fields": {
             "name": "Ru\u017eomberok",
@@ -360,7 +360,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 509,
         "fields": {
             "name": "Tur\u010dianske Teplice",
@@ -369,7 +369,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 510,
         "fields": {
             "name": "Tvrdo\u0161\u00edn",
@@ -378,7 +378,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 511,
         "fields": {
             "name": "\u017dilina",
@@ -387,7 +387,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 601,
         "fields": {
             "name": "Bansk\u00e1 Bystrica",
@@ -396,7 +396,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 602,
         "fields": {
             "name": "Bansk\u00e1 \u0160tiavnica",
@@ -405,7 +405,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 603,
         "fields": {
             "name": "Brezno",
@@ -414,7 +414,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 604,
         "fields": {
             "name": "Detva",
@@ -423,7 +423,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 605,
         "fields": {
             "name": "Krupina",
@@ -432,7 +432,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 606,
         "fields": {
             "name": "Lu\u010denec",
@@ -441,7 +441,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 607,
         "fields": {
             "name": "Polt\u00e1r",
@@ -450,7 +450,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 608,
         "fields": {
             "name": "Rev\u00faca",
@@ -459,7 +459,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 609,
         "fields": {
             "name": "Rimavsk\u00e1 Sobota",
@@ -468,7 +468,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 610,
         "fields": {
             "name": "Ve\u013ek\u00fd Krt\u00ed\u0161",
@@ -477,7 +477,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 611,
         "fields": {
             "name": "Zvolen",
@@ -486,7 +486,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 612,
         "fields": {
             "name": "\u017darnovica",
@@ -495,7 +495,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 613,
         "fields": {
             "name": "\u017diar nad Hronom",
@@ -504,7 +504,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 701,
         "fields": {
             "name": "Bardejov",
@@ -513,7 +513,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 702,
         "fields": {
             "name": "Humenn\u00e9",
@@ -522,7 +522,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 703,
         "fields": {
             "name": "Ke\u017emarok",
@@ -531,7 +531,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 704,
         "fields": {
             "name": "Levo\u010da",
@@ -540,7 +540,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 705,
         "fields": {
             "name": "Medzilaborce",
@@ -549,7 +549,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 706,
         "fields": {
             "name": "Poprad",
@@ -558,7 +558,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 707,
         "fields": {
             "name": "Pre\u0161ov",
@@ -567,7 +567,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 708,
         "fields": {
             "name": "Sabinov",
@@ -576,7 +576,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 709,
         "fields": {
             "name": "Snina",
@@ -585,7 +585,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 710,
         "fields": {
             "name": "Star\u00e1 \u013dubov\u0148a",
@@ -594,7 +594,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 711,
         "fields": {
             "name": "Stropkov",
@@ -603,7 +603,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 712,
         "fields": {
             "name": "Svidn\u00edk",
@@ -612,7 +612,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 713,
         "fields": {
             "name": "Vranov nad Top\u013eou",
@@ -621,7 +621,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 801,
         "fields": {
             "name": "Gelnica",
@@ -630,7 +630,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 802,
         "fields": {
             "name": "Ko\u0161ice I",
@@ -639,7 +639,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 803,
         "fields": {
             "name": "Ko\u0161ice II",
@@ -648,7 +648,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 804,
         "fields": {
             "name": "Ko\u0161ice III",
@@ -657,7 +657,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 805,
         "fields": {
             "name": "Ko\u0161ice IV",
@@ -666,7 +666,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 806,
         "fields": {
             "name": "Ko\u0161ice - okolie",
@@ -675,7 +675,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 807,
         "fields": {
             "name": "Michalovce",
@@ -684,7 +684,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 808,
         "fields": {
             "name": "Ro\u017e\u0148ava",
@@ -693,7 +693,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 809,
         "fields": {
             "name": "Sobrance",
@@ -702,7 +702,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 810,
         "fields": {
             "name": "Spi\u0161sk\u00e1 Nov\u00e1 Ves",
@@ -711,7 +711,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 811,
         "fields": {
             "name": "Trebi\u0161ov",
@@ -720,7 +720,7 @@
         }
     },
     {
-        "model": "competition.District",
+        "model": "school.District",
         "pk": 901,
         "fields": {
             "name": "Zahrani\u010die",

@@ -1,3 +1,5 @@
+from competition.forms import ProfileCreationForm, ProfileUpdateForm
+from competition.models import Grade, Profile
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
@@ -6,9 +8,8 @@ from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.views.generic import DetailView
+from school.models import District, School
 
-from competition.forms import ProfileCreationForm, ProfileUpdateForm
-from competition.models import County, District, Grade, Profile, School
 from user.forms import NameUpdateForm, UserCreationForm
 from user.models import User
 from user.tokens import email_verification_token_generator
@@ -106,35 +107,3 @@ def profile_update(request):
 class UserProfileView(DetailView):
     template_name = 'user/profile_view.html'
     model = Profile
-
-
-def district_by_county(request, pk):
-    # pylint: disable=invalid-name
-    county = get_object_or_404(County, pk=pk)
-    queryset = District.objects.filter(county=county).values('pk', 'name')
-
-    return JsonResponse(list(queryset), safe=False)
-
-
-def school_by_county(request, pk):
-    # pylint: disable=invalid-name
-    county = get_object_or_404(County, pk=pk)
-    districts = District.objects.filter(
-        county=county).values('pk', 'name')
-    queryset = School.objects.filter(district__in=districts.values('pk'))
-
-    values = [{'value': school.pk, 'label': str(school)}
-              for school in queryset]
-
-    return JsonResponse(values, safe=False)
-
-
-def school_by_district(request, pk):
-    # pylint: disable=invalid-name
-    district = get_object_or_404(District, pk=pk)
-    queryset = School.objects.filter(district=district)
-
-    values = [{'value': school.pk, 'label': str(school)}
-              for school in queryset]
-
-    return JsonResponse(values, safe=False)

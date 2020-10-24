@@ -1,6 +1,6 @@
 [
     {
-        "model": "competition.School",
+        "model": "school.School",
         "pk": 0,
         "fields": {
             "district": 0,
@@ -8,7 +8,7 @@
         }
     },
     {
-        "model": "competition.School",
+        "model": "school.School",
         "pk": 1,
         "fields": {
             "district": 0,
