@@ -1,4 +1,3 @@
-from django.db.models.aggregates import Count
 from rest_framework import viewsets
 
 from .models import County, District, School
@@ -10,7 +9,7 @@ class CountyViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = CountySerializer
 
 
-class DistrictViewSet(viewsets.ModelViewSet):
+class DistrictViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = District.objects.all()
     serializer_class = DistrictSerializer
     filterset_fields = ['county', ]
