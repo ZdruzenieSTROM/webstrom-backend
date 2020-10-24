@@ -10,21 +10,21 @@ class MenuItemViewSet(viewsets.ModelViewSet):
     """
     Obsluhuje API endpoint pre MenuItems
     """
-    queryset = MenuItem.objects.all()
+    queryset = MenuItem.objects.order_by('-priority')
     serializer_class = MenuItemShortSerializer
     permission_classes = [ReadOnly]
 
     @action(methods=['get'], detail=False, url_path=r'on_site/(?P<site_id>\d+)')
     def on_site(self, request, site_id):
         items = MenuItem.objects.filter(
-            sites=site_id).order_by('-priority').all()
+            sites=site_id).order_by('-priority')
         serializer = MenuItemShortSerializer(items, many=True)
         return Response(serializer.data)
 
     @action(methods=['get'], detail=False)
     def on_current_site(self, request):
         items = MenuItem.objects.filter(
-            sites=request.site).order_by('-priority').all()
+            sites=request.site).order_by('-priority')
         serializer = MenuItemShortSerializer(items, many=True)
         return Response(serializer.data)
 
