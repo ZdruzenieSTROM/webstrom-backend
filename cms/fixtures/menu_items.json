@@ -95,7 +95,7 @@
         "pk": 7,
         "fields": {
             "priority": 100,
-            "caption": "Ochrana osobných údajou",
+            "caption": "Ochrana osobných údajov",
             "url": "/gdpr/",
             "sites": [
                 1,
