@@ -488,7 +488,9 @@ class Problem(models.Model):
     text = models.TextField(verbose_name='znenie úlohy')
     order = models.PositiveSmallIntegerField(verbose_name='poradie v sérii')
     series = models.ForeignKey(
-        Series, verbose_name='úloha zaradená do série', on_delete=models.CASCADE,)
+        Series, verbose_name='úloha zaradená do série',
+        related_name='problems',
+        on_delete=models.CASCADE,)
 
     def __str__(self):
         return f'{self.series.semester.competition.name}-{self.series.semester.year}' \
