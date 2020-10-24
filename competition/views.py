@@ -4,10 +4,31 @@ from django.contrib import messages
 from django.shortcuts import redirect
 from django.views.generic import DetailView, ListView, View
 
+from rest_framework import viewsets
+from competition.serializers import ProblemSerializer, SeriesSerializer, SeriesWithProblemsSerializer
+
 from competition.forms import SeriesSolutionForm
 from competition.models import (Competition, EventRegistration, Grade, Problem,
                                 Semester, Series, Solution)
 from competition.utils import generate_praticipant_invitations
+
+
+class ProblemViewSet(viewsets.ModelViewSet):
+    """
+    Obsluhuje API endpoint pre Úlohy
+    """
+    queryset = Problem.objects.all()
+    serializer_class = ProblemSerializer
+    #permission_classes = (UserPermission,)
+
+
+class SeriesViewSet(viewsets.ModelViewSet):
+    """
+    Obsluhuje API endpoint pre Úlohy
+    """
+    queryset = Series.objects.all()
+    serializer_class = SeriesWithProblemsSerializer
+    #permission_classes = (UserPermission,)
 
 
 class SeriesProblemsView(DetailView):
