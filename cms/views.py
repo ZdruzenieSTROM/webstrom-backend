@@ -3,16 +3,15 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from cms.models import MenuItem, Post
 from cms.serializers import MenuItemShortSerializer, PostSerializer
-from cms.permissions import PostPermission, ReadOnly
+from cms.permissions import PostPermission
 
 
-class MenuItemViewSet(viewsets.ModelViewSet):
+class MenuItemViewSet(viewsets.ReadOnlyModelViewSet):
     """
     Obsluhuje API endpoint pre MenuItems
     """
     queryset = MenuItem.objects.order_by('-priority')
     serializer_class = MenuItemShortSerializer
-    permission_classes = [ReadOnly]
 
     @action(methods=['get'], detail=False, url_path=r'on_site/(?P<site_id>\d+)')
     def on_site(self, request, site_id):
