@@ -2,6 +2,12 @@ from rest_framework import serializers
 from cms import models
 
 
+class MenuItemShortSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.MenuItem
+        exclude = ['priority', 'sites']
+
+
 class PostLinkSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.PostLink

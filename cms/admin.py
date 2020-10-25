@@ -1,5 +1,18 @@
 from django.contrib import admin
-from cms.models import Post, PostLink
+from cms.models import MenuItem, Post, PostLink
+
+
+@admin.register(MenuItem)
+class MenuItemAdmin(admin.ModelAdmin):
+    list_display = (
+        'caption',
+        'url',
+        'priority'
+    )
+
+    list_filter = (
+        'sites',
+    )
 
 
 @admin.register(Post)
