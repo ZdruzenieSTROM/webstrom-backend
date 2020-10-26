@@ -1,8 +1,10 @@
 from rest_framework import permissions
 
 
-class UserPermission(permissions.BasePermission):
-    # Prístup k objektom má iba staff, výnimkou je retrieve viditeľných objektov
+class PostPermission(permissions.BasePermission):
+    """
+    Prístup k objektom má iba staff, výnimkou je retrieve viditeľných objektov
+    """
 
     def has_permission(self, request, view):
         if view.action in ['list', 'create', 'update', 'partial_update', 'destroy']:
