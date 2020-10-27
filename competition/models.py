@@ -405,13 +405,13 @@ class Series(models.Model):
 
     @property
     def num_problems(self):
-        return self.problem_set.count()
+        return self.problems.count()
 
     # Generuje jeden riadok poradia ako slovník atribútov
     def _create_profile_dict(self, sum_func, semester_registration, profile_solutions):
         # list primary keys uloh v aktualnom semestri
         problems_pk_list = []
-        for problem in self.problem_set.all():
+        for problem in self.problems.all():
             problems_pk_list.append(problem.pk)
 
         return {
@@ -423,8 +423,8 @@ class Series(models.Model):
             'rank_changed': True,
             # primary key riešiteľovej registrácie do semestra
             'semester_registration_pk': semester_registration.pk,
-            'profile': semester_registration.profile,                # Profil riešiteľa
-            'school': semester_registration.school,                  # Škola
+            # 'profile': semester_registration.profile,                # Profil riešiteľa
+            # 'school': semester_registration.school,                  # Škola
             'grade': semester_registration.grade.tag,          # Značka stupňa
             'points': utils.solutions_to_list_of_points_pretty(profile_solutions),
             # Súčty bodov po sériách
@@ -434,7 +434,7 @@ class Series(models.Model):
             # zipnutý zoznam riešení a pk príslušných problémov,
             # aby ich bolo možné prelinkovať z poradia do admina
             # a získať pk problému pri none riešení
-            'solutions': zip(profile_solutions, problems_pk_list)
+            # 'solutions': zip(profile_solutions, problems_pk_list)
         }
 
     def results(self):

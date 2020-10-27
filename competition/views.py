@@ -5,7 +5,9 @@ from django.shortcuts import redirect
 from django.views.generic import DetailView, ListView, View
 
 from rest_framework import viewsets
-from competition.serializers import ProblemSerializer, SeriesSerializer, SeriesWithProblemsSerializer
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from competition.serializers import ProblemSerializer, SeriesSerializer, SeriesWithProblemsSerializer, ProblemStatsSerializer
 
 from competition.forms import SeriesSolutionForm
 from competition.models import (Competition, EventRegistration, Grade, Problem,
@@ -21,6 +23,10 @@ class ProblemViewSet(viewsets.ModelViewSet):
     serializer_class = ProblemSerializer
     #permission_classes = (UserPermission,)
 
+    @action(methods=['get'], detail=True)
+    def stats(self, request, pk=None):
+        return Response(self.get_object().get_stats())
+
 
 class SeriesViewSet(viewsets.ModelViewSet):
     """
@@ -29,6 +35,17 @@ class SeriesViewSet(viewsets.ModelViewSet):
     queryset = Series.objects.all()
     serializer_class = SeriesWithProblemsSerializer
     #permission_classes = (UserPermission,)
+
+    @action(methods=['get'], detail=True)
+    def results(self, request, pk=None):
+        series = self.get_object()
+        return Response(series.results())
+
+    @action(methods=['get'], detail=True)
+    def stats(self, request, pk=None):
+        problems = self.get_object().problems
+
+        return
 
 
 class SeriesProblemsView(DetailView):
