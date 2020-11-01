@@ -675,6 +675,12 @@ class Solution(models.Model):
     def __str__(self):
         return f'Riešiteľ: { self.semester_registration } - úloha { self.problem }'
 
+    def get_solution_file_name(self):
+        return f'{self.semester_registration.profile.user.get_full_name_camel_case()}-{self.problem.id}-{self.semester_registration.id}.pdf'
+
+    def get_corrected_solution_file_name(self):
+        return f'corrected/{self.semester_registration.profile.user.get_full_name_camel_case()}-{self.problem.id}-{self.semester_registration.id}_corrected.pdf'
+
 
 class Publication(models.Model):
     """
