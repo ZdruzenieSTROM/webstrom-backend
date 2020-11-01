@@ -16,9 +16,9 @@ router.register(r'problem', views.ProblemViewSet)
 router.register(r'series', views.SeriesViewSet)
 
 
-urlpatterns = []
-# Úlohy
-"""
+urlpatterns = [
+    # Úlohy
+
     path('series/<int:pk>/problems', SeriesProblemsView.as_view(),
          name='series-problems-detail'),
     path('series/latest-problems', LatestSeriesProblemsView.as_view(),
@@ -49,7 +49,7 @@ urlpatterns = []
     # Archív
     path('archive/', ArchiveView.as_view(),
          name='archive-view'),
-     """
+]
 
 
 urlpatterns += router.urls
