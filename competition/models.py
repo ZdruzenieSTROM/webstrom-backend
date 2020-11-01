@@ -8,6 +8,7 @@ from django.conf import settings
 from django.contrib.sites.models import Site
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
+from django.core.validators import validate_slug
 from django.db import models
 from django.db.models import Q
 from django.db.models.constraints import UniqueConstraint
@@ -189,6 +190,8 @@ class LateTag(models.Model):
 
     name = models.CharField(
         verbose_name='označenie štítku pre riešiteľa', max_length=50)
+    slug = models.CharField(
+        verbose_name='označenie priečinku pri stiahnutí', max_length=50, validators=[validate_slug])
     upper_bound = models.DurationField(
         verbose_name='maximálna dĺžka omeškania')
     comment = models.TextField(verbose_name='komentár pre opravovateľa')
@@ -656,7 +659,7 @@ class Solution(models.Model):
         verbose_name='opravené riešenie', blank=True, upload_to='solutions/corrected/')
 
     score = models.PositiveSmallIntegerField(
-        verbose_name='body', null=True)
+        verbose_name='body', null=True, blank=True)
 
     uploaded_at = models.DateTimeField(
         verbose_name='dátum pridania', auto_now_add=True)
