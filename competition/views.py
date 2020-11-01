@@ -1,18 +1,29 @@
+
+from io import BytesIO
+import json
 from operator import itemgetter
+import os
+import zipfile
 
 from django.contrib import messages
+from django.core.files.move import file_move_safe
+from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.views.generic import DetailView, ListView, View
 
-from rest_framework import viewsets
+from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.permissions import IsAdminUser
+from rest_framework import exceptions
 from competition.serializers import ProblemSerializer, SeriesSerializer, SeriesWithProblemsSerializer, ProblemStatsSerializer
 
 from competition.forms import SeriesSolutionForm
 from competition.models import (Competition, EventRegistration, Grade, Problem,
                                 Semester, Series, Solution)
 from competition.utils import generate_praticipant_invitations
+
+from webstrom import settings
 
 
 class ProblemViewSet(viewsets.ModelViewSet):
@@ -21,11 +32,120 @@ class ProblemViewSet(viewsets.ModelViewSet):
     """
     queryset = Problem.objects.all()
     serializer_class = ProblemSerializer
-    #permission_classes = (UserPermission,)
+    # permission_classes = (UserPermission,)
 
-    @action(methods=['get'], detail=True)
+    @action(methods=['get'], detail=True, permission_classes=[IsAdminUser])
     def stats(self, request, pk=None):
         return Response(self.get_object().get_stats())
+
+    @action(methods=['post'], detail=True)
+    def upload_solution(self, request, pk=None):
+        problem = self.get_object()
+        if not request.user.is_authenticated:
+            raise exceptions.PermissionDenied('Je potrebné sa prihlásiť')
+        event_registration = EventRegistration.get_registration_by_profile_and_event(
+            request.user.profile, problem.series.semester)
+        if event_registration is None:
+            raise exceptions.MethodNotAllowed(method='upload-solutuion')
+        elif 'file' not in request.data:
+            raise exceptions.ParseError(detail='Solution file not found')
+        else:
+            f = request.data['file']
+            late_tag = problem.series.get_actual_late_flag()
+            solution = Solution.objects.create(
+                problem=problem,
+                semester_registration=event_registration,
+                late_tag=late_tag,
+                is_online=True
+            )
+            solution.solution.save(
+                solution.get_solution_file_name(), f, save=True)
+        return Response(status=status.HTTP_201_CREATED)
+
+    @action(detail=True)
+    def my_solution(self, request, pk=None):
+        pass
+
+    @action(methods=['get'], detail=True, permission_classes=[IsAdminUser])
+    def download_solutions(self, request, pk=None):
+        solutions = self.get_object().solution_set.all()
+        # Open StringIO to grab in-memory ZIP contents
+        s = BytesIO()
+        with zipfile.ZipFile(s, 'w') as zipf:
+            # writing each file one by one
+            for solution in solutions:
+                if solution.is_online and solution.solution.name is not None:
+                    prefix = ''
+                    if solution.late_tag is not None:
+                        prefix = f'{solution.late_tag.slug}/'
+                        print(prefix)
+                    _, fname = os.path.split(solution.solution.path)
+                    zipf.write(solution.solution.path,
+                               f'{prefix}{fname}')
+        response = HttpResponse(s.getvalue(),
+                                content_type="application/x-zip-compressed")
+        # ..and correct content-disposition
+        response['Content-Disposition'] = (
+            'attachment; filename=export.zip'
+        )
+
+        return response
+
+    @action(methods=['post'], detail=True, permission_classes=[IsAdminUser])
+    def upload_solutions_with_points(self, request, pk=None):
+        if 'file' not in request.data:
+            raise exceptions.ParseError(detail='No file attached')
+        zfile = request.data['file']
+        if not zipfile.is_zipfile(zfile):
+            raise exceptions.ParseError(
+                detail='Attached file is not a zip file')
+        zfile = zipfile.ZipFile(zfile)
+        if zfile.testzip():
+            raise exceptions.ParseError(detail='Zip file is corrupted')
+        pdf_files = [name for name in zfile.namelist()
+                     if name.endswith('.pdf')]
+        status = []
+        for filename in pdf_files:
+            try:
+                parts = filename.rstrip('.pdf').split('-')
+                score = int(parts[0])
+                problem_pk = int(parts[-2])
+                registration_pk = int(parts[-1])
+                event_reg = EventRegistration.objects.get(pk=registration_pk)
+                solution = Solution.objects.get(semester_registration=event_reg,
+                                                problem=problem_pk)
+            except (IndexError, ValueError, AssertionError):
+                status.append({
+                    'filename': filename,
+                    'status': 'Cannot parse file'
+                })
+                continue
+            except EventRegistration.DoesNotExist:
+                status.append({
+                    'filename': filename,
+                    'status': f'User registration with id {registration_pk} does not exist'
+                })
+                continue
+            except Solution.DoesNotExist:
+                status.append({
+                    'filename': filename,
+                    'status': f'Solution with registration id {registration_pk} and problem id {problem_pk} does not exist'
+                })
+                continue
+
+            extracted_path = zfile.extract(filename, path='/tmp')
+            new_path = os.path.join(
+                settings.MEDIA_ROOT, 'solutions', solution.get_corrected_solution_file_name())
+            file_move_safe(extracted_path, new_path, allow_overwrite=True)
+
+            solution.score = score
+            solution.corrected_solution = solution.get_corrected_solution_file_name()
+            solution.save()
+            status.append({
+                'filename': filename,
+                'status': f'OK - points: {score}'
+            })
+        return Response(json.dumps(status))
 
 
 class SeriesViewSet(viewsets.ModelViewSet):
@@ -34,7 +154,7 @@ class SeriesViewSet(viewsets.ModelViewSet):
     """
     queryset = Series.objects.all()
     serializer_class = SeriesWithProblemsSerializer
-    #permission_classes = (UserPermission,)
+    # permission_classes = (UserPermission,)
 
     @action(methods=['get'], detail=True)
     def results(self, request, pk=None):
@@ -46,6 +166,10 @@ class SeriesViewSet(viewsets.ModelViewSet):
         problems = self.get_object().problems
 
         return
+
+
+class SolutionViewSet(viewsets.ModelViewSet):
+    pass
 
 
 class SeriesProblemsView(DetailView):
@@ -64,7 +188,7 @@ class SeriesProblemsView(DetailView):
             context['profile'] = context['registration'] = None
 
         context['form'] = form = SeriesSolutionForm(self.object)
-        context['problems'] = zip(self.object.problem_set.all(), form)
+        context['problems'] = zip(self.object.problems.all(), form)
         return context
 
     def post(self, request, **kwargs):
@@ -181,7 +305,7 @@ class SeriesResultsLatexView(SeriesResultsView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['histograms'] = []
-        for problem in self.object.problem_set.all():
+        for problem in self.object.problems.all():
             context['histograms'].append(problem.get_stats())
         context['schools'] = self.object.semester.get_schools()
         context['schools_offline'] = self.object.semester.get_schools(
