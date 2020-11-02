@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import County, District, School
+from .models import County, District, Profile, School
 
 
 class CountySerializer(serializers.ModelSerializer):
@@ -19,3 +19,13 @@ class SchoolSerializer(serializers.ModelSerializer):
     class Meta:
         model = School
         fields = '__all__'
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = '__all__'
+
+    first_name = serializers.CharField(source='user.first_name')
+    last_name = serializers.CharField(source='user.last_name')
+    email = serializers.EmailField(source='user.email')
