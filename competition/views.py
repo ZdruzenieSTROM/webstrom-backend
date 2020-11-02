@@ -69,6 +69,13 @@ class ProblemViewSet(viewsets.ModelViewSet):
 
     @action(detail=True)
     def my_solution(self, request, pk=None):
+        problem = self.get_object()
+        if not request.user.is_authenticated:
+            raise exceptions.PermissionDenied('Je potrebné sa prihlásiť')
+        event_registration = EventRegistration.get_registration_by_profile_and_event(
+            request.user.profile, problem.series.semester)
+        if event_registration is None:
+            raise exceptions.MethodNotAllowed(method='upload-solutuion')
         pass
 
     @action(methods=['get'], detail=True, permission_classes=[IsAdminUser])
