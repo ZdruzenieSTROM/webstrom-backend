@@ -1,7 +1,7 @@
 from django import forms
 from django.core.mail import mail_managers
 from django.template.loader import render_to_string
-from school.models import County, District, School
+from profile.models import County, District, School
 
 from competition.models import Grade, Profile
 

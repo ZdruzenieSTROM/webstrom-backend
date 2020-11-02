@@ -8,7 +8,7 @@ urlpatterns = [
     path('user/', include('user.urls')),
     path('competition/', include('competition.urls')),
     path('cms/', include('cms.urls')),
-    path('school/', include('school.urls')),
+    path('profile/', include('profile.urls')),
 ]
 
 # Pri vývoji servuj media files priamo z djanga

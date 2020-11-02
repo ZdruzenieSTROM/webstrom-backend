@@ -20,7 +20,7 @@ from django.dispatch import receiver
 from django.shortcuts import get_object_or_404
 from django.utils.functional import cached_property
 from django.utils.timezone import now
-from school.models import School
+from profile.models import School
 
 from competition import utils
 
