@@ -5,6 +5,8 @@ from operator import itemgetter
 import os
 import zipfile
 
+from base.utils import mime_type
+
 from django.contrib import messages
 from django.core.files.move import file_move_safe
 from django.http import HttpResponse
@@ -48,9 +50,12 @@ class ProblemViewSet(viewsets.ModelViewSet):
         if event_registration is None:
             raise exceptions.MethodNotAllowed(method='upload-solutuion')
         elif 'file' not in request.data:
-            raise exceptions.ParseError(detail='Solution file not found')
+            raise exceptions.ParseError(detail='Request neobsahoval súbor')
         else:
             f = request.data['file']
+            if mime_type(f) != 'application/pdf':
+                raise exceptions.ParseError(
+                    detail='Riešenie nie je vo formáte pdf')
             late_tag = problem.series.get_actual_late_flag()
             solution = Solution.objects.create(
                 problem=problem,
@@ -72,7 +77,6 @@ class ProblemViewSet(viewsets.ModelViewSet):
         # Open StringIO to grab in-memory ZIP contents
         s = BytesIO()
         with zipfile.ZipFile(s, 'w') as zipf:
-            # writing each file one by one
             for solution in solutions:
                 if solution.is_online and solution.solution.name is not None:
                     prefix = ''
@@ -84,7 +88,7 @@ class ProblemViewSet(viewsets.ModelViewSet):
                                f'{prefix}{fname}')
         response = HttpResponse(s.getvalue(),
                                 content_type="application/x-zip-compressed")
-        # ..and correct content-disposition
+
         response['Content-Disposition'] = (
             'attachment; filename=export.zip'
         )
