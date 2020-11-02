@@ -1,9 +1,8 @@
 from django import forms
 from django.core.mail import mail_managers
 from django.template.loader import render_to_string
-from profile.models import County, District, School
-
-from competition.models import Grade, Profile
+from profile.models import County, District, Profile, School
+from competition.models import Grade
 
 
 class ProfileForm(forms.ModelForm):
