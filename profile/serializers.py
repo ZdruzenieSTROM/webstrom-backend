@@ -26,6 +26,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         model = Profile
         fields = '__all__'
 
-    first_name = serializers.CharField(source='user.first_name')
+    first_name = serializers.CharField(
+        source='user.first_name', read_only=False)
     last_name = serializers.CharField(source='user.last_name')
     email = serializers.EmailField(source='user.email')

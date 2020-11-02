@@ -1,5 +1,7 @@
-from rest_framework import viewsets, filters
-from rest_framework.permissions import IsAdminUser
+from rest_framework import filters, status, viewsets
+from rest_framework.decorators import action
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
+from rest_framework.response import Response
 from .models import County, District, Profile, School
 from .serializers import CountySerializer, DistrictSerializer, ProfileSerializer, SchoolSerializer
 
@@ -33,3 +35,17 @@ class ProfileViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAdminUser]
     filter_backends = [filters.SearchFilter]
     search_fields = ['user__first_name', 'user__last_name', 'nickname']
+
+    @action(methods=['get', 'put'], detail=False, permission_classes=[IsAuthenticated])
+    def myprofile(self, request):
+        if request.method == 'GET':
+            profile = Profile.objects.get(user=request.user)
+            serializer = ProfileSerializer(profile)
+            return Response(serializer.data)
+        elif request.method == 'PUT':
+            profile = Profile.objects.get(user=request.user)
+            serializer = ProfileSerializer(profile, data=request.data)
+            if serializer.is_valid():
+                serializer.update()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
