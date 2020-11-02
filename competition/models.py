@@ -61,6 +61,9 @@ class Profile(models.Model):
 
 
 class Competition(models.Model):
+    """
+    Model súťaže, ktorý pokrýva súťaž ako koncept. Napríklad Matboj, Seminár STROM, Kôš
+    """
     class Meta:
         verbose_name = 'súťaž'
         verbose_name_plural = 'súťaže'
@@ -109,6 +112,10 @@ class Competition(models.Model):
 
 
 class LateTag(models.Model):
+    """
+    Slúži na označenie riešenia po termíne.
+    Každý LateTag vyjadruje druh omeškania (napríklad do 24 hodín)
+    """
     class Meta:
         verbose_name = 'omeškanie'
         verbose_name_plural = 'omeškanie'
@@ -124,6 +131,10 @@ class LateTag(models.Model):
 
 
 class Event(models.Model):
+    """
+    Slúži na označenie instancie súťaže (Napríklad: Matboj 2020,
+    Letný semester 40. ročníka STROMu, Jarný výlet 2021)
+    """
     # pylint: disable=no-member
     class Meta:
         verbose_name = 'ročník súťaže'
@@ -156,6 +167,11 @@ class Event(models.Model):
 
 
 class Semester(Event):
+    """
+    Špeciálny prípad eventu pridávajúci niekoľko ďalších polí
+    pre funkcionalitu semestrov korešpondenčných seminárov.
+    S dodatočnými informáciami ako season(letný, zimný) a povolené kategórie omeškaní riešení
+    """
     class Meta:
         verbose_name = 'semester'
         verbose_name_plural = 'semestre'
@@ -169,12 +185,19 @@ class Semester(Event):
     season_code = models.PositiveSmallIntegerField(choices=SEASON_CHOICES)
     late_tags = models.ManyToManyField(
         LateTag, verbose_name='Stavy omeškania', blank=True)
+    frozen_results = models.TextField(
+        null=True,
+        blank=True,
+        default=None)
 
     def get_first_series(self):
         return self.series_set.get(order=1)
 
     def get_second_series(self):
         return self.series_set.get(order=2)
+
+    def freeze_results(self):
+        self.frozen_results = self.results_with_ranking()
 
     @cached_property
     def season(self):
@@ -261,7 +284,9 @@ class Semester(Event):
 
         return series_results
 
-    def results_with_ranking(self, show_only_last_series_points=False):
+    def results_with_ranking(self):
+        if self.frozen_results is not None:
+            return self.frozen_results
         current_results = None
         curent_number_of_problems = 0
         for series in self.series_set.all():
@@ -274,6 +299,7 @@ class Semester(Event):
         current_results = utils.rank_results(current_results)
         return current_results
 
+    # Túto metódu vyberme do view
     def get_schools(self, offline_users_only=False):
         if offline_users_only:
             return School.objects.filter(eventregistration__event=self.pk)\
@@ -287,6 +313,9 @@ class Semester(Event):
 
 
 class Series(models.Model):
+    """
+    Popisuje jednu sériu semestra
+    """
     class Meta:
         verbose_name = 'séria'
         verbose_name_plural = 'série'
@@ -297,11 +326,17 @@ class Series(models.Model):
     order = models.PositiveSmallIntegerField(verbose_name='poradie série')
 
     deadline = models.DateTimeField(verbose_name='termín série')
-    complete = models.BooleanField(verbose_name='séria uzavretá')
+    complete = models.BooleanField(
+        verbose_name='séria uzavretá', help_text='Séria má finálne poradie a už sa nebude meniť')
 
+    # Implementuje bonfikáciu
     sum_method = models.CharField(
         verbose_name='Súčtová metóda', max_length=50, blank=True,
         choices=utils.SERIES_SUM_METHODS)
+    frozen_results = models.TextField(
+        null=True,
+        blank=True,
+        default=None)
 
     def __str__(self):
         return f'{self.semester} - {self.order}. séria'
@@ -321,6 +356,10 @@ class Series(models.Model):
 
     @property
     def can_submit(self):
+        """
+        Vráti True, ak užívateľ ešte môže odovzdať úlohu. 
+        Pozerá sa na maximálne možné omeškanie v LateFlagoch.
+        """
         max_late_tag_value = self.semester.late_tags.aggregate(
             models.Max('upper_bound'))['upper_bound__max']
         if not max_late_tag_value:
@@ -328,6 +367,9 @@ class Series(models.Model):
         return now() < self.deadline + max_late_tag_value
 
     def get_actual_late_flag(self):
+        """
+        Vráti late flag, ktorý má byť v tomto okamihu priradený riešeniu, teda jeho aktuálne omeškanie
+        """
         if not self.is_past_deadline:
             return None
         if not self.can_submit:
@@ -335,6 +377,9 @@ class Series(models.Model):
         return self.semester.late_tags.filter(upper_bound__gte=now()-self.deadline)\
             .order_by('upper_bound')\
             .first()
+
+    def freeze_results(self):
+        self.frozen_results = self.results_with_ranking()
 
     @property
     def num_problems(self):
@@ -405,6 +450,8 @@ class Series(models.Model):
         return results
 
     def results_with_ranking(self):
+        if self.frozen_results is not None:
+            return self.frozen_results
         results = self.results()
         results.sort(key=itemgetter('total'), reverse=True)
         results = utils.rank_results(results)
@@ -412,6 +459,9 @@ class Series(models.Model):
 
 
 class Problem(models.Model):
+    """
+    Popisuje jednu úlohu v sérií
+    """
     class Meta:
         verbose_name = 'úloha'
         verbose_name_plural = 'úlohy'
@@ -445,6 +495,9 @@ class Problem(models.Model):
 
 
 class Grade(models.Model):
+    """
+    Popisuje ročník súťažiaceho. Napríklad Z9, S1 ...
+    """
     class Meta:
         verbose_name = 'ročník účastníka'
         verbose_name_plural = 'ročníky účastníka'
@@ -480,6 +533,10 @@ class Grade(models.Model):
 
 
 class EventRegistration(models.Model):
+    """
+    Registruje účastníka na instanciu súťaže(napríklad Matboj 2020, letný semester 40. ročník STROMu).
+    V registrácií sú uložené údaje účastníka aktuálne v čase konania súťaže. 
+    """
     class Meta:
         verbose_name = 'registrácia užívateľa na akciu'
         verbose_name_plural = 'registrácie užívateľov na akcie'
@@ -513,6 +570,9 @@ class EventRegistration(models.Model):
 
 
 class Solution(models.Model):
+    """
+    Popisuje riešenie úlohy od užívateľa. Obsahuje nahraté aj opravné riešenie, body
+    """
     class Meta:
         verbose_name = 'riešenie'
         verbose_name_plural = 'riešenia'
@@ -563,6 +623,9 @@ class Publication(models.Model):
 
 
 class SemesterPublication(Publication):
+    """
+    Časopis
+    """
     class Meta:
         verbose_name = 'časopis'
         verbose_name_plural = 'časopisy'
@@ -577,8 +640,8 @@ class SemesterPublication(Publication):
         blank=True,
         verbose_name='náhľad')
 
-    def validate_unique(self, *args, **kwargs):
-        super(SemesterPublication, self).validate_unique(*args, **kwargs)
+    def validate_unique(self, exclude=None):
+        super(SemesterPublication, self).validate_unique(exclude)
         e = self.event
         if Publication.objects.filter(event=e, semesterpublication__isnull=False) \
                 .filter(~Q(semesterpublication=self.pk), semesterpublication__order=self.order) \
@@ -623,6 +686,9 @@ class SemesterPublication(Publication):
 
 
 class UnspecifiedPublication(Publication):
+    """
+    Iná publikácia (Napríklad poradie, brožúra na Matboj)
+    """
     class Meta:
         verbose_name = 'iná publikácia'
         verbose_name_plural = 'iné publikácie'

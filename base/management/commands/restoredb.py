@@ -60,3 +60,4 @@ class Command(BaseCommand):
         load_fixture('semesters', 'event_registrations')
         load_fixture('event_registrations_random', 'solutions_random')
         load_fixture('posts', 'post_links')
+        load_fixture('menu_items')

@@ -7,6 +7,7 @@ app_name = 'cms'
 # Create a router and register our viewsets with it.
 router = DefaultRouter()
 router.register(r'post', views.PostViewSet)
+router.register(r'menu-item', views.MenuItemViewSet)
 
 
 urlpatterns = [

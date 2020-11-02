@@ -1,0 +1,107 @@
+[
+    {
+        "model": "cms.MenuItem",
+        "pk": 0,
+        "fields": {
+            "priority": 500,
+            "caption": "Zadania",
+            "url": "/zadania/",
+            "sites": [
+                1,
+                2,
+                3
+            ]
+        }
+    },
+    {
+        "model": "cms.MenuItem",
+        "pk": 1,
+        "fields": {
+            "priority": 450,
+            "caption": "Výsledky",
+            "url": "/vysledky/",
+            "sites": [
+                1,
+                2,
+                3
+            ]
+        }
+    },
+    {
+        "model": "cms.MenuItem",
+        "pk": 2,
+        "fields": {
+            "priority": 300,
+            "caption": "Matboj",
+            "url": "/matboj/",
+            "sites": [
+                1
+            ]
+        }
+    },
+    {
+        "model": "cms.MenuItem",
+        "pk": 3,
+        "fields": {
+            "priority": 300,
+            "caption": "Lomihlav",
+            "url": "/lomihlav/",
+            "sites": [
+                2
+            ]
+        }
+    },
+    {
+        "model": "cms.MenuItem",
+        "pk": 4,
+        "fields": {
+            "priority": 300,
+            "caption": "Mamut",
+            "url": "/mamut/",
+            "sites": [
+                3
+            ]
+        }
+    },
+    {
+        "model": "cms.MenuItem",
+        "pk": 5,
+        "fields": {
+            "priority": 100,
+            "caption": "TMM",
+            "url": "/tmm/",
+            "sites": [
+                1,
+                2,
+                3
+            ]
+        }
+    },
+    {
+        "model": "cms.MenuItem",
+        "pk": 6,
+        "fields": {
+            "priority": 100,
+            "caption": "Minisústredenia",
+            "url": "/minisustredenia/",
+            "sites": [
+                2,
+                3
+            ]
+        }
+    },
+    {
+        "model": "cms.MenuItem",
+        "pk": 7,
+        "fields": {
+            "priority": 100,
+            "caption": "Ochrana osobných údajov",
+            "url": "/gdpr/",
+            "sites": [
+                1,
+                2,
+                3
+            ]
+        }
+    }
+]
