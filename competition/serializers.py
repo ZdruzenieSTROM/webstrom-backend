@@ -2,10 +2,21 @@ from rest_framework import serializers
 from competition import models
 
 
+class HistrogramItemSerializer(serializers.Serializer):
+    score = serializers.IntegerField()
+    count = serializers.IntegerField()
+
+
 class ProblemSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Problem
         fields = '__all__'
+
+
+class ProblemStatsSerializer(serializers.Serializer):
+    historgram = HistrogramItemSerializer(many=True)
+    num_solutions = serializers.IntegerField()
+    mean = serializers.FloatField()
 
 
 class SeriesSerializer(serializers.ModelSerializer):

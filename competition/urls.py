@@ -19,6 +19,7 @@ router.register(r'semester', views.SemesterViewSet)
 
 urlpatterns = [
     # Úlohy
+
     path('series/<int:pk>/problems', SeriesProblemsView.as_view(),
          name='series-problems-detail'),
     path('series/latest-problems', LatestSeriesProblemsView.as_view(),
@@ -50,5 +51,6 @@ urlpatterns = [
     path('archive/', ArchiveView.as_view(),
          name='archive-view'),
 ]
+
 
 urlpatterns += router.urls
