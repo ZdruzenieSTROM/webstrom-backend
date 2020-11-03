@@ -2,7 +2,7 @@ from django.contrib import admin, messages
 from django.http import HttpResponseRedirect
 from django.utils.html import format_html
 
-from competition.models import (Event, Problem, School, Semester,
+from competition.models import (Event, Problem, Semester,
                                 SemesterPublication, Series, Solution,
                                 UnspecifiedPublication)
 
