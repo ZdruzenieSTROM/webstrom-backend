@@ -5,7 +5,7 @@ from django.shortcuts import redirect
 from django.views.generic import DetailView, ListView, View
 
 from rest_framework import viewsets
-from competition.serializers import ProblemSerializer, SeriesSerializer, SeriesWithProblemsSerializer
+from competition.serializers import ProblemSerializer, SeriesSerializer, SeriesWithProblemsSerializer, SemesterSerializer
 
 from competition.forms import SeriesSolutionForm
 from competition.models import (Competition, EventRegistration, Grade, Problem,
@@ -28,6 +28,12 @@ class SeriesViewSet(viewsets.ModelViewSet):
     """
     queryset = Series.objects.all()
     serializer_class = SeriesWithProblemsSerializer
+    #permission_classes = (UserPermission,)
+
+
+class SemesterViewSet(viewsets.ModelViewSet):
+    queryset = Semester.objects.all()
+    serializer_class = SemesterSerializer
     #permission_classes = (UserPermission,)
 
 

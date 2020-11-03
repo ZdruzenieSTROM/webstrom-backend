@@ -14,6 +14,7 @@ app_name = 'competition'
 router = DefaultRouter()
 router.register(r'problem', views.ProblemViewSet)
 router.register(r'series', views.SeriesViewSet)
+router.register(r'semester', views.SemesterViewSet)
 
 
 urlpatterns = [

@@ -27,3 +27,8 @@ class SeriesWithProblemsSerializer(serializers.ModelSerializer):
         for data in problem_data:
             models.Problem.objects.create(series=series, **data)
         return series
+
+class SemesterSerializer(serializers.ModelSerializer):
+     class Meta:
+        model = models.Semester
+        fields = '__all__'
