@@ -12,7 +12,7 @@
 
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'css/materialize.mis.css' %}" />
-    
+
     {% block css %}
     {% endblock css %}
 </head>
@@ -35,11 +35,7 @@
         </div>
     </div>
 
-    <script>
-        var filter_district_by_county_url = "{% url 'user:filter-district-by-county' 0 %}";
-        var filter_school_by_county_url = "{% url 'user:filter-school-by-county' 0 %}";
-        var filter_school_by_district_url = "{% url 'user:filter-school-by-district' 0 %}";
-    </script>
+
     <script src="{% static 'js/jquery-3.4.1.min.js' %}"></script>
     <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
     <script src="{% static 'js/main.js' %}"></script>
@@ -62,7 +58,8 @@
             messageStyle: "none",
         });
     </script>
-    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript"
+        src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     {% block javascript %}
     {% endblock javascript %}
 </body>
