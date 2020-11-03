@@ -3,8 +3,20 @@ from django.http import HttpResponseRedirect
 from django.utils.html import format_html
 
 from competition.models import (Event, Problem, School, Semester,
-                                SemesterPublication, Series, Solution,
+                                SemesterPublication, Series, Solution, Vote,
                                 UnspecifiedPublication)
+
+
+@admin.register(Vote)
+class VoteAdmin(admin.ModelAdmin):
+    list_display = (
+        '__str__',
+        'solution',
+        'comment'
+    )
+    list_filter = (
+        'is_positive',
+    )
 
 
 @admin.register(Series)
