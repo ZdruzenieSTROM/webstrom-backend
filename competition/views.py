@@ -19,10 +19,12 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser
 from rest_framework import exceptions
 from competition.serializers import ProblemSerializer, SeriesSerializer, SeriesWithProblemsSerializer, ProblemStatsSerializer, SemesterSerializer
+from profile.serializers import SchoolSerializer
 
 from competition.forms import SeriesSolutionForm
 from competition.models import (Competition, EventRegistration, Grade, Problem,
                                 Semester, Series, Solution)
+from profile.models import School
 from competition.utils import generate_praticipant_invitations
 
 from webstrom import settings
@@ -67,7 +69,7 @@ class ProblemViewSet(viewsets.ModelViewSet):
                 solution.get_solution_file_name(), f, save=True)
         return Response(status=status.HTTP_201_CREATED)
 
-    @action(detail=True)
+    @action(detail=True, url_path='my-solution')
     def my_solution(self, request, pk=None):
         problem = self.get_object()
         if not request.user.is_authenticated:
@@ -75,10 +77,10 @@ class ProblemViewSet(viewsets.ModelViewSet):
         event_registration = EventRegistration.get_registration_by_profile_and_event(
             request.user.profile, problem.series.semester)
         if event_registration is None:
-            raise exceptions.MethodNotAllowed(method='upload-solutuion')
+            raise exceptions.MethodNotAllowed(method='my-solutuion')
         pass
 
-    @action(methods=['get'], detail=True, permission_classes=[IsAdminUser])
+    @action(methods=['get'], detail=True, permission_classes=[IsAdminUser], url_path='download-solutions')
     def download_solutions(self, request, pk=None):
         solutions = self.get_object().solution_set.all()
         # Open StringIO to grab in-memory ZIP contents
@@ -102,7 +104,7 @@ class ProblemViewSet(viewsets.ModelViewSet):
 
         return response
 
-    @action(methods=['post'], detail=True, permission_classes=[IsAdminUser])
+    @action(methods=['post'], detail=True, permission_classes=[IsAdminUser], url_path='upload-corrected')
     def upload_solutions_with_points(self, request, pk=None):
         if 'file' not in request.data:
             raise exceptions.ParseError(detail='No file attached')
@@ -187,6 +189,35 @@ class SemesterViewSet(viewsets.ModelViewSet):
     queryset = Semester.objects.all()
     serializer_class = SemesterSerializer
     #permission_classes = (UserPermission,)
+
+    @action(methods=['get'], detail=True)
+    def schools(self, request, pk=None):
+        schools = School.objects.filter(eventregistration__event=pk)\
+            .distinct()\
+            .order_by('city', 'street')
+        serializer = SchoolSerializer(schools, many=True)
+        return Response(serializer.data)
+
+    @action(methods=['get'], detail=True, url_path='offline-schools')
+    def offline_schools(self, request, pk=None):
+        schools = School.objects.filter(eventregistration__event=pk)\
+            .filter(eventregistration__solution__is_online=False)\
+            .distinct()\
+            .order_by('city', 'street')
+        serializer = SchoolSerializer(schools, many=True)
+        return Response(serializer.data)
+
+    @action(methods=['get'], detail=True)
+    def invitations(self, request, pk=None):
+        pass
+
+    @action(methods=['get'], detail=True, url_path='school-invitations')
+    def school_invitations(self):
+        pass
+
+    @action(methods=['get'], detail=False)
+    def current(self, request, pk=None):
+        pass
 
 
 class SeriesProblemsView(DetailView):
