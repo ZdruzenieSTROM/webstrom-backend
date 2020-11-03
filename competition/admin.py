@@ -83,16 +83,6 @@ class SemesterAdmin(admin.ModelAdmin):
     )
 
 
-@admin.register(School)
-class SchoolAdmin(admin.ModelAdmin):
-    list_display = (
-        'name',
-        'street',
-        'city',
-        'abbreviation',
-    )
-
-
 @admin.register(Problem)
 class ProblemAdmin(admin.ModelAdmin):
     list_display = (

@@ -12,7 +12,7 @@
         }
     },
     {
-        "model": "competition.Profile",
+        "model": "profile.Profile",
         "pk": 1,
         "fields": {
             "user": 1,
