@@ -11,7 +11,6 @@ from competition.models import (Event, Problem, School, Semester,
 class VoteAdmin(admin.ModelAdmin):
     list_display = (
         '__str__',
-        'solution',
         'comment'
     )
     list_filter = (
