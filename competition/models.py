@@ -570,6 +570,20 @@ class Solution(models.Model):
         return f'Riešiteľ: { self.semester_registration } - úloha { self.problem }'
 
 
+class Vote(models.Model):
+    class Meta:
+        verbose_name = 'hlas'
+        verbose_name_plural = 'hlasy'
+    solution = models.ForeignKey(Solution, on_delete=models.CASCADE)
+    is_positive = models.BooleanField(verbose_name='Pozitívny hlas')
+    comment = models.CharField(
+        verbose_name='Komentár', max_length=200, help_text='Dôvod udelenia hlasu')
+
+    def __str__(self):
+        pos = 'Kladný' if self.is_positive else 'Záporný'
+        return f'{pos} hlas za {self.solution.problem} pre {self.solution.semester_registration.profile.user.get_full_name()}'
+
+
 class Publication(models.Model):
     """
     Reprezentuje výsledky, brožúrku alebo akýkoľvek materiál
