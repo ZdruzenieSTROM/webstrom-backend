@@ -524,7 +524,6 @@ class EventRegistration(models.Model):
         Grade, verbose_name='ročník', on_delete=models.CASCADE)
     event = models.ForeignKey(
         Semester, verbose_name='semester', on_delete=models.CASCADE)
-    votes = models.SmallIntegerField(verbose_name='hlasy', default=0)
 
     @staticmethod
     def get_registration_by_profile_and_event(profile, event):
@@ -585,7 +584,8 @@ class Vote(models.Model):
     class Meta:
         verbose_name = 'hlas'
         verbose_name_plural = 'hlasy'
-    solution = models.ForeignKey(Solution, on_delete=models.CASCADE)
+    solution = models.ForeignKey(
+        Solution, on_delete=models.CASCADE, related_name='votes', unique=True)
     is_positive = models.BooleanField(verbose_name='Pozitívny hlas')
     comment = models.CharField(
         verbose_name='Komentár', max_length=200, help_text='Dôvod udelenia hlasu')
