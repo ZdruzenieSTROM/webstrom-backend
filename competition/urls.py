@@ -5,9 +5,7 @@ from competition.views import (ArchiveView, LatestSeriesProblemsView,
                                SemesterInvitationsLatexView,
                                SemesterPublicationView,
                                SemesterRegistrationView,
-                               SemesterResultsLatexView, SemesterResultsView,
-                               SeriesProblemsView, SeriesResultsLatexView,
-                               SeriesResultsView)
+                               SeriesProblemsView)
 
 app_name = 'competition'
 
@@ -15,6 +13,7 @@ router = DefaultRouter()
 router.register(r'problem', views.ProblemViewSet)
 router.register(r'series', views.SeriesViewSet)
 router.register(r'semester', views.SemesterViewSet)
+router.register(r'solution', views.SolutionViewSet)
 
 
 urlpatterns = [
@@ -31,10 +30,7 @@ urlpatterns = [
     #         name='series-results'),
     #    path('series/<int:pk>/results/latex', SeriesResultsLatexView.as_view(),
     #         name='series-results-latex'),
-    path('semester/<int:pk>/results', SemesterResultsView.as_view(),
-         name='semester-results'),
-    path('semester/<int:pk>/results/latex', SemesterResultsLatexView.as_view(),
-         name='semester-results-latex'),
+
 
 
     # Registrácia do semestra
