@@ -1,10 +1,22 @@
 from rest_framework import serializers
 from competition import models
+from profile.serializers import ProfileShortSerializer, SchoolShortSerializer
 
 
-class HistrogramItemSerializer(serializers.Serializer):
-    score = serializers.IntegerField()
-    count = serializers.IntegerField()
+class EventSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Event
+        fields = '__all__'
+
+
+class EventRegistrationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.EventRegistration
+        fields = ['school', 'grade', 'profile']
+    school = SchoolShortSerializer(many=False)
+    grade = serializers.SlugRelatedField(
+        slug_field='tag', many=False, read_only=True)
+    profile = ProfileShortSerializer(many=False)
 
 
 class ProblemSerializer(serializers.ModelSerializer):
@@ -13,11 +25,24 @@ class ProblemSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class ProblemStatsSerializer(serializers.Serializer):
-    historgram = HistrogramItemSerializer(many=True)
-    num_solutions = serializers.IntegerField()
-    mean = serializers.FloatField()
+class VoteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Vote
+        fields = '__all__'
 
+
+class SolutionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Solution
+        fields = '__all__'
+    votes = VoteSerializer(many=True)
+
+
+# class ProblemStatsSerializer(serializers.Serializer):
+#    historgram = HistrogramItemSerializer(many=True)
+#    num_solutions = serializers.IntegerField()
+#   mean = serializers.FloatField()
+#
 
 class SeriesSerializer(serializers.ModelSerializer):
     class Meta:
@@ -43,9 +68,4 @@ class SeriesWithProblemsSerializer(serializers.ModelSerializer):
 class SemesterSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Semester
-
-
-class VoteSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Vote
         fields = '__all__'
