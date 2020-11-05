@@ -90,7 +90,6 @@ class ProblemViewSet(viewsets.ModelViewSet):
                     prefix = ''
                     if solution.late_tag is not None:
                         prefix = f'{solution.late_tag.slug}/'
-                        print(prefix)
                     _, fname = os.path.split(solution.solution.path)
                     zipf.write(solution.solution.path,
                                f'{prefix}{fname}')
@@ -222,7 +221,6 @@ class SeriesViewSet(viewsets.ModelViewSet):
                     # Zbali usera a a nahodi ho do vysledkov
                     results.append(SeriesViewSet._create_profile_dict(series,
                                                                       sum_func, current_profile, profile_solutions))
-                    print(results[-1])
                 # vytvori prazdny list s riešeniami
                 current_profile = solution.semester_registration
                 profile_solutions = [None] * series.num_problems
