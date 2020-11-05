@@ -83,6 +83,7 @@ def solutions_to_list_of_points_pretty(solutions):
 
 
 def series_simple_sum(solutions, user_registration=None):
+    # pylint: disable=unused-argument
     return sum([s.score or 0 for s in solutions if s is not None])
 
 
@@ -96,6 +97,7 @@ def series_general_weighted_sum(solutions, weights):
 
 
 def series_Malynar_sum(solutions, user_registration):
+    # pylint: disable=invalid-name
     weights = None
     if user_registration.class_level is not None:
         if user_registration.class_level.years_until_graduation > 8:
@@ -106,6 +108,7 @@ def series_Malynar_sum(solutions, user_registration):
 
 
 def series_Matik_sum(solutions, user_registration):
+    # pylint: disable=invalid-name
     weights = None
     if user_registration.class_level is not None:
         if user_registration.class_level.years_until_graduation > 5:
@@ -116,6 +119,7 @@ def series_Matik_sum(solutions, user_registration):
 
 
 def series_STROM_sum(solutions, user_registration):
+    # pylint: disable=invalid-name
     weights = None
     if user_registration.class_level is not None:
         if user_registration.class_level.years_until_graduation > 2:
@@ -126,6 +130,7 @@ def series_STROM_sum(solutions, user_registration):
 
 
 def series_STROM_4problems_sum(solutions, user_registration):
+    # pylint: disable=invalid-name
     weights = [1, 1, 1, 2]
     if user_registration.class_level is not None:
         if user_registration.class_level.years_until_graduation > 2:
