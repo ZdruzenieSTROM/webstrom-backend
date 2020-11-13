@@ -26,6 +26,8 @@ from competition.models import (Competition, Event, EventRegistration, Grade, Pr
 from competition import utils
 from profile.models import School
 
+from user.models import User
+
 from webstrom import settings
 
 
@@ -251,6 +253,15 @@ class SeriesViewSet(viewsets.ModelViewSet):
 
         return
 
+    @ action(methods=['get'], detail=False)
+    def current(self, request):
+        items = Series.objects.all()\
+            .filter(complete=False)\
+            .order_by('-deadline')\
+            .first()
+        serializer = SeriesWithProblemsSerializer(items, many=False)
+        return Response(serializer.data)
+
 
 class SolutionViewSet(viewsets.ModelViewSet):
     queryset = Solution.objects.all()
@@ -367,11 +378,32 @@ class SemesterViewSet(viewsets.ModelViewSet):
         return Response(schools, status=status.HTTP_200_OK)
 
     @ action(methods=['get'], detail=False)
-    def current(self, request, pk=None):
-        # TODO: Vráti aktuálny semester
-        pass
+    def current(self, request):
+        from datetime import datetime
+        items = Semester.objects.all()\
+            .filter(start__lt=datetime.now())\
+            .filter(end__gt=datetime.now())\
+            .order_by('-end')
+        if (items.count() > 0):
+            serializer = SemesterSerializer(items[0], many=False)
+            return Response(serializer.data)
+        else:
+            serializer = SemesterSerializer(items, many=True)
+            return Response(serializer.data)
 
+    @ action(methods=['get'], detail=False, url_path='current-results')
+    def current_results(self, request):
+        from datetime import datetime
+        items = Semester.objects.all()\
+            .filter(start__lt=datetime.now())\
+            .filter(end__gt=datetime.now())\
+            .order_by('-end')
+        if (items.count() > 0):
+            semester = items[0]
+            current_results = SemesterViewSet.semester_results(semester)
+            return Response(current_results, status=status.HTTP_201_CREATED)
 
+    
 class EventViewSet(viewsets.ModelViewSet):
     queryset = Event.objects.all()
     serializer_class = EventSerializer
