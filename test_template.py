@@ -4,6 +4,7 @@ more info  here https://docs.djangoproject.com/en/3.1/topics/testing/overview/
 you run them by running "./manage.py test"
 '''
 from django.test import TestCase
+from test_utils import get_app_fixtures
 
 
 class TestTest(TestCase):
