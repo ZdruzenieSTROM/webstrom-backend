@@ -119,7 +119,7 @@ class SeriesSolutionForm(forms.Form):
     def __init__(self, series, *args, **kwargs):
         super(SeriesSolutionForm, self).__init__(*args, **kwargs)
 
-        for problem in series.problem_set.all():
+        for problem in series.problems.all():
             self.fields[str(problem.pk)] = forms.FileField(
                 label='Tvoje riešenie',
                 required=False)
