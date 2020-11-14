@@ -18,7 +18,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework import exceptions
-from competition.serializers import EventSerializer, EventRegistrationSerializer, ProblemSerializer, SeriesSerializer, SeriesWithProblemsSerializer, SemesterSerializer, SolutionSerializer
+from competition.serializers import EventSerializer, EventRegistrationSerializer, ProblemSerializer, SeriesSerializer, SeriesWithProblemsSerializer, SemesterSerializer, SemesterWithProblemsSerializer, SolutionSerializer
 from profile.serializers import SchoolSerializer
 
 from competition.models import (Competition, Event, EventRegistration, Grade, Problem,
@@ -79,7 +79,8 @@ class ProblemViewSet(viewsets.ModelViewSet):
             request.user.profile, problem.series.semester)
         if event_registration is None:
             raise exceptions.MethodNotAllowed(method='my-solutuion')
-        pass
+        # TODO: vráti riešenie užívateľa
+        return Response([], status=status.HTTP_501_NOT_IMPLEMENTED)
 
     @action(methods=['get'], detail=True, permission_classes=[IsAdminUser], url_path='download-solutions')
     def download_solutions(self, request, pk=None):
@@ -250,8 +251,10 @@ class SeriesViewSet(viewsets.ModelViewSet):
     @ action(methods=['get'], detail=True)
     def stats(self, request, pk=None):
         problems = self.get_object().problems
-
-        return
+        stats = []
+        for problem in problems:
+            stats.append(problem.get_stats())
+        return Response(stats, status=status.HTTP_200_OK)
 
     @ action(methods=['get'], detail=False)
     def current(self, request):
@@ -260,7 +263,7 @@ class SeriesViewSet(viewsets.ModelViewSet):
             .order_by('-deadline')\
             .first()
         serializer = SeriesWithProblemsSerializer(items, many=False)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class SolutionViewSet(viewsets.ModelViewSet):
@@ -296,7 +299,7 @@ class SolutionViewSet(viewsets.ModelViewSet):
 
 class SemesterViewSet(viewsets.ModelViewSet):
     queryset = Semester.objects.all()
-    serializer_class = SemesterSerializer
+    serializer_class = SemesterWithProblemsSerializer
     # permission_classes = (UserPermission,)
 
     @staticmethod
@@ -385,10 +388,10 @@ class SemesterViewSet(viewsets.ModelViewSet):
             .filter(end__gt=datetime.now())\
             .order_by('-end')
         if (items.count() > 0):
-            serializer = SemesterSerializer(items[0], many=False)
+            serializer = SemesterWithProblemsSerializer(items[0], many=False)
             return Response(serializer.data)
         else:
-            serializer = SemesterSerializer(items, many=True)
+            serializer = SemesterWithProblemsSerializer(items, many=True)
             return Response(serializer.data)
 
     @ action(methods=['get'], detail=False, url_path='current-results')
@@ -403,7 +406,7 @@ class SemesterViewSet(viewsets.ModelViewSet):
             current_results = SemesterViewSet.semester_results(semester)
             return Response(current_results, status=status.HTTP_201_CREATED)
 
-    
+
 class EventViewSet(viewsets.ModelViewSet):
     queryset = Event.objects.all()
     serializer_class = EventSerializer
@@ -413,6 +416,7 @@ class EventViewSet(viewsets.ModelViewSet):
     def register(self, request, pk=None):
         event = self.get_object()
         profile = request.user.profile
+        # TODO: Overiť či sa môže registrovať ... či nie je starý
         if EventRegistration.get_registration_by_profile_and_event(
                 profile, event):
             return Response(status=status.HTTP_409_CONFLICT)
@@ -431,56 +435,3 @@ class EventRegistrationViewSet(viewsets.ModelViewSet):
     queryset = EventRegistration.objects.all()
     serializer_class = EventRegistrationSerializer
     filterset_fields = ['event', 'profile', ]
-
-
-class ArchiveView(ListView):
-    # TODO: toto prerobím keď pribudne model ročník
-    template_name = 'competition/archive.html'
-    model = Semester
-    context_object_name = 'context'
-
-    def get_queryset(self):
-        site_competition = Competition.get_seminar_by_current_site()
-        context = {}
-        years = {}
-
-        for sem in Semester.objects.filter(competition=site_competition).order_by('-year'):
-            if not sem.year in years:
-                years[sem.year] = []
-            years[sem.year].append(sem)
-
-        context["mostRecentYear"] = Semester.objects.filter(
-            competition=site_competition).order_by('-year').first().year
-        context["years"] = years
-        return context
-
-
-class SemesterRegistrationView(View):
-    def get(self, request, pk, cont, **kwargs):
-        # pylint: disable=unused-argument, invalid-name
-        try:
-            profile = self.request.user.profile
-            semester = Semester.objects.get(pk=pk)
-            assert not EventRegistration.get_registration_by_profile_and_event(
-                profile, semester)
-            EventRegistration(
-                profile=profile, school=profile.school,
-                grade=Grade.get_grade_by_year_of_graduation(
-                    profile.year_of_graduation),
-                event=semester).save()
-        except AssertionError:
-            messages.info(
-                request, 'Do semestra sa dá registrovať iba jedenkrát')
-        except AttributeError:
-            messages.error(request, 'Na registráciu je potrebné sa prihlásiť')
-        else:
-            messages.success(
-                request,
-                f'{Semester.objects.get(pk=pk)}: Registrácia do semestra prebehla úspešne')
-
-        return redirect(cont)
-
-
-class SemesterPublicationView(DetailView):
-    model = Semester
-    template_name = 'competition/publication.html'
