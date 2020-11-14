@@ -66,6 +66,16 @@ class SeriesWithProblemsSerializer(serializers.ModelSerializer):
 
 
 class SemesterSerializer(serializers.ModelSerializer):
+    series_set = SeriesSerializer(many=True)
+
+    class Meta:
+        model = models.Semester
+        fields = '__all__'
+
+
+class SemesterWithProblemsSerializer(serializers.ModelSerializer):
+    series_set = SeriesWithProblemsSerializer(many=True)
+
     class Meta:
         model = models.Semester
         fields = '__all__'
