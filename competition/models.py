@@ -357,7 +357,7 @@ class EventRegistration(models.Model):
     grade = models.ForeignKey(
         Grade, verbose_name='ročník', on_delete=models.CASCADE)
     event = models.ForeignKey(
-        Semester, verbose_name='semester', on_delete=models.CASCADE)
+        Event, verbose_name='semester', on_delete=models.CASCADE)
 
     @staticmethod
     def get_registration_by_profile_and_event(profile, event):
