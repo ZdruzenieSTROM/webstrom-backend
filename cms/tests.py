@@ -1,4 +1,8 @@
-
+<<<<<<< Updated upstream
+=======
+<<<<<<< Updated upstream
+=======
+>>>>>>> Stashed changes
 '''
 name of the test file must start with test
 more info  here https://docs.djangoproject.com/en/3.1/topics/testing/overview/
@@ -46,6 +50,8 @@ class TestPosts(TestCase):
         self.assertTrue(len(response_json) > 0)
         for key in expected_keys:
             self.assertIn(key, response_json[0])
+<<<<<<< Updated upstream
+=======
     
 class TestMenuItems(TestCase):
     '''test menu_items functionality'''
@@ -67,4 +73,5 @@ class TestMenuItems(TestCase):
         '''menu-item status code is 200'''
         response = self.client.get('/cms/menu-item', {}, 'json')
         self.assertEqual(response.status_code, 200)
-
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
