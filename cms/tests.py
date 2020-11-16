@@ -10,7 +10,7 @@ from rest_framework.test import APIClient
 
 
 class TestPosts(TestCase):
-    '''test posts functionality'''
+    '''test posts functionality, blabla'''
     fixtures = get_app_fixtures([
         'users',
         'base',
