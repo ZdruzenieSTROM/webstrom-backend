@@ -1,12 +1,6 @@
-
-'''
-name of the test file must start with test
-more info  here https://docs.djangoproject.com/en/3.1/topics/testing/overview/
-you run them by running "./manage.py test"
-'''
 from django.test import TestCase
-from django.test import Client
-from test_utils import get_app_fixtures
+from rest_framework.test import APIClient
+from tests.test_utils import get_app_fixtures
 
 
 class TestPosts(TestCase):
@@ -18,7 +12,7 @@ class TestPosts(TestCase):
 
     def setUp(self):
         '''create client'''
-        self.client = Client()
+        self.client = APIClient()
 
     def test_get_status_code_visible(self):
         '''post/visible status code is 200'''
@@ -46,7 +40,8 @@ class TestPosts(TestCase):
         self.assertTrue(len(response_json) > 0)
         for key in expected_keys:
             self.assertIn(key, response_json[0])
-    
+
+
 class TestMenuItems(TestCase):
     '''test menu_items functionality'''
     fixtures = get_app_fixtures([
@@ -56,15 +51,15 @@ class TestMenuItems(TestCase):
 
     def setUp(self):
         '''create client'''
-        self.client = Client()
+        self.client = APIClient()
 
     def test_get_status_code_on_current_site(self):
         '''menu-item/on-current-site status code is 200'''
-        response = self.client.get('/cms/menu-item/on-current-site', {}, 'json')
+        response = self.client.get(
+            '/cms/menu-item/on-current-site', {}, 'json')
         self.assertEqual(response.status_code, 200)
 
     def test_get_(self):
         '''menu-item status code is 200'''
         response = self.client.get('/cms/menu-item', {}, 'json')
         self.assertEqual(response.status_code, 200)
-
