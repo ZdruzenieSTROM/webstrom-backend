@@ -4,20 +4,22 @@ more info  here https://docs.djangoproject.com/en/3.1/topics/testing/overview/
 you run them by running "./manage.py test"
 '''
 from django.test import TestCase
-from django.test import Client
 from test_utils import get_app_fixtures
+from user.models import User
+from rest_framework.test import APIClient
 
 
 class TestPosts(TestCase):
     '''test posts functionality'''
     fixtures = get_app_fixtures([
+        'users',
         'base',
         'cms',
     ])
 
     def setUp(self):
         '''create client'''
-        self.client = Client()
+        self.client = APIClient()
 
     def test_get_status_code_visible(self):
         '''post/visible status code is 200'''

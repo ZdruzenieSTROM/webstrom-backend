@@ -11,8 +11,6 @@ def get_app_fixtures(app_list=[]):
         fixtures_dir = os.path.join(BASE_DIR, app, 'fixtures')
         fixtures_files = map(str, Path(fixtures_dir).rglob('*.json'))
         for file in fixtures_files:
-            print(file)
-
             fixtures.append(file)
 
     return fixtures
