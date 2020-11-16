@@ -4,10 +4,18 @@ more info  here https://docs.djangoproject.com/en/3.1/topics/testing/overview/
 you run them by running "./manage.py test"
 '''
 from django.test import TestCase
+from test_utils import get_app_fixtures
 
 
 class TestTest(TestCase):
-    '''test class must be a subclass of django.test.TestCase'''
+    '''
+    test class must be a subclass of django.test.TestCase
+    add fixtures to fill the db
+    '''
+    fixtures = get_app_fixtures([
+        'base',
+        'cms',
+    ])
 
     def setUp(self):
         '''setUp method is called once before other tests'''
