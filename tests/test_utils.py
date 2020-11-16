@@ -3,7 +3,7 @@ from pathlib import Path
 from webstrom.settings import BASE_DIR
 
 
-def get_app_fixtures(app_list=[]):
+def get_app_fixtures(app_list):
     '''returns all .json fixtures from given list of apps'''
     fixtures = []
 

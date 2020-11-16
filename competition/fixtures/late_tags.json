@@ -4,6 +4,7 @@
         "pk": 0,
         "fields": {
             "name": "Do 24 hodín",
+            "slug": "Do24Hodin",
             "upper_bound": "1 00:00:00",
             "comment": "Riešiteľ odovzdal riešenie do 24 hodín po termíne. Body získané v riešení budú prenásobené 2/3 a zaokrúhlené nahor."
         }
@@ -13,6 +14,7 @@
         "pk": 1,
         "fields": {
             "name": "Do 4 dní",
+            "slug": "Do4Dni",
             "upper_bound": "4 00:00:00",
             "comment": "Riešiteľ odovzdal riešenie do 4 dní po termíne. Body získané v riešení budú prenásobené 1/2 a zaokrúhlené nadol."
         }
@@ -22,6 +24,7 @@
         "pk": 2,
         "fields": {
             "name": "Viac ako 4 dni",
+            "slug": "ViacAko4Dni",
             "upper_bound": "10 00:00:00",
             "comment": "Riešiteľ odovzdal riešenie do 24 hodín po termíne. Za riešenie bude udelených 0 bodov."
         }

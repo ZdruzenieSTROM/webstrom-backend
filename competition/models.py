@@ -1,13 +1,13 @@
 import datetime
 import os
 from io import BytesIO
-from operator import itemgetter
 
 import pdf2image
 
 from django.contrib.sites.models import Site
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
+from django.core.validators import validate_slug
 from django.db import models
 from django.db.models import Q
 from django.db.models.constraints import UniqueConstraint
@@ -88,6 +88,8 @@ class LateTag(models.Model):
 
     name = models.CharField(
         verbose_name='označenie štítku pre riešiteľa', max_length=50)
+    slug = models.CharField(
+        verbose_name='označenie priečinku pri stiahnutí', max_length=50, validators=[validate_slug])
     upper_bound = models.DurationField(
         verbose_name='maximálna dĺžka omeškania')
     comment = models.TextField(verbose_name='komentár pre opravovateľa')
@@ -162,8 +164,8 @@ class Semester(Event):
     def get_second_series(self):
         return self.series_set.get(order=2)
 
-    def freeze_results(self):
-        self.frozen_results = self.results_with_ranking()
+    def freeze_results(self, results):
+        self.frozen_results = results
 
     @cached_property
     def season(self):
@@ -183,99 +185,6 @@ class Semester(Event):
 
     def __str__(self):
         return f'{self.competition.name}, {self.year}. ročník - {self.season} semester'
-
-    def _merge_profile(self, old, new, problems_in_old, problems_in_new):
-        if not old:
-            new['solutions'] = [None]*problems_in_old+new['solutions']
-            new['points'] = ['-']*problems_in_old+new['points']
-            new['subtotal'].append(0)
-            return new
-        elif not new:
-            old['solutions'] += [None]*problems_in_new
-            old['points'] += ['-']*problems_in_new
-            old['subtotal'].append(0)
-            return old
-
-        else:
-            # mergnutie dvoch zip
-            solutions0 = []
-            solutions1 = []
-            for a in old['solutions']:
-                solutions0.append(a[0])
-                solutions1.append(a[1])
-            for a in new['solutions']:
-                solutions0.append(a[0])
-                solutions1.append(a[1])
-            old['solutions'] = zip(solutions0, solutions1)
-
-            old['points'] += new['points']
-            old['subtotal'].append(new['total'])
-            old['total'] = sum(old['subtotal'])
-            return old
-
-    def _merge_results(
-            self,
-            current_results,
-            series_results,
-            problems_in_current,
-            problems_in_series):
-        # Zmerguje riadky výsledkov. Predpokladá že obe results su usporiadané podľa usera
-        if current_results:
-            merged_results = []
-            i, j = 0, 0
-            while i < len(current_results) and j < len(series_results):
-                if current_results[i]['profile'] == series_results[j]['profile']:
-                    merged_results.append(self._merge_profile(
-                        current_results[i], series_results[j],
-                        problems_in_current, problems_in_series))
-                    i += 1
-                    j += 1
-                elif current_results[i]['profile'] > series_results[j]['profile']:
-                    merged_results.append(self._merge_profile(
-                        None, series_results[j], problems_in_current, problems_in_series))
-                    j += 1
-                else:
-                    merged_results.append(self._merge_profile(
-                        current_results[i], None, problems_in_current, problems_in_series))
-                    i += 1
-            while i < len(current_results):
-                merged_results.append(self._merge_profile(
-                    current_results[i], None, problems_in_current, problems_in_series))
-                i += 1
-            while j < len(series_results):
-                merged_results.append(self._merge_profile(
-                    None, series_results[j], problems_in_current, problems_in_series))
-                j += 1
-            return merged_results
-
-        return series_results
-
-    def results_with_ranking(self):
-        if self.frozen_results is not None:
-            return self.frozen_results
-        current_results = None
-        curent_number_of_problems = 0
-        for series in self.series_set.all():
-            series_result = series.results()
-            count = series.num_problems
-            current_results = self._merge_results(
-                current_results, series_result, curent_number_of_problems, count)
-            curent_number_of_problems += count
-        current_results.sort(key=itemgetter('total'), reverse=True)
-        current_results = utils.rank_results(current_results)
-        return current_results
-
-    # Túto metódu vyberme do view
-    def get_schools(self, offline_users_only=False):
-        if offline_users_only:
-            return School.objects.filter(eventregistration__event=self.pk)\
-                .filter(eventregistration__solution__is_online=False)\
-                .distinct()\
-                .order_by('city', 'street')
-        else:
-            return School.objects.filter(eventregistration__event=self.pk)\
-                .distinct()\
-                .order_by('city', 'street')
 
 
 class Series(models.Model):
@@ -344,84 +253,12 @@ class Series(models.Model):
             .order_by('upper_bound')\
             .first()
 
-    def freeze_results(self):
-        self.frozen_results = self.results_with_ranking()
+    def freeze_results(self, results):
+        self.frozen_results = results
 
     @property
     def num_problems(self):
-        return self.problem_set.count()
-
-    # Generuje jeden riadok poradia ako slovník atribútov
-    def _create_profile_dict(self, sum_func, semester_registration, profile_solutions):
-        # list primary keys uloh v aktualnom semestri
-        problems_pk_list = []
-        for problem in self.problem_set.all():
-            problems_pk_list.append(problem.pk)
-
-        return {
-            # Poradie - horná hranica, v prípade deleného miesto(napr. 1.-3.) ide o nižšie miesto(1)
-            'rank_start': 0,
-            # Poradie - dolná hranica, v prípade deleného miesto(napr. 1.-3.) ide o vyššie miesto(3)
-            'rank_end': 0,
-            # Indikuje či sa zmenilo poradie od minulej priečky, slúži na delené miesta
-            'rank_changed': True,
-            # primary key riešiteľovej registrácie do semestra
-            'semester_registration_pk': semester_registration.pk,
-            'profile': semester_registration.profile,                # Profil riešiteľa
-            'school': semester_registration.school,                  # Škola
-            'grade': semester_registration.grade.tag,          # Značka stupňa
-            'points': utils.solutions_to_list_of_points_pretty(profile_solutions),
-            # Súčty bodov po sériách
-            'subtotal': [sum_func(profile_solutions, semester_registration)],
-            # Celkový súčet za danú entitu
-            'total': sum_func(profile_solutions, semester_registration),
-            # zipnutý zoznam riešení a pk príslušných problémov,
-            # aby ich bolo možné prelinkovať z poradia do admina
-            # a získať pk problému pri none riešení
-            'solutions': zip(profile_solutions, problems_pk_list)
-        }
-
-    def results(self):
-        sum_func = getattr(utils, self.sum_method or '',
-                           utils.series_simple_sum)
-        results = []
-
-        solutions = Solution.objects.only('semester_registration', 'problem', 'score')\
-            .filter(problem__series=self.pk)\
-            .order_by('semester_registration', 'problem')\
-            .select_related('semester_registration', 'problem')
-
-        current_profile = None
-        profile_solutions = [None] * self.num_problems
-
-        for solution in solutions:
-            if current_profile != solution.semester_registration:
-                if current_profile:
-                    # Bolo dokončené spracovanie jedného usera
-                    # Zbali usera a a nahodi ho do vysledkov
-                    results.append(self._create_profile_dict(
-                        sum_func, current_profile, profile_solutions))
-                # vytvori prazdny list s riešeniami
-                current_profile = solution.semester_registration
-                profile_solutions = [None] * self.num_problems
-
-            # Spracuj riešenie
-            profile_solutions[solution.problem.order - 1] = solution
-
-        # Uloz posledneho usera
-        if current_profile:
-            results.append(self._create_profile_dict(
-                sum_func, current_profile, profile_solutions))
-
-        return results
-
-    def results_with_ranking(self):
-        if self.frozen_results is not None:
-            return self.frozen_results
-        results = self.results()
-        results.sort(key=itemgetter('total'), reverse=True)
-        results = utils.rank_results(results)
-        return results
+        return self.problems.count()
 
 
 class Problem(models.Model):
@@ -437,7 +274,9 @@ class Problem(models.Model):
     text = models.TextField(verbose_name='znenie úlohy')
     order = models.PositiveSmallIntegerField(verbose_name='poradie v sérii')
     series = models.ForeignKey(
-        Series, verbose_name='úloha zaradená do série', on_delete=models.CASCADE,)
+        Series, verbose_name='úloha zaradená do série',
+        related_name='problems',
+        on_delete=models.CASCADE,)
 
     def __str__(self):
         return f'{self.series.semester.competition.name}-{self.series.semester.year}' \
@@ -519,7 +358,6 @@ class EventRegistration(models.Model):
         Grade, verbose_name='ročník', on_delete=models.CASCADE)
     event = models.ForeignKey(
         Semester, verbose_name='semester', on_delete=models.CASCADE)
-    votes = models.SmallIntegerField(verbose_name='hlasy', default=0)
 
     @staticmethod
     def get_registration_by_profile_and_event(profile, event):
@@ -553,7 +391,7 @@ class Solution(models.Model):
         verbose_name='opravené riešenie', blank=True, upload_to='solutions/corrected/')
 
     score = models.PositiveSmallIntegerField(
-        verbose_name='body', null=True)
+        verbose_name='body', null=True, blank=True)
 
     uploaded_at = models.DateTimeField(
         verbose_name='dátum pridania', auto_now_add=True)
@@ -569,12 +407,19 @@ class Solution(models.Model):
     def __str__(self):
         return f'Riešiteľ: { self.semester_registration } - úloha { self.problem }'
 
+    def get_solution_file_name(self):
+        return f'{self.semester_registration.profile.user.get_full_name_camel_case()}-{self.problem.id}-{self.semester_registration.id}.pdf'
+
+    def get_corrected_solution_file_name(self):
+        return f'corrected/{self.semester_registration.profile.user.get_full_name_camel_case()}-{self.problem.id}-{self.semester_registration.id}_corrected.pdf'
+
 
 class Vote(models.Model):
     class Meta:
         verbose_name = 'hlas'
         verbose_name_plural = 'hlasy'
-    solution = models.ForeignKey(Solution, on_delete=models.CASCADE)
+    solution = models.ForeignKey(
+        Solution, on_delete=models.CASCADE, related_name='votes', unique=True)
     is_positive = models.BooleanField(verbose_name='Pozitívny hlas')
     comment = models.CharField(
         verbose_name='Komentár', max_length=200, help_text='Dôvod udelenia hlasu')

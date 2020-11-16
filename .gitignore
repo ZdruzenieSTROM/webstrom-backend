@@ -16,6 +16,7 @@ fixtures/sources
 # Environmenty
 env
 .env
+strom
 vevericka
 django-env
 

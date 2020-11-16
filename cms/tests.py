@@ -1,18 +1,11 @@
-'''
-name of the test file must start with test
-more info  here https://docs.djangoproject.com/en/3.1/topics/testing/overview/
-you run them by running "./manage.py test"
-'''
 from django.test import TestCase
-from tests import test_utils
-from user.models import User
 from rest_framework.test import APIClient
+from tests.test_utils import get_app_fixtures
 
 
 class TestPosts(TestCase):
-    '''test posts functionality, blabla'''
-    fixtures = test_utils.get_app_fixtures([
-        'users',
+    '''test posts functionality'''
+    fixtures = get_app_fixtures([
         'base',
         'cms',
     ])

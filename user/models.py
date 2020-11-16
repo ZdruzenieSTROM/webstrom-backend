@@ -99,6 +99,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     def get_full_name(self):
         return f'{self.first_name.strip()} {self.last_name.strip()}'
 
+    def get_full_name_camel_case(self):
+        return f'{self.first_name.strip()}{self.last_name.strip()}'
+
     def get_short_name(self):
         return self.first_name
 
