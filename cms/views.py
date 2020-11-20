@@ -38,7 +38,6 @@ class PostViewSet(viewsets.ModelViewSet):
 
     @action(detail=False)
     def visible(self, request):
-        posts = Post.objects.all()
-        posts = [p for p in posts if p.is_visible]
+        posts = Post.objects.filter(is_visible=True)
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data)

@@ -25,6 +25,8 @@ from competition.serializers import (EventRegistrationSerializer,
 from profile.models import School
 from profile.serializers import SchoolSerializer
 
+# pylint: disable=unused-argument
+
 
 class ProblemViewSet(viewsets.ModelViewSet):
     """
@@ -53,8 +55,8 @@ class ProblemViewSet(viewsets.ModelViewSet):
         if 'file' not in request.data:
             raise exceptions.ParseError(detail='Request neobsahoval súbor')
 
-        f = request.data['file']
-        if mime_type(f) != 'application/pdf':
+        file = request.data['file']
+        if mime_type(file) != 'application/pdf':
             raise exceptions.ParseError(
                 detail='Riešenie nie je vo formáte pdf')
         late_tag = problem.series.get_actual_late_flag()
@@ -65,7 +67,7 @@ class ProblemViewSet(viewsets.ModelViewSet):
             is_online=True
         )
         solution.solution.save(
-            solution.get_solution_file_name(), f, save=True)
+            solution.get_solution_file_name(), file, save=True)
 
         return Response(status=status.HTTP_201_CREATED)
 
@@ -86,8 +88,8 @@ class ProblemViewSet(viewsets.ModelViewSet):
     def download_solutions(self, request, pk=None):
         solutions = self.get_object().solution_set.all()
         # Open StringIO to grab in-memory ZIP contents
-        s = BytesIO()
-        with zipfile.ZipFile(s, 'w') as zipf:
+        stream = BytesIO()
+        with zipfile.ZipFile(stream, 'w') as zipf:
             for solution in solutions:
                 if solution.is_online and solution.solution.name is not None:
                     prefix = ''
@@ -96,7 +98,7 @@ class ProblemViewSet(viewsets.ModelViewSet):
                     _, fname = os.path.split(solution.solution.path)
                     zipf.write(solution.solution.path,
                                f'{prefix}{fname}')
-        response = HttpResponse(s.getvalue(),
+        response = HttpResponse(stream.getvalue(),
                                 content_type="application/x-zip-compressed")
 
         response['Content-Disposition'] = (
@@ -119,7 +121,7 @@ class ProblemViewSet(viewsets.ModelViewSet):
             raise exceptions.ParseError(detail='Zip file is corrupted')
         pdf_files = [name for name in zfile.namelist()
                      if name.endswith('.pdf')]
-        status = []
+        errors = []
         for filename in pdf_files:
             try:
                 parts = filename.rstrip('.pdf').split('-')
@@ -130,19 +132,19 @@ class ProblemViewSet(viewsets.ModelViewSet):
                 solution = Solution.objects.get(semester_registration=event_reg,
                                                 problem=problem_pk)
             except (IndexError, ValueError, AssertionError):
-                status.append({
+                errors.append({
                     'filename': filename,
                     'status': 'Cannot parse file'
                 })
                 continue
             except EventRegistration.DoesNotExist:
-                status.append({
+                errors.append({
                     'filename': filename,
                     'status': f'User registration with id {registration_pk} does not exist'
                 })
                 continue
             except Solution.DoesNotExist:
-                status.append({
+                errors.append({
                     'filename': filename,
                     'status': f'Solution with registration id {registration_pk}'
                               f'and problem id {problem_pk} does not exist'
@@ -157,11 +159,11 @@ class ProblemViewSet(viewsets.ModelViewSet):
             solution.score = score
             solution.corrected_solution = solution.get_corrected_solution_file_name()
             solution.save()
-            status.append({
+            errors.append({
                 'filename': filename,
                 'status': f'OK - points: {score}'
             })
-        return Response(json.dumps(status))
+        return Response(json.dumps(errors))
 
 
 class SeriesViewSet(viewsets.ModelViewSet):
@@ -433,8 +435,8 @@ class EventViewSet(viewsets.ModelViewSet):
             profile=profile,
             grade=Grade.get_grade_by_year_of_graduation(
                 profile.year_of_graduation),
-
         )
+
         return Response(status=status.HTTP_201_CREATED)
 
 
