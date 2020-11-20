@@ -1,5 +1,3 @@
-from competition.forms import ProfileCreationForm, ProfileUpdateForm
-from competition.models import Grade, Profile
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
@@ -9,6 +7,8 @@ from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.views.generic import DetailView
 from rest_framework.decorators import api_view
 
+from competition.forms import ProfileCreationForm, ProfileUpdateForm
+from competition.models import Grade, Profile
 from profile.models import District, School
 from user.forms import NameUpdateForm, UserCreationForm
 from user.models import User
