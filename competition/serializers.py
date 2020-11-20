@@ -110,3 +110,13 @@ class SemesterWithProblemsSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Semester
         fields = '__all__'
+
+class UnspecifiedPublicationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.UnspecifiedPublication
+        fields = '__all__'
+
+class SemesterPublicationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.SemesterPublication
+        fields = '__all__'
