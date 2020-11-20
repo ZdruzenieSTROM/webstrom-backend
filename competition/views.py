@@ -1,34 +1,29 @@
-
-from io import BytesIO
 import json
-from operator import itemgetter
 import os
 import zipfile
+from datetime import datetime
+from io import BytesIO
+from operator import itemgetter
 
-from base.utils import mime_type
-
-from django.contrib import messages
 from django.core.files.move import file_move_safe
 from django.http import HttpResponse
-from django.shortcuts import redirect
-from django.views.generic import DetailView, ListView, View
-
-from rest_framework import filters, status, viewsets
+from rest_framework import exceptions, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
-from rest_framework import exceptions
-from competition.serializers import EventSerializer, EventRegistrationSerializer, ProblemSerializer, SeriesSerializer, SeriesWithProblemsSerializer, SemesterSerializer, SemesterWithProblemsSerializer, SolutionSerializer
-from profile.serializers import SchoolSerializer
-
-from competition.models import (Competition, Event, EventRegistration, Grade, Problem,
-                                Semester, Series, Solution, Vote)
-from competition import utils
-from profile.models import School
-
-from user.models import User
-
+from rest_framework.response import Response
 from webstrom import settings
+
+from base.utils import mime_type
+from competition import utils
+from competition.models import (Event, EventRegistration, Grade, Problem,
+                                Semester, Series, Solution, Vote)
+from competition.serializers import (EventRegistrationSerializer,
+                                     EventSerializer, ProblemSerializer,
+                                     SemesterWithProblemsSerializer,
+                                     SeriesWithProblemsSerializer,
+                                     SolutionSerializer)
+from profile.models import School
+from profile.serializers import SchoolSerializer
 
 
 class ProblemViewSet(viewsets.ModelViewSet):
@@ -37,7 +32,6 @@ class ProblemViewSet(viewsets.ModelViewSet):
     """
     queryset = Problem.objects.all()
     serializer_class = ProblemSerializer
-    # permission_classes = (UserPermission,)
 
     @action(methods=['get'], detail=True, permission_classes=[IsAdminUser])
     def stats(self, request, pk=None):
@@ -46,28 +40,33 @@ class ProblemViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True, url_name='upload-solution')
     def upload_solution(self, request, pk=None):
         problem = self.get_object()
+
         if not request.user.is_authenticated:
             raise exceptions.PermissionDenied('Je potrebné sa prihlásiť')
+
         event_registration = EventRegistration.get_registration_by_profile_and_event(
             request.user.profile, problem.series.semester)
+
         if event_registration is None:
             raise exceptions.MethodNotAllowed(method='upload-solutuion')
-        elif 'file' not in request.data:
+
+        if 'file' not in request.data:
             raise exceptions.ParseError(detail='Request neobsahoval súbor')
-        else:
-            f = request.data['file']
-            if mime_type(f) != 'application/pdf':
-                raise exceptions.ParseError(
-                    detail='Riešenie nie je vo formáte pdf')
-            late_tag = problem.series.get_actual_late_flag()
-            solution = Solution.objects.create(
-                problem=problem,
-                semester_registration=event_registration,
-                late_tag=late_tag,
-                is_online=True
-            )
-            solution.solution.save(
-                solution.get_solution_file_name(), f, save=True)
+
+        f = request.data['file']
+        if mime_type(f) != 'application/pdf':
+            raise exceptions.ParseError(
+                detail='Riešenie nie je vo formáte pdf')
+        late_tag = problem.series.get_actual_late_flag()
+        solution = Solution.objects.create(
+            problem=problem,
+            semester_registration=event_registration,
+            late_tag=late_tag,
+            is_online=True
+        )
+        solution.solution.save(
+            solution.get_solution_file_name(), f, save=True)
+
         return Response(status=status.HTTP_201_CREATED)
 
     @action(detail=True, url_path='my-solution')
@@ -82,7 +81,8 @@ class ProblemViewSet(viewsets.ModelViewSet):
         # TODO: vráti riešenie užívateľa
         return Response([], status=status.HTTP_501_NOT_IMPLEMENTED)
 
-    @action(methods=['get'], detail=True, permission_classes=[IsAdminUser], url_path='download-solutions')
+    @action(methods=['get'], detail=True, permission_classes=[IsAdminUser],
+            url_path='download-solutions')
     def download_solutions(self, request, pk=None):
         solutions = self.get_object().solution_set.all()
         # Open StringIO to grab in-memory ZIP contents
@@ -105,7 +105,8 @@ class ProblemViewSet(viewsets.ModelViewSet):
 
         return response
 
-    @action(methods=['post'], detail=True, permission_classes=[IsAdminUser], url_path='upload-corrected')
+    @action(methods=['post'], detail=True, permission_classes=[IsAdminUser],
+            url_path='upload-corrected')
     def upload_solutions_with_points(self, request, pk=None):
         if 'file' not in request.data:
             raise exceptions.ParseError(detail='No file attached')
@@ -143,7 +144,8 @@ class ProblemViewSet(viewsets.ModelViewSet):
             except Solution.DoesNotExist:
                 status.append({
                     'filename': filename,
-                    'status': f'Solution with registration id {registration_pk} and problem id {problem_pk} does not exist'
+                    'status': f'Solution with registration id {registration_pk}'
+                              f'and problem id {problem_pk} does not exist'
                 })
                 continue
 
@@ -168,7 +170,6 @@ class SeriesViewSet(viewsets.ModelViewSet):
     """
     queryset = Series.objects.all()
     serializer_class = SeriesWithProblemsSerializer
-    # permission_classes = (UserPermission,)
 
     @staticmethod
     def _create_profile_dict(series, sum_func, semester_registration, profile_solutions):
@@ -177,7 +178,9 @@ class SeriesViewSet(viewsets.ModelViewSet):
         for problem in series.problems.all():
             problems_pk_list.append(problem.pk)
         solutions = []
-        for points, sol, problem in zip(utils.solutions_to_list_of_points_pretty(profile_solutions), profile_solutions, problems_pk_list):
+        for points, sol, problem in zip(
+            utils.solutions_to_list_of_points_pretty(profile_solutions),
+                profile_solutions, problems_pk_list):
             solutions.append({
                 'points': points,
                 'solution_pk': sol.pk if sol else None,
@@ -203,7 +206,7 @@ class SeriesViewSet(viewsets.ModelViewSet):
             'solutions': [solutions]
         }
 
-    @ staticmethod
+    @staticmethod
     def series_results(series):
         sum_func = getattr(utils, series.sum_method or '',
                            utils.series_simple_sum)
@@ -222,8 +225,8 @@ class SeriesViewSet(viewsets.ModelViewSet):
                 if current_profile:
                     # Bolo dokončené spracovanie jedného usera
                     # Zbali usera a a nahodi ho do vysledkov
-                    results.append(SeriesViewSet._create_profile_dict(series,
-                                                                      sum_func, current_profile, profile_solutions))
+                    results.append(SeriesViewSet._create_profile_dict(
+                        series, sum_func, current_profile, profile_solutions))
                 # vytvori prazdny list s riešeniami
                 current_profile = solution.semester_registration
                 profile_solutions = [None] * series.num_problems
@@ -233,8 +236,8 @@ class SeriesViewSet(viewsets.ModelViewSet):
 
         # Uloz posledneho usera
         if current_profile:
-            results.append(SeriesViewSet._create_profile_dict(series,
-                                                              sum_func, current_profile, profile_solutions))
+            results.append(SeriesViewSet._create_profile_dict(
+                series, sum_func, current_profile, profile_solutions))
 
         return results
 
@@ -280,17 +283,20 @@ class SolutionViewSet(viewsets.ModelViewSet):
             Vote.objects.create(solution=solution, is_positive=positive)
         return Response(status=status.HTTP_201_CREATED)
 
-    @ action(methods=['post'], detail=True, url_name='add-positive-vote', permission_classes=[IsAdminUser])
+    @action(methods=['post'], detail=True, url_name='add-positive-vote',
+            permission_classes=[IsAdminUser])
     def add_positive_vote(self, request, pk=None):
         solution = self.get_object()
         return self.add_vote(request, True, solution)
 
-    @ action(methods=['post'], detail=True, url_name='add-negative-vote',  permission_classes=[IsAdminUser])
+    @action(methods=['post'], detail=True, url_name='add-negative-vote',
+            permission_classes=[IsAdminUser])
     def add_negative_vote(self, request, pk=None):
         solution = self.get_object()
         return self.add_vote(request, False, solution)
 
-    @ action(methods=['post'], detail=True, url_name='remove-vote',  permission_classes=[IsAdminUser])
+    @action(methods=['post'], detail=True, url_name='remove-vote',
+            permission_classes=[IsAdminUser])
     def remove_vote(self, request, pk=None):
         solution = self.get_object()
         Vote.objects.filter(solution=solution).delete()
@@ -300,7 +306,6 @@ class SolutionViewSet(viewsets.ModelViewSet):
 class SemesterViewSet(viewsets.ModelViewSet):
     queryset = Semester.objects.all()
     serializer_class = SemesterWithProblemsSerializer
-    # permission_classes = (UserPermission,)
 
     @staticmethod
     def semester_results(semester):
@@ -318,13 +323,13 @@ class SemesterViewSet(viewsets.ModelViewSet):
         current_results = utils.rank_results(current_results)
         return current_results
 
-    @ action(methods=['get'], detail=True)
+    @action(methods=['get'], detail=True)
     def results(self, request, pk=None):
         semester = self.get_object()
         current_results = SemesterViewSet.semester_results(semester)
         return Response(current_results, status=status.HTTP_201_CREATED)
 
-    @ action(methods=['get'], detail=True)
+    @action(methods=['get'], detail=True)
     def schools(self, request, pk=None):
         schools = School.objects.filter(eventregistration__event=pk)\
             .distinct()\
@@ -332,7 +337,7 @@ class SemesterViewSet(viewsets.ModelViewSet):
         serializer = SchoolSerializer(schools, many=True)
         return Response(serializer.data)
 
-    @ action(methods=['get'], detail=True, url_path='offline-schools')
+    @action(methods=['get'], detail=True, url_path='offline-schools')
     def offline_schools(self, request, pk=None):
         schools = School.objects.filter(eventregistration__event=pk)\
             .filter(eventregistration__solution__is_online=False)\
@@ -341,7 +346,8 @@ class SemesterViewSet(viewsets.ModelViewSet):
         serializer = SchoolSerializer(schools, many=True)
         return Response(serializer.data)
 
-    @ action(methods=['get'], detail=True, url_path=r'invitations/(?P<num_participants>\d+)/(?P<num_substitutes>\d+)')
+    @action(methods=['get'], detail=True,
+            url_path=r'invitations/(?P<num_participants>\d+)/(?P<num_substitutes>\d+)')
     def invitations(self, request, pk=None, num_participants=32, num_substitutes=20):
         semester = self.get_object()
         num_participants = int(num_participants)
@@ -356,7 +362,8 @@ class SemesterViewSet(viewsets.ModelViewSet):
 
         return Response(participants, status=status.HTTP_200_OK)
 
-    @ action(methods=['get'], detail=True, url_path=r'school-invitations/(?P<num_participants>\d+)/(?P<num_substitutes>\d+)')
+    @action(methods=['get'], detail=True,
+            url_path=r'school-invitations/(?P<num_participants>\d+)/(?P<num_substitutes>\d+)')
     def school_invitations(self, request, pk=None, num_participants=32, num_substitutes=20):
         num_participants = int(num_participants)
         num_substitutes = int(num_substitutes)
@@ -380,28 +387,28 @@ class SemesterViewSet(viewsets.ModelViewSet):
 
         return Response(schools, status=status.HTTP_200_OK)
 
-    @ action(methods=['get'], detail=False)
+    @action(methods=['get'], detail=False)
     def current(self, request):
-        from datetime import datetime
         items = Semester.objects.all()\
             .filter(start__lt=datetime.now())\
             .filter(end__gt=datetime.now())\
             .order_by('-end')
-        if (items.count() > 0):
+
+        if items.count() > 0:
             serializer = SemesterWithProblemsSerializer(items[0], many=False)
             return Response(serializer.data)
-        else:
-            serializer = SemesterWithProblemsSerializer(items, many=True)
-            return Response(serializer.data)
 
-    @ action(methods=['get'], detail=False, url_path='current-results')
+        serializer = SemesterWithProblemsSerializer(items, many=True)
+        return Response(serializer.data)
+
+    @action(methods=['get'], detail=False, url_path='current-results')
     def current_results(self, request):
-        from datetime import datetime
         items = Semester.objects.all()\
             .filter(start__lt=datetime.now())\
             .filter(end__gt=datetime.now())\
             .order_by('-end')
-        if (items.count() > 0):
+
+        if items.count() > 0:
             semester = items[0]
             current_results = SemesterViewSet.semester_results(semester)
             return Response(current_results, status=status.HTTP_201_CREATED)
@@ -412,7 +419,7 @@ class EventViewSet(viewsets.ModelViewSet):
     serializer_class = EventSerializer
     filterset_fields = ['school_year', 'competition', ]
 
-    @ action(methods=['post'], detail=True, permission_classes=[IsAuthenticated])
+    @action(methods=['post'], detail=True, permission_classes=[IsAuthenticated])
     def register(self, request, pk=None):
         event = self.get_object()
         profile = request.user.profile

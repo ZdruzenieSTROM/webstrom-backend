@@ -2,7 +2,7 @@ from django.contrib import admin, messages
 from django.http import HttpResponseRedirect
 from django.utils.html import format_html
 
-from competition.models import (Event, Problem, School, Semester,
+from competition.models import (Event, Problem, Semester,
                                 SemesterPublication, Series, Solution, Vote,
                                 UnspecifiedPublication)
 
@@ -198,7 +198,7 @@ class SemesterPublicationAdmin(admin.ModelAdmin):
 
             return HttpResponseRedirect('.')
 
-        return super(SemesterPublicationAdmin, self).response_change(request, obj)
+        return super().response_change(request, obj)
 
 
 @admin.register(UnspecifiedPublication)
@@ -217,4 +217,4 @@ class UnspecifiedPublicationAdmin(admin.ModelAdmin):
 
             return HttpResponseRedirect('.')
 
-        return super(UnspecifiedPublicationAdmin, self).response_change(request, obj)
+        return super().response_change(request, obj)
