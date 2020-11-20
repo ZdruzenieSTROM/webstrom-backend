@@ -436,13 +436,13 @@ class Vote(models.Model):
         return f'{pos} hlas za {self.solution.problem} pre '\
                f'{self.solution.semester_registration.profile.user.get_full_name()}'
 
-
+"""
 class Publication(models.Model):
-    """
+    
     Reprezentuje výsledky, brožúrku alebo akýkoľvek materiál
     zverejnený k nejakému Eventu. Časopisy vyčleňujeme
     do špeciálnej podtriedy SemesterPublication
-    """
+    
 
     class Meta:
         verbose_name = 'publikácia'
@@ -453,9 +453,10 @@ class Publication(models.Model):
 
     def __str__(self):
         return self.name
+"""
 
 
-class SemesterPublication(Publication):
+class SemesterPublication(models.Model):
     """
     Časopis
     """
@@ -463,6 +464,8 @@ class SemesterPublication(Publication):
         verbose_name = 'časopis'
         verbose_name_plural = 'časopisy'
 
+    name = models.CharField(max_length=30, blank=True)
+    event = models.ForeignKey(Event, null=True, on_delete=models.SET_NULL)
     order = models.PositiveSmallIntegerField()
     file = RestrictedFileField(
         upload_to='publications/semester_publication/%Y',
@@ -475,8 +478,8 @@ class SemesterPublication(Publication):
 
     def validate_unique(self, exclude=None):
         super().validate_unique(exclude)
-
-        if Publication.objects.filter(event=self.event, semesterpublication__isnull=False) \
+        e = self.event
+        if SemesterPublication.objects.filter(event=e, semesterpublication__isnull=False) \
                 .filter(~Q(semesterpublication=self.pk), semesterpublication__order=self.order) \
                 .exists():
             raise ValidationError({
@@ -518,13 +521,18 @@ class SemesterPublication(Publication):
         self.save()
 
 
-class UnspecifiedPublication(Publication):
+class UnspecifiedPublication(models.Model):
     """
-    Iná publikácia (Napríklad poradie, brožúra na Matboj)
+    Reprezentuje výsledky, brožúrku alebo akýkoľvek materiál
+    zverejnený k nejakému Eventu okrem časopisov. Časopisy majú
+    vlastnú triedu SemesterPublication.
     """
     class Meta:
         verbose_name = 'iná publikácia'
         verbose_name_plural = 'iné publikácie'
+
+    name = models.CharField(max_length=30, blank=True)
+    event = models.ForeignKey(Event, null=True, on_delete=models.SET_NULL)
 
     file = RestrictedFileField(
         upload_to='publications/%Y',
