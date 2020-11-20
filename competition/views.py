@@ -24,9 +24,8 @@ from competition.models import (Competition, Event, EventRegistration, Grade, Pr
                                 Semester, Series, Solution, Vote, UnspecifiedPublication, 
                                 SemesterPublication)
 from competition import utils
-from competition.models import (Competition, Event, EventRegistration, Grade, Problem,
-                                Semester, Series, Solution, Vote)
-from competition.serializers import (CompetitionSerializer, EventRegistrationSerializer,
+from competition.serializers import (CompetitionSerializer,
+                                     EventRegistrationSerializer,
                                      EventSerializer, ProblemSerializer,
                                      SemesterWithProblemsSerializer,
                                      SeriesWithProblemsSerializer,
@@ -464,34 +463,33 @@ class EventRegistrationViewSet(viewsets.ModelViewSet):
 class UnspecifiedPublicationViewSet(viewsets.ModelViewSet):
     queryset = UnspecifiedPublication.objects.all()
     serializer_class = UnspecifiedPublicationSerializer
-
+  
     @action(methods=['get'], detail=True, url_path='download')
     def download_publication(self, request, pk=None):
         publication = self.get_object()
-        response = HttpResponse(publication.file, content_type=mime_type(publication.file))
-        response['Content-Disposition'] = f'attachment; filename="{publication.name}"'
+        response = HttpResponse(content_type=mime_type(publication.file))
+        response['Content-Disposition'] = f'attachment; filename="{publication.file}"'
         return response
 
-    @action(methods=['post'], detail=False, url_path='upload', permission_classes=[IsAdminUser])
-    def upload_publication(self, request):
+    @action(methods=['post'], detail=True, url_name='upload', permission_classes=[IsAdminUser])
+    def upload_publication(self, request, pk=None):
         if 'file' not in request.data:
             raise exceptions.ParseError(detail='Request neobsahoval súbor')
         else:
             f = request.data['file']
-            if mime_type(f) not in ['application/pdf', 'application/zip']:
+            if mime_type(f) != 'application/pdf' or mime_type(f) != 'application/zip':   
                 raise exceptions.ParseError(
                     detail='Nesprávny formát')
-
-            e = Event.objects.filter(pk=request.data['event']).first()
             publication = UnspecifiedPublication.objects.create(
-                file=f,
-                event=e,
-                order=request.data['order'],
+                file = f,
+                event = request.data['event']
             )
-            publication.generate_name()
-            publication.file.save(
-                publication.name, f)
-            return Response(status=status.HTTP_201_CREATED)
+            publication.publication.save(
+                
+            )
+
+            return Response(status=status.HTTP_201_CREATED) 
+
 
 class SemesterPublicationViewSet(viewsets.ModelViewSet):
     queryset = SemesterPublication.objects.all()
