@@ -1,6 +1,6 @@
-
 from django.contrib import admin
-from .models import School
+
+from profile.models import School
 
 
 @admin.register(School)

@@ -1,5 +1,3 @@
-from decimal import InvalidOperation
-
 from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
@@ -40,6 +38,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
     filter_backends = [filters.SearchFilter]
     search_fields = ['user__first_name', 'user__last_name', 'nickname']
 
+    # pylint: disable=inconsistent-return-statements
     @action(methods=['get', 'put'], detail=False, permission_classes=[IsAuthenticated])
     def myprofile(self, request):
         if request.method == 'GET':
@@ -54,6 +53,5 @@ class ProfileViewSet(viewsets.ModelViewSet):
             if serializer.is_valid():
                 serializer.update()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        raise InvalidOperation("Unreachable code")
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
