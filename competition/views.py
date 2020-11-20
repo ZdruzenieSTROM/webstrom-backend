@@ -15,14 +15,19 @@ from rest_framework.response import Response
 from webstrom import settings
 
 from base.utils import mime_type
+from profile.serializers import SchoolSerializer
+
+from competition.models import (Competition, Event, EventRegistration, Grade, Problem,
+                                Semester, Series, Solution, Vote, UnspecifiedPublication, 
+                                SemesterPublication)
 from competition import utils
-from competition.models import (Event, EventRegistration, Grade, Problem,
-                                Semester, Series, Solution, Vote)
 from competition.serializers import (EventRegistrationSerializer,
                                      EventSerializer, ProblemSerializer,
                                      SemesterWithProblemsSerializer,
                                      SeriesWithProblemsSerializer,
-                                     SolutionSerializer)
+                                     SolutionSerializer, 
+                                     UnspecifiedPublicationSerializer, 
+                                     SemesterPublicationSerializer)
 from personal.models import School
 from personal.serializers import SchoolSerializer
 
@@ -447,3 +452,46 @@ class EventRegistrationViewSet(viewsets.ModelViewSet):
     queryset = EventRegistration.objects.all()
     serializer_class = EventRegistrationSerializer
     filterset_fields = ['event', 'profile', ]
+
+class UnspecifiedPublicationViewSet(viewsets.ModelViewSet):
+    queryset = UnspecifiedPublication.objects.all()
+    serializer_class = UnspecifiedPublicationSerializer
+  
+    @action(methods=['get'], detail=True, url_path='download')
+    def download_publication(self, request, pk=None):
+        publication = self.get_object()
+        response = HttpResponse(content_type=mime_type(publication.file))
+        response['Content-Disposition'] = f'attachment; filename="{publication.file}"'
+        return response
+
+    @action(methods=['post'], detail=True, url_name='upload', permission_classes=[IsAdminUser])
+    def upload_publication(self, request, pk=None):
+        if 'file' not in request.data:
+            raise exceptions.ParseError(detail='Request neobsahoval súbor')
+        else:
+            f = request.data['file']
+            if mime_type(f) != 'application/pdf' or mime_type(f) != 'application/zip':   
+                raise exceptions.ParseError(
+                    detail='Nesprávny formát')
+            publication = UnspecifiedPublication.objects.create(
+                file = f,
+                event = request.data['event']
+            )
+            publication.publication.save(
+                
+            )
+
+            return Response(status=status.HTTP_201_CREATED) 
+                 
+        
+
+class SemesterPublicationViewSet(viewsets.ModelViewSet):
+    queryset = SemesterPublication.objects.all()
+    serializer_class = SemesterPublicationSerializer
+
+    @action(methods=['get'], detail=True, url_path='download')
+    def download_publication(self, request, pk=None):
+        publication = self.get_object()
+        response = HttpResponse(content_type=mime_type(file))
+        response['Content-Disposition'] = f'attachment; filename="{publication.file}"'
+        return response
