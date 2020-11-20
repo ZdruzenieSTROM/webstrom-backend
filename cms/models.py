@@ -72,4 +72,5 @@ class MenuItem(models.Model):
         help_text='Priorita, čím väčšie, tým vyššie v menu.')
     sites = models.ManyToManyField(Site)
 
-    # TODO: Pridať oprávnenia a umožniť tak vedúcovské položky v menu ... zobrazované aj možno niekde inde
+    # TODO: Pridať oprávnenia a umožniť tak vedúcovské položky v menu
+    # zobrazované aj možno niekde inde
