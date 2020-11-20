@@ -11,10 +11,10 @@ class RestrictedFileField(models.FileField):
         self.content_types = kwargs.pop('content_types', None)
         self.max_size = kwargs.pop('max_size', None)
 
-        super(RestrictedFileField, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def clean(self, *args, **kwargs):
-        file = super(RestrictedFileField, self).clean(*args, *kwargs)
+        file = super().clean(*args, *kwargs)
 
         if self.max_size and file.size > self.max_size:
             raise ValidationError(
