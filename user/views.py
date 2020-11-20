@@ -7,11 +7,9 @@ from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.views.generic import DetailView
-
 from rest_framework.decorators import api_view
 
 from profile.models import District, School
-
 from user.forms import NameUpdateForm, UserCreationForm
 from user.models import User
 from user.tokens import email_verification_token_generator
@@ -38,7 +36,8 @@ def register(request):
             send_verification_email(user)
             messages.info(request, 'Odoslali sme ti overovací email')
             return redirect('user:login')
-        elif user_form.has_error('email', code='unique'):
+
+        if user_form.has_error('email', code='unique'):
             messages.error(
                 request, render_to_string('user/messages/email_exists.html'))
     else:
