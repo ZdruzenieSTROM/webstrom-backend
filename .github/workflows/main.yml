@@ -23,8 +23,9 @@ jobs:
       - name: Install pylint
         run: pip3 install pylint pylint-django
 
+      # TODO: come up with a better way of discovering packages
       - name: Run pylint
-        run: python3 -m pylint --load-plugins=pylint_django --disable=missing-docstring
+        run: python3 -m pylint base cms competition profile tests user webstrom
 
   build:
     # The type of runner that the job will run on
