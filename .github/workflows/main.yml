@@ -18,6 +18,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Install setuptools
+        run: pip3 install setuptools
+
       - name: Install requirements
         run: pip3 install -r prod-requirements.txt
 
