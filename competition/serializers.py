@@ -1,4 +1,5 @@
 from rest_framework import serializers
+
 from competition import models
 from personal.serializers import ProfileShortSerializer, SchoolShortSerializer
 

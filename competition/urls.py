@@ -1,6 +1,6 @@
 from rest_framework.routers import DefaultRouter
-from competition import views
 
+from competition import views
 
 app_name = 'competition'
 

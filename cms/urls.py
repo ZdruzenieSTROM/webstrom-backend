@@ -1,4 +1,5 @@
 from rest_framework.routers import DefaultRouter
+
 from cms import views
 
 app_name = 'cms'
