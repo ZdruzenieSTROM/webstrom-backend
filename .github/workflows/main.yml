@@ -47,4 +47,4 @@ jobs:
         run: python3 manage.py restoredb
 
       - name: Run django tests
-        run: python3 manage.py test
+        run: python3 manage.py test --testrunner='django.test.runner.DiscoverRunner'

@@ -1,12 +1,12 @@
 import json
 import os
 import zipfile
-from datetime import datetime
 from io import BytesIO
 from operator import itemgetter
 
 from django.core.files.move import file_move_safe
 from django.http import HttpResponse
+from django.utils import timezone
 
 from rest_framework import exceptions, status, viewsets
 from rest_framework.decorators import action
@@ -252,7 +252,7 @@ class SeriesViewSet(viewsets.ModelViewSet):
         results = self.series_results(series)
         results.sort(key=itemgetter('total'), reverse=True)
         results = utils.rank_results(results)
-        return Response(results, status=status.HTTP_201_CREATED)
+        return Response(results, status=status.HTTP_200_OK)
 
     @ action(methods=['get'], detail=True)
     def stats(self, request, pk=None):
@@ -330,7 +330,7 @@ class SemesterViewSet(viewsets.ModelViewSet):
     def results(self, request, pk=None):
         semester = self.get_object()
         current_results = SemesterViewSet.semester_results(semester)
-        return Response(current_results, status=status.HTTP_201_CREATED)
+        return Response(current_results, status=status.HTTP_200_OK)
 
     @action(methods=['get'], detail=True)
     def schools(self, request, pk=None):
@@ -393,8 +393,8 @@ class SemesterViewSet(viewsets.ModelViewSet):
     @action(methods=['get'], detail=False)
     def current(self, request):
         items = Semester.objects.all()\
-            .filter(start__lt=datetime.now())\
-            .filter(end__gt=datetime.now())\
+            .filter(start__lt=timezone.now())\
+            .filter(end__gt=timezone.now())\
             .order_by('-end')
 
         if items.count() > 0:
@@ -407,8 +407,8 @@ class SemesterViewSet(viewsets.ModelViewSet):
     @action(methods=['get'], detail=False, url_path='current-results')
     def current_results(self, request):
         items = Semester.objects.all()\
-            .filter(start__lt=datetime.now())\
-            .filter(end__gt=datetime.now())\
+            .filter(start__lt=timezone.now())\
+            .filter(end__gt=timezone.now())\
             .order_by('-end')
 
         if items.count() > 0:
