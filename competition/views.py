@@ -1,12 +1,12 @@
 import json
 import os
 import zipfile
-from datetime import datetime
 from io import BytesIO
 from operator import itemgetter
 
 from django.core.files.move import file_move_safe
 from django.http import HttpResponse
+from django.utils import timezone
 
 from rest_framework import exceptions, status, viewsets
 from rest_framework.decorators import action
@@ -393,8 +393,8 @@ class SemesterViewSet(viewsets.ModelViewSet):
     @action(methods=['get'], detail=False)
     def current(self, request):
         items = Semester.objects.all()\
-            .filter(start__lt=datetime.now())\
-            .filter(end__gt=datetime.now())\
+            .filter(start__lt=timezone.now())\
+            .filter(end__gt=timezone.now())\
             .order_by('-end')
 
         if items.count() > 0:
@@ -407,8 +407,8 @@ class SemesterViewSet(viewsets.ModelViewSet):
     @action(methods=['get'], detail=False, url_path='current-results')
     def current_results(self, request):
         items = Semester.objects.all()\
-            .filter(start__lt=datetime.now())\
-            .filter(end__gt=datetime.now())\
+            .filter(start__lt=timezone.now())\
+            .filter(end__gt=timezone.now())\
             .order_by('-end')
 
         if items.count() > 0:
