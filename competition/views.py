@@ -415,6 +415,8 @@ class SemesterViewSet(viewsets.ModelViewSet):
             current_results = SemesterViewSet.semester_results(semester)
             return Response(current_results, status=status.HTTP_201_CREATED)
 
+        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 class EventViewSet(viewsets.ModelViewSet):
     queryset = Event.objects.all()
