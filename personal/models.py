@@ -1,6 +1,7 @@
-from django.db import models
-from base.managers import UnspecifiedValueManager
 from django.conf import settings
+from django.db import models
+
+from base.managers import UnspecifiedValueManager
 from base.validators import phone_number_validator
 
 

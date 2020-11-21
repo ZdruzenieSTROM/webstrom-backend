@@ -1,7 +1,6 @@
-from django.urls import path
 from rest_framework.routers import DefaultRouter
-from competition import views
 
+from competition import views
 
 app_name = 'competition'
 
@@ -11,9 +10,6 @@ router.register(r'series', views.SeriesViewSet)
 router.register(r'semester', views.SemesterViewSet)
 router.register(r'solution', views.SolutionViewSet)
 
-
-urlpatterns = [
-]
-
+urlpatterns = []
 
 urlpatterns += router.urls

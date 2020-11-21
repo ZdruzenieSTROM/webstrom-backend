@@ -23,7 +23,7 @@ from base.models import RestrictedFileField
 from base.utils import mime_type
 from base.validators import school_year_validator
 from competition import utils
-from profile.models import Profile, School
+from personal.models import Profile, School
 
 
 class Competition(models.Model):
@@ -130,8 +130,8 @@ class Event(models.Model):
     def __str__(self):
         if self.semester:
             return str(self.semester)
-        else:
-            return f'{self.competition.name}, {self.year}. ročník'
+
+        return f'{self.competition.name}, {self.year}. ročník'
 
 
 class Semester(Event):
@@ -226,13 +226,13 @@ class Series(models.Model):
 
         if remaining_time.total_seconds() < 0:
             return datetime.timedelta(0)
-        else:
-            return remaining_time
+
+        return remaining_time
 
     @property
     def can_submit(self):
         """
-        Vráti True, ak užívateľ ešte môže odovzdať úlohu. 
+        Vráti True, ak užívateľ ešte môže odovzdať úlohu.
         Pozerá sa na maximálne možné omeškanie v LateFlagoch.
         """
         max_late_tag_value = self.semester.late_tags.aggregate(
@@ -243,7 +243,8 @@ class Series(models.Model):
 
     def get_actual_late_flag(self):
         """
-        Vráti late flag, ktorý má byť v tomto okamihu priradený riešeniu, teda jeho aktuálne omeškanie
+        Vráti late flag, ktorý má byť v tomto okamihu priradený riešeniu,
+        teda jeho aktuálne omeškanie
         """
         if not self.is_past_deadline:
             return None
@@ -339,8 +340,9 @@ class Grade(models.Model):
 
 class EventRegistration(models.Model):
     """
-    Registruje účastníka na instanciu súťaže(napríklad Matboj 2020, letný semester 40. ročník STROMu).
-    V registrácií sú uložené údaje účastníka aktuálne v čase konania súťaže. 
+    Registruje účastníka na instanciu súťaže(napríklad Matboj 2020,
+    letný semester 40. ročník STROMu).
+    V registrácií sú uložené údaje účastníka aktuálne v čase konania súťaže.
     """
     class Meta:
         verbose_name = 'registrácia užívateľa na akciu'
@@ -408,10 +410,12 @@ class Solution(models.Model):
         return f'Riešiteľ: { self.semester_registration } - úloha { self.problem }'
 
     def get_solution_file_name(self):
-        return f'{self.semester_registration.profile.user.get_full_name_camel_case()}-{self.problem.id}-{self.semester_registration.id}.pdf'
+        return f'{self.semester_registration.profile.user.get_full_name_camel_case()}'\
+               f'-{self.problem.id}-{self.semester_registration.id}.pdf'
 
     def get_corrected_solution_file_name(self):
-        return f'corrected/{self.semester_registration.profile.user.get_full_name_camel_case()}-{self.problem.id}-{self.semester_registration.id}_corrected.pdf'
+        return f'corrected/{self.semester_registration.profile.user.get_full_name_camel_case()}'\
+               f'-{self.problem.id}-{self.semester_registration.id}_corrected.pdf'
 
 
 class Vote(models.Model):
@@ -426,7 +430,8 @@ class Vote(models.Model):
 
     def __str__(self):
         pos = 'Kladný' if self.is_positive else 'Záporný'
-        return f'{pos} hlas za {self.solution.problem} pre {self.solution.semester_registration.profile.user.get_full_name()}'
+        return f'{pos} hlas za {self.solution.problem} pre '\
+               f'{self.solution.semester_registration.profile.user.get_full_name()}'
 
 
 class Publication(models.Model):
@@ -466,9 +471,9 @@ class SemesterPublication(Publication):
         verbose_name='náhľad')
 
     def validate_unique(self, exclude=None):
-        super(SemesterPublication, self).validate_unique(exclude)
-        e = self.event
-        if Publication.objects.filter(event=e, semesterpublication__isnull=False) \
+        super().validate_unique(exclude)
+
+        if Publication.objects.filter(event=self.event, semesterpublication__isnull=False) \
                 .filter(~Q(semesterpublication=self.pk), semesterpublication__order=self.order) \
                 .exists():
             raise ValidationError({

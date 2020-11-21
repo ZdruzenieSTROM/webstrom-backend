@@ -1,6 +1,7 @@
 from rest_framework import serializers
+
 from competition import models
-from profile.serializers import ProfileShortSerializer, SchoolShortSerializer
+from personal.serializers import ProfileShortSerializer, SchoolShortSerializer
 
 
 class EventSerializer(serializers.ModelSerializer):

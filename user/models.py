@@ -35,6 +35,7 @@ class UserManager(BaseUserManager):
         return self._create_user(email, password, **extra_fields)
 
     def with_perm(self, perm, is_active=True, include_superusers=True, backend=None, obj=None):
+        # pylint: disable=too-many-arguments
         if backend is None:
             # pylint: disable=protected-access
             backends = auth._get_backends(return_tuples=True)
@@ -93,7 +94,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name_plural = 'používatelia'
 
     def clean(self):
-        super(User, self).clean()
+        super().clean()
         self.email = self.__class__.objects.normalize_email(self.email)
 
     def get_full_name(self):

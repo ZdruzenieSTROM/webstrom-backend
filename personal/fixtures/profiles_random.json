@@ -1,6 +1,6 @@
 [
     {
-        "model": "profile.Profile",
+        "model": "personal.Profile",
         "pk": 48,
         "fields": {
             "user": 48,
@@ -12,7 +12,7 @@
         }
     },
     {
-        "model": "profile.Profile",
+        "model": "personal.Profile",
         "pk": 49,
         "fields": {
             "user": 49,
@@ -24,7 +24,7 @@
         }
     },
     {
-        "model": "profile.Profile",
+        "model": "personal.Profile",
         "pk": 50,
         "fields": {
             "user": 50,
@@ -36,7 +36,7 @@
         }
     },
     {
-        "model": "profile.Profile",
+        "model": "personal.Profile",
         "pk": 51,
         "fields": {
             "user": 51,
@@ -48,7 +48,7 @@
         }
     },
     {
-        "model": "profile.Profile",
+        "model": "personal.Profile",
         "pk": 52,
         "fields": {
             "user": 52,
@@ -60,7 +60,7 @@
         }
     },
     {
-        "model": "profile.Profile",
+        "model": "personal.Profile",
         "pk": 53,
         "fields": {
             "user": 53,
@@ -72,7 +72,7 @@
         }
     },
     {
-        "model": "profile.Profile",
+        "model": "personal.Profile",
         "pk": 54,
         "fields": {
             "user": 54,
@@ -84,7 +84,7 @@
         }
     },
     {
-        "model": "profile.Profile",
+        "model": "personal.Profile",
         "pk": 55,
         "fields": {
             "user": 55,
@@ -96,7 +96,7 @@
         }
     },
     {
-        "model": "profile.Profile",
+        "model": "personal.Profile",
         "pk": 56,
         "fields": {
             "user": 56,
@@ -108,7 +108,7 @@
         }
     },
     {
-        "model": "profile.Profile",
+        "model": "personal.Profile",
         "pk": 57,
         "fields": {
             "user": 57,
@@ -120,7 +120,7 @@
         }
     },
     {
-        "model": "profile.Profile",
+        "model": "personal.Profile",
         "pk": 58,
         "fields": {
             "user": 58,
@@ -132,7 +132,7 @@
         }
     },
     {
-        "model": "profile.Profile",
+        "model": "personal.Profile",
         "pk": 59,
         "fields": {
             "user": 59,
@@ -144,7 +144,7 @@
         }
     },
     {
-        "model": "profile.Profile",
+        "model": "personal.Profile",
         "pk": 60,
         "fields": {
             "user": 60,
@@ -156,7 +156,7 @@
         }
     },
     {
-        "model": "profile.Profile",
+        "model": "personal.Profile",
         "pk": 61,
         "fields": {
             "user": 61,
@@ -168,7 +168,7 @@
         }
     },
     {
-        "model": "profile.Profile",
+        "model": "personal.Profile",
         "pk": 62,
         "fields": {
             "user": 62,
@@ -180,7 +180,7 @@
         }
     },
     {
-        "model": "profile.Profile",
+        "model": "personal.Profile",
         "pk": 63,
         "fields": {
             "user": 63,
@@ -192,7 +192,7 @@
         }
     },
     {
-        "model": "profile.Profile",
+        "model": "personal.Profile",
         "pk": 64,
         "fields": {
             "user": 64,
@@ -204,7 +204,7 @@
         }
     },
     {
-        "model": "profile.Profile",
+        "model": "personal.Profile",
         "pk": 65,
         "fields": {
             "user": 65,
@@ -216,7 +216,7 @@
         }
     },
     {
-        "model": "profile.Profile",
+        "model": "personal.Profile",
         "pk": 66,
         "fields": {
             "user": 66,
@@ -228,7 +228,7 @@
         }
     },
     {
-        "model": "profile.Profile",
+        "model": "personal.Profile",
         "pk": 67,
         "fields": {
             "user": 67,
@@ -240,7 +240,7 @@
         }
     },
     {
-        "model": "profile.Profile",
+        "model": "personal.Profile",
         "pk": 68,
         "fields": {
             "user": 68,
@@ -252,7 +252,7 @@
         }
     },
     {
-        "model": "profile.Profile",
+        "model": "personal.Profile",
         "pk": 69,
         "fields": {
             "user": 69,
@@ -264,7 +264,7 @@
         }
     },
     {
-        "model": "profile.Profile",
+        "model": "personal.Profile",
         "pk": 70,
         "fields": {
             "user": 70,
@@ -276,7 +276,7 @@
         }
     },
     {
-        "model": "profile.Profile",
+        "model": "personal.Profile",
         "pk": 71,
         "fields": {
             "user": 71,
@@ -288,7 +288,7 @@
         }
     },
     {
-        "model": "profile.Profile",
+        "model": "personal.Profile",
         "pk": 72,
         "fields": {
             "user": 72,
@@ -300,7 +300,7 @@
         }
     },
     {
-        "model": "profile.Profile",
+        "model": "personal.Profile",
         "pk": 73,
         "fields": {
             "user": 73,
@@ -312,7 +312,7 @@
         }
     },
     {
-        "model": "profile.Profile",
+        "model": "personal.Profile",
         "pk": 74,
         "fields": {
             "user": 74,
@@ -324,7 +324,7 @@
         }
     },
     {
-        "model": "profile.Profile",
+        "model": "personal.Profile",
         "pk": 75,
         "fields": {
             "user": 75,
@@ -336,7 +336,7 @@
         }
     },
     {
-        "model": "profile.Profile",
+        "model": "personal.Profile",
         "pk": 76,
         "fields": {
             "user": 76,
@@ -348,7 +348,7 @@
         }
     },
     {
-        "model": "profile.Profile",
+        "model": "personal.Profile",
         "pk": 77,
         "fields": {
             "user": 77,

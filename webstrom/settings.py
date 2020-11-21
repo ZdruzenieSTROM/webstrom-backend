@@ -42,7 +42,7 @@ LOCAL_APPS = [
     'competition.apps.CompetitionConfig',
     'cms.apps.CmsConfig',
     'user.apps.UserConfig',
-    'profile.apps.ProfileConfig',
+    'personal.apps.PersonalConfig',
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS

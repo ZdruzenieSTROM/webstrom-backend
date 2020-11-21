@@ -1,7 +1,8 @@
 from django.urls.conf import include, path
 from rest_framework.routers import DefaultRouter
 
-from .views import CountyViewSet, DistrictViewSet, ProfileViewSet, SchoolViewSet
+from personal.views import (CountyViewSet, DistrictViewSet, ProfileViewSet,
+                            SchoolViewSet)
 
 router = DefaultRouter()
 router.register(r'counties', CountyViewSet)

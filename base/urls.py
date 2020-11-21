@@ -1,14 +1,12 @@
 from rest_framework.routers import DefaultRouter
+from base import views
 
-from cms import views
-
-app_name = 'cms'
+app_name = 'base'
 
 
 # Create a router and register our viewsets with it.
 router = DefaultRouter()
-router.register(r'post', views.PostViewSet)
-router.register(r'menu-item', views.MenuItemViewSet)
+router.register(r'flat-page', views.FlatPageViewSet)
 
 
 urlpatterns = [

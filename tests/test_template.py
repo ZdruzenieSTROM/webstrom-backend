@@ -5,6 +5,7 @@ you run them by running "./manage.py test"
 '''
 from django.test import TestCase
 from rest_framework.test import APIClient
+
 from tests.test_utils import get_app_fixtures
 
 
