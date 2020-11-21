@@ -9,7 +9,7 @@ from rest_framework.decorators import api_view
 
 from competition.forms import ProfileCreationForm, ProfileUpdateForm
 from competition.models import Grade, Profile
-from profile.models import District, School
+from personal.models import District, School
 from user.forms import NameUpdateForm, UserCreationForm
 from user.models import User
 from user.tokens import email_verification_token_generator

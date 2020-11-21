@@ -22,8 +22,8 @@ from competition.serializers import (EventRegistrationSerializer,
                                      SemesterWithProblemsSerializer,
                                      SeriesWithProblemsSerializer,
                                      SolutionSerializer)
-from profile.models import School
-from profile.serializers import SchoolSerializer
+from personal.models import School
+from personal.serializers import SchoolSerializer
 
 # pylint: disable=unused-argument
 

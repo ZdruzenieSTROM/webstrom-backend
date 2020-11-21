@@ -12,7 +12,7 @@
         }
     },
     {
-        "model": "profile.Profile",
+        "model": "personal.Profile",
         "pk": 1,
         "fields": {
             "user": 1,

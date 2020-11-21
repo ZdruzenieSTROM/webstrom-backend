@@ -3,7 +3,7 @@ from django.core.mail import mail_managers
 from django.template.loader import render_to_string
 
 from competition.models import Grade
-from profile.models import County, District, Profile, School
+from personal.models import County, District, Profile, School
 
 
 class ProfileForm(forms.ModelForm):

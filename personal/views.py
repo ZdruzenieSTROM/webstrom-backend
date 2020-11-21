@@ -3,9 +3,9 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 
-from profile.models import County, District, Profile, School
-from profile.serializers import (CountySerializer, DistrictSerializer,
-                                 ProfileSerializer, SchoolSerializer)
+from personal.models import County, District, Profile, School
+from personal.serializers import (CountySerializer, DistrictSerializer,
+                                  ProfileSerializer, SchoolSerializer)
 
 # Filterset umoznuju pouzit URL v tvare profile/districts/?county=1
 # Search filter umoznuju pouzit URL v tvare profile/schools/?search=Alej

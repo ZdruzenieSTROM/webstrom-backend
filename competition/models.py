@@ -23,7 +23,7 @@ from base.models import RestrictedFileField
 from base.utils import mime_type
 from base.validators import school_year_validator
 from competition import utils
-from profile.models import Profile, School
+from personal.models import Profile, School
 
 
 class Competition(models.Model):
