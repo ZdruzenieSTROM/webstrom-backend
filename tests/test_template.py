@@ -10,10 +10,11 @@ from tests.test_utils import get_app_fixtures
 
 class TestTest(TestCase):
     '''
-    test class must be a subclass of django.test.TestCase
-        or another suitable class; visit docs for more
-    add fixtures to fill the db
+    sample tests
     '''
+    # test class must be a subclass of django.test.TestCase
+    #     or another suitable class; visit docs for more
+    # add fixtures to fill the db
     fixtures = get_app_fixtures([
         'base',
         'cms',
@@ -27,9 +28,9 @@ class TestTest(TestCase):
         self.client = APIClient()
 
     def test_name_must_start_with_test(self):
-        '''name of test method must start with "test"'''
+        '''sample test'''
         self.assertFalse(1 + 2 == 300)
 
     def test_another_one(self):
-        '''some test, bla, bla'''
+        '''some other sample test'''
         self.assertEqual('banan'[0], 'b')
