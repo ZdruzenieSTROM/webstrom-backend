@@ -18,19 +18,19 @@ class UnspecifiedValueManager(models.Manager):
             raise ImproperlyConfigured(
                 'UnspecifiedValueManager potrebuje mať nastavené unspecified_value_pk')
 
-        super(UnspecifiedValueManager, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def all_except_unspecified(self):
-        queryset = super(UnspecifiedValueManager, self).get_queryset()
+        queryset = super().get_queryset()
         return queryset.exclude(pk=self.unspecified_value_pk)
 
     def get_unspecified_value(self):
-        return super(UnspecifiedValueManager, self).get_queryset().get(
+        return super().get_queryset().get(
             pk=self.unspecified_value_pk)
 
     def filter(self, *args, **kwargs):
         include_unspecified = kwargs.pop('include_unspecified', False)
-        queryset = super(UnspecifiedValueManager, self).get_queryset()
+        queryset = super().get_queryset()
 
         filter_results = queryset.filter(*args, **kwargs)
 

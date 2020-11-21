@@ -92,8 +92,8 @@ def series_general_weighted_sum(solutions, weights):
         points = solutions_to_list_of_points(solutions)
         points.sort(reverse=True)
         return dot_product(points, weights)
-    else:
-        return series_simple_sum(solutions)
+
+    return series_simple_sum(solutions)
 
 
 def series_Malynar_sum(solutions, user_registration):
@@ -147,16 +147,16 @@ def merge_results_profile(old, new, problems_in_old, problems_in_new):
         new['solutions'] = [None]*problems_in_old+new['solutions']
         new['subtotal'].append(0)
         return new
-    elif not new:
+
+    if not new:
         old['solutions'] += [None]*problems_in_new
         old['subtotal'].append(0)
         return old
 
-    else:
-        old['solutions'].append(new['solutions'])
-        old['subtotal'].append(new['total'])
-        old['total'] = sum(old['subtotal'])
-        return old
+    old['solutions'].append(new['solutions'])
+    old['subtotal'].append(new['total'])
+    old['total'] = sum(old['subtotal'])
+    return old
 
 
 def merge_results(

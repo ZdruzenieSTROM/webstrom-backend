@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import County, District, Profile, School
+from personal.models import County, District, Profile, School
 
 
 class CountySerializer(serializers.ModelSerializer):

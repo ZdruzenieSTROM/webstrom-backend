@@ -1,8 +1,9 @@
 from django import forms
 from django.core.mail import mail_managers
 from django.template.loader import render_to_string
-from profile.models import County, District, Profile, School
+
 from competition.models import Grade
+from personal.models import County, District, Profile, School
 
 
 class ProfileForm(forms.ModelForm):
@@ -47,7 +48,7 @@ class ProfileForm(forms.ModelForm):
         label='Okres školy')
 
     def __init__(self, *args, **kwargs):
-        super(ProfileForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         self.fields['county'].queryset = County.objects.all_except_unspecified()
         self.fields['school'].widget = forms.HiddenInput()
@@ -82,7 +83,7 @@ class ProfileCreationForm(ProfileForm):
 
     def save(self, user, commit=True):
         # pylint: disable=arguments-differ
-        profile = super(ProfileCreationForm, self).save(commit=False)
+        profile = super().save(commit=False)
         profile.user = user
 
         profile.year_of_graduation = \
@@ -117,7 +118,7 @@ class ProfileUpdateForm(ProfileForm):
 
 class SeriesSolutionForm(forms.Form):
     def __init__(self, series, *args, **kwargs):
-        super(SeriesSolutionForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         for problem in series.problems.all():
             self.fields[str(problem.pk)] = forms.FileField(
