@@ -78,6 +78,10 @@ class Profile(models.Model):
         verbose_name = 'profil'
         verbose_name_plural = 'profily'
 
+    first_name = models.CharField(verbose_name='krstné meno', max_length=150)
+
+    last_name = models.CharField(verbose_name='priezvisko', max_length=150)
+
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 

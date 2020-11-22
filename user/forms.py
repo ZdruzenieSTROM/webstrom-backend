@@ -23,8 +23,8 @@ class UserCreationForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ['email', 'new_password1',
-                  'new_password2', 'first_name', 'last_name', ]
+        # 'first_name', 'last_name',
+        fields = ['email', 'new_password1', 'new_password2']
 
     def __init__(self, *args, **kwargs):
         # pylint: disable=no-member
