@@ -64,6 +64,7 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
+    # pylint: disable=E1101
     first_name = models.CharField(verbose_name='krstné meno', max_length=150)
     last_name = models.CharField(verbose_name='priezvisko', max_length=150)
 
