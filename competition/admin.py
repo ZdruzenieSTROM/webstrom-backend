@@ -134,37 +134,37 @@ class SemesterPublicationAdmin(admin.ModelAdmin):
         'name',
         'thumbnail_list_preview',
         'competition',
-        'event',
+        'semester',
         'order',
         'school_year',
     )
 
     ordering = (
-        'event',
+        'semester',
         '-order',
     )
 
     list_filter = (
-        'event__school_year',
-        'event__competition',
+        'semester__school_year',
+        # 'semester__competition',
     )
 
     def get_changeform_initial_data(self, request):
         # TODO: doplniť výber súťaže
         return {
-            'event': Event.objects.first(),
-            'order': Event.objects.first().publication_set.count() + 1,
+            'semester': Semester.objects.first(),
+            'order': Semester.objects.first().semesterpublication_set.count() + 1,
         }
 
     @staticmethod
     def school_year(obj):
-        return obj.event.school_year
-    school_year.admin_order_field = 'event__school_year'
+        return obj.semester.school_year
+    school_year.admin_order_field = 'semester__school_year'
 
     @staticmethod
     def competition(obj):
-        return obj.event.competition
-    competition.admin_order_field = 'event__competition'
+        return obj.semester.competition
+    competition.admin_order_field = 'semester__competition'
 
     @staticmethod
     def thumbnail_list_preview(obj):

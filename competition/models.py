@@ -445,7 +445,7 @@ class SemesterPublication(models.Model):
         verbose_name_plural = 'časopisy'
 
     name = models.CharField(max_length=30, blank=True)
-    event = models.ForeignKey(Event, null=True, on_delete=models.SET_NULL)
+    semester = models.ForeignKey(Semester, null=True, on_delete=models.SET_NULL)
     order = models.PositiveSmallIntegerField()
     file = RestrictedFileField(
         upload_to='publications/semester_publication/%Y',
@@ -457,9 +457,8 @@ class SemesterPublication(models.Model):
         verbose_name='náhľad')
 
     def validate_unique(self, exclude=None):
-        super().validate_unique(exclude)
-        e = self.event
-        if SemesterPublication.objects.filter(event=e) \
+        s = self.semester
+        if SemesterPublication.objects.filter(semester=s) \
                 .filter(~Q(pk=self.pk), order=self.order) \
                 .exists():
             raise ValidationError({
@@ -497,7 +496,7 @@ class SemesterPublication(models.Model):
         if self.name and not forced:
             return
 
-        self.name = f'{self.event.competition}-{self.event.year}-{self.order}'
+        self.name = f'{self.semester.competition}-{self.semester.year}-{self.order}'
         self.save()
 
 

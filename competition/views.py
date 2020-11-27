@@ -512,9 +512,9 @@ class SemesterPublicationViewSet(viewsets.ModelViewSet):
                 raise exceptions.ParseError(
                     detail='Nesprávny formát')
 
-            e = Event.objects.filter(pk=request.data['event']).first()
-            primary_key = request.data['event']
-            if SemesterPublication.objects.filter(event=e) \
+            s = Semester.objects.filter(pk=request.data['semester']).first()
+            primary_key = request.data['semester']
+            if SemesterPublication.objects.filter(semester=s) \
                 .filter(~Q(pk=primary_key), order=request.data['order']) \
                 .exists():
                 raise ValidationError({
@@ -523,7 +523,7 @@ class SemesterPublicationViewSet(viewsets.ModelViewSet):
             else:
                 publication = SemesterPublication.objects.create(
                     file=f,
-                    event=e,
+                    semester=s,
                     order=request.data['order'],
                 )
                 publication.generate_name()
