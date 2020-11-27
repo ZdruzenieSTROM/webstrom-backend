@@ -23,6 +23,17 @@ class SemesterPublicationSerializer(serializers.ModelSerializer):
 class RegistrationLinkSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.RegistrationLink
+
+        
+class UnspecifiedPublicationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.UnspecifiedPublication
+        fields = '__all__'
+
+
+class SemesterPublicationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.SemesterPublication
         fields = '__all__'
 
 
@@ -30,6 +41,7 @@ class EventSerializer(serializers.ModelSerializer):
     registration_links = RegistrationLinkSerializer(many=True)
     unspecifiedpublication_set = UnspecifiedPublicationSerializer(many=True)
     registration_links = RegistrationLinkSerializer(many=True)
+    unspecifiedpublication_set = UnspecifiedPublicationSerializer(many=True)
 
     class Meta:
         model = models.Event
@@ -115,14 +127,4 @@ class SemesterWithProblemsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Semester
-        fields = '__all__'
-
-class UnspecifiedPublicationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.UnspecifiedPublication
-        fields = '__all__'
-
-class SemesterPublicationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.SemesterPublication
         fields = '__all__'
