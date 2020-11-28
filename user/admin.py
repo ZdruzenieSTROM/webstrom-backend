@@ -5,7 +5,7 @@ from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.contrib.auth.models import Permission
 
 from personal.models import Profile
-from user.forms import UserCreationForm
+from user.forms import UserCreationForm, UserChangeForm
 from user.models import User
 
 
@@ -14,23 +14,12 @@ class ProfileInline(admin.StackedInline):
     can_delete = False
 
 
-class UserChangeForm(forms.ModelForm):
-    class Meta:
-        model = User
-        fields = ('email', 'password',)
-
-    password = ReadOnlyPasswordHashField()
-
-    def clean_password(self):
-        return self.initial['password']
-
-
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
     form = UserChangeForm
     add_form = UserCreationForm
 
-    list_display = ('first_name', 'last_name', 'email', 'is_staff',)
+    list_display = ('email', 'is_staff',)  # 'first_name', 'last_name',
     list_filter = ('is_active', 'is_staff', 'is_superuser', 'groups',)
     search_fields = ('email',)
     ordering = ('email',)

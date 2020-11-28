@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth import password_validation
 
 from user.models import User
+from personal.models import Profile
 
 
 class UserCreationForm(forms.ModelForm):
@@ -58,7 +59,18 @@ class UserCreationForm(forms.ModelForm):
         return user
 
 
-class NameUpdateForm(forms.ModelForm):
+class UserChangeForm(forms.ModelForm):
     class Meta:
         model = User
+        fields = ('email',)  # 'password',
+
+    # password = ReadOnlyPasswordHashField()
+
+    def clean_password(self):
+        return self.initial['password']
+
+
+class NameUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Profile
         fields = ['first_name', 'last_name', ]
