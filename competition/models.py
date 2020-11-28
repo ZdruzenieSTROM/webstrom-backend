@@ -559,7 +559,7 @@ def make_name_on_creation(sender, instance, created, **kwargs):
 
 class RegistrationLink(models.Model):
     class Meta:
-        verbose_name = 'link na reistráciu'
+        verbose_name = 'link na registráciu'
         verbose_name_plural = 'linky na registráciu'
 
     event = models.ForeignKey(
