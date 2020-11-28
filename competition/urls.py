@@ -5,6 +5,7 @@ from competition import views
 app_name = 'competition'
 
 router = DefaultRouter()
+router.register(r'competition', views.CompetitionViewSet)
 router.register(r'problem', views.ProblemViewSet)
 router.register(r'series', views.SeriesViewSet)
 router.register(r'semester', views.SemesterViewSet)

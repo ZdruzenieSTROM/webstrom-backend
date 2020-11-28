@@ -24,7 +24,9 @@ from competition.models import (Competition, Event, EventRegistration, Grade, Pr
                                 Semester, Series, Solution, Vote, UnspecifiedPublication, 
                                 SemesterPublication)
 from competition import utils
-from competition.serializers import (EventRegistrationSerializer,
+from competition.models import (Competition, Event, EventRegistration, Grade, Problem,
+                                Semester, Series, Solution, Vote)
+from competition.serializers import (CompetitionSerializer, EventRegistrationSerializer,
                                      EventSerializer, ProblemSerializer,
                                      SemesterWithProblemsSerializer,
                                      SeriesWithProblemsSerializer,
@@ -35,6 +37,11 @@ from personal.models import School
 from personal.serializers import SchoolSerializer
 
 # pylint: disable=unused-argument
+
+
+class CompetitionViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Competition.objects.all()
+    serializer_class = CompetitionSerializer
 
 
 class ProblemViewSet(viewsets.ModelViewSet):

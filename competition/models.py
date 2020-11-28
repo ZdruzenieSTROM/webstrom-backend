@@ -43,6 +43,9 @@ class Competition(models.Model):
     name = models.CharField(verbose_name='názov', max_length=50)
     start_year = models.PositiveSmallIntegerField(
         verbose_name='rok prvého ročníka súťaže', blank=True)
+    description = models.TextField(verbose_name='Popis súťaže', blank=True)
+    rules = models.TextField(
+        verbose_name='Pravidlá súťaže', blank=True, null=True)
 
     sites = models.ManyToManyField(Site)
 
@@ -539,3 +542,16 @@ def make_name_on_creation(sender, instance, created, **kwargs):
     # pylint: disable=unused-argument
     if created:
         instance.generate_name()
+
+
+class RegistrationLink(models.Model):
+    class Meta:
+        verbose_name = 'link na reistráciu'
+        verbose_name_plural = 'linky na registráciu'
+
+    event = models.ForeignKey(
+        Event, related_name='registration_links', on_delete=models.CASCADE)
+    url = models.URLField(verbose_name='url registrácie')
+    start = models.DateTimeField(verbose_name='Začiatok registrácie')
+    end = models.DateTimeField(verbose_name='Koniec registrácie')
+    additional_info = models.TextField(verbose_name='Doplňujúce informácie')
