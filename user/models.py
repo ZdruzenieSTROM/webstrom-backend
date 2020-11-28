@@ -64,8 +64,9 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    first_name = models.CharField(verbose_name='krstné meno', max_length=150)
-    last_name = models.CharField(verbose_name='priezvisko', max_length=150)
+    # pylint: disable=E1101
+    # first_name = models.CharField(verbose_name='krstné meno', max_length=150)
+    # last_name = models.CharField(verbose_name='priezvisko', max_length=150)
 
     email = models.EmailField(verbose_name='email', unique=True)
     verified_email = models.BooleanField(
@@ -98,13 +99,13 @@ class User(AbstractBaseUser, PermissionsMixin):
         self.email = self.__class__.objects.normalize_email(self.email)
 
     def get_full_name(self):
-        return f'{self.first_name.strip()} {self.last_name.strip()}'
+        return f'{self.profile.first_name.strip()} {self.profile.last_name.strip()}'
 
     def get_full_name_camel_case(self):
-        return f'{self.first_name.strip()}{self.last_name.strip()}'
+        return f'{self.profile.first_name.strip()}{self.profile.last_name.strip()}'
 
     def get_short_name(self):
-        return self.first_name
+        return self.profile.first_name
 
     def email_user(self, subject, message, from_email=None, **kwargs):
         send_mail(subject, message, from_email, [self.email], **kwargs)

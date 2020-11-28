@@ -422,8 +422,8 @@ class Vote(models.Model):
     class Meta:
         verbose_name = 'hlas'
         verbose_name_plural = 'hlasy'
-    solution = models.ForeignKey(
-        Solution, on_delete=models.CASCADE, related_name='votes', unique=True)
+    solution = models.OneToOneField(
+        Solution, on_delete=models.CASCADE, related_name='votes')
     is_positive = models.BooleanField(verbose_name='Pozitívny hlas')
     comment = models.CharField(
         verbose_name='Komentár', max_length=200, help_text='Dôvod udelenia hlasu')
