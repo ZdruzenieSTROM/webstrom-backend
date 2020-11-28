@@ -18,12 +18,18 @@ class UnspecifiedPublicationSerializer(serializers.ModelSerializer):
 class SemesterPublicationSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.SemesterPublication
+
+
+class RegistrationLinkSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.RegistrationLink
         fields = '__all__'
 
 
 class EventSerializer(serializers.ModelSerializer):
     registration_links = RegistrationLinkSerializer(many=True)
     unspecifiedpublication_set = UnspecifiedPublicationSerializer(many=True)
+    registration_links = RegistrationLinkSerializer(many=True)
 
     class Meta:
         model = models.Event

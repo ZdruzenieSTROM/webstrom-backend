@@ -24,7 +24,9 @@ from competition.models import (Competition, Event, EventRegistration, Grade, Pr
                                 Semester, Series, Solution, Vote, UnspecifiedPublication, 
                                 SemesterPublication)
 from competition import utils
-from competition.serializers import (EventRegistrationSerializer,
+from competition.models import (Competition, Event, EventRegistration, Grade, Problem,
+                                Semester, Series, Solution, Vote)
+from competition.serializers import (CompetitionSerializer, EventRegistrationSerializer,
                                      EventSerializer, ProblemSerializer,
                                      SemesterWithProblemsSerializer,
                                      SeriesWithProblemsSerializer,
