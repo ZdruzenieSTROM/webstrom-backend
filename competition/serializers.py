@@ -4,9 +4,25 @@ from competition import models
 from personal.serializers import ProfileShortSerializer, SchoolShortSerializer
 
 
+class RegistrationLinkSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.RegistrationLink
+        fields = '__all__'
+
+
 class EventSerializer(serializers.ModelSerializer):
+    registration_links = RegistrationLinkSerializer(many=True)
+
     class Meta:
         model = models.Event
+        fields = '__all__'
+
+
+class CompetitionSerializer(serializers.ModelSerializer):
+    event_set = EventSerializer(many=True)
+
+    class Meta:
+        model = models.Competition
         fields = '__all__'
 
 

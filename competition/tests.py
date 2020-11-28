@@ -137,3 +137,46 @@ class TestSemester(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue(len(response.json()) > 0)
         results_row_assert_format(self, response.json()[0], 2)
+
+
+class TestCompetition(APITestCase):
+    '''competition/competition'''
+    URL_PREFIX = '/competition/competition'
+
+    fixtures = get_app_fixtures([
+        'base',
+        'competition',
+        'personal',
+        'user'
+    ])
+
+    competition_expected_keys = [
+        'name',
+        'start_year',
+        'description',
+        'rules',
+        'competition_type',
+        'min_years_until_graduation',
+    ]
+
+    def competition_assert_format(self, comp, num_events):
+        '''assert given competition format'''
+        for key in self.competition_expected_keys:
+            self.assertIn(key, comp)
+        self.assertEqual(len(comp['event_set']), num_events)
+
+    def test_get_competition_list(self):
+        '''/ format OK'''
+        response = self.client.get(self.URL_PREFIX + '/', {}, 'json')
+        self.assertEqual(response.status_code, 200)
+
+    def test_post_competition_list(self):
+        '''post not allowed OK'''
+        response = self.client.post(self.URL_PREFIX + '/', {})
+        self.assertEqual(response.status_code, 405)
+
+    def test_get_competition_detail(self):
+        '''/0 format OK'''
+        response = self.client.get(self.URL_PREFIX + '/0', {}, 'json')
+        self.assertEqual(response.status_code, 200)
+        self.competition_assert_format(response.json(), 6)
