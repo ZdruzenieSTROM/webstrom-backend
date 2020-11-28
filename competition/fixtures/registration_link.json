@@ -1,0 +1,35 @@
+[
+    {
+        "model": "competition.RegistrationLink",
+        "pk": 0,
+        "fields": {
+            "event": 0,
+            "start": "2020-04-01T20:00:00.000Z",
+            "end": "2021-10-01T20:00:00.000Z",
+            "url": "https://seminar.strom.sk/sk/prispevky/",
+            "additional_info": ""
+        }
+    },
+    {
+        "model": "competition.RegistrationLink",
+        "pk": 1,
+        "fields": {
+            "event": 1,
+            "start": "2021-11-01T20:00:00.000Z",
+            "end": "2021-12-01T20:00:00.000Z",
+            "url": "https://seminar.strom.sk/sk/prispevky/",
+            "additional_info": ""
+        }
+    },
+    {
+        "model": "competition.RegistrationLink",
+        "pk": 2,
+        "fields": {
+            "event": 2,
+            "start": "2020-04-01T20:00:00.000Z",
+            "end": "2020-05-01T20:00:00.000Z",
+            "url": "https://seminar.strom.sk/sk/prispevky/",
+            "additional_info": ""
+        }
+    }
+]
