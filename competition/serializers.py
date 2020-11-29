@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
-from competition import models
 from personal.serializers import ProfileShortSerializer, SchoolShortSerializer
+from competition import models
 
 
 class RegistrationLinkSerializer(serializers.ModelSerializer):
@@ -24,7 +24,7 @@ class RegistrationLinkSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.RegistrationLink
 
-        
+
 class UnspecifiedPublicationSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.UnspecifiedPublication

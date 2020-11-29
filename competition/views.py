@@ -18,10 +18,12 @@ from rest_framework.response import Response
 from webstrom import settings
 
 from base.utils import mime_type
-from profile.serializers import SchoolSerializer
+
+from personal.models import School
+from personal.serializers import SchoolSerializer
 
 from competition.models import (Competition, Event, EventRegistration, Grade, Problem,
-                                Semester, Series, Solution, Vote, UnspecifiedPublication, 
+                                Semester, Series, Solution, Vote, UnspecifiedPublication,
                                 SemesterPublication)
 from competition import utils
 from competition.serializers import (CompetitionSerializer,
@@ -29,11 +31,9 @@ from competition.serializers import (CompetitionSerializer,
                                      EventSerializer, ProblemSerializer,
                                      SemesterWithProblemsSerializer,
                                      SeriesWithProblemsSerializer,
-                                     SolutionSerializer, 
-                                     UnspecifiedPublicationSerializer, 
+                                     SolutionSerializer,
+                                     UnspecifiedPublicationSerializer,
                                      SemesterPublicationSerializer)
-from personal.models import School
-from personal.serializers import SchoolSerializer
 
 # pylint: disable=unused-argument
 
@@ -475,22 +475,19 @@ class UnspecifiedPublicationViewSet(viewsets.ModelViewSet):
     def upload_publication(self, request):
         if 'file' not in request.data:
             raise exceptions.ParseError(detail='Request neobsahoval súbor')
-        else:
-            f = request.data['file']
-            if mime_type(f) not in ['application/pdf', 'application/zip']:
-                raise exceptions.ParseError(
-                    detail='Nesprávny formát')
 
-            e = Event.objects.filter(pk=request.data['event']).first()
-            publication = UnspecifiedPublication.objects.create(
-                file=f,
-                event=e,
-                order=request.data['order'],
-            )
-            publication.generate_name()
-            publication.file.save(
-                publication.name, f)
-            return Response(status=status.HTTP_201_CREATED)
+        file = request.data['file']
+        if mime_type(file) not in ['application/pdf', 'application/zip']:
+            raise exceptions.ParseError(detail='Nesprávny formát')
+
+        event = Event.objects.filter(pk=request.data['event']).first()
+        publication = UnspecifiedPublication.objects.create(
+            file=file,
+            event=event
+        )
+        publication.generate_name()
+        publication.file.save(publication.name, file)
+        return Response(status=status.HTTP_201_CREATED)
 
 class SemesterPublicationViewSet(viewsets.ModelViewSet):
     queryset = SemesterPublication.objects.all()
@@ -507,27 +504,26 @@ class SemesterPublicationViewSet(viewsets.ModelViewSet):
     def upload_publication(self, request):
         if 'file' not in request.data:
             raise exceptions.ParseError(detail='Request neobsahoval súbor')
-        else:
-            f = request.data['file']
-            if mime_type(f) != 'application/pdf':
-                raise exceptions.ParseError(
-                    detail='Nesprávny formát')
 
-            s = Semester.objects.filter(pk=request.data['semester']).first()
-            primary_key = request.data['semester']
-            if SemesterPublication.objects.filter(semester=s) \
-                .filter(~Q(pk=primary_key), order=request.data['order']) \
-                .exists():
-                raise ValidationError({
-                    'order': 'Časopis s týmto číslom už v danom semestri existuje',
-                })
-            else:
-                publication = SemesterPublication.objects.create(
-                    file=f,
-                    semester=s,
-                    order=request.data['order'],
-                )
-                publication.generate_name()
-                publication.file.save(
-                    publication.name, f)
-                return Response(status=status.HTTP_201_CREATED)
+        file = request.data['file']
+        if mime_type(file) != 'application/pdf':
+            raise exceptions.ParseError(detail='Nesprávny formát')
+
+        semester = Semester.objects.filter(pk=request.data['semester']).first()
+        primary_key = request.data['semester']
+        if SemesterPublication.objects.filter(semester=semester) \
+            .filter(~Q(pk=primary_key), order=request.data['order']) \
+            .exists():
+            raise ValidationError({
+                'order': 'Časopis s týmto číslom už v danom semestri existuje',
+            })
+
+        publication = SemesterPublication.objects.create(
+            file=file,
+            semester=semester,
+            order=request.data['order'],
+        )
+        publication.generate_name()
+        publication.file.save(
+            publication.name, file)
+        return Response(status=status.HTTP_201_CREATED)
