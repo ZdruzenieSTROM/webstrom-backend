@@ -25,18 +25,6 @@ class RegistrationLinkSerializer(serializers.ModelSerializer):
         model = models.RegistrationLink
 
 
-class UnspecifiedPublicationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.UnspecifiedPublication
-        fields = '__all__'
-
-
-class SemesterPublicationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.SemesterPublication
-        fields = '__all__'
-
-
 class EventSerializer(serializers.ModelSerializer):
     registration_links = RegistrationLinkSerializer(many=True)
     unspecifiedpublication_set = UnspecifiedPublicationSerializer(many=True)

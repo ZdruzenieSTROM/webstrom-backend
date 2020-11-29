@@ -6,7 +6,6 @@ from operator import itemgetter
 
 from django.core.exceptions import ValidationError
 from django.db.models import Q
-from django.contrib import messages
 from django.core.files.move import file_move_safe
 from django.http import HttpResponse
 from django.utils import timezone
