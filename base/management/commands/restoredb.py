@@ -53,8 +53,8 @@ class Command(BaseCommand):
         load_fixture('sites', 'flatpages')
 
         load_fixture('counties', 'districts', 'schools', 'schools_custom')
-        load_fixture('superuser', 'groups', 'users', 'profiles')
-        load_fixture('users_random', 'profiles_random')
+        load_fixture('superuser', 'groups', 'profiles', 'users', )
+        load_fixture('profiles_random', 'users_random', )
 
         load_fixture('competitions', 'grades', 'late_tags')
         load_fixture('semesters', 'event_registrations')
