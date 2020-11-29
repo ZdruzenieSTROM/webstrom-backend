@@ -4,11 +4,6 @@ from personal.serializers import ProfileShortSerializer, SchoolShortSerializer
 from competition import models
 
 
-class RegistrationLinkSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.RegistrationLink
-
-
 class UnspecifiedPublicationSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.UnspecifiedPublication
@@ -26,7 +21,6 @@ class RegistrationLinkSerializer(serializers.ModelSerializer):
 
 
 class EventSerializer(serializers.ModelSerializer):
-    registration_links = RegistrationLinkSerializer(many=True)
     unspecifiedpublication_set = UnspecifiedPublicationSerializer(many=True)
     registration_links = RegistrationLinkSerializer(many=True)
 
