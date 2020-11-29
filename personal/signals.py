@@ -5,10 +5,12 @@ from personal.models import Profile
 
 
 def callback(sender, instance, **kwargs):
-    profile = Profile.objects.get_or_create(
-        user=instance, defaults={'year_of_graduation': 2000, 'school_id': 1, 'first_name': '', 'last_name': ''})
+    # pylint: disable=W0613
+
+    Profile.objects.get_or_create(
+        user=instance, defaults={'year_of_graduation': 2000,
+                                 'school_id': 1, 'first_name': '', 'last_name': ''})
     instance.profile.save()
-    pass
 
 
 post_save.connect(callback, sender=User)
