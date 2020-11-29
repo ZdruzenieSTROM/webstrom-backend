@@ -29,7 +29,6 @@ class EventSerializer(serializers.ModelSerializer):
     registration_links = RegistrationLinkSerializer(many=True)
     unspecifiedpublication_set = UnspecifiedPublicationSerializer(many=True)
     registration_links = RegistrationLinkSerializer(many=True)
-    unspecifiedpublication_set = UnspecifiedPublicationSerializer(many=True)
 
     class Meta:
         model = models.Event
