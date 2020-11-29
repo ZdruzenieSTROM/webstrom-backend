@@ -18,8 +18,8 @@ from webstrom import settings
 
 from base.utils import mime_type
 
-from personal.models import School
-from personal.serializers import SchoolSerializer
+from personal.models import School, Profile
+from personal.serializers import SchoolSerializer, ProfileMailSerializer
 
 from competition.models import (Competition, Event, EventRegistration, Grade, Problem,
                                 Semester, Series, Solution, Vote, UnspecifiedPublication,
@@ -445,7 +445,23 @@ class SemesterViewSet(viewsets.ModelViewSet):
             current_results = SemesterViewSet.semester_results(semester)
             return Response(current_results, status=status.HTTP_201_CREATED)
 
-        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    @action(methods=['get'], detail=True)
+    def participants(self, request, pk=None):
+        semester = self.get_object()
+        participants_id = []
+
+        for series in semester.series_set.all():
+            solutions = Solution.objects.only('semester_registration')\
+                .filter(problem__series=series)\
+                .order_by('semester_registration')
+
+            for solution in solutions:
+                participants_id.append(
+                    solution.semester_registration.profile.pk)
+
+        profiles = Profile.objects.only("user").filter(pk__in=participants_id)
+        serializer = ProfileMailSerializer(profiles, many=True)
+        return Response(serializer.data)
 
 
 class EventViewSet(viewsets.ModelViewSet):
