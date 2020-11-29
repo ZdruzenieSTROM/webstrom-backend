@@ -13,11 +13,13 @@ class UnspecifiedPublicationSerializer(serializers.ModelSerializer):
 class SemesterPublicationSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.SemesterPublication
+        fields = '__all__'
 
 
 class RegistrationLinkSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.RegistrationLink
+        fields = '__all__'
 
 
 class EventSerializer(serializers.ModelSerializer):
