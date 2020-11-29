@@ -22,8 +22,8 @@ from base.managers import UnspecifiedValueManager
 from base.models import RestrictedFileField
 from base.utils import mime_type
 from base.validators import school_year_validator
-from competition import utils
 from personal.models import Profile, School
+from competition import utils
 
 
 class Competition(models.Model):
@@ -457,8 +457,7 @@ class SemesterPublication(models.Model):
         verbose_name='náhľad')
 
     def validate_unique(self, exclude=None):
-        s = self.semester
-        if SemesterPublication.objects.filter(semester=s) \
+        if SemesterPublication.objects.filter(semester=self.semester) \
                 .filter(~Q(pk=self.pk), order=self.order) \
                 .exists():
             raise ValidationError({
