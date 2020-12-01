@@ -448,6 +448,7 @@ class SemesterViewSet(viewsets.ModelViewSet):
             semester = items[0]
             current_results = SemesterViewSet.semester_results(semester)
             return Response(current_results, status=status.HTTP_201_CREATED)
+        return Response([], status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     @action(methods=['get'], detail=True)
     def participants(self, request, pk=None):
