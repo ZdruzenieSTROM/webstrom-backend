@@ -43,6 +43,8 @@ class CompetitionViewSet(viewsets.ReadOnlyModelViewSet):
 
 # pylint: disable=unused-argument
 
+# pylint: disable=unused-argument
+
 
 class ProblemViewSet(viewsets.ModelViewSet):
     """
