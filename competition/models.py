@@ -22,8 +22,8 @@ from base.managers import UnspecifiedValueManager
 from base.models import RestrictedFileField
 from base.utils import mime_type
 from base.validators import school_year_validator
-from competition import utils
 from personal.models import Profile, School
+from competition import utils
 
 
 class Competition(models.Model):
@@ -436,26 +436,7 @@ class Vote(models.Model):
         return f'{pos} hlas za {self.solution.problem} pre '\
                f'{self.solution.semester_registration.profile.user.get_full_name()}'
 
-
-class Publication(models.Model):
-    """
-    Reprezentuje výsledky, brožúrku alebo akýkoľvek materiál
-    zverejnený k nejakému Eventu. Časopisy vyčleňujeme
-    do špeciálnej podtriedy SemesterPublication
-    """
-
-    class Meta:
-        verbose_name = 'publikácia'
-        verbose_name_plural = 'publikácie'
-
-    name = models.CharField(max_length=30, blank=True)
-    event = models.ForeignKey(Event, null=True, on_delete=models.SET_NULL)
-
-    def __str__(self):
-        return self.name
-
-
-class SemesterPublication(Publication):
+class SemesterPublication(models.Model):
     """
     Časopis
     """
@@ -463,6 +444,8 @@ class SemesterPublication(Publication):
         verbose_name = 'časopis'
         verbose_name_plural = 'časopisy'
 
+    name = models.CharField(max_length=30, blank=True)
+    semester = models.ForeignKey(Semester, null=True, on_delete=models.SET_NULL)
     order = models.PositiveSmallIntegerField()
     file = RestrictedFileField(
         upload_to='publications/semester_publication/%Y',
@@ -474,10 +457,8 @@ class SemesterPublication(Publication):
         verbose_name='náhľad')
 
     def validate_unique(self, exclude=None):
-        super().validate_unique(exclude)
-
-        if Publication.objects.filter(event=self.event, semesterpublication__isnull=False) \
-                .filter(~Q(semesterpublication=self.pk), semesterpublication__order=self.order) \
+        if SemesterPublication.objects.filter(semester=self.semester) \
+                .filter(~Q(pk=self.pk), order=self.order) \
                 .exists():
             raise ValidationError({
                 'order': 'Časopis s týmto číslom už v danom semestri existuje',
@@ -514,17 +495,22 @@ class SemesterPublication(Publication):
         if self.name and not forced:
             return
 
-        self.name = f'{self.event.competition}-{self.event.year}-{self.order}'
+        self.name = f'{self.semester.competition}-{self.semester.year}-{self.order}'
         self.save()
 
 
-class UnspecifiedPublication(Publication):
+class UnspecifiedPublication(models.Model):
     """
-    Iná publikácia (Napríklad poradie, brožúra na Matboj)
+    Reprezentuje výsledky, brožúrku alebo akýkoľvek materiál
+    zverejnený k nejakému Eventu okrem časopisov. Časopisy majú
+    vlastnú triedu SemesterPublication.
     """
     class Meta:
         verbose_name = 'iná publikácia'
         verbose_name_plural = 'iné publikácie'
+
+    name = models.CharField(max_length=30, blank=True)
+    event = models.ForeignKey(Event, null=True, on_delete=models.SET_NULL)
 
     file = RestrictedFileField(
         upload_to='publications/%Y',

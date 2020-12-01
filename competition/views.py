@@ -4,6 +4,8 @@ import zipfile
 from io import BytesIO
 from operator import itemgetter
 
+from django.core.exceptions import ValidationError
+from django.db.models import Q
 from django.core.files.move import file_move_safe
 from django.http import HttpResponse
 from django.utils import timezone
@@ -15,16 +17,22 @@ from rest_framework.response import Response
 from webstrom import settings
 
 from base.utils import mime_type
-from competition import utils
+
+from personal.models import School
+from personal.serializers import SchoolSerializer
+
 from competition.models import (Competition, Event, EventRegistration, Grade, Problem,
-                                Semester, Series, Solution, Vote)
-from competition.serializers import (CompetitionSerializer, EventRegistrationSerializer,
+                                Semester, Series, Solution, Vote, UnspecifiedPublication,
+                                SemesterPublication)
+from competition import utils
+from competition.serializers import (CompetitionSerializer,
+                                     EventRegistrationSerializer,
                                      EventSerializer, ProblemSerializer,
                                      SemesterWithProblemsSerializer,
                                      SeriesWithProblemsSerializer,
-                                     SolutionSerializer)
-from personal.models import School
-from personal.serializers import SchoolSerializer
+                                     SolutionSerializer,
+                                     UnspecifiedPublicationSerializer,
+                                     SemesterPublicationSerializer)
 
 # pylint: disable=unused-argument
 
@@ -401,7 +409,6 @@ class SemesterViewSet(viewsets.ModelViewSet):
             .filter(start__lt=timezone.now())\
             .filter(end__gt=timezone.now())\
             .order_by('-end')
-
         if items.count() > 0:
             serializer = SemesterWithProblemsSerializer(items[0], many=False)
             return Response(serializer.data)
@@ -415,7 +422,6 @@ class SemesterViewSet(viewsets.ModelViewSet):
             .filter(start__lt=timezone.now())\
             .filter(end__gt=timezone.now())\
             .order_by('-end')
-
         if items.count() > 0:
             semester = items[0]
             current_results = SemesterViewSet.semester_results(semester)
@@ -452,3 +458,71 @@ class EventRegistrationViewSet(viewsets.ModelViewSet):
     queryset = EventRegistration.objects.all()
     serializer_class = EventRegistrationSerializer
     filterset_fields = ['event', 'profile', ]
+
+class UnspecifiedPublicationViewSet(viewsets.ModelViewSet):
+    queryset = UnspecifiedPublication.objects.all()
+    serializer_class = UnspecifiedPublicationSerializer
+
+    @action(methods=['get'], detail=True, url_path='download')
+    def download_publication(self, request, pk=None):
+        publication = self.get_object()
+        response = HttpResponse(publication.file, content_type=mime_type(publication.file))
+        response['Content-Disposition'] = f'attachment; filename="{publication.name}"'
+        return response
+
+    @action(methods=['post'], detail=False, url_path='upload', permission_classes=[IsAdminUser])
+    def upload_publication(self, request):
+        if 'file' not in request.data:
+            raise exceptions.ParseError(detail='Request neobsahoval súbor')
+
+        file = request.data['file']
+        if mime_type(file) not in ['application/pdf', 'application/zip']:
+            raise exceptions.ParseError(detail='Nesprávny formát')
+
+        event = Event.objects.filter(pk=request.data['event']).first()
+        publication = UnspecifiedPublication.objects.create(
+            file=file,
+            event=event
+        )
+        publication.generate_name()
+        publication.file.save(publication.name, file)
+        return Response(status=status.HTTP_201_CREATED)
+
+class SemesterPublicationViewSet(viewsets.ModelViewSet):
+    queryset = SemesterPublication.objects.all()
+    serializer_class = SemesterPublicationSerializer
+
+    @action(methods=['get'], detail=True, url_path='download')
+    def download_publication(self, request, pk=None):
+        publication = self.get_object()
+        response = HttpResponse(publication.file, content_type=mime_type(publication.file))
+        response['Content-Disposition'] = f'attachment; filename="{publication.name}"'
+        return response
+
+    @action(methods=['post'], detail=False, url_path='upload', permission_classes=[IsAdminUser])
+    def upload_publication(self, request):
+        if 'file' not in request.data:
+            raise exceptions.ParseError(detail='Request neobsahoval súbor')
+
+        file = request.data['file']
+        if mime_type(file) != 'application/pdf':
+            raise exceptions.ParseError(detail='Nesprávny formát')
+
+        semester = Semester.objects.filter(pk=request.data['semester']).first()
+        primary_key = request.data['semester']
+        if SemesterPublication.objects.filter(semester=semester) \
+            .filter(~Q(pk=primary_key), order=request.data['order']) \
+            .exists():
+            raise ValidationError({
+                'order': 'Časopis s týmto číslom už v danom semestri existuje',
+            })
+
+        publication = SemesterPublication.objects.create(
+            file=file,
+            semester=semester,
+            order=request.data['order'],
+        )
+        publication.generate_name()
+        publication.file.save(
+            publication.name, file)
+        return Response(status=status.HTTP_201_CREATED)

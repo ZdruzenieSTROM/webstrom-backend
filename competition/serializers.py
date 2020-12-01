@@ -1,7 +1,19 @@
 from rest_framework import serializers
 
-from competition import models
 from personal.serializers import ProfileShortSerializer, SchoolShortSerializer
+from competition import models
+
+
+class UnspecifiedPublicationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.UnspecifiedPublication
+        fields = '__all__'
+
+
+class SemesterPublicationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.SemesterPublication
+        fields = '__all__'
 
 
 class RegistrationLinkSerializer(serializers.ModelSerializer):
@@ -11,6 +23,7 @@ class RegistrationLinkSerializer(serializers.ModelSerializer):
 
 
 class EventSerializer(serializers.ModelSerializer):
+    unspecifiedpublication_set = UnspecifiedPublicationSerializer(many=True)
     registration_links = RegistrationLinkSerializer(many=True)
 
     class Meta:
@@ -92,6 +105,8 @@ class SemesterSerializer(serializers.ModelSerializer):
 
 class SemesterWithProblemsSerializer(serializers.ModelSerializer):
     series_set = SeriesWithProblemsSerializer(many=True)
+    semesterpublication_set = SemesterPublicationSerializer(many=True)
+    unspecifiedpublication_set = UnspecifiedPublicationSerializer(many=True)
 
     class Meta:
         model = models.Semester
