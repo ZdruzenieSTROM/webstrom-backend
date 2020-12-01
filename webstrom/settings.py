@@ -35,6 +35,9 @@ THIRD_PARTY_APPS = [
     'crispy_forms',
     'rest_framework',
     'django_filters',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
 ]
 
 LOCAL_APPS = [
@@ -119,6 +122,16 @@ AUTH_PASSWORD_VALIDATORS = [
     }
 ]
 
+# Allauth
+
+SITE_ID = 1
+
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+
+ACCOUNT_ADAPTER = 'user.adapters.CustomAccountAdapter'
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
