@@ -325,14 +325,16 @@ class SolutionViewSet(viewsets.ModelViewSet):
     @action(methods=['get'], detail=True, url_path='download-solution')
     def download_solution(self, request, pk=None):
         solution = self.get_object()
-        response = HttpResponse(content_type='application/pdf')
+        response = HttpResponse(
+            solution.solution, content_type='application/pdf')
         response['Content-Disposition'] = f'attachment; filename="{solution.solution}"'
         return response
 
     @action(methods=['get'], detail=True, url_path='download-corrected')
     def download_corrected(self, request, pk=None):
         solution = self.get_object()
-        response = HttpResponse(content_type='application/pdf')
+        response = HttpResponse(
+            solution.solution, content_type='application/pdf')
         response['Content-Disposition'] = f'attachment; filename="{solution.corrected_solution}"'
         return response
 
