@@ -85,6 +85,27 @@ class DistrictViewsTest(APITestCase):
                 response.data
             )
 
+    def test_filter_districts(self):
+        response = self.client.get(self.URL_PREFIX + '/?county=1', {}, 'json')
+
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        self.assertEqual(2, len(response.data))
+
+        for district in self.districts[:2]:
+            self.assertIn(
+                DistrictSerializer(instance=district).data,
+                response.data
+            )
+
+        response = self.client.get(self.URL_PREFIX + '/?county=2', {}, 'json')
+
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        self.assertEqual(1, len(response.data))
+        self.assertIn(
+                DistrictSerializer(instance=self.districts[2]).data,
+                response.data
+            )
+
 class TestSchoolWithoutAddress(TestCase):
 
     def setUp(self):
@@ -126,7 +147,9 @@ class SchoolViewsTest(APITestCase):
         district1 = District.objects.create(name="Košice I", county=county)
         district2 = District.objects.create(name="Košice IV", county=county)
         self.schools = [School.objects.create(name='Gymnázium',district=district1,street='Poštová 9',city='Košice',zip_code='04001'), 
-            School.objects.create(name='Gymnázium',district=district2,street='Alejová 1',city='Košice',zip_code='04149')]
+            School.objects.create(name='Gymnázium',district=district2,street='Alejová 1',city='Košice',zip_code='04149'),
+            School.objects.create(name='Gymnázium',district=district2,street='Opatovská cesta 7',city='Košice',zip_code='04001')
+            ]
 
     URL_PREFIX = '/personal/schools'
 
@@ -137,6 +160,27 @@ class SchoolViewsTest(APITestCase):
         self.assertEqual(len(self.schools), len(response.data))
 
         for school in self.schools:
+            self.assertIn(
+                SchoolSerializer(instance=school).data,
+                response.data
+            )
+
+    def test_filter_schools(self):
+        response = self.client.get(self.URL_PREFIX + '/?district=1', {}, 'json')
+
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        self.assertEqual(1, len(response.data))
+        self.assertIn(
+                SchoolSerializer(instance=self.schools[0]).data,
+                response.data
+            )
+
+        response = self.client.get(self.URL_PREFIX + '/?district=2', {}, 'json')
+
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        self.assertEqual(2, len(response.data))
+
+        for school in self.schools[1:]:
             self.assertIn(
                 SchoolSerializer(instance=school).data,
                 response.data
