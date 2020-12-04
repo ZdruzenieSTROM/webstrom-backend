@@ -1,9 +1,12 @@
+from django.conf import settings
 from django.contrib import auth
 from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
                                         PermissionsMixin)
 from django.core.mail import send_mail
 from django.db import models
 from django.utils import timezone
+from django.utils.module_loading import import_string
+from rest_framework.authtoken.models import Token
 
 
 class UserManager(BaseUserManager):
@@ -112,3 +115,6 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return f'{ self.get_full_name() } <{ self.email }>'
+
+
+TokenModel = Token

@@ -34,6 +34,7 @@ DJANGO_APPS = [
 THIRD_PARTY_APPS = [
     'crispy_forms',
     'rest_framework',
+    'rest_framework.authtoken',
     'django_filters',
     'allauth',
     'allauth.account',

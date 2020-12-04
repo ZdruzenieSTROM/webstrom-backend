@@ -1,4 +1,4 @@
-from django.contrib.auth.views import (LoginView, LogoutView,
+from django.contrib.auth.views import (LogoutView,  # LoginView,
                                        PasswordChangeDoneView,
                                        PasswordChangeView,
                                        PasswordResetCompleteView,
@@ -7,7 +7,7 @@ from django.contrib.auth.views import (LoginView, LogoutView,
                                        PasswordResetView)
 from django.urls import path, reverse_lazy
 
-from user.views import UserProfileView, profile_update, register, verify
+from user.views import UserProfileView, profile_update, register, verify, LoginView
 
 app_name = 'user'
 
@@ -16,7 +16,8 @@ urlpatterns = [
     path('register/', register, name='register'),
     path('verify/<str:uidb64>/<str:token>/', verify, name='verify'),
 
-    path('login/', LoginView.as_view(template_name='user/login.html'), name='login'),
+    # path('login/', LoginView.as_view(template_name='user/login.html'), name='login'),
+    path('login/', LoginView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),
 
     path('profile/update/', profile_update, name='profile-update'),
