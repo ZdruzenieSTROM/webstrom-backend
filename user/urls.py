@@ -20,6 +20,8 @@ urlpatterns = [
 
     # Url ktoré neboli zatiaľ prepísané do restu.
 
+    path('register/', register, name='register'),
+    path('verify/<str:uidb64>/<str:token>/', verify, name='verify'),
     path('profile/update/', profile_update, name='profile-update'),
     path('profile/<int:pk>/', UserProfileView.as_view(), name='profile-detail'),
 
