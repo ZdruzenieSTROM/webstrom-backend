@@ -67,12 +67,12 @@ def results_row_assert_format(self, results_row, solutions_expected_count):
         self.assertIn(key, results_row['solutions'][0][0])
 
 
-def semester_assert_format(self, semester):
-    '''assert given semester format'''
-    for key in semester_expected_keys:
-        self.assertIn(key, semester)
-    self.assertEqual(len(semester['series_set']), 2)
-    series_assert_format(self, semester['series_set'][0])
+# def semester_assert_format(self, semester):
+#     '''assert given semester format'''
+#     for key in semester_expected_keys:
+#         self.assertIn(key, semester)
+#     self.assertEqual(len(semester['series_set']), 2)
+#     series_assert_format(self, semester['series_set'][0])
 
 
 class TestSeries(APITestCase):
