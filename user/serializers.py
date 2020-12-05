@@ -1,17 +1,16 @@
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, get_user_model
 
 from rest_framework import serializers, exceptions
+
 from allauth.account import app_settings
+from allauth.account.adapter import get_adapter
 
 from user.models import User, TokenModel
-
-# TODO: presunúť importy
-from django.contrib.auth import authenticate, get_user_model
 from personal.models import Profile
-from allauth.account.adapter import get_adapter
 
 
 class LoginSerializer(serializers.Serializer):
+    #pylint: disable=W0223
     email = serializers.EmailField(required=False, allow_blank=True)
     password = serializers.CharField(style={'input_type': 'password'})
 
@@ -38,6 +37,7 @@ class LoginSerializer(serializers.Serializer):
             raise exceptions.ValidationError(msg)
 
     def validate_email_verification_status(self, user):
+        #pylint: disable=E1101
         if app_settings.EMAIL_VERIFICATION == app_settings.EmailVerificationMethod.MANDATORY:
             email_address = user.emailaddress_set.get(email=user.email)
             if not email_address.verified:
@@ -105,7 +105,7 @@ class UserDetailsSerializer(serializers.ModelSerializer):
         # Profile by mal byť stále vytvorený pomocou post_save User signálu.
         # Pre prípad, že sa tak nestalo, vytvorí sa Profile
         if not instance.profile:
-            UserProfile.objects.create(user=instance, **profile_data)
+            Profile.objects.create(user=instance, **profile_data)
 
         # Update Profile
         # Nie všetky polia v modeloch User a Profile sú editovateľné cez API.

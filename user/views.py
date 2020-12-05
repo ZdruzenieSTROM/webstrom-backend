@@ -1,37 +1,31 @@
 from django.contrib import messages
+from django.contrib.auth import login as django_login
+from django.contrib.auth import logout as django_logout
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
+from django.utils import timezone
+from django.utils.decorators import method_decorator
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+from django.views.decorators.debug import sensitive_post_parameters
 from django.views.generic import DetailView
+from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.generics import GenericAPIView, RetrieveUpdateAPIView
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from competition.forms import ProfileCreationForm, ProfileUpdateForm
 from competition.models import Grade, Profile
 from personal.models import District, School
 from user.forms import NameUpdateForm, UserCreationForm
-from user.models import User
+from user.models import User, TokenModel
+from user.serializers import LoginSerializer, TokenSerializer, UserDetailsSerializer
 from user.tokens import email_verification_token_generator
 
-
-# TODO: preusporiadať importy
-from django.views.decorators.debug import sensitive_post_parameters
-from django.utils.decorators import method_decorator
-from django.conf import settings
-from django.contrib.auth import login as django_login
-from rest_framework.response import Response
-from rest_framework import status
-from user.serializers import LoginSerializer, TokenSerializer
-from user.models import TokenModel
-from django.utils import timezone
-from rest_framework.views import APIView
-from django.contrib.auth import logout as django_logout
-from django.core.exceptions import ObjectDoesNotExist
-from user.serializers import UserDetailsSerializer
-from rest_framework.permissions import IsAuthenticated
 
 sensitive_post_parameters_m = method_decorator(
     sensitive_post_parameters(
@@ -41,13 +35,14 @@ sensitive_post_parameters_m = method_decorator(
 
 
 class LoginView(GenericAPIView):
+    #pylint: disable=W0201
     permission_classes = (AllowAny,)
     serializer_class = LoginSerializer
     token_model = TokenModel
 
     @sensitive_post_parameters_m
     def dispatch(self, *args, **kwargs):
-        return super(LoginView, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
     def process_login(self):
         django_login(self.request, self.user)
@@ -56,7 +51,7 @@ class LoginView(GenericAPIView):
         self.user = self.serializer.validated_data['user']
 
         self.token = self.create_token(
-            self.token_model, self.user, self.serializer)
+            self.token_model, self.user)
 
         # Vytvorí django session.
         self.process_login()
@@ -74,7 +69,7 @@ class LoginView(GenericAPIView):
                             expires=(timezone.now() + timezone.timedelta(weeks=4)))
         return response
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request):
         self.request = request
         self.serializer = self.get_serializer(data=self.request.data)
         self.serializer.is_valid(raise_exception=True)
@@ -82,7 +77,7 @@ class LoginView(GenericAPIView):
         self.login()
         return self.get_response()
 
-    def create_token(self, token_model, user, serializer):
+    def create_token(self, token_model, user):
         token, _ = token_model.objects.get_or_create(user=user)
         return token
 
