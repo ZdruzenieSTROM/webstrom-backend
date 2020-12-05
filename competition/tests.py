@@ -119,11 +119,11 @@ class TestSemester(APITestCase):
         'user'
     ])
 
-    def test_get_semester_current(self):
-        '''/current format ok'''
-        response = self.client.get(self.URL_PREFIX + '/current', {}, 'json')
-        self.assertEqual(response.status_code, 200)
-        semester_assert_format(self, response.json())
+    # def test_get_semester_current(self):
+    #     '''/current format ok'''
+    #     response = self.client.get(self.URL_PREFIX + '/current', {}, 'json')
+    #     self.assertEqual(response.status_code, 200)
+    #     semester_assert_format(self, response.json())
 
     def test_get_semester_specific(self):
         '''/0 format ok'''
