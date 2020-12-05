@@ -6,7 +6,7 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.views.generic import DetailView
 from rest_framework.decorators import api_view
-from rest_framework.generics import GenericAPIView
+from rest_framework.generics import GenericAPIView, RetrieveUpdateAPIView
 from rest_framework.permissions import AllowAny
 
 from competition.forms import ProfileCreationForm, ProfileUpdateForm
@@ -27,7 +27,11 @@ from rest_framework import status
 from user.serializers import LoginSerializer, TokenSerializer
 from user.models import TokenModel
 from django.utils import timezone
-
+from rest_framework.views import APIView
+from django.contrib.auth import logout as django_logout
+from django.core.exceptions import ObjectDoesNotExist
+from user.serializers import UserDetailsSerializer
+from rest_framework.permissions import IsAuthenticated
 
 sensitive_post_parameters_m = method_decorator(
     sensitive_post_parameters(
@@ -40,7 +44,6 @@ class LoginView(GenericAPIView):
     permission_classes = (AllowAny,)
     serializer_class = LoginSerializer
     token_model = TokenModel
-    throttle_scope = 'dj_rest_auth'
 
     @sensitive_post_parameters_m
     def dispatch(self, *args, **kwargs):
@@ -55,7 +58,7 @@ class LoginView(GenericAPIView):
         self.token = self.create_token(
             self.token_model, self.user, self.serializer)
 
-        # Django session login
+        # Vytvorí django session.
         self.process_login()
 
     def get_response(self):
@@ -83,6 +86,41 @@ class LoginView(GenericAPIView):
         token, _ = token_model.objects.get_or_create(user=user)
         return token
 
+
+class LogoutView(APIView):
+    permission_classes = (AllowAny,)
+
+    def get(self, request, *args, **kwargs):
+        response = self.logout(request)
+        return self.finalize_response(request, response, *args, **kwargs)
+
+    def logout(self, request):
+        print(request.user)
+
+        try:
+            request.user.auth_token.delete()
+        except (AttributeError, ObjectDoesNotExist):
+            pass
+
+        # Zmaže django session.
+        django_logout(request)
+
+        response = Response(
+            {"detail": "Úspešne odhlásený."},
+            status=status.HTTP_200_OK
+        )
+        return response
+
+
+class UserDetailsView(RetrieveUpdateAPIView):
+    serializer_class = UserDetailsSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_object(self):
+        return self.request.user
+
+
+# Views ktoré neboli zatiaľ prepísané do restu.
 
 @api_view(http_method_names=['POST'])
 def register_api(request):

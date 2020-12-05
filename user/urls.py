@@ -1,24 +1,24 @@
-from django.contrib.auth.views import (LogoutView,  # LoginView,
-                                       PasswordChangeDoneView,
-                                       PasswordChangeView,
-                                       PasswordResetCompleteView,
-                                       PasswordResetConfirmView,
-                                       PasswordResetDoneView,
-                                       PasswordResetView)
+from django.contrib.auth.views import (  # LogoutView, LoginView,
+    PasswordChangeDoneView,
+    PasswordChangeView,
+    PasswordResetCompleteView,
+    PasswordResetConfirmView,
+    PasswordResetDoneView,
+    PasswordResetView)
 from django.urls import path, reverse_lazy
 
-from user.views import UserProfileView, profile_update, register, verify, LoginView
+from user.views import LoginView, LogoutView, UserDetailsView
+from user.views import UserProfileView, profile_update, register, verify
 
 app_name = 'user'
 
 urlpatterns = [
     # Registrácia a prihlásenie
-    path('register/', register, name='register'),
-    path('verify/<str:uidb64>/<str:token>/', verify, name='verify'),
-
-    # path('login/', LoginView.as_view(template_name='user/login.html'), name='login'),
     path('login/', LoginView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),
+    path('details/', UserDetailsView.as_view(), name='user-details'),
+
+    # Url ktoré neboli zatiaľ prepísané do restu.
 
     path('profile/update/', profile_update, name='profile-update'),
     path('profile/<int:pk>/', UserProfileView.as_view(), name='profile-detail'),
