@@ -7,6 +7,7 @@ from allauth.account.adapter import get_adapter
 
 from user.models import User, TokenModel
 from personal.models import Profile
+from personal.serializers import ProfileSerializer
 
 
 class LoginSerializer(serializers.Serializer):
@@ -72,17 +73,6 @@ class TokenSerializer(serializers.ModelSerializer):
         fields = ('key',)
 
 
-class ProfileSerializer(serializers.ModelSerializer):
-    """
-    Serializer pre Profile
-    """
-
-    class Meta:
-        model = Profile
-        read_only_fields = ('first_name', 'last_name', 'year_of_graduation')
-        exclude = ('user',)
-
-
 class UserDetailsSerializer(serializers.ModelSerializer):
     """
     Serializer pre User model spolu s Profile modelom
@@ -119,6 +109,8 @@ class UserDetailsSerializer(serializers.ModelSerializer):
             'gdpr', instance.profile.gdpr)
         instance.profile.school = profile_data.get(
             'school', instance.profile.school)
+        instance.profile.year_of_graduation = profile_data.get(
+            'year_of_graduation', instance.profile.year_of_graduation)
 
         # User sa nikdy neupdatuje preto nie je potrebné volať instance.save()
         instance.profile.save()
