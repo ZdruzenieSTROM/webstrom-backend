@@ -1,19 +1,121 @@
 from django.contrib import messages
+from django.contrib.auth import login as django_login
+from django.contrib.auth import logout as django_logout
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
+from django.utils import timezone
+from django.utils.decorators import method_decorator
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+from django.views.decorators.debug import sensitive_post_parameters
 from django.views.generic import DetailView
+from rest_framework import status
 from rest_framework.decorators import api_view
+from rest_framework.generics import GenericAPIView, RetrieveUpdateAPIView
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from competition.forms import ProfileCreationForm, ProfileUpdateForm
 from competition.models import Grade, Profile
 from personal.models import District, School
 from user.forms import NameUpdateForm, UserCreationForm
-from user.models import User
+from user.models import User, TokenModel
+from user.serializers import LoginSerializer, TokenSerializer, UserDetailsSerializer
 from user.tokens import email_verification_token_generator
 
+
+sensitive_post_parameters_m = method_decorator(
+    sensitive_post_parameters(
+        'password', 'old_password', 'new_password1', 'new_password2'
+    )
+)
+
+
+class LoginView(GenericAPIView):
+    #pylint: disable=W0201
+    permission_classes = (AllowAny,)
+    serializer_class = LoginSerializer
+    token_model = TokenModel
+
+    @sensitive_post_parameters_m
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+    def process_login(self):
+        django_login(self.request, self.user)
+
+    def login(self):
+        self.user = self.serializer.validated_data['user']
+
+        self.token = self.create_token(
+            self.token_model, self.user)
+
+        # Vytvorí django session.
+        self.process_login()
+
+    def get_response(self):
+        serializer_class = TokenSerializer
+        serializer = serializer_class(instance=self.token,
+                                      context=self.get_serializer_context())
+
+        response = Response(serializer.data, status=status.HTTP_200_OK)
+
+        # Vráti token aj ako cookie.
+        # TODO: Zmeniť to na httponly cookie.
+        response.set_cookie("webstrom-token", self.token,
+                            expires=(timezone.now() + timezone.timedelta(weeks=4)))
+        return response
+
+    def post(self, request):
+        self.request = request
+        self.serializer = self.get_serializer(data=self.request.data)
+        self.serializer.is_valid(raise_exception=True)
+
+        self.login()
+        return self.get_response()
+
+    def create_token(self, token_model, user):
+        token, _ = token_model.objects.get_or_create(user=user)
+        return token
+
+
+class LogoutView(APIView):
+    permission_classes = (AllowAny,)
+
+    def get(self, request, *args, **kwargs):
+        response = self.logout(request)
+        return self.finalize_response(request, response, *args, **kwargs)
+
+    def logout(self, request):
+        print(request.user)
+
+        try:
+            request.user.auth_token.delete()
+        except (AttributeError, ObjectDoesNotExist):
+            pass
+
+        # Zmaže django session.
+        django_logout(request)
+
+        response = Response(
+            {"detail": "Úspešne odhlásený."},
+            status=status.HTTP_200_OK
+        )
+        return response
+
+
+class UserDetailsView(RetrieveUpdateAPIView):
+    serializer_class = UserDetailsSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_object(self):
+        return self.request.user
+
+
+# Views ktoré neboli zatiaľ prepísané do restu.
 
 @api_view(http_method_names=['POST'])
 def register_api(request):

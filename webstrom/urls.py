@@ -10,6 +10,8 @@ urlpatterns = [
     path('cms/', include('cms.urls')),
     path('personal/', include('personal.urls')),
     path('base/', include('base.urls')),
+    # Dočasná cesta pre allauth bez rest frameworku
+    path('accounts/', include('allauth.urls')),
 ]
 
 # Pri vývoji servuj media files priamo z djanga
