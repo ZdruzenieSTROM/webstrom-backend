@@ -1,8 +1,9 @@
-from rest_framework import filters, status, viewsets
+from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
-
+from rest_framework.filters import SearchFilter
+from django_filters.rest_framework import DjangoFilterBackend
 from personal.models import County, District, Profile, School
 from personal.serializers import (CountySerializer, DistrictSerializer,
                                   ProfileSerializer, SchoolSerializer)
@@ -26,7 +27,7 @@ class SchoolViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = School.objects.all()
     serializer_class = SchoolSerializer
     filterset_fields = ['district', ]
-    filter_backends = [filters.SearchFilter]
+    filter_backends = [DjangoFilterBackend, SearchFilter]
     search_fields = ['name', 'street']
 
 
@@ -35,7 +36,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
     serializer_class = ProfileSerializer
     filterset_fields = ['school', 'year_of_graduation', ]
     permission_classes = [IsAdminUser]
-    filter_backends = [filters.SearchFilter]
+    filter_backends = [DjangoFilterBackend, SearchFilter]
     search_fields = ['first_name', 'last_name', 'nickname']
 
     # pylint: disable=inconsistent-return-statements
