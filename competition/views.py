@@ -18,8 +18,8 @@ from webstrom import settings
 
 from base.utils import mime_type
 
-from personal.models import School
-from personal.serializers import SchoolSerializer
+from personal.models import School, Profile
+from personal.serializers import SchoolSerializer, ProfileMailSerializer
 
 from competition.models import (Competition, Event, EventRegistration, Grade, Problem,
                                 Semester, Series, Solution, Vote, UnspecifiedPublication,
@@ -40,6 +40,10 @@ from competition.serializers import (CompetitionSerializer,
 class CompetitionViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Competition.objects.all()
     serializer_class = CompetitionSerializer
+
+# pylint: disable=unused-argument
+
+# pylint: disable=unused-argument
 
 
 class ProblemViewSet(viewsets.ModelViewSet):
@@ -93,9 +97,11 @@ class ProblemViewSet(viewsets.ModelViewSet):
         event_registration = EventRegistration.get_registration_by_profile_and_event(
             request.user.profile, problem.series.semester)
         if event_registration is None:
-            raise exceptions.MethodNotAllowed(method='my-solutuion')
-        # TODO: vráti riešenie užívateľa
-        return Response([], status=status.HTTP_501_NOT_IMPLEMENTED)
+            raise exceptions.MethodNotAllowed(method='my-solution')
+        solution = Solution.objects.filter(
+            problem=problem, semester_registration=event_registration).first()
+        serializer = SolutionSerializer(solution)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(methods=['get'], detail=True, permission_classes=[IsAdminUser],
             url_path='download-solutions')
@@ -318,6 +324,22 @@ class SolutionViewSet(viewsets.ModelViewSet):
         Vote.objects.filter(solution=solution).delete()
         return Response(status=status.HTTP_200_OK)
 
+    @action(methods=['get'], detail=True, url_path='download-solution')
+    def download_solution(self, request, pk=None):
+        solution = self.get_object()
+        response = HttpResponse(
+            solution.solution, content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="{solution.solution}"'
+        return response
+
+    @action(methods=['get'], detail=True, url_path='download-corrected')
+    def download_corrected(self, request, pk=None):
+        solution = self.get_object()
+        response = HttpResponse(
+            solution.solution, content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="{solution.corrected_solution}"'
+        return response
+
 
 class SemesterViewSet(viewsets.ModelViewSet):
     queryset = Semester.objects.all()
@@ -426,8 +448,25 @@ class SemesterViewSet(viewsets.ModelViewSet):
             semester = items[0]
             current_results = SemesterViewSet.semester_results(semester)
             return Response(current_results, status=status.HTTP_201_CREATED)
+        return Response([], status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    @action(methods=['get'], detail=True)
+    def participants(self, request, pk=None):
+        semester = self.get_object()
+        participants_id = []
+
+        for series in semester.series_set.all():
+            solutions = Solution.objects.only('semester_registration')\
+                .filter(problem__series=series)\
+                .order_by('semester_registration')
+
+            for solution in solutions:
+                participants_id.append(
+                    solution.semester_registration.profile.pk)
+
+        profiles = Profile.objects.only("user").filter(pk__in=participants_id)
+        serializer = ProfileMailSerializer(profiles, many=True)
+        return Response(serializer.data)
 
 
 class EventViewSet(viewsets.ModelViewSet):
@@ -459,6 +498,7 @@ class EventRegistrationViewSet(viewsets.ModelViewSet):
     serializer_class = EventRegistrationSerializer
     filterset_fields = ['event', 'profile', ]
 
+
 class UnspecifiedPublicationViewSet(viewsets.ModelViewSet):
     queryset = UnspecifiedPublication.objects.all()
     serializer_class = UnspecifiedPublicationSerializer
@@ -466,7 +506,8 @@ class UnspecifiedPublicationViewSet(viewsets.ModelViewSet):
     @action(methods=['get'], detail=True, url_path='download')
     def download_publication(self, request, pk=None):
         publication = self.get_object()
-        response = HttpResponse(publication.file, content_type=mime_type(publication.file))
+        response = HttpResponse(
+            publication.file, content_type=mime_type(publication.file))
         response['Content-Disposition'] = f'attachment; filename="{publication.name}"'
         return response
 
@@ -488,6 +529,7 @@ class UnspecifiedPublicationViewSet(viewsets.ModelViewSet):
         publication.file.save(publication.name, file)
         return Response(status=status.HTTP_201_CREATED)
 
+
 class SemesterPublicationViewSet(viewsets.ModelViewSet):
     queryset = SemesterPublication.objects.all()
     serializer_class = SemesterPublicationSerializer
@@ -495,7 +537,8 @@ class SemesterPublicationViewSet(viewsets.ModelViewSet):
     @action(methods=['get'], detail=True, url_path='download')
     def download_publication(self, request, pk=None):
         publication = self.get_object()
-        response = HttpResponse(publication.file, content_type=mime_type(publication.file))
+        response = HttpResponse(
+            publication.file, content_type=mime_type(publication.file))
         response['Content-Disposition'] = f'attachment; filename="{publication.name}"'
         return response
 
@@ -512,7 +555,7 @@ class SemesterPublicationViewSet(viewsets.ModelViewSet):
         primary_key = request.data['semester']
         if SemesterPublication.objects.filter(semester=semester) \
             .filter(~Q(pk=primary_key), order=request.data['order']) \
-            .exists():
+                .exists():
             raise ValidationError({
                 'order': 'Časopis s týmto číslom už v danom semestri existuje',
             })
