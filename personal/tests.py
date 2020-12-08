@@ -1,12 +1,13 @@
-from django.test import TestCase
-from user.models import User
-from personal.models import *
 from rest_framework import status
 from rest_framework.test import APITestCase
-from personal.serializers import *
+from django.test import TestCase
+from user.models import User
+from personal.models import County, District, School
+from personal.serializers import CountySerializer, DistrictSerializer, SchoolSerializer
 
 
 class TestProfile(TestCase):
+
     def setUp(self):
         county = County.objects.create(name="Testovací kraj")
         district = District.objects.create(
@@ -19,7 +20,7 @@ class TestProfile(TestCase):
 
         self.assertTrue(hasattr(user, 'profile'),
                         msg="Profile pre Usera nebol vytvorený automaticky.")
-    
+
 class TestCounty(TestCase):
 
     def setUp(self):
@@ -31,10 +32,10 @@ class TestCounty(TestCase):
         self.assertEqual(mod.__str__(), 'Testovaci kraj')
 
 class CountyViewsTest(APITestCase):
-    @classmethod
-    def setUp(self):         
-        self.counties = [County.objects.create(name="Košický kraj"), 
-            County.objects.create(name="Prešovský kraj"), 
+
+    def setUp(self):
+        self.counties = [County.objects.create(name="Košický kraj"),
+            County.objects.create(name="Prešovský kraj"),
             County.objects.create(name="Bratislavský kraj")]
 
     URL_PREFIX = '/personal/counties'
@@ -63,12 +64,12 @@ class TestDistrict(TestCase):
         self.assertEqual(mod.__str__(), 'Testovaci okres')
 
 class DistrictViewsTest(APITestCase):
-    @classmethod
-    def setUp(self):  
-        county1 = County.objects.create(name="Košický kraj")  
-        county2 = County.objects.create(name="Prešovský kraj")  
-        self.districts = [District.objects.create(name="Gelnica", county=county1), 
-            District.objects.create(name="Rožňava", county=county1), 
+
+    def setUp(self):
+        county1 = County.objects.create(name="Košický kraj")
+        county2 = County.objects.create(name="Prešovský kraj")
+        self.districts = [District.objects.create(name="Gelnica", county=county1),
+            District.objects.create(name="Rožňava", county=county1),
             District.objects.create(name="Sabinov", county=county2)]
 
     URL_PREFIX = '/personal/districts'
@@ -123,13 +124,19 @@ class TestSchoolWithAddress(TestCase):
     def setUp(self):
         county = County.objects.create(name="Testovací kraj")
         district = District.objects.create(name="Testovací okres",county=county)
-        return School.objects.create(name='Gymnázium',district=district,street='Poštová 9',city='Košice',zip_code='04001')
+        return School.objects.create(
+            name='Gymnázium',
+            district=district,
+            street='Poštová 9',
+            city='Košice',
+            zip_code='04001'
+            )
 
     def test_school_check_title(self):
         mod = self.setUp()
         self.assertTrue(isinstance(mod, School))
         self.assertEqual(mod.__str__(), 'Gymnázium, Poštová 9, Košice')
-    
+
     def test_printable_zip_code(self):
         mod = self.setUp()
         self.assertTrue(isinstance(mod, School))
@@ -141,14 +148,33 @@ class TestSchoolWithAddress(TestCase):
         self.assertEqual(mod.stitok, '\\stitok{Gymnázium}{Košice}{040 01}{Poštová 9}')
 
 class SchoolViewsTest(APITestCase):
-    @classmethod
-    def setUp(self):  
-        county = County.objects.create(name="Košický kraj")  
+
+    def setUp(self):
+        county = County.objects.create(name="Košický kraj")
         district1 = District.objects.create(name="Košice I", county=county)
         district2 = District.objects.create(name="Košice IV", county=county)
-        self.schools = [School.objects.create(name='Gymnázium',district=district1,street='Poštová 9',city='Košice',zip_code='04001'), 
-            School.objects.create(name='Gymnázium',district=district2,street='Alejová 1',city='Košice',zip_code='04149'),
-            School.objects.create(name='Gymnázium',district=district2,street='Opatovská cesta 7',city='Košice',zip_code='04001')
+        self.schools = [
+            School.objects.create(
+                name='Gymnázium',
+                district=district1,
+                street='Poštová 9',
+                city='Košice',
+                zip_code='04001'
+                ),
+            School.objects.create(
+                name='Gymnázium',
+                district=district2,
+                street='Alejová 1',
+                city='Košice',
+                zip_code='04149'
+                ),
+            School.objects.create(
+                name='Gymnázium',
+                district=district2,
+                street='Opatovská cesta 7',
+                city='Košice',
+                zip_code='04001'
+                )
             ]
 
     URL_PREFIX = '/personal/schools'
