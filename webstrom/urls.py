@@ -10,6 +10,7 @@ urlpatterns = [
     path('cms/', include('cms.urls')),
     path('personal/', include('personal.urls')),
     path('base/', include('base.urls')),
+    path('problem_database/',include('problem_database.urls'))
 ]
 
 # Pri vývoji servuj media files priamo z djanga

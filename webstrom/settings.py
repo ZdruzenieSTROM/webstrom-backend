@@ -43,6 +43,7 @@ LOCAL_APPS = [
     'cms.apps.CmsConfig',
     'user.apps.UserConfig',
     'personal.apps.PersonalConfig',
+    'problem_database.apps.ProblemDatabaseConfig'
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
