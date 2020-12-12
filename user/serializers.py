@@ -2,10 +2,9 @@ from django.contrib.auth import authenticate, get_user_model
 
 from rest_framework import serializers, exceptions
 
-from allauth.account import app_settings as allauth_settings
 from allauth.account.adapter import get_adapter
 from allauth.account.utils import setup_user_email
-from allauth.utils import (email_address_exists, get_username_max_length)
+from allauth.utils import email_address_exists
 
 
 from user.models import User, TokenModel
@@ -121,6 +120,9 @@ class UserDetailsSerializer(serializers.ModelSerializer):
 
 
 class RegisterSerializer(serializers.Serializer):
+    #pylint: disable=w0223
+    #pylint: disable=w0221
+    #pylint: disable=w0201
     email = serializers.EmailField(required=True)
     password1 = serializers.CharField(write_only=True)
     password2 = serializers.CharField(write_only=True)
@@ -159,6 +161,7 @@ class RegisterSerializer(serializers.Serializer):
 
 
 class VerifyEmailSerializer(serializers.Serializer):
+    #pylint: disable=w0223
     key = serializers.CharField()
 
 

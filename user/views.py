@@ -27,7 +27,12 @@ from competition.models import Grade, Profile
 from personal.models import District, School
 from user.forms import NameUpdateForm, UserCreationForm
 from user.models import User, TokenModel
-from user.serializers import LoginSerializer, TokenSerializer, UserDetailsSerializer, RegisterSerializer, VerifyEmailSerializer
+from user.serializers import (
+    LoginSerializer,
+    TokenSerializer,
+    UserDetailsSerializer,
+    RegisterSerializer,
+    VerifyEmailSerializer)
 from user.tokens import email_verification_token_generator
 
 
@@ -119,18 +124,20 @@ class UserDetailsView(RetrieveUpdateAPIView):
 
 
 class RegisterView(CreateAPIView):
+    #pylint: disable=w0212
+    #pylint: disable=E1101
     serializer_class = RegisterSerializer
     permission_classes = [AllowAny, ]
     token_model = TokenModel
 
     @sensitive_post_parameters_m
     def dispatch(self, *args, **kwargs):
-        return super(RegisterView, self).dispatch(*args, **kwargs)
+        return super().dispatch(*args, **kwargs)
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user = self.perform_create(serializer)
+        self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
 
         return Response({"detail": "Verifikačný email odoslaný."},
@@ -147,6 +154,7 @@ class RegisterView(CreateAPIView):
 
 
 class VerifyEmailView(APIView, ConfirmEmailView):
+    #pylint: disable=w0221
     permission_classes = (AllowAny,)
     allowed_methods = ('POST', 'OPTIONS', 'HEAD')
 
