@@ -2,8 +2,11 @@ from django.contrib.auth import authenticate, get_user_model
 
 from rest_framework import serializers, exceptions
 
-from allauth.account import app_settings
+from allauth.account import app_settings as allauth_settings
 from allauth.account.adapter import get_adapter
+from allauth.account.utils import setup_user_email
+from allauth.utils import (email_address_exists, get_username_max_length)
+
 
 from user.models import User, TokenModel
 from personal.models import Profile
@@ -39,10 +42,9 @@ class LoginSerializer(serializers.Serializer):
 
     def validate_email_verification_status(self, user):
         #pylint: disable=E1101
-        if app_settings.EMAIL_VERIFICATION == app_settings.EmailVerificationMethod.MANDATORY:
-            email_address = user.emailaddress_set.get(email=user.email)
-            if not email_address.verified:
-                raise serializers.ValidationError('Email nie je overený.')
+        email_address = user.emailaddress_set.get(email=user.email)
+        if not email_address.verified:
+            raise serializers.ValidationError('Email nie je overený.')
 
     def validate(self, attrs):
         email = attrs.get('email')
@@ -116,6 +118,48 @@ class UserDetailsSerializer(serializers.ModelSerializer):
         instance.profile.save()
 
         return instance
+
+
+class RegisterSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)
+    password1 = serializers.CharField(write_only=True)
+    password2 = serializers.CharField(write_only=True)
+    profile = ProfileSerializer()
+
+    def validate_email(self, email):
+        email = get_adapter().clean_email(email)
+        if email and email_address_exists(email):
+            raise serializers.ValidationError(
+                "Používateľ s danou emailovou adresou už existuje.")
+        return email
+
+    def validate_password1(self, password):
+        return get_adapter().clean_password(password)
+
+    def validate(self, data):
+        if data['password1'] != data['password2']:
+            raise serializers.ValidationError("Zadané heslá sa nezhodujú.")
+        return data
+
+    def get_cleaned_data(self):
+        return {
+            'email': self.validated_data.get('email', ''),
+            'password1': self.validated_data.get('password1', '')
+        }
+
+    def save(self, request):
+        adapter = get_adapter()
+        user = adapter.new_user(request)
+        self.cleaned_data = self.get_cleaned_data()
+        adapter.save_user(request, user, self)
+        profile_data = self.validated_data['profile']
+        Profile.objects.create(user=user, **profile_data)
+        setup_user_email(request, user, [])
+        return user
+
+
+class VerifyEmailSerializer(serializers.Serializer):
+    key = serializers.CharField()
 
 
 class UserShortSerializer(serializers.ModelSerializer):

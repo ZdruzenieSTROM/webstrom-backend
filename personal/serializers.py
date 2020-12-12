@@ -30,10 +30,8 @@ class SchoolShortSerializer(serializers.ModelSerializer):
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
-        read_only_fields = ('first_name', 'last_name')
+        # read_only_fields = ('first_name', 'last_name')
         exclude = ('user',)
-
-    email = serializers.EmailField(source='user.email')
 
 
 class ProfileShortSerializer(serializers.ModelSerializer):

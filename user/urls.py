@@ -7,7 +7,7 @@ from django.contrib.auth.views import (  # LogoutView, LoginView,
     PasswordResetView)
 from django.urls import path, reverse_lazy
 
-from user.views import LoginView, LogoutView, UserDetailsView
+from user.views import LoginView, LogoutView, UserDetailsView, RegisterView, VerifyEmailView
 from user.views import UserProfileView, profile_update, register, verify
 
 app_name = 'user'
@@ -17,10 +17,13 @@ urlpatterns = [
     path('login/', LoginView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),
     path('details/', UserDetailsView.as_view(), name='user-details'),
+    path('registration/', RegisterView.as_view(), name='register'),
+    path('registration/verify-email/',
+         VerifyEmailView.as_view(), name='verify-email'),
 
     # Url ktoré neboli zatiaľ prepísané do restu.
 
-    path('register/', register, name='register'),
+    path('register/', register, name='register-to-be-deleted'),
     path('verify/<str:uidb64>/<str:token>/', verify, name='verify'),
     path('profile/update/', profile_update, name='profile-update'),
     path('profile/<int:pk>/', UserProfileView.as_view(), name='profile-detail'),

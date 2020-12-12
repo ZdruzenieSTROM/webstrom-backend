@@ -1,3 +1,6 @@
+from allauth.account import app_settings as allauth_settings
+from allauth.account.utils import complete_signup
+from allauth.account.views import ConfirmEmailView
 from django.contrib import messages
 from django.contrib.auth import login as django_login
 from django.contrib.auth import logout as django_logout
@@ -13,7 +16,8 @@ from django.views.decorators.debug import sensitive_post_parameters
 from django.views.generic import DetailView
 from rest_framework import status
 from rest_framework.decorators import api_view
-from rest_framework.generics import GenericAPIView, RetrieveUpdateAPIView
+from rest_framework.exceptions import MethodNotAllowed
+from rest_framework.generics import CreateAPIView, GenericAPIView, RetrieveUpdateAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -23,7 +27,7 @@ from competition.models import Grade, Profile
 from personal.models import District, School
 from user.forms import NameUpdateForm, UserCreationForm
 from user.models import User, TokenModel
-from user.serializers import LoginSerializer, TokenSerializer, UserDetailsSerializer
+from user.serializers import LoginSerializer, TokenSerializer, UserDetailsSerializer, RegisterSerializer, VerifyEmailSerializer
 from user.tokens import email_verification_token_generator
 
 
@@ -50,8 +54,7 @@ class LoginView(GenericAPIView):
     def login(self):
         self.user = self.serializer.validated_data['user']
 
-        self.token = self.create_token(
-            self.token_model, self.user)
+        self.token = self.create_token(self.token_model, self.user)
 
         # Vytvorí django session.
         self.process_login()
@@ -113,6 +116,53 @@ class UserDetailsView(RetrieveUpdateAPIView):
 
     def get_object(self):
         return self.request.user
+
+
+class RegisterView(CreateAPIView):
+    serializer_class = RegisterSerializer
+    permission_classes = [AllowAny, ]
+    token_model = TokenModel
+
+    @sensitive_post_parameters_m
+    def dispatch(self, *args, **kwargs):
+        return super(RegisterView, self).dispatch(*args, **kwargs)
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+
+        return Response({"detail": "Verifikačný email odoslaný."},
+                        status=status.HTTP_201_CREATED,
+                        headers=headers)
+
+    def perform_create(self, serializer):
+        user = serializer.save(self.request)
+
+        complete_signup(self.request._request, user,
+                        allauth_settings.EMAIL_VERIFICATION,
+                        None)
+        return user
+
+
+class VerifyEmailView(APIView, ConfirmEmailView):
+    permission_classes = (AllowAny,)
+    allowed_methods = ('POST', 'OPTIONS', 'HEAD')
+
+    def get_serializer(self, *args, **kwargs):
+        return VerifyEmailSerializer(*args, **kwargs)
+
+    def get(self, *args, **kwargs):
+        raise MethodNotAllowed('GET')
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.kwargs['key'] = serializer.validated_data['key']
+        confirmation = self.get_object()
+        confirmation.confirm(self.request)
+        return Response({'detail': 'ok'}, status=status.HTTP_200_OK)
 
 
 # Views ktoré neboli zatiaľ prepísané do restu.
