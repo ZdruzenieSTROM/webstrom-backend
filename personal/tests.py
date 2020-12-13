@@ -224,3 +224,35 @@ class SchoolViewsTest(APITestCase):
                 SchoolSerializer(instance=school).data,
                 response.data
             )
+
+    def test_search_schools(self):
+        response = self.client.get(self.URL_PREFIX + '/?search=Opatov', {}, 'json')
+
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        self.assertEqual(1, len(response.data))
+        self.assertIn(
+                SchoolSerializer(instance=self.schools[2]).data,
+                response.data
+            )
+
+        response = self.client.get(self.URL_PREFIX + '/?search=Gym', {}, 'json')
+
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        self.assertEqual(3, len(response.data))
+
+        for school in self.schools:
+            self.assertIn(
+                SchoolSerializer(instance=school).data,
+                response.data
+            )
+
+        response = self.client.get(self.URL_PREFIX + '/?search=ová', {}, 'json')
+
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        self.assertEqual(2, len(response.data))
+
+        for school in self.schools[:2]:
+            self.assertIn(
+                SchoolSerializer(instance=school).data,
+                response.data
+            )
