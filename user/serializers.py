@@ -9,7 +9,7 @@ from allauth.utils import email_address_exists
 
 from user.models import User, TokenModel
 from personal.models import Profile
-from personal.serializers import ProfileSerializer
+from personal.serializers import ProfileCreateSerializer
 
 
 class LoginSerializer(serializers.Serializer):
@@ -79,7 +79,7 @@ class UserDetailsSerializer(serializers.ModelSerializer):
     Serializer pre User model spolu s Profile modelom
     """
 
-    profile = ProfileSerializer(label='')
+    profile = ProfileCreateSerializer(label='')
 
     def validate_username(self, username):
         username = get_adapter().clean_username(username)
@@ -126,7 +126,7 @@ class RegisterSerializer(serializers.Serializer):
     email = serializers.EmailField(required=True)
     password1 = serializers.CharField(write_only=True)
     password2 = serializers.CharField(write_only=True)
-    profile = ProfileSerializer()
+    profile = ProfileCreateSerializer(label="")
 
     def validate_email(self, email):
         email = get_adapter().clean_email(email)
