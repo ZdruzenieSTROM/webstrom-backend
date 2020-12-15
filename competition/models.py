@@ -24,9 +24,10 @@ from base.utils import mime_type
 from base.validators import school_year_validator
 from personal.models import Profile, School
 from competition import utils
+from competition import permissions
 
 
-class Competition(models.Model):
+class Competition(models.Model, permissions.CompetitionPermissionMixin):
     """
     Model súťaže, ktorý pokrýva súťaž ako koncept. Napríklad Matboj, Seminár STROM, Kôš
     """
@@ -57,6 +58,10 @@ class Competition(models.Model):
         help_text='Horná hranica na účasť v súťaži. '
         'Zadáva sa v počte rokov do maturity. '
         'Ak najstraší, kto môže riešiť súťaž je deviatak, zadá sa 4.')
+
+    permission_group = models.ManyToManyField('auth.Group',
+                                              blank=True,
+                                              verbose_name='Skupiny práv')
 
     def can_user_participate(self, user):
         if self.min_years_until_graduation:
@@ -101,7 +106,7 @@ class LateTag(models.Model):
         return self.name
 
 
-class Event(models.Model):
+class Event(models.Model, permissions.CompetitionPermissionMixin):
     """
     Slúži na označenie instancie súťaže (Napríklad: Matboj 2020,
     Letný semester 40. ročníka STROMu, Jarný výlet 2021)
@@ -135,6 +140,9 @@ class Event(models.Model):
             return str(self.semester)
 
         return f'{self.competition.name}, {self.year}. ročník'
+
+    def can_user_modify(self, user):
+        return self.competition.can_user_modify(user)
 
 
 class Semester(Event):
@@ -190,7 +198,7 @@ class Semester(Event):
         return f'{self.competition.name}, {self.year}. ročník - {self.season} semester'
 
 
-class Series(models.Model):
+class Series(models.Model, permissions.CompetitionPermissionMixin):
     """
     Popisuje jednu sériu semestra
     """
@@ -264,8 +272,11 @@ class Series(models.Model):
     def num_problems(self):
         return self.problems.count()
 
+    def can_user_modify(self, user):
+        return self.semester.can_user_modify(user)
 
-class Problem(models.Model):
+
+class Problem(models.Model, permissions.CompetitionPermissionMixin):
     """
     Popisuje jednu úlohu v sérií
     """
@@ -301,6 +312,9 @@ class Problem(models.Model):
         stats['mean'] = total_points / \
             total_solutions if total_solutions else '?'
         return stats
+
+    def can_user_modify(self, user):
+        return self.series.can_user_modify(user)
 
 
 class Grade(models.Model):
@@ -341,7 +355,7 @@ class Grade(models.Model):
         return self.name
 
 
-class EventRegistration(models.Model):
+class EventRegistration(models.Model, permissions.CompetitionPermissionMixin):
     """
     Registruje účastníka na instanciu súťaže(napríklad Matboj 2020,
     letný semester 40. ročník STROMu).
@@ -376,6 +390,9 @@ class EventRegistration(models.Model):
 
     def __str__(self):
         return f'{ self.profile.user.get_full_name() } @ { self.event }'
+
+    def can_user_modify(self, user):
+        return self.event.can_user_modify(user)
 
 
 class Solution(models.Model):
@@ -436,7 +453,8 @@ class Vote(models.Model):
         return f'{pos} hlas za {self.solution.problem} pre '\
                f'{self.solution.semester_registration.profile.user.get_full_name()}'
 
-class SemesterPublication(models.Model):
+
+class SemesterPublication(models.Model, permissions.CompetitionPermissionMixin):
     """
     Časopis
     """
@@ -445,7 +463,8 @@ class SemesterPublication(models.Model):
         verbose_name_plural = 'časopisy'
 
     name = models.CharField(max_length=30, blank=True)
-    semester = models.ForeignKey(Semester, null=True, on_delete=models.SET_NULL)
+    semester = models.ForeignKey(
+        Semester, null=True, on_delete=models.SET_NULL)
     order = models.PositiveSmallIntegerField()
     file = RestrictedFileField(
         upload_to='publications/semester_publication/%Y',
@@ -498,8 +517,11 @@ class SemesterPublication(models.Model):
         self.name = f'{self.semester.competition}-{self.semester.year}-{self.order}'
         self.save()
 
+    def can_user_modify(self, user):
+        return self.semester.can_user_modify(user)
 
-class UnspecifiedPublication(models.Model):
+
+class UnspecifiedPublication(models.Model, permissions.CompetitionPermissionMixin):
     """
     Reprezentuje výsledky, brožúrku alebo akýkoľvek materiál
     zverejnený k nejakému Eventu okrem časopisov. Časopisy majú
@@ -527,6 +549,9 @@ class UnspecifiedPublication(models.Model):
     def __str__(self):
         return self.name
 
+    def can_user_modify(self, user):
+        return self.event.can_user_modify(user)
+
 
 @receiver(post_save, sender=SemesterPublication)
 def make_thumbnail_on_creation(sender, instance, created, **kwargs):
@@ -543,7 +568,7 @@ def make_name_on_creation(sender, instance, created, **kwargs):
         instance.generate_name()
 
 
-class RegistrationLink(models.Model):
+class RegistrationLink(models.Model, permissions.CompetitionPermissionMixin):
     class Meta:
         verbose_name = 'link na registráciu'
         verbose_name_plural = 'linky na registráciu'
@@ -554,3 +579,6 @@ class RegistrationLink(models.Model):
     start = models.DateTimeField(verbose_name='Začiatok registrácie')
     end = models.DateTimeField(verbose_name='Koniec registrácie')
     additional_info = models.TextField(verbose_name='Doplňujúce informácie')
+
+    def can_user_modify(self, user):
+        return self.event.can_user_modify(user)

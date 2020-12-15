@@ -25,6 +25,7 @@ from competition.models import (Competition, Event, EventRegistration, Grade, Pr
                                 Semester, Series, Solution, Vote, UnspecifiedPublication,
                                 SemesterPublication)
 from competition import utils
+from competition.permissions import CompetitionRestrictedPermission
 from competition.serializers import (CompetitionSerializer,
                                      EventRegistrationSerializer,
                                      EventSerializer, ProblemSerializer,
@@ -33,13 +34,13 @@ from competition.serializers import (CompetitionSerializer,
                                      SolutionSerializer,
                                      UnspecifiedPublicationSerializer,
                                      SemesterPublicationSerializer)
-
 # pylint: disable=unused-argument
 
 
 class CompetitionViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Competition.objects.all()
     serializer_class = CompetitionSerializer
+    permission_classes = (CompetitionRestrictedPermission,)
 
 
 class ProblemViewSet(viewsets.ModelViewSet):
@@ -48,6 +49,7 @@ class ProblemViewSet(viewsets.ModelViewSet):
     """
     queryset = Problem.objects.all()
     serializer_class = ProblemSerializer
+    permission_classes = (CompetitionRestrictedPermission,)
 
     @action(methods=['get'], detail=True, permission_classes=[IsAdminUser])
     def stats(self, request, pk=None):
@@ -186,6 +188,7 @@ class SeriesViewSet(viewsets.ModelViewSet):
     """
     queryset = Series.objects.all()
     serializer_class = SeriesWithProblemsSerializer
+    permission_classes = (CompetitionRestrictedPermission,)
 
     @staticmethod
     def _create_profile_dict(series, sum_func, semester_registration, profile_solutions):
@@ -322,6 +325,7 @@ class SolutionViewSet(viewsets.ModelViewSet):
 class SemesterViewSet(viewsets.ModelViewSet):
     queryset = Semester.objects.all()
     serializer_class = SemesterWithProblemsSerializer
+    permission_classes = (CompetitionRestrictedPermission,)
 
     @staticmethod
     def semester_results(semester):
@@ -434,6 +438,7 @@ class EventViewSet(viewsets.ModelViewSet):
     queryset = Event.objects.all()
     serializer_class = EventSerializer
     filterset_fields = ['school_year', 'competition', ]
+    permission_classes = (CompetitionRestrictedPermission,)
 
     @action(methods=['post'], detail=True, permission_classes=[IsAuthenticated])
     def register(self, request, pk=None):
@@ -458,15 +463,19 @@ class EventRegistrationViewSet(viewsets.ModelViewSet):
     queryset = EventRegistration.objects.all()
     serializer_class = EventRegistrationSerializer
     filterset_fields = ['event', 'profile', ]
+    permission_classes = (CompetitionRestrictedPermission,)
+
 
 class UnspecifiedPublicationViewSet(viewsets.ModelViewSet):
     queryset = UnspecifiedPublication.objects.all()
     serializer_class = UnspecifiedPublicationSerializer
+    permission_classes = (CompetitionRestrictedPermission,)
 
     @action(methods=['get'], detail=True, url_path='download')
     def download_publication(self, request, pk=None):
         publication = self.get_object()
-        response = HttpResponse(publication.file, content_type=mime_type(publication.file))
+        response = HttpResponse(
+            publication.file, content_type=mime_type(publication.file))
         response['Content-Disposition'] = f'attachment; filename="{publication.name}"'
         return response
 
@@ -488,14 +497,17 @@ class UnspecifiedPublicationViewSet(viewsets.ModelViewSet):
         publication.file.save(publication.name, file)
         return Response(status=status.HTTP_201_CREATED)
 
+
 class SemesterPublicationViewSet(viewsets.ModelViewSet):
     queryset = SemesterPublication.objects.all()
     serializer_class = SemesterPublicationSerializer
+    permission_classes = (CompetitionRestrictedPermission,)
 
     @action(methods=['get'], detail=True, url_path='download')
     def download_publication(self, request, pk=None):
         publication = self.get_object()
-        response = HttpResponse(publication.file, content_type=mime_type(publication.file))
+        response = HttpResponse(
+            publication.file, content_type=mime_type(publication.file))
         response['Content-Disposition'] = f'attachment; filename="{publication.name}"'
         return response
 
@@ -512,7 +524,7 @@ class SemesterPublicationViewSet(viewsets.ModelViewSet):
         primary_key = request.data['semester']
         if SemesterPublication.objects.filter(semester=semester) \
             .filter(~Q(pk=primary_key), order=request.data['order']) \
-            .exists():
+                .exists():
             raise ValidationError({
                 'order': 'Časopis s týmto číslom už v danom semestri existuje',
             })
