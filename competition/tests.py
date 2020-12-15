@@ -1,5 +1,5 @@
 from rest_framework.test import APITestCase
-from tests.test_utils import get_app_fixtures
+from tests.test_utils import get_app_fixtures, PermissionTestMixin
 
 series_expected_keys = [
     'id',
@@ -75,7 +75,7 @@ def semester_assert_format(self, semester):
     series_assert_format(self, semester['series_set'][0])
 
 
-class TestSeries(APITestCase):
+class TestSeries(APITestCase, PermissionTestMixin):
     '''competition/series'''
 
     URL_PREFIX = '/competition/series'
@@ -87,24 +87,45 @@ class TestSeries(APITestCase):
         'user'
     ])
 
+    def setUp(self):
+        self.create_users()
+
     def test_get_series_current(self):
         '''/current format ok'''
+        self.get_client()
         response = self.client.get(self.URL_PREFIX + '/current', {}, 'json')
         self.assertEqual(response.status_code, 200)
         series_assert_format(self, response.json())
 
     def test_get_series_specific(self):
         '''/0 format ok'''
+        self.get_client()
         response = self.client.get(self.URL_PREFIX + '/0', {}, 'json')
         self.assertEqual(response.status_code, 200)
         series_assert_format(self, response.json())
 
     def test_get_series_result_specific(self):
         '''/0/results format ok'''
+        self.get_client()
         response = self.client.get(self.URL_PREFIX + '/0/results', {}, 'json')
         self.assertEqual(response.status_code, 200)
         self.assertTrue(len(response.json()) > 0)
         results_row_assert_format(self, response.json()[0], 1)
+
+    def test_permission_list(self):
+        responses = {user_name: 200 for user_name in self.user_settings}
+        responses[None] = 200
+        self.check_permissions(self.URL_PREFIX+'/', 'GET', responses)
+
+    # def test_permission_retrieve_strom(self):
+    #     responses = {user_name: 200 for user_name in self.user_settings}
+    #     responses[None] = 200
+    #     self.check_permissions(self.URL_PREFIX+'/', 'GET', responses)
+
+    # def test_permission_retrieve_kricky(self):
+    #     responses = {user_name: 200 for user_name in self.user_settings}
+    #     responses[None] = 200
+    #     self.check_permissions(self.URL_PREFIX+'/', 'GET', responses)
 
 
 class TestSemester(APITestCase):
@@ -139,7 +160,7 @@ class TestSemester(APITestCase):
         results_row_assert_format(self, response.json()[0], 2)
 
 
-class TestCompetition(APITestCase):
+class TestCompetition(APITestCase, PermissionTestMixin):
     '''competition/competition'''
     URL_PREFIX = '/competition/competition'
 
@@ -159,6 +180,9 @@ class TestCompetition(APITestCase):
         'min_years_until_graduation',
     ]
 
+    def setUp(self):
+        self.create_users()
+
     def competition_assert_format(self, comp, num_events):
         '''assert given competition format'''
         for key in self.competition_expected_keys:
@@ -170,13 +194,28 @@ class TestCompetition(APITestCase):
         response = self.client.get(self.URL_PREFIX + '/', {}, 'json')
         self.assertEqual(response.status_code, 200)
 
-    def test_post_competition_list(self):
-        '''post not allowed OK'''
-        response = self.client.post(self.URL_PREFIX + '/', {})
-        self.assertEqual(response.status_code, 405)
+    # def test_post_competition_list(self):
+    #    '''post not allowed OK'''
+    #    response = self.client.post(self.URL_PREFIX + '/', {})
+    #    self.assertEqual(response.status_code, 405)
 
     def test_get_competition_detail(self):
         '''/0 format OK'''
         response = self.client.get(self.URL_PREFIX + '/0', {}, 'json')
         self.assertEqual(response.status_code, 200)
         self.competition_assert_format(response.json(), 6)
+
+    def test_permission_list(self):
+        pass
+
+    def test_permission_get(self):
+        pass
+
+    def test_permission_update_kricky(self):
+        pass
+
+    def test_permission_update_strom(self):
+        pass
+
+    def test_permission_create(self):
+        pass
