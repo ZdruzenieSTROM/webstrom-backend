@@ -11,6 +11,9 @@
             "min_years_until_graduation": 0,
             "sites": [
                 1
+            ],
+            "permission_group": [
+                1
             ]
         }
     },
@@ -23,6 +26,9 @@
             "competition_type": 0,
             "min_years_until_graduation": 4,
             "sites": [
+                2
+            ],
+            "permission_group": [
                 2
             ]
         }
@@ -37,6 +43,9 @@
             "min_years_until_graduation": 7,
             "sites": [
                 3
+            ],
+            "permission_group": [
+                2
             ]
         }
     },
@@ -49,6 +58,9 @@
             "competition_type": 1,
             "min_years_until_graduation": 0,
             "sites": [
+                1
+            ],
+            "permission_group": [
                 1
             ]
         }
@@ -63,6 +75,9 @@
             "min_years_until_graduation": 4,
             "sites": [
                 2
+            ],
+            "permission_group": [
+                2
             ]
         }
     },
@@ -76,6 +91,9 @@
             "min_years_until_graduation": 7,
             "sites": [
                 3
+            ],
+            "permission_group": [
+                2
             ]
         }
     },
@@ -90,6 +108,10 @@
                 1,
                 2,
                 3
+            ],
+            "permission_group": [
+                1,
+                2
             ]
         }
     },
@@ -104,6 +126,9 @@
                 1,
                 2,
                 3
+            ],
+            "permission_group": [
+                1
             ]
         }
     }
