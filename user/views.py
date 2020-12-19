@@ -94,8 +94,10 @@ class LogoutView(APIView):
     permission_classes = (AllowAny,)
 
     def get(self, request, *args, **kwargs):
-        response = self.logout(request)
-        return self.finalize_response(request, response, *args, **kwargs)
+        return self.http_method_not_allowed(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.logout(request)
 
     def logout(self, request):
         print(request.user)
