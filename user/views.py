@@ -91,6 +91,7 @@ class LoginView(GenericAPIView):
 
 
 class LogoutView(APIView):
+    #pylint: disable=w0613
     permission_classes = (AllowAny,)
 
     def get(self, request, *args, **kwargs):
