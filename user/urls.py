@@ -1,22 +1,31 @@
-from django.contrib.auth.views import (  # LogoutView, LoginView,
+from django.contrib.auth.views import (  # LogoutView, LoginView, PasswordChangeView,
     PasswordChangeDoneView,
-    PasswordChangeView,
     PasswordResetCompleteView,
     PasswordResetConfirmView,
     PasswordResetDoneView,
     PasswordResetView)
 from django.urls import path, reverse_lazy
 
-from user.views import LoginView, LogoutView, UserDetailsView, RegisterView, VerifyEmailView
+from user.views import (
+    LoginView,
+    LogoutView,
+    PasswordChangeView,
+    RegisterView,
+    UserDetailsView,
+    VerifyEmailView,
+)
+# old views
 from user.views import UserProfileView, profile_update, register, verify
 
 app_name = 'user'
 
 urlpatterns = [
     # Registrácia a prihlásenie
+    path('details/', UserDetailsView.as_view(), name='user-details'),
     path('login/', LoginView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),
-    path('details/', UserDetailsView.as_view(), name='user-details'),
+    path('password/change/', PasswordChangeView.as_view(),
+         name='password-change'),
     path('registration/', RegisterView.as_view(), name='register'),
     path('registration/verify-email/',
          VerifyEmailView.as_view(), name='verify-email'),
@@ -54,11 +63,11 @@ urlpatterns = [
              template_name='user/password_reset_complete.html'),
          name='password-reset-complete'),
 
-    path('password-change/',
-         PasswordChangeView.as_view(
-             template_name='user/password_change.html',
-             success_url=reverse_lazy('user:password-change-done')),
-         name='password-change'),
+    # path('password-change/',
+    #      PasswordChangeView.as_view(
+    #          template_name='user/password_change.html',
+    #          success_url=reverse_lazy('user:password-change-done')),
+    #      name='password-change'),
 
     path('password-change/done/',
          PasswordChangeDoneView.as_view(

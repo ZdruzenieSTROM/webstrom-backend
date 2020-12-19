@@ -29,9 +29,10 @@ from user.forms import NameUpdateForm, UserCreationForm
 from user.models import User, TokenModel
 from user.serializers import (
     LoginSerializer,
+    PasswordChangeSerializer,
+    RegisterSerializer,
     TokenSerializer,
     UserDetailsSerializer,
-    RegisterSerializer,
     VerifyEmailSerializer)
 from user.tokens import email_verification_token_generator
 
@@ -171,6 +172,22 @@ class VerifyEmailView(APIView, ConfirmEmailView):
         confirmation = self.get_object()
         confirmation.confirm(self.request)
         return Response({'detail': 'ok'}, status=status.HTTP_200_OK)
+
+
+class PasswordChangeView(GenericAPIView):
+    # pylint: disable=w0613
+    serializer_class = PasswordChangeSerializer
+    permission_classes = (IsAuthenticated,)
+
+    @sensitive_post_parameters_m
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({"detail": "Nové heslo bolo uložené"})
 
 
 # Views ktoré neboli zatiaľ prepísané do restu.
