@@ -19,5 +19,15 @@
             "school": 1,
             "year_of_graduation": 2000
         }
+    },
+    {
+        "model": "account.emailaddress",
+        "pk": 1,
+        "fields": {
+            "user": 1,
+            "email": "webmaster@strom.sk",
+            "verified": true,
+            "primary": true
+        }
     }
 ]
