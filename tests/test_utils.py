@@ -70,10 +70,10 @@ class PermissionTestMixin:
 
     #pylint: disable=dangerous-default-value
     def check_permissions(self, url, method, responses, body={}):
-        for user, er in responses.items():
+        for user, status in responses.items():
             client = self.get_client(user)
-            expected_response = er if isinstance(
-                er, list) else [er]
+            expected_response = status if isinstance(
+                status, list) else [status]
             if method == 'GET':
                 response = client.get(url, body, 'json')
             elif method == 'POST':

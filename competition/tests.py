@@ -171,7 +171,8 @@ class TestSemester(APITestCase, PermissionTestMixin):
     # def test_create_permissions(self):
     #     ''' create permission OK '''
     #     with open(os.path.join(
-    #             BASE_DIR, 'tests', 'test_requests', 'seminar_create.json'), 'r', encoding='utf-8') as f:
+    #             BASE_DIR, 'tests', 'test_requests', 'seminar_create.json'),
+    #             'r', encoding='utf-8') as f:
     #         competition_to_create = json.load(f)
     #     self.check_permissions(self.URL_PREFIX + '/',
     #                            'POST', self.ONLY_STROM_OK_RESPONSES, competition_to_create)
@@ -276,4 +277,5 @@ class TestCompetition(APITestCase, PermissionTestMixin):
     def test_permission_create(self):
         ''' create permission OK'''
         self.check_permissions(self.URL_PREFIX + '/',
-                               'POST', self.ALL_FORBIDDEN, {'name': 'Ilegalna sutaz', 'start_year': 2020})
+                               'POST', self.ALL_FORBIDDEN,
+                               {'name': 'Ilegalna sutaz', 'start_year': 2020})

@@ -379,7 +379,8 @@ class SemesterViewSet(viewsets.ModelViewSet):
         serializer = SchoolSerializer(schools, many=True)
         return Response(serializer.data)
 
-    @action(methods=['get'], detail=True, url_path='offline-schools', permission_classes=[IsAdminUser])
+    @action(methods=['get'], detail=True,
+            url_path='offline-schools', permission_classes=[IsAdminUser])
     def offline_schools(self, request, pk=None):
         schools = School.objects.filter(eventregistration__event=pk)\
             .filter(eventregistration__solution__is_online=False)\
@@ -389,7 +390,8 @@ class SemesterViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     @action(methods=['get'], detail=True,
-            url_path=r'invitations/(?P<num_participants>\d+)/(?P<num_substitutes>\d+)', permission_classes=[IsAdminUser])
+            url_path=r'invitations/(?P<num_participants>\d+)/(?P<num_substitutes>\d+)',
+            permission_classes=[IsAdminUser])
     def invitations(self, request, pk=None, num_participants=32, num_substitutes=20):
         semester = self.get_object()
         num_participants = int(num_participants)
@@ -405,7 +407,8 @@ class SemesterViewSet(viewsets.ModelViewSet):
         return Response(participants, status=status.HTTP_200_OK)
 
     @action(methods=['get'], detail=True,
-            url_path=r'school-invitations/(?P<num_participants>\d+)/(?P<num_substitutes>\d+)', permission_classes=[IsAdminUser])
+            url_path=r'school-invitations/(?P<num_participants>\d+)/(?P<num_substitutes>\d+)',
+            permission_classes=[IsAdminUser])
     def school_invitations(self, request, pk=None, num_participants=32, num_substitutes=20):
         num_participants = int(num_participants)
         num_substitutes = int(num_substitutes)
