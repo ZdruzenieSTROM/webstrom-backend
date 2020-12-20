@@ -2,6 +2,7 @@ from rest_framework import permissions
 
 
 class CompetitionPermissionMixin:
+    # pylint: disable=too-few-public-methods
     def can_user_modify(self, user):
         return len(set(self.permission_group.all()).intersection(set(user.groups.all()))) > 0
 
