@@ -33,18 +33,13 @@ class CompetitionRestrictedPermission(permissions.BasePermission):
     """
 
     def has_permission(self, request, view):
-        if view.action in ['visible', 'retrieve', 'list']:
+        if request.method in permissions.SAFE_METHODS:
             return True
 
         return request.user.is_authenticated and request.user.is_staff
 
     def has_object_permission(self, request, view, obj):
-        if view.action == 'visible':
-            return obj.is_visible
-        if view.action == 'retrieve':
+        if request.method in permissions.SAFE_METHODS:
             return True
 
-        if view.action in ['update', 'partial_update', 'destroy']:
-            return obj.can_user_modify(request.user)
-
-        return False
+        return obj.can_user_modify(request.user)

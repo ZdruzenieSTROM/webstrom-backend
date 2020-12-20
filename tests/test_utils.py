@@ -20,11 +20,6 @@ def get_app_fixtures(app_list):
 
 class PermissionTestMixin:
     user_settings = {
-        'unverified': {
-            'verified_email': False,
-            'is_staff': False,
-            'is_active': False
-        },
         'competitor': {
             'verified_email': True,
             'is_staff': False,
@@ -42,8 +37,15 @@ class PermissionTestMixin:
         }
     }
 
+    @classmethod
+    def get_basic_fixtures(cls):
+        return [
+            os.path.join(BASE_DIR, 'base', 'fixtures', 'sites.json'),
+            os.path.join(BASE_DIR, 'competition',
+                         'fixtures', 'competitions.json')
+        ] + get_app_fixtures(['personal', 'user'])
+
     def create_users(self):
-        self.unverified_user = self.create_user('unverified')
         self.competitior_user = self.create_user('competitor')
         self.kricky_user = self.create_user('kricky')
         self.strom_user = self.create_user('strom')
@@ -62,34 +64,53 @@ class PermissionTestMixin:
     def get_client(self, user_type=None):
         self.client = APIClient()
         if user_type is not None:
-            self.client.login(user=f'{user_type}@strom.sk')
+            user = User.objects.get(email=f'{user_type}@strom.sk')
+            self.client.force_authenticate(user=user)
         return self.client
 
     #pylint: disable=dangerous-default-value
     def check_permissions(self, url, method, responses, body={}):
-        for user, expected_response in responses.items():
+        for user, er in responses.items():
             client = self.get_client(user)
+            expected_response = er if isinstance(
+                er, list) else [er]
             if method == 'GET':
                 response = client.get(url, body, 'json')
             elif method == 'POST':
                 response = client.post(url, body, 'json')
+            elif method == 'PUT':
+                response = client.put(url, body, 'json')
             else:
                 raise NotImplementedError()
-            self.assertEqual(response.status_code, expected_response,
-                             f'Permission assertion failed on {user} with {method} {url}')
+            self.assertIn(response.status_code, expected_response,
+                          f'Permission assertion failed on user {user} with {method} {url}')
 
-    def check_post_public_object(self, url, body):
-        responses = {user_name: 200 for user_name in self.user_settings}
-        responses[None] = 200
-        self.check_permissions(url, 'GET', responses, body)
-
-    def check_post_strom_object(self, url, body):
-        responses = {'unverified': 405, }
-        responses = {user_name: 200 for user_name in self.user_settings}
-        responses[None] = 200
-        self.check_permissions(url, 'GET', responses, body)
-
-    def check_post_kricky_object(self, url, body):
-        responses = {user_name: 200 for user_name in self.user_settings}
-        responses[None] = 200
-        self.check_permissions(url, 'GET', responses, body)
+    PUBLIC_OK_RESPONSES = {
+        'competitor': 200,
+        'strom': 200,
+        'kricky': 200,
+        None: 200
+    }
+    ONLY_STROM_OK_RESPONSES = {
+        'competitor': [403, 405],
+        'strom': 200,
+        'kricky': [403, 405],
+        None: [403, 405]
+    }
+    ONLY_KRICKY_OK_RESPONSES = {
+        'competitor': [403, 405],
+        'strom': [403, 405],
+        'kricky': 200,
+        None: [403, 405]}
+    ALL_FORBIDDEN = {
+        'competitor': [403, 405],
+        'strom': [403, 405],
+        'kricky': [403, 405],
+        None: [403, 405]
+    }
+    ONLY_STAFF_OK_RESPONSES = {
+        'competitor': [403, 405],
+        'strom': 200,
+        'kricky': 200,
+        None: [403, 405]
+    }

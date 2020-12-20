@@ -195,6 +195,7 @@ class SeriesViewSet(viewsets.ModelViewSet):
     queryset = Series.objects.all()
     serializer_class = SeriesWithProblemsSerializer
     permission_classes = (CompetitionRestrictedPermission,)
+    http_method_names = ['get', 'head']
 
     @staticmethod
     def _create_profile_dict(series, sum_func, semester_registration, profile_solutions):
@@ -348,6 +349,7 @@ class SemesterViewSet(viewsets.ModelViewSet):
     queryset = Semester.objects.all()
     serializer_class = SemesterWithProblemsSerializer
     permission_classes = (CompetitionRestrictedPermission,)
+    http_method_names = ['get', 'post', 'head']
 
     @staticmethod
     def semester_results(semester):
@@ -371,7 +373,7 @@ class SemesterViewSet(viewsets.ModelViewSet):
         current_results = SemesterViewSet.semester_results(semester)
         return Response(current_results, status=status.HTTP_200_OK)
 
-    @action(methods=['get'], detail=True)
+    @action(methods=['get'], detail=True, permission_classes=[IsAdminUser])
     def schools(self, request, pk=None):
         schools = School.objects.filter(eventregistration__event=pk)\
             .distinct()\
@@ -379,7 +381,7 @@ class SemesterViewSet(viewsets.ModelViewSet):
         serializer = SchoolSerializer(schools, many=True)
         return Response(serializer.data)
 
-    @action(methods=['get'], detail=True, url_path='offline-schools')
+    @action(methods=['get'], detail=True, url_path='offline-schools', permission_classes=[IsAdminUser])
     def offline_schools(self, request, pk=None):
         schools = School.objects.filter(eventregistration__event=pk)\
             .filter(eventregistration__solution__is_online=False)\
@@ -389,7 +391,7 @@ class SemesterViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     @action(methods=['get'], detail=True,
-            url_path=r'invitations/(?P<num_participants>\d+)/(?P<num_substitutes>\d+)')
+            url_path=r'invitations/(?P<num_participants>\d+)/(?P<num_substitutes>\d+)', permission_classes=[IsAdminUser])
     def invitations(self, request, pk=None, num_participants=32, num_substitutes=20):
         semester = self.get_object()
         num_participants = int(num_participants)
@@ -405,7 +407,7 @@ class SemesterViewSet(viewsets.ModelViewSet):
         return Response(participants, status=status.HTTP_200_OK)
 
     @action(methods=['get'], detail=True,
-            url_path=r'school-invitations/(?P<num_participants>\d+)/(?P<num_substitutes>\d+)')
+            url_path=r'school-invitations/(?P<num_participants>\d+)/(?P<num_substitutes>\d+)', permission_classes=[IsAdminUser])
     def school_invitations(self, request, pk=None, num_participants=32, num_substitutes=20):
         num_participants = int(num_participants)
         num_substitutes = int(num_substitutes)
