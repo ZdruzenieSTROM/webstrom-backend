@@ -44,8 +44,6 @@ class CompetitionViewSet(viewsets.ReadOnlyModelViewSet):
 
 # pylint: disable=unused-argument
 
-# pylint: disable=unused-argument
-
 
 class ProblemViewSet(viewsets.ModelViewSet):
     """
@@ -505,7 +503,6 @@ class EventRegistrationViewSet(viewsets.ModelViewSet):
     serializer_class = EventRegistrationSerializer
     filterset_fields = ['event', 'profile', ]
     permission_classes = (CompetitionRestrictedPermission,)
-
 
 
 class UnspecifiedPublicationViewSet(viewsets.ModelViewSet):
