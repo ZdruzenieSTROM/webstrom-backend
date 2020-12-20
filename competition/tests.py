@@ -1,9 +1,6 @@
 from rest_framework.test import APITestCase
 from tests.test_utils import get_app_fixtures, PermissionTestMixin
 from competition import models
-import json
-from webstrom.settings import BASE_DIR
-import os
 
 series_expected_keys = [
     'id',

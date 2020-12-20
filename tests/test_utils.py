@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
-from user.models import User
 from rest_framework.test import APIClient
+from user.models import User
 from webstrom.settings import BASE_DIR
 
 
