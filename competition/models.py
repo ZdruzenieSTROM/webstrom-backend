@@ -24,7 +24,6 @@ from base.utils import mime_type
 from base.validators import school_year_validator
 from personal.models import Profile, School
 from competition import utils
-from competition import permissions
 
 
 class Competition(models.Model):
