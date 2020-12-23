@@ -27,7 +27,7 @@ from competition import utils
 from competition import permissions
 
 
-class Competition(models.Model, permissions.CompetitionPermissionMixin):
+class Competition(models.Model):
     """
     Model súťaže, ktorý pokrýva súťaž ako koncept. Napríklad Matboj, Seminár STROM, Kôš
     """
@@ -105,8 +105,11 @@ class LateTag(models.Model):
     def __str__(self):
         return self.name
 
+    def can_user_modify(self, user):
+        return len(set(self.permission_group.all()).intersection(set(user.groups.all()))) > 0
 
-class Event(models.Model, permissions.CompetitionPermissionMixin):
+
+class Event(models.Model):
     """
     Slúži na označenie instancie súťaže (Napríklad: Matboj 2020,
     Letný semester 40. ročníka STROMu, Jarný výlet 2021)
@@ -198,7 +201,7 @@ class Semester(Event):
         return f'{self.competition.name}, {self.year}. ročník - {self.season} semester'
 
 
-class Series(models.Model, permissions.CompetitionPermissionMixin):
+class Series(models.Model):
     """
     Popisuje jednu sériu semestra
     """
@@ -276,7 +279,7 @@ class Series(models.Model, permissions.CompetitionPermissionMixin):
         return self.semester.can_user_modify(user)
 
 
-class Problem(models.Model, permissions.CompetitionPermissionMixin):
+class Problem(models.Model):
     """
     Popisuje jednu úlohu v sérií
     """
@@ -355,7 +358,7 @@ class Grade(models.Model):
         return self.name
 
 
-class EventRegistration(models.Model, permissions.CompetitionPermissionMixin):
+class EventRegistration(models.Model):
     """
     Registruje účastníka na instanciu súťaže(napríklad Matboj 2020,
     letný semester 40. ročník STROMu).
@@ -454,7 +457,7 @@ class Vote(models.Model):
                f'{self.solution.semester_registration.profile.user.get_full_name()}'
 
 
-class SemesterPublication(models.Model, permissions.CompetitionPermissionMixin):
+class SemesterPublication(models.Model):
     """
     Časopis
     """
@@ -521,7 +524,7 @@ class SemesterPublication(models.Model, permissions.CompetitionPermissionMixin):
         return self.semester.can_user_modify(user)
 
 
-class UnspecifiedPublication(models.Model, permissions.CompetitionPermissionMixin):
+class UnspecifiedPublication(models.Model):
     """
     Reprezentuje výsledky, brožúrku alebo akýkoľvek materiál
     zverejnený k nejakému Eventu okrem časopisov. Časopisy majú
@@ -568,7 +571,7 @@ def make_name_on_creation(sender, instance, created, **kwargs):
         instance.generate_name()
 
 
-class RegistrationLink(models.Model, permissions.CompetitionPermissionMixin):
+class RegistrationLink(models.Model):
     class Meta:
         verbose_name = 'link na registráciu'
         verbose_name_plural = 'linky na registráciu'
