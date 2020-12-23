@@ -1,6 +1,31 @@
 from rest_framework import permissions
 
 
+class CommentPermission(permissions.BasePermission):
+    """
+    Prístup k objektom má iba staff, výnimkou je retrieve publishnutých komentárov
+    """
+
+    def has_object_permission(self, request, view, obj):
+        if view.action == 'retrieve':
+            if obj.published:
+                return True
+            if (request.user.is_authenticated and request.user.is_staff):
+                return True
+            if obj.posted_by == request.user:
+                return True
+
+        if view.action in ['publish', 'hide']:
+            if (request.user.is_authenticated and request.user.is_staff):
+                return True
+
+        if view.action == 'edit':
+            if obj.posted_by == request.user:
+                return True
+
+        return False
+
+
 class ProblemPermission(permissions.BasePermission):
     """
     Prístup k objektom má iba staff

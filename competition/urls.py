@@ -13,6 +13,7 @@ router.register(r'solution', views.SolutionViewSet)
 router.register(r'event', views.EventViewSet)
 router.register(r'publication', views.UnspecifiedPublicationViewSet)
 router.register(r'semester-publication', views.SemesterPublicationViewSet)
+router.register(r'comment', views.CommentViewSet)
 
 urlpatterns = []
 

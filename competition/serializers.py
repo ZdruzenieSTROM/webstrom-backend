@@ -55,6 +55,12 @@ class ProblemSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class CommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Comment
+        fields = '__all__'
+
+
 class VoteSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Vote
