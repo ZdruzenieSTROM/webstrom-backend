@@ -1,6 +1,20 @@
 [
     {
         "model": "personal.Profile",
+        "pk": 2,
+        "fields": {
+            "user": 2,
+            "first_name": "",
+            "last_name": "",
+            "nickname": "",
+            "school": 0,
+            "year_of_graduation": 0,
+            "phone": "",
+            "parent_phone": ""
+        }
+    },
+    {
+        "model": "personal.Profile",
         "pk": 4,
         "fields": {
             "user": 4,

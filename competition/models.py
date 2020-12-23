@@ -58,6 +58,10 @@ class Competition(models.Model):
         'Zadáva sa v počte rokov do maturity. '
         'Ak najstraší, kto môže riešiť súťaž je deviatak, zadá sa 4.')
 
+    permission_group = models.ManyToManyField('auth.Group',
+                                              blank=True,
+                                              verbose_name='Skupiny práv')
+
     def can_user_participate(self, user):
         if self.min_years_until_graduation:
             return user.profile.year_of_graduation-utils.get_school_year_start_by_date() \
@@ -100,6 +104,9 @@ class LateTag(models.Model):
     def __str__(self):
         return self.name
 
+    def can_user_modify(self, user):
+        return len(set(self.permission_group.all()).intersection(set(user.groups.all()))) > 0
+
 
 class Event(models.Model):
     """
@@ -135,6 +142,9 @@ class Event(models.Model):
             return str(self.semester)
 
         return f'{self.competition.name}, {self.year}. ročník'
+
+    def can_user_modify(self, user):
+        return self.competition.can_user_modify(user)
 
 
 class Semester(Event):
@@ -264,6 +274,9 @@ class Series(models.Model):
     def num_problems(self):
         return self.problems.count()
 
+    def can_user_modify(self, user):
+        return self.semester.can_user_modify(user)
+
 
 class Problem(models.Model):
     """
@@ -301,6 +314,9 @@ class Problem(models.Model):
         stats['mean'] = total_points / \
             total_solutions if total_solutions else '?'
         return stats
+
+    def can_user_modify(self, user):
+        return self.series.can_user_modify(user)
 
 
 class Grade(models.Model):
@@ -377,6 +393,9 @@ class EventRegistration(models.Model):
     def __str__(self):
         return f'{ self.profile.user.get_full_name() } @ { self.event }'
 
+    def can_user_modify(self, user):
+        return self.event.can_user_modify(user)
+
 
 class Solution(models.Model):
     """
@@ -436,6 +455,7 @@ class Vote(models.Model):
         return f'{pos} hlas za {self.solution.problem} pre '\
                f'{self.solution.semester_registration.profile.user.get_full_name()}'
 
+
 class SemesterPublication(models.Model):
     """
     Časopis
@@ -445,7 +465,8 @@ class SemesterPublication(models.Model):
         verbose_name_plural = 'časopisy'
 
     name = models.CharField(max_length=30, blank=True)
-    semester = models.ForeignKey(Semester, null=True, on_delete=models.SET_NULL)
+    semester = models.ForeignKey(
+        Semester, null=True, on_delete=models.SET_NULL)
     order = models.PositiveSmallIntegerField()
     file = RestrictedFileField(
         upload_to='publications/semester_publication/%Y',
@@ -498,6 +519,9 @@ class SemesterPublication(models.Model):
         self.name = f'{self.semester.competition}-{self.semester.year}-{self.order}'
         self.save()
 
+    def can_user_modify(self, user):
+        return self.semester.can_user_modify(user)
+
 
 class UnspecifiedPublication(models.Model):
     """
@@ -527,6 +551,9 @@ class UnspecifiedPublication(models.Model):
     def __str__(self):
         return self.name
 
+    def can_user_modify(self, user):
+        return self.event.can_user_modify(user)
+
 
 @receiver(post_save, sender=SemesterPublication)
 def make_thumbnail_on_creation(sender, instance, created, **kwargs):
@@ -554,3 +581,6 @@ class RegistrationLink(models.Model):
     start = models.DateTimeField(verbose_name='Začiatok registrácie')
     end = models.DateTimeField(verbose_name='Koniec registrácie')
     additional_info = models.TextField(verbose_name='Doplňujúce informácie')
+
+    def can_user_modify(self, user):
+        return self.event.can_user_modify(user)
