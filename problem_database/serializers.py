@@ -51,12 +51,6 @@ class ProblemTypeSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class ProblemProblemTypeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ProblemProblemType
-        fields = '__all__'
-
-
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
