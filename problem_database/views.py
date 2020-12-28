@@ -22,6 +22,7 @@ class SeminarViewSet(viewsets.ReadOnlyModelViewSet):
 class ActivityTypeViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = ActivityType.objects.all()
     serializer_class = ActivityTypeSerializer
+    filterset_fields = ['seminar',]
     
 
 class ActivityViewSet(viewsets.ReadOnlyModelViewSet):
@@ -52,11 +53,6 @@ class ProblemActivityViewSet(viewsets.ReadOnlyModelViewSet):
 class ProblemTypeViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = ProblemType.objects.all()
     serializer_class = ProblemTypeSerializer
-    
-
-class ProblemProblemTypeViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = ProblemProblemType.objects.all()
-    serializer_class = ProblemProblemTypeSerializer
     
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
