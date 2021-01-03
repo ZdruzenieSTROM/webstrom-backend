@@ -6,7 +6,7 @@ class Seminar(models.Model):
     class Meta:
         verbose_name = 'seminár'
         verbose_name_plural = 'semináre'
-    #seminar_id = models.AutoField(verbose_name='id',default=1,primary_key=True)
+    
     name = models.CharField(max_length=32,verbose_name='názov seminára')
 
     def __str__(self):
@@ -18,7 +18,6 @@ class ActivityType(models.Model):
         verbose_name = 'typ aktivity'
         verbose_name_plural = 'typy aktivít'
     
-    #activity_type_id = models.AutoField(verbose_name='id',default=1,primary_key=True)
     name = models.CharField(verbose_name='názov',max_length=64)
     seminar = models.ForeignKey(Seminar,default=1,on_delete=models.CASCADE,verbose_name='seminár')
 
@@ -31,7 +30,7 @@ class Activity(models.Model):
         verbose_name = 'aktivita'
         verbose_name_plural = 'aktivity'
     
-    #activity_id = models.AutoField(verbose_name='id',default=1,primary_key=True)
+    #dátum je vo formáte YYYY-MM-DD
     date = models.DateField(verbose_name='dátum')
     activity_type = models.ForeignKey(ActivityType,default=1,on_delete=models.CASCADE,verbose_name='typ aktivity')
     description = models.TextField(verbose_name='popis')
@@ -46,7 +45,6 @@ class Difficulty(models.Model):
         verbose_name = 'náročnosť'
         verbose_name_plural = 'náročnosti'
     
-    #difficulty_id = models.AutoField(verbose_name='id',default=1,primary_key=True)
     name = models.CharField(verbose_name='názov',max_length=128)
     activity_type = models.ForeignKey(ActivityType,default=1,on_delete=models.CASCADE,verbose_name='typ aktivity')
 
@@ -59,7 +57,6 @@ class ProblemType(models.Model):
         verbose_name = 'typ príkladu'
         verbose_name_plural = 'typy príkladov'
 
-    #problem_type_id = models.AutoField(verbose_name='id',default=1,primary_key=True)
     seminar = models.ForeignKey(Seminar,default=1,on_delete=models.CASCADE,verbose_name='seminár')
     name = models.CharField(verbose_name='názov',max_length=64)
     description = models.TextField(verbose_name='popis')
@@ -73,7 +70,6 @@ class Problem(models.Model):
         verbose_name = 'príklad'
         verbose_name_plural = 'príklady'
     
-    #problem_id = models.AutoField(verbose_name='id',default=1,primary_key=True)
     problem = models.TextField(verbose_name='príklad')
     result = models.CharField(verbose_name='výsledok',max_length=128)
     solution = models.TextField(verbose_name='riešenie')
@@ -90,7 +86,6 @@ class Media(models.Model):
         verbose_name = 'súbor'
         verbose_name_plural = 'súbory'
     
-    #media_id = models.AutoField(verbose_name='id',default=1,primary_key=True)
     data = models.BinaryField(verbose_name='priložené súbory')
     problem = models.ForeignKey(Problem,default=1,on_delete=models.CASCADE,verbose_name='príklad')
     soft_deleted = models.BooleanField(default=False)
