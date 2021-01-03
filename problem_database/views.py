@@ -28,6 +28,7 @@ class ActivityTypeViewSet(viewsets.ReadOnlyModelViewSet):
 class ActivityViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Activity.objects.all()
     serializer_class = ActivitySerializer
+    filterset_fields = ['activity_type',]
     
 
 class DifficultyViewSet(viewsets.ReadOnlyModelViewSet):
@@ -35,25 +36,29 @@ class DifficultyViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = DifficultySerializer
     
 
+class ProblemTypeViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = ProblemType.objects.all()
+    serializer_class = ProblemTypeSerializer    
+
+
 class ProblemViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Problem.objects.all()
     serializer_class = ProblemSerializer
+    filterset_fields = ['problem_type',]
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+    search_fields = ['problem']
     
 
 class MediaViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Media.objects.all()
     serializer_class = MediaSerializer
+    filterset_fields = ['problem',]
     
 
 class ProblemActivityViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = ProblemActivity.objects.all()
     serializer_class = ProblemActivitySerializer
-    
 
-class ProblemTypeViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = ProblemType.objects.all()
-    serializer_class = ProblemTypeSerializer
-    
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
