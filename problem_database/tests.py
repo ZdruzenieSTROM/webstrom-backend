@@ -104,48 +104,67 @@ class TestActivity(TestCase):
         self.assertTrue(isinstance(mod, Activity))
         self.assertEqual(mod.__str__(), 'Mamut 2020')
 
-class ActivityViewsTest(APITestCase):
+class TestProblemTag(TestCase):
 
     def setUp(self):
-        seminar1 = Seminar.objects.create(name='Malynár')
-        seminar2 = Seminar.objects.create(name='Matik')
-        activity_type1 = ActivityType.objects.create(name="Malynár",seminar=seminar1)
-        activity_type2 = ActivityType.objects.create(name="Mamut",seminar=seminar1)
-        activity_type3 = ActivityType.objects.create(name="Lomihlav",seminar=seminar2)
-        self.activities = []
+        problem = Problem.objects.create(problem='Lorem?',result='Ipsum')
+        tag = Tag.objects.create(name='Výroková logika')
+        return ProblemTag.objects.create(problem=problem,tag=tag)
 
-    URL_PREFIX = '/problem_database/activity_types'
+    def test_problem_tag_check_title(self):
+        mod = self.setUp()
+        self.assertTrue(isinstance(mod, ProblemTag))
+        self.assertEqual(mod.__str__(), 'Lorem?, Výroková logika')
 
-    def test_can_browse_all_activity_types(self):
+class ProblemTagTest(APITestCase):
+
+    def setUp(self):
+        problems = [
+            Problem.objects.create(problem='Koľko je 1+2?',result='3',solution='indukciou'),
+            Problem.objects.create(problem='Koľko je 2+3?',result='5',solution='priamo')
+        ]
+        tags = [
+            Tag.objects.create(name='Indukcia'),
+            Tag.objects.create(name='Aritmetika')
+        ]
+        self.problem_tags = [
+            ProblemTag.objects.create(problem=problems[0],tag=tags[0]),
+            ProblemTag.objects.create(problem=problems[0],tag=tags[1]),
+            ProblemTag.objects.create(problem=problems[1],tag=tags[1])
+        ]
+
+    URL_PREFIX = '/problem_database/problem_tags'
+
+    def test_can_browse_all_problem_tags(self):
         response = self.client.get(self.URL_PREFIX, {}, 'json')
-
+        
         self.assertEqual(status.HTTP_200_OK, response.status_code)
-        self.assertEqual(len(self.activity_types), len(response.data))
+        self.assertEqual(len(self.problem_tags), len(response.data))
 
-        for activity_type in self.activity_types:
+        for problem_tag in self.problem_tags:
             self.assertIn(
-                ActivityTypeSerializer(instance=activity_type).data,
+                ProblemTagSerializer(instance=problem_tag).data,
                 response.data
             )
     
-    def test_filter_activity_types(self):
-        response = self.client.get(self.URL_PREFIX + '/?seminar=2', {}, 'json')
+    def test_filter_problem_tags(self):
+        response = self.client.get(self.URL_PREFIX + '/?problem=1', {}, 'json')
+
+        self.assertEqual(status.HTTP_200_OK, response.status_code)
+        self.assertEqual(2, len(response.data))
+
+        for problem_tag in self.problem_tags[:2]:
+            self.assertIn(
+                ProblemTagSerializer(instance=problem_tag).data,
+                response.data
+                )        
+
+        response = self.client.get(self.URL_PREFIX + '/?tag=1', {}, 'json')
 
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.assertEqual(1, len(response.data))
 
         self.assertIn(
-                ActivityTypeSerializer(instance=self.activity_types[2]).data,
-                response.data
-            )
-
-        response = self.client.get(self.URL_PREFIX + '/?seminar=1', {}, 'json')
-
-        self.assertEqual(status.HTTP_200_OK, response.status_code)
-        self.assertEqual(2, len(response.data))
-
-        for activity_type in self.activity_types[:2]:
-            self.assertIn(
-                ActivityTypeSerializer(instance=activity_type).data,
-                response.data
-                )
+            ProblemTagSerializer(instance=self.problem_tags[0]).data,
+            response.data
+        )

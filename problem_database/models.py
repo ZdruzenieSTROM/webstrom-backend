@@ -73,7 +73,6 @@ class Problem(models.Model):
     problem = models.TextField(verbose_name='príklad')
     result = models.CharField(verbose_name='výsledok',max_length=128)
     solution = models.TextField(verbose_name='riešenie')
-    #duplicate_problem_id = models.ForeignKey(self,on_delete=models.SET_DEFAULT,to_field=problem_id,verbose_name='duplikovaný príklad')
     soft_deleted = models.BooleanField(default=False)
     problem_type = models.ManyToManyField(ProblemType)
 
@@ -104,7 +103,7 @@ class ProblemActivity(models.Model):
     difficulty = models.ForeignKey(Difficulty,default=1,on_delete=models.CASCADE,verbose_name='náročnosť')
 
     def __str__(self):
-        return f'{ self.problem_id }, { self.activity_id }, { self.difficulty_id }'
+        return f'{ self.problem }, { self.activity }, { self.difficulty }'
 
 
 class Tag(models.Model):
@@ -126,4 +125,4 @@ class ProblemTag(models.Model):
     tag = models.ForeignKey(Tag,default=1,on_delete=models.CASCADE,verbose_name='aktivita')
 
     def __str__(self):
-        return f'{ self.problem_id }, { self.tag_id }'
+        return f'{ self.problem }, { self.tag }'
