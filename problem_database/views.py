@@ -68,3 +68,4 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
 class ProblemTagViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = ProblemTag.objects.all()
     serializer_class = ProblemTagSerializer
+    filterset_fields = ['problem','tag']
