@@ -100,7 +100,7 @@ class ProblemViewSet(viewsets.ModelViewSet):
         problem = self.get_object()
 
         problem.add_comment(
-            request.data['text'], request.user, request.user.is_staff)
+            request.data['text'], request.user, problem.can_user_modify(request.user))
 
         return Response("Komentár bol pridaný", status=status.HTTP_201_CREATED)
 

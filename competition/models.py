@@ -378,6 +378,9 @@ class Comment(models.Model):
         )
         comment.save()
 
+    def can_user_modify(self, user):
+        return self.problem.can_user_modify(user)
+
 
 class Grade(models.Model):
     """
