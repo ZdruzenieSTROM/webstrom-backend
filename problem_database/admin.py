@@ -2,8 +2,9 @@ from django.contrib import admin
 from problem_database import models
 
 
-@admin.register(models.Activity)
-class ActivityAdmin(admin.ModelAdmin):
+@admin.register(models.ActivityType)
+class ActivityTypeAdmin(admin.ModelAdmin):
     list_display = (
-        'name'
+        'name',
+        'seminar'
     )
