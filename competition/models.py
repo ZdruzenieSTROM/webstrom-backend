@@ -84,6 +84,9 @@ class Competition(models.Model):
     def get_seminar_by_current_site(cls):
         return cls.get_seminar_by_site(Site.objects.get_current())
 
+    def can_user_modify(self, user):
+        return len(set(self.permission_group.all()).intersection(set(user.groups.all()))) > 0
+
 
 class LateTag(models.Model):
     """
@@ -104,9 +107,6 @@ class LateTag(models.Model):
 
     def __str__(self):
         return self.name
-
-    def can_user_modify(self, user):
-        return len(set(self.permission_group.all()).intersection(set(user.groups.all()))) > 0
 
 
 class Event(models.Model):
