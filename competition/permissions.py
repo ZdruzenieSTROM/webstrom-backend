@@ -7,16 +7,18 @@ class CommentPermission(permissions.BasePermission):
     """
 
     def has_object_permission(self, request, view, obj):
+        can_user_modify = obj.can_user_modify(request.user)
+
         if view.action == 'retrieve':
             if obj.published:
                 return True
-            if (request.user.is_authenticated and request.user.is_staff):
+            if can_user_modify:
                 return True
             if obj.posted_by == request.user:
                 return True
 
         if view.action in ['publish', 'hide']:
-            if (request.user.is_authenticated and request.user.is_staff):
+            if can_user_modify:
                 return True
 
         if view.action == 'edit':
