@@ -29,7 +29,7 @@ jobs:
 
       # TODO: come up with a better way of discovering packages
       - name: Run pylint
-        run: python3 -m pylint base cms competition personal tests user webstrom
+        run: python3 -m pylint --load-plugins pylint_django --django-settings-module=webstrom.settings base cms competition personal tests user webstrom problem_database
 
   build:
     # The type of runner that the job will run on
