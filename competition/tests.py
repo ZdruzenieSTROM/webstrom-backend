@@ -1,6 +1,13 @@
-from rest_framework.test import APITestCase
-from tests.test_utils import get_app_fixtures, PermissionTestMixin
+from django.utils import timezone
+from datetime import datetime
+from django.test import RequestFactory, TestCase
+from competition.models import Competition, Semester
+from tests.test_utils import get_app_fixtures
+from rest_framework import status
+from rest_framework.test import APITestCase, APIRequestFactory
 from competition import models
+from tests.test_utils import get_app_fixtures, PermissionTestMixin
+from rest_framework.test import APITestCase
 
 series_expected_keys = [
     'id',
@@ -204,6 +211,59 @@ class TestSemester(APITestCase, PermissionTestMixin):
                                'GET', self.ONLY_STAFF_OK_RESPONSES, {})
         self.check_permissions(self.URL_PREFIX + '/0/school-invitations/30/20',
                                'GET', self.ONLY_STAFF_OK_RESPONSES, {})
+
+
+class TestAPISemester(APITestCase):
+
+    URL_PREFIX = '/competition/semester/'
+
+    def setUp(self):
+        competition = Competition.objects.create(
+            name='Malynár',
+            start_year=1980,
+            description='Pre deti',
+            competition_type=2)
+        self.semester = Semester.objects.create(
+            competition=competition,
+            school_year='2020/2021',
+            season_code=1,
+            start=datetime(2015, 6, 15, 23, 30, 1, tzinfo=timezone.utc),
+            end=datetime(2016, 6, 15, 23, 30, 1, tzinfo=timezone.utc),
+            year=44)
+
+    def test_create_semester(self):
+        data = {
+            "id": 5,
+            "series_set": [
+                {
+                    "id": 5,
+                    "problems": [
+                        {
+                            "id": 71,
+                            "text": "$ABCD$ je rovnobežník s ostrým uhlom $DAB$. Body $A,\\ P,\\ B,\\ D$ ležia na jednej kružnici v tomto poradí. Priamky $AP$ a $CD$ sa pretínajú v bode $Q$. Bod $O$ je stred kružnice opísanej trojuholníku $CPQ$. Dokážte, že ak $D \\neq O$, tak priamky $AD$ a $DO$ sú na seba kolmé.",
+                            "order": 6,
+                            "series": 11
+                        }
+                    ],
+                    "order": 2,
+                    "deadline": "2017-11-19T22:00:00Z",
+                    "semester": 5
+                }
+            ],
+            "semesterpublication_set": [],
+            "unspecifiedpublication_set": [],
+            "year": 42,
+            "school_year": "2017/2018",
+            "start": "2017-10-02T22:00:00Z",
+            "end": "2017-11-19T22:00:00Z",
+            "season_code": 0,
+            "competition": 0,
+            "late_tags": []
+        }
+        response = self.client.post(self.URL_PREFIX, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Semester.objects.count(), 1)
+        self.assertEqual(Semester.objects.get().season_code, 1)
 
 
 class TestCompetition(APITestCase, PermissionTestMixin):
