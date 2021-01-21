@@ -50,21 +50,12 @@ class ProblemTypeViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = ProblemTypeSerializer    
 
 
-class ProblemViewSet(viewsets.ReadOnlyModelViewSet):
+class ProblemViewSet(viewsets.ModelViewSet):
     queryset = Problem.objects.all()
     serializer_class = ProblemSerializer
     filterset_fields = ['problem_type',]
     filter_backends = [DjangoFilterBackend, SearchFilter]
     search_fields = ['problem']
-
-    def create(self, request, *args, **kwargs):
-        many = True if isinstance(request.data, list) else False
-        serializer = ProblemSerializer(data=request.data, many=many)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
     
 
 class MediaViewSet(viewsets.ReadOnlyModelViewSet):

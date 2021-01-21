@@ -102,6 +102,12 @@ class SemesterSerializer(serializers.ModelSerializer):
         model = models.Semester
         fields = '__all__'
 
+    def create(self, validated_data):
+        series_data = validated_data.pop('series_set')
+        semester = models.Semester.objects.create(**validated_data)
+        for series in series_data:
+           models.Series.objects.create(semester=semester,**series)
+        return semester
 
 class SemesterWithProblemsSerializer(serializers.ModelSerializer):
     series_set = SeriesWithProblemsSerializer(many=True)
@@ -111,3 +117,16 @@ class SemesterWithProblemsSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Semester
         fields = '__all__'
+   
+    def create(self, validated_data):
+        series_data = validated_data.pop('series_set')
+        semesterpublication_data = validated_data.pop('semesterpublication_set')
+        unspecifiedpublication_data = validated_data.pop('unspecifiedpublication_set')
+        semester = models.Semester.objects.create(**validated_data)
+        for series in series_data:
+           models.Series.objects.create(semester=semester,**series)
+        for semesterpublication in semesterpublication_data:
+           models.SemesterPublication.objects.create(semester=semester,**semesterpublication)
+        for unspecifiedpublication in unspecifiedpublication_data:
+           models.UnspecifiedPublication.objects.create(event=semester,**unspecifiedpublication)
+        return semester
