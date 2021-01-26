@@ -6,7 +6,11 @@
             "email": "webmaster@strom.sk",
             "password": "pbkdf2_sha256$180000$NyzwabHNPn2K$sTirqoFPMkLZpnUHkCpzUFZnAsbGM7Bp2+EoN8sOuQA=",
             "is_superuser": true,
-            "is_staff": true
+            "is_staff": true,
+            "groups": [
+                1,
+                2
+            ]
         }
     },
     {

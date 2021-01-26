@@ -10,7 +10,7 @@ from django.core.files.move import file_move_safe
 from django.http import HttpResponse
 from django.utils import timezone
 
-from rest_framework import exceptions, status, viewsets
+from rest_framework import exceptions, status, viewsets, mixins
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
@@ -23,7 +23,7 @@ from personal.serializers import SchoolSerializer, ProfileMailSerializer
 
 from competition.models import (Competition, Event, EventRegistration, Grade, Problem,
                                 Semester, Series, Solution, Vote, UnspecifiedPublication,
-                                SemesterPublication)
+                                SemesterPublication, Comment)
 from competition import utils
 from competition.permissions import CompetitionRestrictedPermission
 from competition.serializers import (CompetitionSerializer,
@@ -33,7 +33,11 @@ from competition.serializers import (CompetitionSerializer,
                                      SeriesWithProblemsSerializer,
                                      SolutionSerializer,
                                      UnspecifiedPublicationSerializer,
-                                     SemesterPublicationSerializer)
+                                     SemesterPublicationSerializer,
+                                     CommentSerializer)
+
+from competition.permissions import CommentPermission
+
 # pylint: disable=unused-argument
 
 
@@ -45,6 +49,36 @@ class CompetitionViewSet(viewsets.ReadOnlyModelViewSet):
 # pylint: disable=unused-argument
 
 
+class CommentViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    permission_classes = (CommentPermission, )
+
+    @action(methods=['post'], detail=True)
+    def publish(self, request, pk=None):
+        comment = self.get_object()
+        comment.publish()
+        comment.save()
+
+        return Response("Komentár bol publikovaný.", status=status.HTTP_200_OK)
+
+    @action(methods=['post'], detail=True)
+    def hide(self, request, pk=None):
+        comment = self.get_object()
+        comment.hide()
+        comment.save()
+
+        return Response("Komentár bol skrytý.", status=status.HTTP_200_OK)
+
+    @action(methods=['post'], detail=True)
+    def edit(self, request, pk=None):
+        comment = self.get_object()
+        comment.change_text(request.data['text'])
+        comment.save()
+
+        return Response("Komentár bol upravený.", status=status.HTTP_200_OK)
+
+
 class ProblemViewSet(viewsets.ModelViewSet):
     """
     Obsluhuje API endpoint pre Úlohy
@@ -52,6 +86,23 @@ class ProblemViewSet(viewsets.ModelViewSet):
     queryset = Problem.objects.all()
     serializer_class = ProblemSerializer
     permission_classes = (CompetitionRestrictedPermission,)
+
+    @action(methods=['get'], detail=True)
+    def comments(self, request, pk=None):
+        comments_objects = self.get_object().get_comments(request.user)
+        comments_serialized = map(
+            (lambda obj: CommentSerializer(obj).data), comments_objects)
+        return Response(comments_serialized, status=status.HTTP_200_OK)
+
+    @action(methods=['post'], detail=True, url_path=r'add-comment',
+            permission_classes=[IsAuthenticated])
+    def add_comment(self, request, pk=None):
+        problem = self.get_object()
+
+        problem.add_comment(
+            request.data['text'], request.user, problem.can_user_modify(request.user))
+
+        return Response("Komentár bol pridaný", status=status.HTTP_201_CREATED)
 
     @action(methods=['get'], detail=True, permission_classes=[IsAdminUser])
     def stats(self, request, pk=None):

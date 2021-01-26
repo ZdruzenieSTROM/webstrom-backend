@@ -48,6 +48,28 @@
         }
     },
     {
+        "model": "competition.Comment",
+        "pk": 0,
+        "fields": {
+            "text": "A TROJUHOLNIK JE AJ STVOREC????????",
+            "posted_at": "2020-12-22T20:00:00+02:00",
+            "problem": 1,
+            "posted_by": 2,
+            "published": true
+        }
+    },
+    {
+        "model": "competition.Comment",
+        "pk": 1,
+        "fields": {
+            "text": "nie, \n S laskou, veduci :)",
+            "posted_at": "2020-12-22T21:00:00+02:00",
+            "problem": 1,
+            "posted_by": 1,
+            "published": true
+        }
+    },
+    {
         "model": "competition.Problem",
         "pk": 1,
         "fields": {

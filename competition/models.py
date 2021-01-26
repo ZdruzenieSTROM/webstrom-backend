@@ -24,6 +24,7 @@ from base.utils import mime_type
 from base.validators import school_year_validator
 from personal.models import Profile, School
 from competition import utils
+from user.models import User
 
 
 class Competition(models.Model):
@@ -83,6 +84,9 @@ class Competition(models.Model):
     def get_seminar_by_current_site(cls):
         return cls.get_seminar_by_site(Site.objects.get_current())
 
+    def can_user_modify(self, user):
+        return len(set(self.permission_group.all()).intersection(set(user.groups.all()))) > 0
+
 
 class LateTag(models.Model):
     """
@@ -103,9 +107,6 @@ class LateTag(models.Model):
 
     def __str__(self):
         return self.name
-
-    def can_user_modify(self, user):
-        return len(set(self.permission_group.all()).intersection(set(user.groups.all()))) > 0
 
 
 class Event(models.Model):
@@ -317,6 +318,68 @@ class Problem(models.Model):
 
     def can_user_modify(self, user):
         return self.series.can_user_modify(user)
+
+    def get_comments(self, user):
+        def filter_by_permissions(obj):
+            if user.is_staff:
+                return True
+            if obj.published:
+                return True
+            if obj.posted_by == user:
+                return True
+            return False
+
+        return filter(filter_by_permissions, Comment.objects.filter(problem=self))
+
+    def add_comment(self, text, user_id, published=0):
+        Comment.create_comment(
+            _text=text,
+            _problem_id=self.pk,
+            _posted_by=user_id,
+            _published=published
+        )
+
+
+class Comment(models.Model):
+    class Meta:
+        verbose_name = 'komentár'
+        verbose_name_plural = 'komentáre'
+
+        ordering = ['posted_at']
+
+    problem = models.ForeignKey(
+        Problem, verbose_name='komentár k úlohe',
+        on_delete=models.CASCADE,)
+    text = models.TextField()
+    posted_at = models.DateTimeField(
+        verbose_name='dátum pridania', auto_now_add=True)
+    posted_by = models.ForeignKey(
+        User, verbose_name='autor komentára',
+        on_delete=models.CASCADE)
+    published = models.BooleanField(
+        verbose_name='komentár publikovaný')
+
+    def publish(self):
+        self.published = True
+
+    def hide(self):
+        self.published = False
+
+    def change_text(self, new_text):
+        self.text = new_text
+
+    @staticmethod
+    def create_comment(_text, _problem_id, _posted_by, _published):
+        comment = Comment.objects.create(
+            problem=Problem.objects.get(pk=_problem_id),
+            text=_text,
+            published=_published,
+            posted_by=_posted_by
+        )
+        comment.save()
+
+    def can_user_modify(self, user):
+        return self.problem.can_user_modify(user)
 
 
 class Grade(models.Model):
