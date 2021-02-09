@@ -139,7 +139,12 @@ class RegisterView(CreateAPIView):
         return super().dispatch(*args, **kwargs)
 
     def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
+        data = request.data
+        if 'grade' in data['profile']:
+            data['profile']['year_of_graduation'] = Grade.objects.get(
+                pk=data['profile']['grade']).get_year_of_graduation_by_date()
+        print(data)
+        serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
