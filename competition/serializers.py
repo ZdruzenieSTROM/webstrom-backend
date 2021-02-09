@@ -117,3 +117,15 @@ class SemesterWithProblemsSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Semester
         fields = '__all__'
+
+
+class LateTagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.LateTag
+        exclude = ['comment']
+
+
+class GradeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Grade
+        exclude = ['is_active']

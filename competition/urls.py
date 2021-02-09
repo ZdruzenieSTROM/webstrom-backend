@@ -14,6 +14,8 @@ router.register(r'event', views.EventViewSet)
 router.register(r'publication', views.UnspecifiedPublicationViewSet)
 router.register(r'semester-publication', views.SemesterPublicationViewSet)
 router.register(r'comment', views.CommentViewSet)
+router.register(r'late-tag', views.LateTagViewSet)
+router.register(r'grade', views.GradeViewSet)
 
 urlpatterns = []
 

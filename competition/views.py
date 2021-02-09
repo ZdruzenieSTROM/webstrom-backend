@@ -21,14 +21,17 @@ from base.utils import mime_type
 from personal.models import School, Profile
 from personal.serializers import SchoolSerializer, ProfileMailSerializer
 
-from competition.models import (Competition, Event, EventRegistration, Grade, Problem,
+from competition.models import (Competition, Event, EventRegistration, Grade,
+                                LateTag, Problem,
                                 Semester, Series, Solution, Vote, UnspecifiedPublication,
                                 SemesterPublication, Comment)
 from competition import utils
 from competition.permissions import CompetitionRestrictedPermission
 from competition.serializers import (CompetitionSerializer,
                                      EventRegistrationSerializer,
-                                     EventSerializer, ProblemSerializer,
+                                     EventSerializer, GradeSerializer,
+                                     LateTagSerializer,
+                                     ProblemSerializer,
                                      SemesterWithProblemsSerializer,
                                      SeriesWithProblemsSerializer,
                                      SolutionSerializer,
@@ -631,3 +634,13 @@ class SemesterPublicationViewSet(viewsets.ModelViewSet):
         publication.file.save(
             publication.name, file)
         return Response(status=status.HTTP_201_CREATED)
+
+
+class GradeViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Grade.objects.filter(is_active=True).all()
+    serializer_class = GradeSerializer
+
+
+class LateTagViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = LateTag.objects.all()
+    serializer_class = LateTagSerializer
