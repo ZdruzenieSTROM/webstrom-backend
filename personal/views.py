@@ -52,7 +52,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
             serializer = ProfileSerializer(profile, data=request.data)
 
             if serializer.is_valid():
-                serializer.update()
+                serializer.update(profile, serializer._validated_data)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
 
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
