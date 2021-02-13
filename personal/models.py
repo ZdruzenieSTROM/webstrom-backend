@@ -1,3 +1,4 @@
+from django.apps import apps
 from django.conf import settings
 from django.db import models
 
@@ -107,6 +108,17 @@ class Profile(models.Model):
 
     gdpr = models.BooleanField(
         verbose_name='súhlas so spracovaním osobných údajov', default=False)
+
+    @property
+    def grade(self):
+        return apps.get_model('competition', 'Grade').get_grade_by_year_of_graduation(
+            year_of_graduation=self.year_of_graduation
+        ).pk
+
+    @grade.setter
+    def grade(self, value):
+        self.year_of_graduation = apps.get_model('competition', 'Grade').get(
+            pk=value).get_year_of_graduation_by_date()
 
     def __str__(self):
         return str(self.user)

@@ -11,10 +11,11 @@ from allauth.utils import email_address_exists
 from user.models import User, TokenModel
 from personal.models import Profile
 from personal.serializers import ProfileCreateSerializer
+from competition.models import Grade
 
 
 class LoginSerializer(serializers.Serializer):
-    #pylint: disable=W0223
+    # pylint: disable=W0223
     email = serializers.EmailField(required=False, allow_blank=True)
     password = serializers.CharField(style={'input_type': 'password'})
 
@@ -41,7 +42,7 @@ class LoginSerializer(serializers.Serializer):
             raise exceptions.ValidationError(msg)
 
     def validate_email_verification_status(self, user):
-        #pylint: disable=E1101
+        # pylint: disable=E1101
         email_address = user.emailaddress_set.get(email=user.email)
         if not email_address.verified:
             raise serializers.ValidationError('Email nie je overený.')
@@ -121,9 +122,9 @@ class UserDetailsSerializer(serializers.ModelSerializer):
 
 
 class RegisterSerializer(serializers.Serializer):
-    #pylint: disable=w0223
-    #pylint: disable=w0221
-    #pylint: disable=w0201
+    # pylint: disable=w0223
+    # pylint: disable=w0221
+    # pylint: disable=w0201
     email = serializers.EmailField(required=True)
     password1 = serializers.CharField(write_only=True)
     password2 = serializers.CharField(write_only=True)
@@ -156,13 +157,23 @@ class RegisterSerializer(serializers.Serializer):
         self.cleaned_data = self.get_cleaned_data()
         adapter.save_user(request, user, self)
         profile_data = self.validated_data['profile']
-        Profile.objects.create(user=user, **profile_data)
+        grade = Grade.objects.get(pk=profile_data['grade'])
+
+        Profile.objects.create(user=user,
+                               first_name=profile_data['first_name'],
+                               last_name=profile_data['last_name'],
+                               nickname=profile_data['nickname'],
+                               school=profile_data['school'],
+                               year_of_graduation=grade.get_year_of_graduation_by_date(),
+                               phone=profile_data['phone'],
+                               parent_phone=profile_data['parent_phone'],
+                               gdpr=profile_data['gdpr'])
         setup_user_email(request, user, [])
         return user
 
 
 class VerifyEmailSerializer(serializers.Serializer):
-    #pylint: disable=w0223
+    # pylint: disable=w0223
     key = serializers.CharField()
 
 
