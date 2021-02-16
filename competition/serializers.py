@@ -53,6 +53,7 @@ class ProblemSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Problem
         fields = '__all__'
+        read_only_fields = ['series']
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -92,6 +93,7 @@ class SeriesWithProblemsSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Series
         exclude = ['sum_method']
+        read_only_fields = ['semester']
 
     def create(self, validated_data):
         problem_data = validated_data.pop('problems')
@@ -126,20 +128,19 @@ class SemesterWithProblemsSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def create(self, validated_data):
-        series_data = validated_data.pop('series_set')
-        semesterpublication_data = validated_data.pop(
-            'semesterpublication_set')
-        unspecifiedpublication_data = validated_data.pop(
-            'unspecifiedpublication_set')
+        all_series_data = validated_data.pop('series_set')
+        late_tags = validated_data.pop('late_tags')
+        validated_data.pop('semesterpublication_set')
+        validated_data.pop('unspecifiedpublication_set')
         semester = models.Semester.objects.create(**validated_data)
-        for series in series_data:
-            models.Series.objects.create(semester=semester, **series)
-        for semesterpublication in semesterpublication_data:
-            models.SemesterPublication.objects.create(
-                semester=semester, **semesterpublication)
-        for unspecifiedpublication in unspecifiedpublication_data:
-            models.UnspecifiedPublication.objects.create(
-                event=semester, **unspecifiedpublication)
+        for series_data in all_series_data:
+            problems_data = series_data.pop('problems')
+            series = models.Series.objects.create(
+                semester=semester, **series_data)
+            for problem in problems_data:
+                models.Problem.objects.create(series=series, **problem)
+        for tag in late_tags:
+            semester.late_tags.add(tag)
         return semester
 
 
@@ -153,3 +154,5 @@ class GradeSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Grade
         exclude = ['is_active']
+        read_only_fields = ['semesterpublication_set',
+                            'unspecifiedpublication_set']
