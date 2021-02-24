@@ -177,6 +177,9 @@ EMAIL_VERIFICATION_TIMEOUT = 86400
 
 MANAGERS = [('Web', 'web@strom.sk'), ]
 
+EMAIL_NO_REPLY = 'no-reply@strom.sk'    # z tade sa odosielaju maily
+EMAIL_ALERT = 'alert-email-address@strom.sk'  # tu sa prijimaju maily
+
 # Crispy forms
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
