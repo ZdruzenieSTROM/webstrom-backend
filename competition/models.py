@@ -502,6 +502,9 @@ class Solution(models.Model):
         return f'corrected/{self.semester_registration.profile.user.get_full_name_camel_case()}'\
                f'-{self.problem.id}-{self.semester_registration.id}_corrected.pdf'
 
+    def can_user_modify(self, user):
+        return self.problem.can_user_modify(user)
+
 
 class Vote(models.Model):
     class Meta:

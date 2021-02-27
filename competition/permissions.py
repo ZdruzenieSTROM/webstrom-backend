@@ -3,7 +3,7 @@ from rest_framework import permissions
 
 class CommentPermission(permissions.BasePermission):
     """
-    Prístup k objektom má iba staff, výnimkou je retrieve publishnutých komentárov
+    Prístup k objektom má iba staff sutaze, výnimkou je retrieve publishnutých komentárov
     """
 
     def has_object_permission(self, request, view, obj):
@@ -28,30 +28,10 @@ class CommentPermission(permissions.BasePermission):
         return False
 
 
-class ProblemPermission(permissions.BasePermission):
-    """
-    Prístup k objektom má iba staff
-    """
-
-    def has_permission(self, request, view):
-        if view.action in ['retrieve']:
-            return True
-
-        return request.user.is_authenticated and request.user.is_staff
-
-    def has_object_permission(self, request, view, obj):
-        if view.action == 'retrieve':
-            return obj.is_visible or (request.user.is_authenticated and request.user.is_staff)
-
-        if view.action in ['update', 'partial_update', 'destroy']:
-            return request.user.is_staff
-
-        return False
-
-
 class CompetitionRestrictedPermission(permissions.BasePermission):
     """
-    Prístup k objektom má iba staff, výnimkou je retrieve viditeľných objektov
+    Prístup k objektom má iba staff, výnimkou je retrieve viditeľných objektov,
+    osetrit vytvaranie objektov treba samostatne v danych views (?)
     """
 
     def has_permission(self, request, view):

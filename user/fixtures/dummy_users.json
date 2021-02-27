@@ -1,6 +1,171 @@
 [
     {
         "model": "user.user",
+        "pk": 5,
+        "fields": {
+            "password": "pbkdf2_sha256$180000$3gRQEjw1jJd8$tXKthc92X95On0MbkpyJH0ZjNXD0FxvoaGbwdaeoLL4=",
+            "last_login": "2020-04-07T21:02:39.447Z",
+            "date_joined": "2020-04-07T20:43:01.351Z",
+            "is_superuser": false,
+            "email": "riesitel1@strom.sk",
+            "verified_email": true,
+            "is_staff": false,
+            "is_active": true,
+            "groups": [],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "user.user",
+        "pk": 6,
+        "fields": {
+            "password": "pbkdf2_sha256$180000$3gRQEjw1jJd8$tXKthc92X95On0MbkpyJH0ZjNXD0FxvoaGbwdaeoLL4=",
+            "last_login": "2020-04-07T21:02:39.447Z",
+            "date_joined": "2020-04-07T20:43:01.351Z",
+            "is_superuser": false,
+            "email": "riesitel2@strom.sk",
+            "verified_email": true,
+            "is_staff": false,
+            "is_active": true,
+            "groups": [],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "user.user",
+        "pk": 7,
+        "fields": {
+            "password": "pbkdf2_sha256$180000$3gRQEjw1jJd8$tXKthc92X95On0MbkpyJH0ZjNXD0FxvoaGbwdaeoLL4=",
+            "last_login": "2020-04-07T21:02:39.447Z",
+            "date_joined": "2020-04-07T20:43:01.351Z",
+            "is_superuser": false,
+            "email": "riesitel3@strom.sk",
+            "verified_email": true,
+            "is_staff": false,
+            "is_active": true,
+            "groups": [],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "user.user",
+        "pk": 8,
+        "fields": {
+            "password": "pbkdf2_sha256$180000$3gRQEjw1jJd8$tXKthc92X95On0MbkpyJH0ZjNXD0FxvoaGbwdaeoLL4=",
+            "last_login": "2020-04-07T21:02:39.447Z",
+            "date_joined": "2020-04-07T20:43:01.351Z",
+            "is_superuser": false,
+            "email": "riesitel4@strom.sk",
+            "verified_email": true,
+            "is_staff": false,
+            "is_active": true,
+            "groups": [],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "user.user",
+        "pk": 9,
+        "fields": {
+            "password": "pbkdf2_sha256$180000$3gRQEjw1jJd8$tXKthc92X95On0MbkpyJH0ZjNXD0FxvoaGbwdaeoLL4=",
+            "last_login": "2020-04-07T21:02:39.447Z",
+            "date_joined": "2020-04-07T20:43:01.351Z",
+            "is_superuser": false,
+            "email": "riesitel5@strom.sk",
+            "verified_email": true,
+            "is_staff": false,
+            "is_active": true,
+            "groups": [],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "user.user",
+        "pk": 10,
+        "fields": {
+            "password": "pbkdf2_sha256$180000$3gRQEjw1jJd8$tXKthc92X95On0MbkpyJH0ZjNXD0FxvoaGbwdaeoLL4=",
+            "last_login": "2020-04-07T21:02:39.447Z",
+            "date_joined": "2020-04-07T20:43:01.351Z",
+            "is_superuser": false,
+            "email": "riesitel6@strom.sk",
+            "verified_email": true,
+            "is_staff": false,
+            "is_active": true,
+            "groups": [],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "user.user",
+        "pk": 11,
+        "fields": {
+            "password": "pbkdf2_sha256$180000$NyzwabHNPn2K$sTirqoFPMkLZpnUHkCpzUFZnAsbGM7Bp2+EoN8sOuQA=",
+            "last_login": "2020-04-07T21:02:39.447Z",
+            "date_joined": "2020-04-07T20:43:01.351Z",
+            "is_superuser": false,
+            "email": "veducko1@strom.sk",
+            "verified_email": true,
+            "is_staff": true,
+            "is_active": true,
+            "groups": [
+                1,
+                2
+            ],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "user.user",
+        "pk": 12,
+        "fields": {
+            "password": "pbkdf2_sha256$180000$NyzwabHNPn2K$sTirqoFPMkLZpnUHkCpzUFZnAsbGM7Bp2+EoN8sOuQA=",
+            "last_login": "2020-04-07T21:02:39.447Z",
+            "date_joined": "2020-04-07T20:43:01.351Z",
+            "is_superuser": false,
+            "email": "veducko2@strom.sk",
+            "verified_email": true,
+            "is_staff": true,
+            "is_active": true,
+            "groups": [
+                2
+            ],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "user.user",
+        "pk": 42,
+        "fields": {
+            "password": "pbkdf2_sha256$180000$NyzwabHNPn2K$sTirqoFPMkLZpnUHkCpzUFZnAsbGM7Bp2+EoN8sOuQA=",
+            "last_login": null,
+            "date_joined": "2020-04-07T20:43:01.351Z",
+            "is_superuser": false,
+            "email": "mat",
+            "verified_email": true,
+            "is_staff": false,
+            "is_active": true,
+            "groups": [],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "user.user",
+        "pk": 47,
+        "fields": {
+            "password": "pbkdf2_sha256$180000$NyzwabHNPn2K$sTirqoFPMkLZpnUHkCpzUFZnAsbGM7Bp2+EoN8sOuQA=",
+            "last_login": null,
+            "date_joined": "2020-04-07T20:43:01.351Z",
+            "is_superuser": false,
+            "email": "pat",
+            "verified_email": true,
+            "is_staff": false,
+            "is_active": true,
+            "groups": [],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "user.user",
         "pk": 48,
         "fields": {
             "password": "pbkdf2_sha256$180000$NyzwabHNPn2K$sTirqoFPMkLZpnUHkCpzUFZnAsbGM7Bp2+EoN8sOuQA=",

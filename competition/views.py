@@ -90,6 +90,18 @@ class ProblemViewSet(viewsets.ModelViewSet):
     serializer_class = ProblemSerializer
     permission_classes = (CompetitionRestrictedPermission,)
 
+    def perform_create(self, serializer):
+        '''
+        Vola sa pri vytvarani objektu,
+        checkuju sa tu permissions, ci user vie vytvorit problem v danej sutazi
+        '''
+        series = serializer.validated_data['series']
+        if series.can_user_modify(self.request.user):
+            serializer.save()
+        else:
+            raise exceptions.PermissionDenied(
+                'Nedostatočné práva na vytvorenie tohoto objektu')
+
     @action(methods=['get'], detail=True)
     def comments(self, request, pk=None):
         comments_objects = self.get_object().get_comments(request.user)
@@ -403,6 +415,18 @@ class SemesterViewSet(viewsets.ModelViewSet):
     permission_classes = (CompetitionRestrictedPermission,)
     http_method_names = ['get', 'post', 'head']
 
+    def perform_create(self, serializer):
+        '''
+        Vola sa pri vytvarani objektu,
+        checkuju sa tu permissions, ci user vie vytvorit semester v danej sutazi
+        '''
+        competition = serializer.validated_data['competition']
+        if competition.can_user_modify(self.request.user):
+            serializer.save()
+        else:
+            raise exceptions.PermissionDenied(
+                'Nedostatočné práva na vytvorenie tohoto objektu')
+
     @staticmethod
     def semester_results(semester):
         if semester.frozen_results is not None:
@@ -536,6 +560,18 @@ class EventViewSet(viewsets.ModelViewSet):
     filterset_fields = ['school_year', 'competition', ]
     permission_classes = (CompetitionRestrictedPermission,)
 
+    def perform_create(self, serializer):
+        '''
+        Vola sa pri vytvarani objektu,
+        checkuju sa tu permissions, ci user vie vytvorit event v danej sutazi
+        '''
+        competition = serializer.validated_data['competition']
+        if competition.can_user_modify(self.request.user):
+            serializer.save()
+        else:
+            raise exceptions.PermissionDenied(
+                'Nedostatočné práva na vytvorenie tohoto objektu')
+
     @action(methods=['post'], detail=True, permission_classes=[IsAuthenticated])
     def register(self, request, pk=None):
         event = self.get_object()
@@ -566,6 +602,18 @@ class UnspecifiedPublicationViewSet(viewsets.ModelViewSet):
     queryset = UnspecifiedPublication.objects.all()
     serializer_class = UnspecifiedPublicationSerializer
     permission_classes = (CompetitionRestrictedPermission,)
+
+    def perform_create(self, serializer):
+        '''
+        Vola sa pri vytvarani objektu,
+        checkuju sa tu permissions, ci user vie vytvorit publication v danom evente
+        '''
+        event = serializer.validated_data['event']
+        if event.can_user_modify(self.request.user):
+            serializer.save()
+        else:
+            raise exceptions.PermissionDenied(
+                'Nedostatočné práva na vytvorenie tohoto objektu')
 
     @action(methods=['get'], detail=True, url_path='download')
     def download_publication(self, request, pk=None):
