@@ -174,6 +174,7 @@ class TestSemester(APITestCase, PermissionTestMixin):
         self.assertTrue(len(response.json()) > 0)
         results_row_assert_format(self, response.json()[0], 2)
 
+<<<<<<< HEAD
     # TODO: Treba opraviť api point aby vedel vytvárať semester
     # def test_create_permissions(self):
     #     ''' create permission OK '''
@@ -212,6 +213,8 @@ class TestSemester(APITestCase, PermissionTestMixin):
         self.check_permissions(self.URL_PREFIX + '/0/school-invitations/30/20',
                                'GET', self.ONLY_STAFF_OK_RESPONSES, {})
 
+=======
+>>>>>>> fa4f199... More large test json in semester create
 
 class TestAPISemester(APITestCase):
 
@@ -234,32 +237,49 @@ class TestAPISemester(APITestCase):
     def test_create_semester(self):
         data = {
             "series_set": [
-                {       '''
-                        "problems": [
-                            {
-                                "text": "$ABCD$ je rovnobežník s ostrým uhlom $DAB$. Body $A,\\ P,\\ B,\\ D$ ležia na jednej kružnici v tomto poradí. Priamky $AP$ a $CD$ sa pretínajú v bode $Q$. Bod $O$ je stred kružnice opísanej trojuholníku $CPQ$. Dokážte, že ak $D \\neq O$, tak priamky $AD$ a $DO$ sú na seba kolmé.",
-                                "order": 1,
-                                "series": 0
-                            }
-                        ],
-                        '''
+                {
+                    "problems": [
+                        {
+                            "text": "2+2",
+                            "order": 1
+                        },
+                        {
+                            "text": "3+3",
+                            "order": 2
+                        },
+                        {
+                            "text": "3+4",
+                            "order": 3
+                        }
+                    ],
                     "order": 2,
                     "deadline": "2017-11-19T22:00:00Z",
-                    "semester": 0,
-                    "complete": True, 
-                    "sum_method": "metóda",
-                    "frozen_results": "vysledky",
+                    "complete": False
+                },
+                {
+                    "problems": [
+                        {
+                            "text": "$EFGH$ je rovnobežník s ostrým uhlom $DAB$. Body $A,\\ P,\\ B,\\ D$ ležia na jednej kružnici v tomto poradí. Priamky $AP$ a $CD$ sa pretínajú v bode $Q$. Bod $O$ je stred kružnice opísanej trojuholníku $CPQ$. Dokážte, že ak $D \\neq O$, tak priamky $AD$ a $DO$ sú na seba kolmé.",
+                            "order": 1
+                        },
+                        {
+                            "text": "$IJKL$ je rovnobežník s ostrým uhlom $DAB$. Body $A,\\ P,\\ B,\\ D$ ležia na jednej kružnici v tomto poradí. Priamky $AP$ a $CD$ sa pretínajú v bode $Q$. Bod $O$ je stred kružnice opísanej trojuholníku $CPQ$. Dokážte, že ak $D \\neq O$, tak priamky $AD$ a $DO$ sú na seba kolmé.",
+                            "order": 2
+                        }
+                    ],
+                    "order": 2,
+                    "deadline": "2017-11-19T22:00:00Z",
+                    "complete": False
                 }
-            ],  '''
-                "semesterpublication_set": [],
-                "unspecifiedpublication_set": [],
-                '''
+            ],
+            "semesterpublication_set": [],
+            "unspecifiedpublication_set": [],
             "year": 42,
             "school_year": "2017/2018",
             "start": "2017-10-02T22:00:00Z",
             "end": "2017-11-19T22:00:00Z",
             "season_code": 0,
-            "competition": 0,
+            "competition": 0
         }
         response = self.client.post(self.URL_PREFIX, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
