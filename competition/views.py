@@ -1,7 +1,5 @@
 import json
 import os
-from competition import serializers
-from problem_database.models import Seminar
 import zipfile
 from io import BytesIO
 from operator import itemgetter
@@ -9,16 +7,11 @@ from operator import itemgetter
 from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.core.files.move import file_move_safe
-from django.http import HttpResponse, response, JsonResponse
+from django.http import HttpResponse
 from django.utils import timezone
-from django.shortcuts import render
-from django.views.decorators.csrf import csrf_exempt
 
 from rest_framework import exceptions, status, viewsets, mixins
 from rest_framework.decorators import action
-from rest_framework.parsers import JSONParser
-from rest_framework.views import APIView
-from rest_framework.decorators import action, api_view
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from webstrom import settings
@@ -27,7 +20,6 @@ from base.utils import mime_type
 
 from personal.models import School, Profile
 from personal.serializers import SchoolSerializer, ProfileMailSerializer
-
 from competition.models import (Competition, Event, EventRegistration, Grade,
                                 LateTag, Problem,
                                 Semester, Series, Solution, Vote, UnspecifiedPublication,
@@ -36,7 +28,7 @@ from competition import utils
 from competition.permissions import CompetitionRestrictedPermission
 from competition.serializers import (CompetitionSerializer,
                                      EventRegistrationSerializer,
-                                     EventSerializer, GradeSerializer,
+                                     GradeSerializer,
                                      LateTagSerializer,
                                      ProblemSerializer,
                                      EventSerializer,
@@ -562,7 +554,7 @@ class SemesterViewSet(viewsets.ModelViewSet):
         serializer = ProfileMailSerializer(profiles, many=True)
         return Response(serializer.data)
 
-    def post(self, request, format=None):
+    def post(self, request, format_post):
         serializer = SemesterSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()

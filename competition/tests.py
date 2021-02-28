@@ -1,13 +1,10 @@
-from django.utils import timezone
 from datetime import datetime
-from django.test import RequestFactory, TestCase
-from competition.models import Competition, Semester
-from tests.test_utils import get_app_fixtures
-from rest_framework import status
-from rest_framework.test import APITestCase, APIRequestFactory
+
+from django.utils import timezone
+from rest_framework.test import APITestCase
+
 from competition import models
 from tests.test_utils import get_app_fixtures, PermissionTestMixin
-from rest_framework.test import APITestCase
 
 series_expected_keys = [
     'id',
@@ -174,7 +171,6 @@ class TestSemester(APITestCase, PermissionTestMixin):
         self.assertTrue(len(response.json()) > 0)
         results_row_assert_format(self, response.json()[0], 2)
 
-<<<<<<< HEAD
     # TODO: Treba opraviť api point aby vedel vytvárať semester
     # def test_create_permissions(self):
     #     ''' create permission OK '''
@@ -213,26 +209,23 @@ class TestSemester(APITestCase, PermissionTestMixin):
         self.check_permissions(self.URL_PREFIX + '/0/school-invitations/30/20',
                                'GET', self.ONLY_STAFF_OK_RESPONSES, {})
 
-=======
->>>>>>> fa4f199... More large test json in semester create
 
-class TestAPISemester(APITestCase):
+class TestAPISemester(APITestCase, PermissionTestMixin):
+    '''competition/semester - Create all'''
 
     URL_PREFIX = '/competition/semester/'
+    fixtures = PermissionTestMixin.get_basic_fixtures()
 
     def setUp(self):
-        competition = Competition.objects.create(
-            name='Malynár',
-            start_year=1980,
-            description='Pre deti',
-            competition_type=2)
-        self.semester = Semester.objects.create(
+        competition = models.Competition.objects.get(pk=0)
+        self.semester = models.Semester.objects.create(
             competition=competition,
             school_year='2020/2021',
             season_code=1,
             start=datetime(2015, 6, 15, 23, 30, 1, tzinfo=timezone.utc),
             end=datetime(2016, 6, 15, 23, 30, 1, tzinfo=timezone.utc),
             year=44)
+        self.create_users()
 
     def test_create_semester(self):
         data = {
@@ -259,11 +252,16 @@ class TestAPISemester(APITestCase):
                 {
                     "problems": [
                         {
-                            "text": "$EFGH$ je rovnobežník s ostrým uhlom $DAB$. Body $A,\\ P,\\ B,\\ D$ ležia na jednej kružnici v tomto poradí. Priamky $AP$ a $CD$ sa pretínajú v bode $Q$. Bod $O$ je stred kružnice opísanej trojuholníku $CPQ$. Dokážte, že ak $D \\neq O$, tak priamky $AD$ a $DO$ sú na seba kolmé.",
+                            "text": """$EFGH$ je rovnobežník s ostrým uhlom $DAB$.
+                            Dokážte, že $AD$ a $DO$ sú na seba kolmé.""",
                             "order": 1
                         },
                         {
-                            "text": "$IJKL$ je rovnobežník s ostrým uhlom $DAB$. Body $A,\\ P,\\ B,\\ D$ ležia na jednej kružnici v tomto poradí. Priamky $AP$ a $CD$ sa pretínajú v bode $Q$. Bod $O$ je stred kružnice opísanej trojuholníku $CPQ$. Dokážte, že ak $D \\neq O$, tak priamky $AD$ a $DO$ sú na seba kolmé.",
+                            "text": """$IJKL$ je rovnobežník s ostrým uhlom $DAB$.
+                            Body $A,\\ P,\\ B,\\ D$ ležia na jednej kružnici v tomto poradí.
+                            Priamky $AP$ a $CD$ sa pretínajú v bode $Q$. Bod $O$ je stred kružnice
+                            opísanej trojuholníku $CPQ$. Dokážte, že ak $D \\neq O$,
+                            tak priamky $AD$ a $DO$ sú na seba kolmé.""",
                             "order": 2
                         }
                     ],
@@ -279,12 +277,17 @@ class TestAPISemester(APITestCase):
             "start": "2017-10-02T22:00:00Z",
             "end": "2017-11-19T22:00:00Z",
             "season_code": 0,
-            "competition": 0
+            "competition": 0,
+            "late_tags": []
         }
-        response = self.client.post(self.URL_PREFIX, data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(Semester.objects.count(), 1)
-        self.assertEqual(Semester.objects.get().season_code, 1)
+        self.check_permissions(self.URL_PREFIX,
+                               'POST',
+                               self.ONLY_STROM_OK_RESPONSES, data)
+        # response = self.client.post(self.URL_PREFIX, data, format='json')
+        # self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(models.Semester.objects.count(), 2)
+        self.assertEqual(models.Series.objects.count(), 2)
+        self.assertEqual(models.Problem.objects.count(), 5)
 
 
 class TestCompetition(APITestCase, PermissionTestMixin):
