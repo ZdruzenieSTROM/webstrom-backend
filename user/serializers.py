@@ -153,7 +153,7 @@ class RegisterSerializer(serializers.Serializer):
         '''
         if not profile['gdpr']:
             raise serializers.ValidationError(
-                'Musíš súhlasiť so spracovaím osobných údajov.')
+                'Musíš podvrdiť, že si si vedomý spracovania osobných údajov.')
         return profile
 
     def validate(self, data):
