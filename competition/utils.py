@@ -153,7 +153,7 @@ def merge_results_profile(old, new, problems_in_old, problems_in_new):
         old['subtotal'].append(0)
         return old
 
-    old['solutions'].append(new['solutions'])
+    old['solutions']+=new['solutions']
     old['subtotal'].append(new['total'])
     old['total'] = sum(old['subtotal'])
     return old
