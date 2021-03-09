@@ -275,7 +275,7 @@ class SeriesViewSet(viewsets.ModelViewSet):
                 'points': points,
                 'solution_pk': sol.pk if sol else None,
                 'problem_pk': problem,
-                'votes': sol.votes if sol and hasattr(sol,'votes') else None
+                'votes': sol.votes.to_num() if sol and hasattr(sol,'votes') else None
             })
         profile = EventRegistrationSerializer(semester_registration)
         return {
@@ -365,7 +365,7 @@ class SolutionViewSet(viewsets.ModelViewSet):
     serializer_class = SolutionSerializer
 
     def add_vote(self, request, positive, solution):
-        if solution.votes.count() > 0:
+        if hasattr(solution,'votes') and solution.votes.count() > 0:
             return Response(status=status.HTTP_409_CONFLICT)
         if 'comment' in request.data:
             Vote.objects.create(

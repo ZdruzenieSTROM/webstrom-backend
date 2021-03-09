@@ -521,6 +521,10 @@ class Vote(models.Model):
         return f'{pos} hlas za {self.solution.problem} pre '\
                f'{self.solution.semester_registration.profile.user.get_full_name()}'
 
+    def to_num(self):
+        return 1 if self.is_positive else -1
+
+
 
 class SemesterPublication(models.Model):
     """

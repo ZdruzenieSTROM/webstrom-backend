@@ -3,7 +3,7 @@
         "model": "user.User",
         "pk": 1,
         "fields": {
-            "email": "Webmaster@strom.sk",
+            "email": "webmaster@strom.sk",
             "password": "pbkdf2_sha256$180000$NyzwabHNPn2K$sTirqoFPMkLZpnUHkCpzUFZnAsbGM7Bp2+EoN8sOuQA=",
             "is_superuser": true,
             "is_staff": true,
