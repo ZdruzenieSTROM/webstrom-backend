@@ -365,8 +365,11 @@ class SolutionViewSet(viewsets.ModelViewSet):
     serializer_class = SolutionSerializer
 
     def add_vote(self, request, positive, solution):
-        if hasattr(solution,'votes') and solution.votes.count() > 0:
-            return Response(status=status.HTTP_409_CONFLICT)
+        if hasattr(solution,'votes'):
+            if solution.votes.is_positive==positive:
+                return Response(status=status.HTTP_409_CONFLICT)
+            else:
+                solution.votes.delete()
         if 'comment' in request.data:
             Vote.objects.create(
                 solution=solution, is_positive=positive, comment=request.data['comment'])
