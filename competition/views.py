@@ -274,7 +274,8 @@ class SeriesViewSet(viewsets.ModelViewSet):
             solutions.append({
                 'points': points,
                 'solution_pk': sol.pk if sol else None,
-                'problem_pk': problem
+                'problem_pk': problem,
+                'votes': sol.votes if sol and hasattr(sol,'votes') else None
             })
         profile = EventRegistrationSerializer(semester_registration)
         return {
@@ -373,19 +374,19 @@ class SolutionViewSet(viewsets.ModelViewSet):
             Vote.objects.create(solution=solution, is_positive=positive)
         return Response(status=status.HTTP_201_CREATED)
 
-    @action(methods=['post'], detail=True, url_name='add-positive-vote',
+    @action(methods=['post'], detail=True, url_path='add-positive-vote',
             permission_classes=[IsAdminUser])
     def add_positive_vote(self, request, pk=None):
         solution = self.get_object()
         return self.add_vote(request, True, solution)
 
-    @action(methods=['post'], detail=True, url_name='add-negative-vote',
+    @action(methods=['post'], detail=True, url_path='add-negative-vote',
             permission_classes=[IsAdminUser])
     def add_negative_vote(self, request, pk=None):
         solution = self.get_object()
         return self.add_vote(request, False, solution)
 
-    @action(methods=['post'], detail=True, url_name='remove-vote',
+    @action(methods=['post'], detail=True, url_path='remove-vote',
             permission_classes=[IsAdminUser])
     def remove_vote(self, request, pk=None):
         solution = self.get_object()
@@ -433,7 +434,7 @@ class SemesterViewSet(viewsets.ModelViewSet):
             return semester.frozen_results
         current_results = None
         curent_number_of_problems = 0
-        for series in semester.series_set.all():
+        for series in semester.series_set.order_by('order').all():
             series_result = SeriesViewSet.series_results(series)
             count = series.num_problems
             current_results = utils.merge_results(
