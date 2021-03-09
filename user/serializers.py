@@ -1,5 +1,3 @@
-from pprint import pformat
-
 from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth.forms import SetPasswordForm
 from django.core.mail import send_mail
@@ -193,8 +191,6 @@ class RegisterSerializer(serializers.Serializer):
                                gdpr=profile_data['gdpr'])
 
         self.handle_other_school(profile_data['school'])
-
-        Profile.objects.create(user=user, **profile_data)
         setup_user_email(request, user, [])
 
         return user
