@@ -1,5 +1,6 @@
 from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth.forms import SetPasswordForm
+from django.core.mail import send_mail
 
 from rest_framework import serializers, exceptions
 
@@ -7,7 +8,7 @@ from allauth.account.adapter import get_adapter
 from allauth.account.utils import setup_user_email
 from allauth.utils import email_address_exists
 
-
+from webstrom.settings import EMAIL_ALERT, EMAIL_NO_REPLY
 from user.models import User, TokenModel
 from personal.models import Profile
 from personal.serializers import ProfileCreateSerializer
@@ -129,6 +130,10 @@ class RegisterSerializer(serializers.Serializer):
     password1 = serializers.CharField(write_only=True)
     password2 = serializers.CharField(write_only=True)
     profile = ProfileCreateSerializer(label="")
+    new_school_description = serializers.CharField(
+        max_length=200, allow_blank=True)
+
+    OTHER_SCHOOL_CODE = 0
 
     def validate_email(self, email):
         email = get_adapter().clean_email(email)
@@ -140,9 +145,25 @@ class RegisterSerializer(serializers.Serializer):
     def validate_password1(self, password):
         return get_adapter().clean_password(password)
 
+    def validate_profile(self, profile):
+        '''
+        check ci je gdpr zaskrtnute
+        '''
+        if not profile['gdpr']:
+            raise serializers.ValidationError(
+                'Musíš podvrdiť, že si si vedomý spracovania osobných údajov.')
+        return profile
+
     def validate(self, data):
         if data['password1'] != data['password2']:
             raise serializers.ValidationError("Zadané heslá sa nezhodujú.")
+
+        # ak je zadana skola "ina skola", musi byt nejaky description skoly
+        if (data['profile']['school'].code == self.OTHER_SCHOOL_CODE and
+                len(data['new_school_description']) == 0):
+            raise serializers.ValidationError(
+                'Musíš zadať popis tvojej školy.')
+
         return data
 
     def get_cleaned_data(self):
@@ -168,8 +189,33 @@ class RegisterSerializer(serializers.Serializer):
                                phone=profile_data['phone'],
                                parent_phone=profile_data['parent_phone'],
                                gdpr=profile_data['gdpr'])
+
+        self.handle_other_school(profile_data['school'])
         setup_user_email(request, user, [])
+
         return user
+
+    def handle_other_school(self, school):
+        '''
+        Ak je zadana skola "ina skola" tak posle o tom mail.
+        '''
+        if school.code == self.OTHER_SCHOOL_CODE:
+            email = self.validated_data['email']
+            name = self.validated_data['profile']['first_name']\
+                + self.validated_data['profile']['last_name']
+            school_info = self.validated_data['new_school_description']
+            send_mail(
+                'Žiadosť o pridanie novej školy',
+                f'''Na webe sa zaregistroval nový používateľ a nenašiel svoju školu.
+                Email: {email}
+                Meno: {name}
+                Škola: {school_info}
+
+                Prosím doplňte školu a priraďte mu ju.
+                ''',
+                EMAIL_NO_REPLY,
+                [EMAIL_ALERT]
+            )
 
 
 class VerifyEmailSerializer(serializers.Serializer):

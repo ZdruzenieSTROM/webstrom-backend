@@ -1,5 +1,6 @@
 from allauth.account.adapter import DefaultAccountAdapter
 from django.core.mail import send_mail
+from webstrom.settings import EMAIL_NO_REPLY
 
 
 class CustomAccountAdapter(DefaultAccountAdapter):
@@ -13,5 +14,9 @@ class CustomAccountAdapter(DefaultAccountAdapter):
 
         # Na znení mailu sa dohodneme neskôr
 
-        send_mail('Konfirmácia emailovej adresy',
-                  f'Key = {context["key"]}', 'no-reply@strom.sk', [context['user'].email])
+        send_mail(
+            'Konfirmácia emailovej adresy',
+            f'Key = {context["key"]}',
+            EMAIL_NO_REPLY,
+            [context['user'].email]
+        )
