@@ -204,10 +204,19 @@ class RegisterSerializer(serializers.Serializer):
         Ak je zadana skola "ina skola" tak posle o tom mail.
         '''
         if school.code == self.OTHER_SCHOOL_CODE:
+            email = self.validated_data['email']
+            name = self.validated_data['profile']['first_name']\
+                + self.validated_data['profile']['last_name']
+            school_info = self.validated_data['new_school_description']
             send_mail(
                 'Žiadosť o pridanie novej školy',
-                'Dakto sa zaregistroval a nenašiel svoju školu.\n' +
-                f'Data: {str(pformat(self.validated_data))}\n',
+                f'''Na webe sa zaregistroval nový používateľ a nenašiel svoju školu.
+                Email: {email}
+                Meno: {name}
+                Škola: {school_info}
+
+                Prosím doplňte školu a priraďte mu ju.
+                ''',
                 EMAIL_NO_REPLY,
                 [EMAIL_ALERT]
             )
