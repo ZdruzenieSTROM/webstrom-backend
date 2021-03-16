@@ -1,6 +1,10 @@
+from datetime import datetime
+
+from django.utils import timezone
 from rest_framework.test import APITestCase
-from tests.test_utils import get_app_fixtures, PermissionTestMixin
+
 from competition import models
+from tests.test_utils import get_app_fixtures, PermissionTestMixin
 
 series_expected_keys = [
     'id',
@@ -167,19 +171,6 @@ class TestSemester(APITestCase, PermissionTestMixin):
         self.assertTrue(len(response.json()) > 0)
         results_row_assert_format(self, response.json()[0], 2)
 
-    # TODO: Treba opraviť api point aby vedel vytvárať semester
-    # def test_create_permissions(self):
-    #     ''' create permission OK '''
-    #     with open(os.path.join(
-    #             BASE_DIR, 'tests', 'test_requests', 'seminar_create.json'),
-    #             'r', encoding='utf-8') as f:
-    #         competition_to_create = json.load(f)
-    #     self.check_permissions(self.URL_PREFIX + '/',
-    #                            'POST', self.ONLY_STROM_OK_RESPONSES, competition_to_create)
-    #     competition_to_create['competition'] = 1
-    #     self.check_permissions(self.URL_PREFIX + '/',
-    #                            'POST', self.ONLY_KRICKY_OK_RESPONSES, competition_to_create)
-
     def test_update_permissions(self):
         ''' update permission OK '''
         self.check_permissions(self.URL_PREFIX + '/0/',
@@ -204,6 +195,84 @@ class TestSemester(APITestCase, PermissionTestMixin):
                                'GET', self.ONLY_STAFF_OK_RESPONSES, {})
         self.check_permissions(self.URL_PREFIX + '/0/school-invitations/30/20',
                                'GET', self.ONLY_STAFF_OK_RESPONSES, {})
+
+
+class TestAPISemester(APITestCase, PermissionTestMixin):
+    '''competition/semester - Create all'''
+
+    URL_PREFIX = '/competition/semester/'
+    fixtures = PermissionTestMixin.get_basic_fixtures()
+
+    def setUp(self):
+        competition = models.Competition.objects.get(pk=0)
+        self.semester = models.Semester.objects.create(
+            competition=competition,
+            school_year='2020/2021',
+            season_code=1,
+            start=datetime(2015, 6, 15, 23, 30, 1, tzinfo=timezone.utc),
+            end=datetime(2016, 6, 15, 23, 30, 1, tzinfo=timezone.utc),
+            year=44)
+        self.create_users()
+
+    def test_create_semester(self):
+        data = {
+            "series_set": [
+                {
+                    "problems": [
+                        {
+                            "text": "2+2",
+                            "order": 1
+                        },
+                        {
+                            "text": "3+3",
+                            "order": 2
+                        },
+                        {
+                            "text": "3+4",
+                            "order": 3
+                        }
+                    ],
+                    "order": 2,
+                    "deadline": "2017-11-19T22:00:00Z",
+                    "complete": False
+                },
+                {
+                    "problems": [
+                        {
+                            "text": """$EFGH$ je rovnobežník s ostrým uhlom $DAB$.
+                            Dokážte, že $AD$ a $DO$ sú na seba kolmé.""",
+                            "order": 1
+                        },
+                        {
+                            "text": """$IJKL$ je rovnobežník s ostrým uhlom $DAB$.
+                            Body $A,\\ P,\\ B,\\ D$ ležia na jednej kružnici v tomto poradí.
+                            Priamky $AP$ a $CD$ sa pretínajú v bode $Q$. Bod $O$ je stred kružnice
+                            opísanej trojuholníku $CPQ$. Dokážte, že ak $D \\neq O$,
+                            tak priamky $AD$ a $DO$ sú na seba kolmé.""",
+                            "order": 2
+                        }
+                    ],
+                    "order": 2,
+                    "deadline": "2017-11-19T22:00:00Z",
+                    "complete": False
+                }
+            ],
+            "semesterpublication_set": [],
+            "unspecifiedpublication_set": [],
+            "year": 42,
+            "school_year": "2017/2018",
+            "start": "2017-10-02T22:00:00Z",
+            "end": "2017-11-19T22:00:00Z",
+            "season_code": 0,
+            "competition": 0,
+            "late_tags": []
+        }
+        self.check_permissions(self.URL_PREFIX,
+                               'POST',
+                               self.ONLY_STROM_OK_RESPONSES, data)
+        self.assertEqual(models.Semester.objects.count(), 2)
+        self.assertEqual(models.Series.objects.count(), 2)
+        self.assertEqual(models.Problem.objects.count(), 5)
 
 
 class TestCompetition(APITestCase, PermissionTestMixin):
@@ -243,11 +312,6 @@ class TestCompetition(APITestCase, PermissionTestMixin):
         self.get_client()
         response = self.client.get(self.URL_PREFIX + '/', {}, 'json')
         self.assertEqual(response.status_code, 200)
-
-    # def test_post_competition_list(self):
-    #    '''post not allowed OK'''
-    #    response = self.client.post(self.URL_PREFIX + '/', {})
-    #    self.assertEqual(response.status_code, 405)
 
     def test_get_competition_detail(self):
         '''detail format OK'''

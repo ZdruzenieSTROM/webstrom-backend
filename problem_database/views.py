@@ -1,5 +1,6 @@
-from rest_framework import viewsets
-# from rest_framework.permissions import IsAdminUser
+# Create your views here.
+from rest_framework import status, viewsets
+from rest_framework.response import Response
 from rest_framework.filters import SearchFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from problem_database import models
@@ -12,6 +13,16 @@ from problem_database import serializers
 class SeminarViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = models.Seminar.objects.all()
     serializer_class = serializers.SeminarSerializer
+
+    def create(self, request, *args, **kwargs):  # pylint: disable=unused-argument
+        many = isinstance(request.data, list)
+        serializer = serializers.SeminarSerializer(
+            data=request.data, many=many)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ActivityTypeViewSet(viewsets.ReadOnlyModelViewSet):
@@ -42,6 +53,16 @@ class ProblemViewSet(viewsets.ReadOnlyModelViewSet):
     filterset_fields = ['problem_type', ]
     filter_backends = [DjangoFilterBackend, SearchFilter]
     search_fields = ['problem']
+
+    def create(self, request, *args, **kwargs):  # pylint: disable=unused-argument
+        many = isinstance(request.data, list)
+        serializer = serializers.ProblemSerializer(
+            data=request.data, many=many)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class MediaViewSet(viewsets.ReadOnlyModelViewSet):

@@ -20,7 +20,6 @@ from base.utils import mime_type
 
 from personal.models import School, Profile
 from personal.serializers import SchoolSerializer, ProfileMailSerializer
-
 from competition.models import (Competition, Event, EventRegistration, Grade,
                                 LateTag, Problem,
                                 Semester, Series, Solution, Vote, UnspecifiedPublication,
@@ -29,9 +28,11 @@ from competition import utils
 from competition.permissions import CompetitionRestrictedPermission
 from competition.serializers import (CompetitionSerializer,
                                      EventRegistrationSerializer,
-                                     EventSerializer, GradeSerializer,
+                                     GradeSerializer,
                                      LateTagSerializer,
                                      ProblemSerializer,
+                                     EventSerializer,
+                                     SemesterSerializer,
                                      SemesterWithProblemsSerializer,
                                      SeriesWithProblemsSerializer,
                                      SolutionSerializer,
@@ -552,6 +553,13 @@ class SemesterViewSet(viewsets.ModelViewSet):
         profiles = Profile.objects.only("user").filter(pk__in=participants_id)
         serializer = ProfileMailSerializer(profiles, many=True)
         return Response(serializer.data)
+
+    def post(self, request, format_post):
+        serializer = SemesterSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class EventViewSet(viewsets.ModelViewSet):

@@ -86,21 +86,21 @@ class PermissionTestMixin:
                           f'Permission assertion failed on user {user} with {method} {url}')
 
     PUBLIC_OK_RESPONSES = {
-        'competitor': 200,
-        'strom': 200,
-        'kricky': 200,
-        None: 200
+        'competitor': [200, 201],
+        'strom': [200, 201],
+        'kricky': [200, 201],
+        None: [200, 201]
     }
     ONLY_STROM_OK_RESPONSES = {
         'competitor': [403, 405],
-        'strom': 200,
+        'strom': [200, 201],
         'kricky': [403, 405],
         None: [403, 405]
     }
     ONLY_KRICKY_OK_RESPONSES = {
         'competitor': [403, 405],
         'strom': [403, 405],
-        'kricky': 200,
+        'kricky': [200, 201],
         None: [403, 405]}
     ALL_FORBIDDEN = {
         'competitor': [403, 405],
@@ -110,7 +110,7 @@ class PermissionTestMixin:
     }
     ONLY_STAFF_OK_RESPONSES = {
         'competitor': [403, 405],
-        'strom': 200,
-        'kricky': 200,
+        'strom': [200, 201],
+        'kricky': [200, 201],
         None: [403, 405]
     }
