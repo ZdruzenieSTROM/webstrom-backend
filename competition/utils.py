@@ -149,7 +149,12 @@ def merge_results_profile(old, new, problems_in_old, problems_in_new):
         return new
 
     if not new:
-        old['solutions'] += [None]*problems_in_new
+        old['solutions'] += [{
+                'points': '-',
+                'solution_pk': None,
+                'problem_pk': problem.pk,
+                'votes': None
+            } for problem in series.problems.all()]
         old['subtotal'].append(0)
         return old
 
@@ -194,6 +199,37 @@ def merge_results(
         return merged_results
 
     return series_results
+
+class SolutionInResultRow:
+
+
+class ResultRow:
+    def __init__(self):
+        self.rank_start = 0
+        # Poradie - dolná hranica, v prípade deleného miesto(napr. 1.-3.) ide o vyššie miesto(3)
+        self.rank_end=0
+        # Indikuje či sa zmenilo poradie od minulej priečky, slúži na delené miesta
+        self.rank_changed = True
+            # primary key riešiteľovej registrácie do semestra
+        self.registration=None
+        # Súčty bodov po sériách
+        self.subtotal = []
+            # Celkový súčet za danú entitu
+        self.total = 0
+            # zipnutý zoznam riešení a pk príslušných problémov,
+            # aby ich bolo možné prelinkovať z poradia do admina
+            # a získať pk problému pri none riešení
+        self.solutions = []
+    def fill_user(self,semester_registration,semester):
+        for series in semester.series_set.order_by('order'):
+            series_solutions = []
+            for problem in series.problem_set.order_by('order'):
+                series_solutions.append()
+            self.solutions.append(series_solutions)
+            self.subtotal.append()
+        self.total = semester
+
+
 
 
 SERIES_SUM_METHODS = [
