@@ -171,19 +171,6 @@ class TestSemester(APITestCase, PermissionTestMixin):
         self.assertTrue(len(response.json()) > 0)
         results_row_assert_format(self, response.json()[0], 2)
 
-    # TODO: Treba opraviť api point aby vedel vytvárať semester
-    # def test_create_permissions(self):
-    #     ''' create permission OK '''
-    #     with open(os.path.join(
-    #             BASE_DIR, 'tests', 'test_requests', 'seminar_create.json'),
-    #             'r', encoding='utf-8') as f:
-    #         competition_to_create = json.load(f)
-    #     self.check_permissions(self.URL_PREFIX + '/',
-    #                            'POST', self.ONLY_STROM_OK_RESPONSES, competition_to_create)
-    #     competition_to_create['competition'] = 1
-    #     self.check_permissions(self.URL_PREFIX + '/',
-    #                            'POST', self.ONLY_KRICKY_OK_RESPONSES, competition_to_create)
-
     def test_update_permissions(self):
         ''' update permission OK '''
         self.check_permissions(self.URL_PREFIX + '/0/',
