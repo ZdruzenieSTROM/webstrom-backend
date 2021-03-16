@@ -270,8 +270,6 @@ class TestAPISemester(APITestCase, PermissionTestMixin):
         self.check_permissions(self.URL_PREFIX,
                                'POST',
                                self.ONLY_STROM_OK_RESPONSES, data)
-        # response = self.client.post(self.URL_PREFIX, data, format='json')
-        # self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(models.Semester.objects.count(), 2)
         self.assertEqual(models.Series.objects.count(), 2)
         self.assertEqual(models.Problem.objects.count(), 5)
@@ -314,11 +312,6 @@ class TestCompetition(APITestCase, PermissionTestMixin):
         self.get_client()
         response = self.client.get(self.URL_PREFIX + '/', {}, 'json')
         self.assertEqual(response.status_code, 200)
-
-    # def test_post_competition_list(self):
-    #    '''post not allowed OK'''
-    #    response = self.client.post(self.URL_PREFIX + '/', {})
-    #    self.assertEqual(response.status_code, 405)
 
     def test_get_competition_detail(self):
         '''detail format OK'''
