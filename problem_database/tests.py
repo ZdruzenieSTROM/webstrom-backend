@@ -6,6 +6,9 @@ from problem_database import serializers
 
 
 class TestSeminar(TestCase):
+    '''
+    seminar create
+    '''
 
     def setUp(self):
         return models.Seminar.objects.create(name='Malynár')
@@ -17,6 +20,9 @@ class TestSeminar(TestCase):
 
 
 class SeminarViewsTest(APITestCase):
+    '''
+    prolem_database/seminars
+    '''
 
     def setUp(self):
         self.seminars = [models.Seminar.objects.create(name="Malynár"),
@@ -39,6 +45,9 @@ class SeminarViewsTest(APITestCase):
 
 
 class TestActivityType(TestCase):
+    '''
+    activity type create
+    '''
 
     def setUp(self):
         seminar = models.Seminar.objects.create(name='Malynár')
@@ -51,6 +60,9 @@ class TestActivityType(TestCase):
 
 
 class ActivityTypeViewsTest(APITestCase):
+    '''
+    problem_database/activity_types
+    '''
 
     def setUp(self):
         seminar1 = models.Seminar.objects.create(name='Malynár')
@@ -102,6 +114,9 @@ class ActivityTypeViewsTest(APITestCase):
 
 
 class TestActivity(TestCase):
+    '''
+    activity create
+    '''
 
     def setUp(self):
         seminar = models.Seminar.objects.create(name='Malynár')
@@ -119,6 +134,9 @@ class TestActivity(TestCase):
 
 
 class TestProblemTag(TestCase):
+    '''
+    problem tag create
+    '''
 
     def setUp(self):
         problem = models.Problem.objects.create(
@@ -133,6 +151,9 @@ class TestProblemTag(TestCase):
 
 
 class ProblemTagTest(APITestCase):
+    '''
+    problem_database/problem_tags
+    '''
 
     def setUp(self):
         problems = [
