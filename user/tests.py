@@ -72,7 +72,7 @@ class UpdateUserTest(APITestCase):
         #self.veduci_log_in = {'username':'veduci', 'password':'1234abcd'}
         #self.client.post('/user/login/',self.veduci_log_in)
 
-        self.profiledata = ProfileSerializer(user)
+        self.profiledata = ProfileSerializer(self.profile)
         self.userdata = {
             'first_name': 'Účastník',
             'last_name': 'Matikovský'
