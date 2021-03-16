@@ -4,8 +4,8 @@ from user.models import User
 from django.test import Client
 from competition.forms import ProfileUpdateForm
 from user.forms import UserChangeForm, NameUpdateForm
-from user.serializers import UserShortSerializer
 from personal.models import County, District, School, Profile
+from personal.serializers import ProfileSerializer
 
 class UpdateUserTest(APITestCase):
     def test_user_change_form(self):
@@ -72,7 +72,7 @@ class UpdateUserTest(APITestCase):
         #self.veduci_log_in = {'username':'veduci', 'password':'1234abcd'}
         #self.client.post('/user/login/',self.veduci_log_in)
 
-        self.profiledata = UserShortSerializer(user)
+        self.profiledata = ProfileSerializer(user)
         self.userdata = {
             'first_name': 'Účastník',
             'last_name': 'Matikovský'
