@@ -23,6 +23,9 @@ class TestProfile(TestCase):
 
 
 class TestCounty(TestCase):
+    '''
+    county create
+    '''
 
     def setUp(self):
         return County.objects.create(name='Testovaci kraj')
@@ -34,6 +37,9 @@ class TestCounty(TestCase):
 
 
 class CountyViewsTest(APITestCase):
+    '''
+    personal/counties
+    '''
 
     def setUp(self):
         self.counties = [County.objects.create(name="Košický kraj"),
@@ -56,6 +62,9 @@ class CountyViewsTest(APITestCase):
 
 
 class TestDistrict(TestCase):
+    '''
+    district create
+    '''
 
     def setUp(self):
         county = County.objects.create(name="Testovací kraj")
@@ -68,6 +77,9 @@ class TestDistrict(TestCase):
 
 
 class DistrictViewsTest(APITestCase):
+    '''
+    personal/district
+    '''
 
     def setUp(self):
         county1 = County.objects.create(name="Košický kraj")
@@ -114,6 +126,9 @@ class DistrictViewsTest(APITestCase):
 
 
 class TestSchoolWithoutAddress(TestCase):
+    '''
+    school without address create
+    '''
 
     def setUp(self):
         county = County.objects.create(name="Testovací kraj")
@@ -128,6 +143,9 @@ class TestSchoolWithoutAddress(TestCase):
 
 
 class TestSchoolWithAddress(TestCase):
+    '''
+    school with address create
+    '''
 
     def setUp(self):
         county = County.objects.create(name="Testovací kraj")
@@ -159,6 +177,9 @@ class TestSchoolWithAddress(TestCase):
 
 
 class SchoolViewsTest(APITestCase):
+    '''
+    personal/school
+    '''
 
     def setUp(self):
         county = County.objects.create(name="Košický kraj")
