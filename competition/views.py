@@ -44,12 +44,63 @@ from competition.permissions import CommentPermission
 # pylint: disable=unused-argument
 
 
+def generate_result_row(
+    semester_registration: EventRegistration,
+    semester: Semester = None,
+    only_series: Series = None
+):
+    """
+    Vygeneruje riadok výsledku pre používateľa.
+    Ak je uvedený only_semester vygenerujú sa výsledky iba sa daný semester
+    """
+    user_solutions = semester_registration.solution_set
+    series_set = semester.series_set.order_by(
+        'order') if semester is not None else [only_series]
+    solutions = []
+    subtotal = []
+    for series in series_set:
+        series_solutions = []
+        solution_points = []
+        for problem in series.problems.order_by('order'):
+            sol = user_solutions.filter(problem=problem).first()
+
+            solution_points.append(sol.score or 0 if sol is not None else 0)
+            series_solutions.append(
+                {
+                    'points': str(sol.score or '?') if sol is not None else '-',
+                    'solution_pk': sol.pk if sol is not None else None,
+                    'problem_pk': problem.pk,
+                    'votes': 0  # TODO: Implement votes sol.vote
+                }
+            )
+        series_sum_func = getattr(utils, series.sum_method or '',
+                                  utils.series_simple_sum)
+        solutions.append(series_solutions)
+        subtotal.append(
+            series_sum_func(solution_points, semester_registration)
+        )
+    return {
+        # Poradie - horná hranica, v prípade deleného miesto(napr. 1.-3.) ide o nižšie miesto(1)
+        'rank_start': 0,
+        # Poradie - dolná hranica, v prípade deleného miesto(napr. 1.-3.) ide o vyššie miesto(3)
+        'rank_end': 0,
+        # Indikuje či sa zmenilo poradie od minulej priečky, slúži na delené miesta
+        'rank_changed': True,
+        # primary key riešiteľovej registrácie do semestra
+        'registration': EventRegistrationSerializer(semester_registration).data,
+        # Súčty bodov po sériách
+        'subtotal': subtotal,
+        # Celkový súčet za danú entitu
+        'total': sum(subtotal),
+        # Zoznam riešení,
+        'solutions': solutions
+    }
+
+
 class CompetitionViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Competition.objects.all()
     serializer_class = CompetitionSerializer
     permission_classes = (CompetitionRestrictedPermission,)
-
-# pylint: disable=unused-argument
 
 
 class CommentViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
@@ -261,83 +312,16 @@ class SeriesViewSet(viewsets.ModelViewSet):
     permission_classes = (CompetitionRestrictedPermission,)
     http_method_names = ['get', 'head']
 
-    @staticmethod
-    def _create_profile_dict(series, sum_func, semester_registration, profile_solutions):
-        # list primary keys uloh v aktualnom semestri
-        problems_pk_list = []
-        for problem in series.problems.all():
-            problems_pk_list.append(problem.pk)
-        solutions = []
-        for points, sol, problem in zip(
-            utils.solutions_to_list_of_points_pretty(profile_solutions),
-                profile_solutions, problems_pk_list):
-            solutions.append({
-                'points': points,
-                'solution_pk': sol.pk if sol else None,
-                'problem_pk': problem,
-                'votes': sol.votes.to_num() if sol and hasattr(sol,'votes') else None
-            })
-        profile = EventRegistrationSerializer(semester_registration)
-        return {
-            # Poradie - horná hranica, v prípade deleného miesto(napr. 1.-3.) ide o nižšie miesto(1)
-            'rank_start': 0,
-            # Poradie - dolná hranica, v prípade deleného miesto(napr. 1.-3.) ide o vyššie miesto(3)
-            'rank_end': 0,
-            # Indikuje či sa zmenilo poradie od minulej priečky, slúži na delené miesta
-            'rank_changed': True,
-            # primary key riešiteľovej registrácie do semestra
-            'registration': profile.data,
-            # Súčty bodov po sériách
-            'subtotal': [sum_func(profile_solutions, semester_registration)],
-            # Celkový súčet za danú entitu
-            'total': sum_func(profile_solutions, semester_registration),
-            # zipnutý zoznam riešení a pk príslušných problémov,
-            # aby ich bolo možné prelinkovať z poradia do admina
-            # a získať pk problému pri none riešení
-            'solutions': [solutions]
-        }
-
-    @staticmethod
-    def series_results(series):
-        sum_func = getattr(utils, series.sum_method or '',
-                           utils.series_simple_sum)
-        results = []
-
-        solutions = Solution.objects.only('semester_registration', 'problem', 'score')\
-            .filter(problem__series=series)\
-            .order_by('semester_registration', 'problem')\
-            .select_related('semester_registration', 'problem')
-
-        current_profile = None
-        profile_solutions = [None] * series.num_problems
-
-        for solution in solutions:
-            if current_profile != solution.semester_registration:
-                if current_profile:
-                    # Bolo dokončené spracovanie jedného usera
-                    # Zbali usera a a nahodi ho do vysledkov
-                    results.append(SeriesViewSet._create_profile_dict(
-                        series, sum_func, current_profile, profile_solutions))
-                # vytvori prazdny list s riešeniami
-                current_profile = solution.semester_registration
-                profile_solutions = [None] * series.num_problems
-
-            # Spracuj riešenie
-            profile_solutions[solution.problem.order - 1] = solution
-
-        # Uloz posledneho usera
-        if current_profile:
-            results.append(SeriesViewSet._create_profile_dict(
-                series, sum_func, current_profile, profile_solutions))
-
-        return results
-
     @ action(methods=['get'], detail=True)
     def results(self, request, pk=None):
         series = self.get_object()
         if series.frozen_results is not None:
             return series.frozen_results
-        results = self.series_results(series)
+        results = []
+        for registration in series.semester.eventregistration_set.all():
+            results.append(
+                generate_result_row(registration, only_series=series)
+            )
         results.sort(key=itemgetter('total'), reverse=True)
         results = utils.rank_results(results)
         return Response(results, status=status.HTTP_200_OK)
@@ -365,11 +349,11 @@ class SolutionViewSet(viewsets.ModelViewSet):
     serializer_class = SolutionSerializer
 
     def add_vote(self, request, positive, solution):
-        if hasattr(solution,'votes'):
-            if solution.votes.is_positive==positive:
+        if hasattr(solution, 'votes'):
+            if solution.votes.is_positive == positive:
                 return Response(status=status.HTTP_409_CONFLICT)
-            else:
-                solution.votes.delete()
+
+            solution.votes.delete()
         if 'comment' in request.data:
             Vote.objects.create(
                 solution=solution, is_positive=positive, comment=request.data['comment'])
@@ -435,17 +419,13 @@ class SemesterViewSet(viewsets.ModelViewSet):
     def semester_results(semester):
         if semester.frozen_results is not None:
             return semester.frozen_results
-        current_results = None
-        curent_number_of_problems = 0
-        for series in semester.series_set.order_by('order').all():
-            series_result = SeriesViewSet.series_results(series)
-            count = series.num_problems
-            current_results = utils.merge_results(
-                current_results, series_result, curent_number_of_problems, count)
-            curent_number_of_problems += count
-        current_results.sort(key=itemgetter('total'), reverse=True)
-        current_results = utils.rank_results(current_results)
-        return current_results
+        results = []
+        for registration in semester.eventregistration_set.all():
+            results.append(generate_result_row(registration, semester))
+
+        results.sort(key=itemgetter('total'), reverse=True)
+        results = utils.rank_results(results)
+        return results
 
     @action(methods=['get'], detail=True)
     def results(self, request, pk=None):

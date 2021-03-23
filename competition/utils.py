@@ -84,12 +84,14 @@ def solutions_to_list_of_points_pretty(solutions):
 
 def series_simple_sum(solutions, user_registration=None):
     # pylint: disable=unused-argument
-    return sum([s.score or 0 for s in solutions if s is not None])
+    # return sum([s.score or 0 for s in solutions if s is not None])
+    return sum(solutions)
 
 
 def series_general_weighted_sum(solutions, weights):
     if weights:
-        points = solutions_to_list_of_points(solutions)
+        #points = solutions_to_list_of_points(solutions)
+        points = solutions
         points.sort(reverse=True)
         return dot_product(points, weights)
 
@@ -140,96 +142,6 @@ def series_STROM_4problems_sum(solutions, user_registration):
         elif user_registration.class_level.years_until_graduation == 1:
             weights = [1, 1, 2, 1]
     return series_general_weighted_sum(solutions, weights)
-
-
-def merge_results_profile(old, new, problems_in_old, problems_in_new):
-    if not old:
-        new['solutions'] = [None]*problems_in_old+new['solutions']
-        new['subtotal'].append(0)
-        return new
-
-    if not new:
-        old['solutions'] += [{
-                'points': '-',
-                'solution_pk': None,
-                'problem_pk': problem.pk,
-                'votes': None
-            } for problem in series.problems.all()]
-        old['subtotal'].append(0)
-        return old
-
-    old['solutions']+=new['solutions']
-    old['subtotal'].append(new['total'])
-    old['total'] = sum(old['subtotal'])
-    return old
-
-
-def merge_results(
-        current_results,
-        series_results,
-        problems_in_current,
-        problems_in_series):
-    # Zmerguje riadky výsledkov. Predpokladá že obe results su usporiadané podľa usera
-    if current_results:
-        merged_results = []
-        i, j = 0, 0
-        while i < len(current_results) and j < len(series_results):
-            if current_results[i]['registration'] == series_results[j]['registration']:
-                merged_results.append(merge_results_profile(
-                    current_results[i], series_results[j],
-                    problems_in_current, problems_in_series))
-                i += 1
-                j += 1
-            elif current_results[i]['registration'] > series_results[j]['registration']:
-                merged_results.append(merge_results_profile(
-                    None, series_results[j], problems_in_current, problems_in_series))
-                j += 1
-            else:
-                merged_results.append(merge_results_profile(
-                    current_results[i], None, problems_in_current, problems_in_series))
-                i += 1
-        while i < len(current_results):
-            merged_results.append(merge_results_profile(
-                current_results[i], None, problems_in_current, problems_in_series))
-            i += 1
-        while j < len(series_results):
-            merged_results.append(merge_results_profile(
-                None, series_results[j], problems_in_current, problems_in_series))
-            j += 1
-        return merged_results
-
-    return series_results
-
-class SolutionInResultRow:
-
-
-class ResultRow:
-    def __init__(self):
-        self.rank_start = 0
-        # Poradie - dolná hranica, v prípade deleného miesto(napr. 1.-3.) ide o vyššie miesto(3)
-        self.rank_end=0
-        # Indikuje či sa zmenilo poradie od minulej priečky, slúži na delené miesta
-        self.rank_changed = True
-            # primary key riešiteľovej registrácie do semestra
-        self.registration=None
-        # Súčty bodov po sériách
-        self.subtotal = []
-            # Celkový súčet za danú entitu
-        self.total = 0
-            # zipnutý zoznam riešení a pk príslušných problémov,
-            # aby ich bolo možné prelinkovať z poradia do admina
-            # a získať pk problému pri none riešení
-        self.solutions = []
-    def fill_user(self,semester_registration,semester):
-        for series in semester.series_set.order_by('order'):
-            series_solutions = []
-            for problem in series.problem_set.order_by('order'):
-                series_solutions.append()
-            self.solutions.append(series_solutions)
-            self.subtotal.append()
-        self.total = semester
-
-
 
 
 SERIES_SUM_METHODS = [
