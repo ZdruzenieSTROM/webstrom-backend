@@ -34,7 +34,11 @@ DJANGO_APPS = [
 THIRD_PARTY_APPS = [
     'crispy_forms',
     'rest_framework',
+    'rest_framework.authtoken',
     'django_filters',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
 ]
 
 LOCAL_APPS = [
@@ -93,7 +97,11 @@ DATABASES = {
 }
 
 REST_FRAMEWORK = {
-    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        # 'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    ),
 }
 
 # User model
@@ -120,6 +128,16 @@ AUTH_PASSWORD_VALIDATORS = [
     }
 ]
 
+# Allauth
+
+SITE_ID = 1
+
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+
+ACCOUNT_ADAPTER = 'user.adapters.CustomAccountAdapter'
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
@@ -158,6 +176,9 @@ EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'emails')
 EMAIL_VERIFICATION_TIMEOUT = 86400
 
 MANAGERS = [('Web', 'web@strom.sk'), ]
+
+EMAIL_NO_REPLY = 'no-reply@strom.sk'    # z tade sa odosielaju maily
+EMAIL_ALERT = 'alert-email-address@strom.sk'  # tu sa prijimaju maily
 
 # Crispy forms
 

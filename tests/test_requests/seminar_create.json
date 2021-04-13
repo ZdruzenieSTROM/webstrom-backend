@@ -1,0 +1,50 @@
+{
+    "series_set": [
+        {
+            "problems": [
+                {
+                    "text": "Text prvého príkladu",
+                    "order": 1
+                },
+                {
+                    "text": "Text druhého príkladu",
+                    "order": 2
+                }
+            ],
+            "order": 2,
+            "deadline": "2020-06-01T18:00:00Z",
+            "complete": false,
+            "frozen_results": null
+        },
+        {
+            "problems": [
+                {
+                    "text": "2/1",
+                    "order": 1
+                },
+                {
+                    "text": "5+5",
+                    "order": 2
+                },
+                {
+                    "text": "Vyplňte priestor mimobežkami",
+                    "order": 3
+                }
+            ],
+            "order": 1,
+            "deadline": "2020-03-01T18:00:00Z",
+            "complete": false,
+            "frozen_results": null
+        }
+    ],
+    "semesterpublication_set": [],
+    "unspecifiedpublication_set": [],
+    "year": 44,
+    "school_year": "2019/2020",
+    "start": "2020-01-01T18:00:00Z",
+    "end": "2020-06-01T18:00:00Z",
+    "season_code": 1,
+    "frozen_results": null,
+    "competition": 0,
+    "late_tags": []
+}

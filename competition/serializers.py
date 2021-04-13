@@ -56,6 +56,12 @@ class ProblemSerializer(serializers.ModelSerializer):
         read_only_fields = ['series']
 
 
+class CommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Comment
+        fields = '__all__'
+
+
 class VoteSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Vote
@@ -138,3 +144,17 @@ class SemesterWithProblemsSerializer(serializers.ModelSerializer):
         for tag in late_tags:
             semester.late_tags.add(tag)
         return semester
+
+
+class LateTagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.LateTag
+        exclude = ['comment']
+
+
+class GradeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Grade
+        exclude = ['is_active']
+        read_only_fields = ['semesterpublication_set',
+                            'unspecifiedpublication_set']

@@ -1,7 +1,7 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
 from django.test import TestCase
-from user.models import User
+# from user.models import User
 from personal.models import County, District, School
 from personal.serializers import CountySerializer, DistrictSerializer, SchoolSerializer
 
@@ -14,14 +14,18 @@ class TestProfile(TestCase):
             name="Testovací okres", county=county)
         School.objects.create(name="Testovacia škola", district=district)
 
-    def test_create_user_without_profile(self):
-        user = User()
-        user.save()
+    # def test_create_user_without_profile(self):
+    #     user = User()
+    #     user.save()
 
-        self.assertTrue(hasattr(user, 'profile'),
-                        msg="Profile pre Usera nebol vytvorený automaticky.")
+    #     self.assertTrue(hasattr(user, 'profile'),
+    #                     msg="Profile pre Usera nebol vytvorený automaticky.")
+
 
 class TestCounty(TestCase):
+    '''
+    county create
+    '''
 
     def setUp(self):
         return County.objects.create(name='Testovaci kraj')
@@ -31,12 +35,16 @@ class TestCounty(TestCase):
         self.assertTrue(isinstance(mod, County))
         self.assertEqual(mod.__str__(), 'Testovaci kraj')
 
+
 class CountyViewsTest(APITestCase):
+    '''
+    personal/counties
+    '''
 
     def setUp(self):
         self.counties = [County.objects.create(name="Košický kraj"),
-            County.objects.create(name="Prešovský kraj"),
-            County.objects.create(name="Bratislavský kraj")]
+                         County.objects.create(name="Prešovský kraj"),
+                         County.objects.create(name="Bratislavský kraj")]
 
     URL_PREFIX = '/personal/counties'
 
@@ -52,25 +60,34 @@ class CountyViewsTest(APITestCase):
                 response.data
             )
 
+
 class TestDistrict(TestCase):
+    '''
+    district create
+    '''
 
     def setUp(self):
         county = County.objects.create(name="Testovací kraj")
-        return District.objects.create(name='Testovaci okres',county=county)
+        return District.objects.create(name='Testovaci okres', county=county)
 
     def test_district_check_title(self):
         mod = self.setUp()
         self.assertTrue(isinstance(mod, District))
         self.assertEqual(mod.__str__(), 'Testovaci okres')
 
+
 class DistrictViewsTest(APITestCase):
+    '''
+    personal/district
+    '''
 
     def setUp(self):
         county1 = County.objects.create(name="Košický kraj")
         county2 = County.objects.create(name="Prešovský kraj")
         self.districts = [District.objects.create(name="Gelnica", county=county1),
-            District.objects.create(name="Rožňava", county=county1),
-            District.objects.create(name="Sabinov", county=county2)]
+                          District.objects.create(
+                              name="Rožňava", county=county1),
+                          District.objects.create(name="Sabinov", county=county2)]
 
     URL_PREFIX = '/personal/districts'
 
@@ -103,34 +120,44 @@ class DistrictViewsTest(APITestCase):
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.assertEqual(1, len(response.data))
         self.assertIn(
-                DistrictSerializer(instance=self.districts[2]).data,
-                response.data
-            )
+            DistrictSerializer(instance=self.districts[2]).data,
+            response.data
+        )
+
 
 class TestSchoolWithoutAddress(TestCase):
+    '''
+    school without address create
+    '''
 
     def setUp(self):
         county = County.objects.create(name="Testovací kraj")
-        district = District.objects.create(name="Testovací okres",county=county)
-        return School.objects.create(name='Gymnázium, Poštová 9',district=district)
+        district = District.objects.create(
+            name="Testovací okres", county=county)
+        return School.objects.create(name='Gymnázium, Poštová 9', district=district)
 
     def test_school_check_title(self):
         mod = self.setUp()
         self.assertTrue(isinstance(mod, School))
         self.assertEqual(mod.__str__(), 'Gymnázium, Poštová 9')
 
+
 class TestSchoolWithAddress(TestCase):
+    '''
+    school with address create
+    '''
 
     def setUp(self):
         county = County.objects.create(name="Testovací kraj")
-        district = District.objects.create(name="Testovací okres",county=county)
+        district = District.objects.create(
+            name="Testovací okres", county=county)
         return School.objects.create(
             name='Gymnázium',
             district=district,
             street='Poštová 9',
             city='Košice',
             zip_code='04001'
-            )
+        )
 
     def test_school_check_title(self):
         mod = self.setUp()
@@ -145,9 +172,14 @@ class TestSchoolWithAddress(TestCase):
     def test_stitok(self):
         mod = self.setUp()
         self.assertTrue(isinstance(mod, School))
-        self.assertEqual(mod.stitok, '\\stitok{Gymnázium}{Košice}{040 01}{Poštová 9}')
+        self.assertEqual(
+            mod.stitok, '\\stitok{Gymnázium}{Košice}{040 01}{Poštová 9}')
+
 
 class SchoolViewsTest(APITestCase):
+    '''
+    personal/school
+    '''
 
     def setUp(self):
         county = County.objects.create(name="Košický kraj")
@@ -160,22 +192,22 @@ class SchoolViewsTest(APITestCase):
                 street='Poštová 9',
                 city='Košice',
                 zip_code='04001'
-                ),
+            ),
             School.objects.create(
                 name='Gymnázium',
                 district=district2,
                 street='Alejová 1',
                 city='Košice',
                 zip_code='04149'
-                ),
+            ),
             School.objects.create(
                 name='Gymnázium',
                 district=district2,
                 street='Opatovská cesta 7',
                 city='Košice',
                 zip_code='04001'
-                )
-            ]
+            )
+        ]
 
     URL_PREFIX = '/personal/schools'
 
@@ -192,16 +224,18 @@ class SchoolViewsTest(APITestCase):
             )
 
     def test_filter_schools(self):
-        response = self.client.get(self.URL_PREFIX + '/?district=1', {}, 'json')
+        response = self.client.get(
+            self.URL_PREFIX + '/?district=1', {}, 'json')
 
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.assertEqual(1, len(response.data))
         self.assertIn(
-                SchoolSerializer(instance=self.schools[0]).data,
-                response.data
-            )
+            SchoolSerializer(instance=self.schools[0]).data,
+            response.data
+        )
 
-        response = self.client.get(self.URL_PREFIX + '/?district=2', {}, 'json')
+        response = self.client.get(
+            self.URL_PREFIX + '/?district=2', {}, 'json')
 
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.assertEqual(2, len(response.data))
@@ -213,16 +247,18 @@ class SchoolViewsTest(APITestCase):
             )
 
     def test_search_schools(self):
-        response = self.client.get(self.URL_PREFIX + '/?search=Opatov', {}, 'json')
+        response = self.client.get(
+            self.URL_PREFIX + '/?search=Opatov', {}, 'json')
 
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.assertEqual(1, len(response.data))
         self.assertIn(
-                SchoolSerializer(instance=self.schools[2]).data,
-                response.data
-            )
+            SchoolSerializer(instance=self.schools[2]).data,
+            response.data
+        )
 
-        response = self.client.get(self.URL_PREFIX + '/?search=Gym', {}, 'json')
+        response = self.client.get(
+            self.URL_PREFIX + '/?search=Gym', {}, 'json')
 
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.assertEqual(3, len(response.data))
@@ -233,7 +269,8 @@ class SchoolViewsTest(APITestCase):
                 response.data
             )
 
-        response = self.client.get(self.URL_PREFIX + '/?search=ová', {}, 'json')
+        response = self.client.get(
+            self.URL_PREFIX + '/?search=ová', {}, 'json')
 
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.assertEqual(2, len(response.data))

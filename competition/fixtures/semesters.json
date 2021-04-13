@@ -7,7 +7,7 @@
             "year": 44,
             "school_year": "2019/2020",
             "start": "2020-01-01T20:00:00+02:00",
-            "end": "2020-06-01T20:00:00+02:00"
+            "end": "2025-06-01T20:00:00+02:00"
         }
     },
     {
@@ -45,6 +45,28 @@
             "text": "Majme doty\u010dnicov\u00fd \u0161tvoruholn\u00edk $ABCD$ rozdelen\u00fd uhloprie\u010dkou $AC$ na 2 trojuholn\u00edky. Dok\u00e1\u017ete, \u017ee kru\u017enica vp\u00edsan\u00e1 trojuholn\u00edku $ABC$ sa dotkne \u00fase\u010dky $AC$ v rovnakom bode ako kru\u017enica vp\u00edsan\u00e1 trojuholn\u00edku $ADC$.",
             "series": 0,
             "order": 1
+        }
+    },
+    {
+        "model": "competition.Comment",
+        "pk": 0,
+        "fields": {
+            "text": "A TROJUHOLNIK JE AJ STVOREC????????",
+            "posted_at": "2020-12-22T20:00:00+02:00",
+            "problem": 1,
+            "posted_by": 2,
+            "published": true
+        }
+    },
+    {
+        "model": "competition.Comment",
+        "pk": 1,
+        "fields": {
+            "text": "nie, \n S laskou, veduci :)",
+            "posted_at": "2020-12-22T21:00:00+02:00",
+            "problem": 1,
+            "posted_by": 1,
+            "published": true
         }
     },
     {
@@ -879,6 +901,45 @@
             "text": "$ABCD$ je rovnobe\u017en\u00edk s ostr\u00fdm uhlom $DAB$. Body $A,\\ P,\\ B,\\ D$ le\u017eia na jednej kru\u017enici v tomto porad\u00ed. Priamky $AP$ a $CD$ sa pret\u00ednaj\u00fa v bode $Q$. Bod $O$ je stred kru\u017enice op\u00edsanej trojuholn\u00edku $CPQ$. Dok\u00e1\u017ete, \u017ee ak $D \\neq O$, tak priamky $AD$ a $DO$ s\u00fa na seba kolm\u00e9.",
             "series": 11,
             "order": 6
+        }
+    },
+    {
+        "model": "competition.Event",
+        "pk": 10,
+        "fields": {
+            "competition": 1,
+            "year": 44,
+            "school_year": "2019/2020",
+            "start": "2020-01-01T20:00:00+02:00",
+            "end": "2020-06-01T20:00:00+02:00"
+        }
+    },
+    {
+        "model": "competition.Semester",
+        "pk": 10,
+        "fields": {
+            "late_tags": [],
+            "season_code": 1
+        }
+    },
+    {
+        "model": "competition.series",
+        "pk": 20,
+        "fields": {
+            "semester": 10,
+            "order": 1,
+            "deadline": "2020-03-01T20:00:00+02:00",
+            "complete": false
+        }
+    },
+    {
+        "model": "competition.series",
+        "pk": 21,
+        "fields": {
+            "semester": 10,
+            "order": 2,
+            "deadline": "2020-06-01T20:00:00+02:00",
+            "complete": false
         }
     }
 ]

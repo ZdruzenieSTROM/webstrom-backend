@@ -24,6 +24,7 @@ from base.utils import mime_type
 from base.validators import school_year_validator
 from personal.models import Profile, School
 from competition import utils
+from user.models import User
 
 
 class Competition(models.Model):
@@ -58,6 +59,10 @@ class Competition(models.Model):
         'Zadáva sa v počte rokov do maturity. '
         'Ak najstraší, kto môže riešiť súťaž je deviatak, zadá sa 4.')
 
+    permission_group = models.ManyToManyField('auth.Group',
+                                              blank=True,
+                                              verbose_name='Skupiny práv')
+
     def can_user_participate(self, user):
         if self.min_years_until_graduation:
             return user.profile.year_of_graduation-utils.get_school_year_start_by_date() \
@@ -78,6 +83,9 @@ class Competition(models.Model):
     @classmethod
     def get_seminar_by_current_site(cls):
         return cls.get_seminar_by_site(Site.objects.get_current())
+
+    def can_user_modify(self, user):
+        return len(set(self.permission_group.all()).intersection(set(user.groups.all()))) > 0
 
 
 class LateTag(models.Model):
@@ -135,6 +143,9 @@ class Event(models.Model):
             return str(self.semester)
 
         return f'{self.competition.name}, {self.year}. ročník'
+
+    def can_user_modify(self, user):
+        return self.competition.can_user_modify(user)
 
 
 class Semester(Event):
@@ -264,6 +275,9 @@ class Series(models.Model):
     def num_problems(self):
         return self.problems.count()
 
+    def can_user_modify(self, user):
+        return self.semester.can_user_modify(user)
+
 
 class Problem(models.Model):
     """
@@ -301,6 +315,71 @@ class Problem(models.Model):
         stats['mean'] = total_points / \
             total_solutions if total_solutions else '?'
         return stats
+
+    def can_user_modify(self, user):
+        return self.series.can_user_modify(user)
+
+    def get_comments(self, user):
+        def filter_by_permissions(obj):
+            if user.is_staff:
+                return True
+            if obj.published:
+                return True
+            if obj.posted_by == user:
+                return True
+            return False
+
+        return filter(filter_by_permissions, Comment.objects.filter(problem=self))
+
+    def add_comment(self, text, user_id, published=0):
+        Comment.create_comment(
+            _text=text,
+            _problem_id=self.pk,
+            _posted_by=user_id,
+            _published=published
+        )
+
+
+class Comment(models.Model):
+    class Meta:
+        verbose_name = 'komentár'
+        verbose_name_plural = 'komentáre'
+
+        ordering = ['posted_at']
+
+    problem = models.ForeignKey(
+        Problem, verbose_name='komentár k úlohe',
+        on_delete=models.CASCADE,)
+    text = models.TextField()
+    posted_at = models.DateTimeField(
+        verbose_name='dátum pridania', auto_now_add=True)
+    posted_by = models.ForeignKey(
+        User, verbose_name='autor komentára',
+        on_delete=models.CASCADE)
+    published = models.BooleanField(
+        verbose_name='komentár publikovaný')
+
+    def publish(self):
+        self.published = True
+
+    def hide(self):
+        self.published = False
+
+    def change_text(self, new_text):
+        self.text = new_text
+
+    @staticmethod
+    def create_comment(_text, _problem_id, _posted_by, _published):
+        comment = Comment.objects.create(
+            problem=Problem.objects.get(pk=_problem_id),
+            text=_text,
+            published=_published,
+            posted_by=_posted_by
+        )
+        comment.save()
+
+    def can_user_modify(self, user):
+        return self.problem.can_user_modify(user)
 
 
 class Grade(models.Model):
@@ -377,6 +456,9 @@ class EventRegistration(models.Model):
     def __str__(self):
         return f'{ self.profile.user.get_full_name() } @ { self.event }'
 
+    def can_user_modify(self, user):
+        return self.event.can_user_modify(user)
+
 
 class Solution(models.Model):
     """
@@ -420,6 +502,9 @@ class Solution(models.Model):
         return f'corrected/{self.semester_registration.profile.user.get_full_name_camel_case()}'\
                f'-{self.problem.id}-{self.semester_registration.id}_corrected.pdf'
 
+    def can_user_modify(self, user):
+        return self.problem.can_user_modify(user)
+
 
 class Vote(models.Model):
     class Meta:
@@ -436,6 +521,11 @@ class Vote(models.Model):
         return f'{pos} hlas za {self.solution.problem} pre '\
                f'{self.solution.semester_registration.profile.user.get_full_name()}'
 
+    def to_num(self):
+        return 1 if self.is_positive else -1
+
+
+
 class SemesterPublication(models.Model):
     """
     Časopis
@@ -445,7 +535,8 @@ class SemesterPublication(models.Model):
         verbose_name_plural = 'časopisy'
 
     name = models.CharField(max_length=30, blank=True)
-    semester = models.ForeignKey(Semester, null=True, on_delete=models.SET_NULL)
+    semester = models.ForeignKey(
+        Semester, null=True, on_delete=models.SET_NULL)
     order = models.PositiveSmallIntegerField()
     file = RestrictedFileField(
         upload_to='publications/semester_publication/%Y',
@@ -498,6 +589,9 @@ class SemesterPublication(models.Model):
         self.name = f'{self.semester.competition}-{self.semester.year}-{self.order}'
         self.save()
 
+    def can_user_modify(self, user):
+        return self.semester.can_user_modify(user)
+
 
 class UnspecifiedPublication(models.Model):
     """
@@ -527,6 +621,9 @@ class UnspecifiedPublication(models.Model):
     def __str__(self):
         return self.name
 
+    def can_user_modify(self, user):
+        return self.event.can_user_modify(user)
+
 
 @receiver(post_save, sender=SemesterPublication)
 def make_thumbnail_on_creation(sender, instance, created, **kwargs):
@@ -554,3 +651,6 @@ class RegistrationLink(models.Model):
     start = models.DateTimeField(verbose_name='Začiatok registrácie')
     end = models.DateTimeField(verbose_name='Koniec registrácie')
     additional_info = models.TextField(verbose_name='Doplňujúce informácie')
+
+    def can_user_modify(self, user):
+        return self.event.can_user_modify(user)

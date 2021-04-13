@@ -1,63 +1,63 @@
 from rest_framework import serializers
 
-from problem_database.models import *
+from problem_database import models
 
 
 class SeminarSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Seminar
+        model = models.Seminar
         fields = '__all__'
 
 
 class ActivityTypeSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ActivityType
+        model = models.ActivityType
         fields = '__all__'
 
 
 class ActivitySerializer(serializers.ModelSerializer):
     class Meta:
-        model = Activity
+        model = models.Activity
         fields = '__all__'
 
 
 class DifficultySerializer(serializers.ModelSerializer):
     class Meta:
-        model = Difficulty
+        model = models.Difficulty
         fields = '__all__'
 
 
 class ProblemSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Problem
+        model = models.Problem
         fields = '__all__'
 
 
 class MediaSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Media
+        model = models.Media
         fields = '__all__'
 
 
 class ProblemActivitySerializer(serializers.ModelSerializer):
     class Meta:
-        model = ProblemActivity
+        model = models.ProblemActivity
         fields = '__all__'
 
 
 class ProblemTypeSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ProblemType
+        model = models.ProblemType
         fields = '__all__'
 
 
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Tag
+        model = models.Tag
         fields = '__all__'
 
 
 class ProblemTagSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ProblemTag
+        model = models.ProblemTag
         fields = '__all__'

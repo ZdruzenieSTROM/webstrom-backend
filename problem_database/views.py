@@ -1,5 +1,3 @@
-from django.shortcuts import render
-
 # Create your views here.
 from rest_framework import status, viewsets
 from rest_framework.decorators import action, api_view
@@ -7,65 +5,85 @@ from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.filters import SearchFilter
 from django_filters.rest_framework import DjangoFilterBackend
-from problem_database.models import *
-from problem_database.serializers import *
+from problem_database import models
+from problem_database import serializers
 
 # Filterset umoznuju pouzit URL v tvare profile/districts/?county=1
 # Search filter umoznuju pouzit URL v tvare profile/schools/?search=Alej
 
 
 class SeminarViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Seminar.objects.all()
-    serializer_class = SeminarSerializer
+    queryset = models.Seminar.objects.all()
+    serializer_class = serializers.SeminarSerializer
+
+    def create(self, request, *args, **kwargs):  # pylint: disable=unused-argument
+        many = isinstance(request.data, list)
+        serializer = serializers.SeminarSerializer(
+            data=request.data, many=many)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ActivityTypeViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = ActivityType.objects.all()
-    serializer_class = ActivityTypeSerializer
-    filterset_fields = ['seminar',]
-    
+    queryset = models.ActivityType.objects.all()
+    serializer_class = serializers.ActivityTypeSerializer
+    filterset_fields = ['seminar', ]
+
 
 class ActivityViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Activity.objects.all()
-    serializer_class = ActivitySerializer
-    filterset_fields = ['activity_type',]
-    
+    queryset = models.Activity.objects.all()
+    serializer_class = serializers.ActivitySerializer
+    filterset_fields = ['activity_type', ]
+
 
 class DifficultyViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Difficulty.objects.all()
-    serializer_class = DifficultySerializer
-    
+    queryset = models.Difficulty.objects.all()
+    serializer_class = serializers.DifficultySerializer
+
 
 class ProblemTypeViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = ProblemType.objects.all()
-    serializer_class = ProblemTypeSerializer    
+    queryset = models.ProblemType.objects.all()
+    serializer_class = serializers.ProblemTypeSerializer
 
 
-class ProblemViewSet(viewsets.ModelViewSet):
-    queryset = Problem.objects.all()
-    serializer_class = ProblemSerializer
-    filterset_fields = ['problem_type',]
+class ProblemViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = models.Problem.objects.all()
+    serializer_class = serializers.ProblemSerializer
+    filterset_fields = ['problem_type', ]
     filter_backends = [DjangoFilterBackend, SearchFilter]
     search_fields = ['problem']
-    
+
+    def create(self, request, *args, **kwargs):  # pylint: disable=unused-argument
+        many = isinstance(request.data, list)
+        serializer = serializers.ProblemSerializer(
+            data=request.data, many=many)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class MediaViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Media.objects.all()
-    serializer_class = MediaSerializer
-    filterset_fields = ['problem',]
-    
+    queryset = models.Media.objects.all()
+    serializer_class = serializers.MediaSerializer
+    filterset_fields = ['problem', ]
+
 
 class ProblemActivityViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = ProblemActivity.objects.all()
-    serializer_class = ProblemActivitySerializer
+    queryset = models.ProblemActivity.objects.all()
+    serializer_class = serializers.ProblemActivitySerializer
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Tag.objects.all()
-    serializer_class = TagSerializer
-    
+    queryset = models.Tag.objects.all()
+    serializer_class = serializers.TagSerializer
+
 
 class ProblemTagViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = ProblemTag.objects.all()
-    serializer_class = ProblemTagSerializer
-    filterset_fields = ['problem','tag']
+    queryset = models.ProblemTag.objects.all()
+    serializer_class = serializers.ProblemTagSerializer
+    filterset_fields = ['problem', 'tag']
