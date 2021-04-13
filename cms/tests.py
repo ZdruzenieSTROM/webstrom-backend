@@ -1,8 +1,8 @@
 from rest_framework.test import APITestCase
-from tests.test_utils import get_app_fixtures
+from tests.test_utils import get_app_fixtures, PermissionTestMixin
 
 
-class TestPosts(APITestCase):
+class TestPosts(APITestCase, PermissionTestMixin):
     '''cms/post'''
 
     URL_PREFIX = '/cms/post'
@@ -10,6 +10,8 @@ class TestPosts(APITestCase):
     fixtures = get_app_fixtures([
         'base',
         'cms',
+        'personal',
+        'user'
     ])
 
     post_expected_keys = [
@@ -23,23 +25,22 @@ class TestPosts(APITestCase):
         'disable_after'
     ]
 
+    def setUp(self):
+        self.create_users()
+
     def test_get_status_code(self):
         '''status code 403'''
-        response = self.client.get(self.URL_PREFIX, {}, 'json')
-        # ToDo: Prerobit to podla competition testov
-        self.assertEqual(response.status_code, 401)
+        self.check_permissions(self.URL_PREFIX + '/',
+                               'GET', self.ONLY_STAFF_OK_RESPONSES, {})
 
     def test_get_specific_post(self):
         '''/0 content ok'''
+        self.check_permissions(self.URL_PREFIX + '/visible',
+                               'GET', self.PUBLIC_OK_RESPONSES, {})
         response = self.client.get(self.URL_PREFIX + '/visible', {}, 'json')
         self.assertEqual(response.status_code, 200)
         for key in self.post_expected_keys:
             self.assertIn(key, response.json()[0])
-
-    def test_get_status_code_visible(self):
-        '''/visible status code 200'''
-        response = self.client.get(self.URL_PREFIX + '/visible', {}, 'json')
-        self.assertEqual(response.status_code, 200)
 
     def test_get_response_format(self):
         '''/visible returned object has good expected keys'''
@@ -51,7 +52,7 @@ class TestPosts(APITestCase):
                 self.assertIn(key, response)
 
 
-class TestMenuItems(APITestCase):
+class TestMenuItems(APITestCase, PermissionTestMixin):
     '''cms/menu-item'''
 
     URL_PREFIX = '/cms/menu-item'
@@ -59,12 +60,19 @@ class TestMenuItems(APITestCase):
     fixtures = get_app_fixtures([
         'base',
         'cms',
+        'personal',
+        'user'
     ])
+
+    def setUp(self):
+        self.create_users()
 
     def test_get_status_code_on_current_site(self):
         '''/on-current-site check if any'''
         response = self.client.get(
             self.URL_PREFIX + '/on-current-site', {}, 'json')
+        self.check_permissions(self.URL_PREFIX + '/on-current-site',
+                               'GET', self.PUBLIC_OK_RESPONSES, {})
         self.assertEqual(response.status_code, 200)
         self.assertTrue(len(response.json()) > 0)
 
@@ -73,9 +81,13 @@ class TestMenuItems(APITestCase):
         response = self.client.get(self.URL_PREFIX, {}, 'json')
         self.assertEqual(response.status_code, 200)
         self.assertTrue(len(response.json()) > 0)
+        self.check_permissions(self.URL_PREFIX + '/',
+                               'GET', self.PUBLIC_OK_RESPONSES, {})
 
     def test_get_status_code_specific_site(self):
         '''/1 check if any'''
         response = self.client.get(self.URL_PREFIX + '/on-site/1', {}, 'json')
         self.assertEqual(response.status_code, 200)
         self.assertTrue(len(response.json()) > 0)
+        self.check_permissions(self.URL_PREFIX + '/on-site/1',
+                               'GET', self.PUBLIC_OK_RESPONSES, {})
