@@ -26,7 +26,8 @@ class TestPosts(APITestCase):
     def test_get_status_code(self):
         '''status code 403'''
         response = self.client.get(self.URL_PREFIX, {}, 'json')
-        self.assertEqual(response.status_code, 403)
+        # ToDo: Prerobit to podla competition testov
+        self.assertEqual(response.status_code, 401)
 
     def test_get_specific_post(self):
         '''/0 content ok'''
