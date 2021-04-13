@@ -95,22 +95,22 @@ class PermissionTestMixin:
         'competitor': [403, 405],
         'strom': [200, 201],
         'kricky': [403, 405],
-        None: [403, 405]
+        None: [401, 403, 405]
     }
     ONLY_KRICKY_OK_RESPONSES = {
         'competitor': [403, 405],
         'strom': [403, 405],
         'kricky': [200, 201],
-        None: [403, 405]}
+        None: [401, 403, 405]}
     ALL_FORBIDDEN = {
         'competitor': [403, 405],
         'strom': [403, 405],
         'kricky': [403, 405],
-        None: [403, 405]
+        None: [401, 403, 405]
     }
     ONLY_STAFF_OK_RESPONSES = {
         'competitor': [403, 405],
         'strom': [200, 201],
         'kricky': [200, 201],
-        None: [403, 405]
+        None: [401, 403, 405]
     }
