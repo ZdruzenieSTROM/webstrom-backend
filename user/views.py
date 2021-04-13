@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import redirect, render
 from django.template.loader import render_to_string
-from django.utils import timezone
+# from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
@@ -72,10 +72,11 @@ class LoginView(GenericAPIView):
 
         response = Response(serializer.data, status=status.HTTP_200_OK)
 
-        # Vráti token aj ako cookie.
-        # TODO: Zmeniť to na httponly cookie.
-        response.set_cookie("webstrom-token", self.token,
-                            expires=(timezone.now() + timezone.timedelta(weeks=4)))
+        # Uloží token do webstrom-token cookie
+        # Aktuálne sa webstrom-token cookie nastavuje na frontende.
+        # Preto je ďalší riadok zakomentovaný.
+        # response.set_cookie("webstrom-token", self.token,
+        #                     expires=(timezone.now() + timezone.timedelta(weeks=4)))
         return response
 
     def post(self, request):
