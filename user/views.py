@@ -63,7 +63,7 @@ class LoginView(GenericAPIView):
         self.token = self.create_token(self.token_model, self.user)
 
         # Vytvorí django session.
-        self.process_login()
+        # self.process_login()
 
     def get_response(self):
         serializer_class = TokenSerializer
