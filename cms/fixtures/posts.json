@@ -8,7 +8,11 @@
             "details": "",
             "added_at": "2020-01-01T20:00:00+02:00",
             "show_after": "2020-01-01T20:00:00+02:00",
-            "disable_after": "2030-01-01T20:00:00+02:00"
+            "disable_after": "2030-01-01T20:00:00+02:00",
+            "sites": [
+                1,
+                2
+            ]
         }
     },
     {
@@ -20,7 +24,11 @@
             "details": "",
             "added_at": "2020-01-01T21:00:00+02:00",
             "show_after": "2020-01-01T20:00:00+02:00",
-            "disable_after": "2020-05-01T20:00:00+02:00"
+            "disable_after": "2020-05-01T20:00:00+02:00",
+            "sites": [
+                1,
+                3
+            ]
         }
     },
     {
@@ -32,7 +40,11 @@
             "details": "Tu je veľa detailov. Napríklad že si nesmú zabudnúť doniesť organ na sústredenie, lebo je to z nejakého dôvodu proste najkľúčovejšia vec na svete. A možno by tu mohol fungovať aj nejaký **markdown** a tak vôbec.",
             "added_at": "2020-01-01T20:00:00+02:00",
             "show_after": "2020-01-01T20:00:00+02:00",
-            "disable_after": "2030-01-01T20:00:00+02:00"
+            "disable_after": "2030-01-01T20:00:00+02:00",
+            "sites": [
+                2,
+                3
+            ]
         }
     },
     {
@@ -44,7 +56,10 @@
             "details": "Tu bude veľa detailov o výlete. Napríklad sa tu môže písať o tom, že výlet bude dlhý stratíme sa niekoľko krát a môže tu byť povedzme aj povedané že na zraz príďte oblečený v dresoch FC Atletiko Geča.",
             "added_at": "2020-01-01T20:00:00+02:00",
             "show_after": "2020-01-01T20:00:00+02:00",
-            "disable_after": "2030-01-01T20:00:00+02:00"
+            "disable_after": "2030-01-01T20:00:00+02:00",
+            "sites": [
+                1
+            ]            
         }
     },
     {
@@ -56,7 +71,12 @@
             "details": "Tu bude niečo o tom že STROM už má veľa rokov a že sme super.",
             "added_at": "2020-01-01T22:00:00+02:00",
             "show_after": "2025-01-01T20:00:00+02:00",
-            "disable_after": "2030-01-01T20:00:00+02:00"
+            "disable_after": "2030-01-01T20:00:00+02:00",
+            "sites": [
+                1,
+                2,
+                3
+            ]
         }
     },
     {
@@ -68,7 +88,12 @@
             "details": "",
             "added_at": "2020-03-01T20:00:00+02:00",
             "show_after": "2020-03-01T20:00:00+02:00",
-            "disable_after": "2030-01-01T20:00:00+02:00"
+            "disable_after": "2030-01-01T20:00:00+02:00",
+            "sites": [
+                1,
+                2,
+                3
+            ]
         }
     },
     {
@@ -80,7 +105,10 @@
             "details": "Haha si sa tešil že tu bude text Atlantídy čo.",
             "added_at": "2020-05-01T20:00:00+02:00",
             "show_after": "2020-05-01T20:00:00+02:00",
-            "disable_after": "2030-01-01T20:00:00+02:00"
+            "disable_after": "2030-01-01T20:00:00+02:00",
+            "sites": [
+                3
+            ]
         }
     }
 ]
