@@ -1,10 +1,9 @@
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-
 from cms.models import MenuItem, Post
-from cms.permissions import PostPermission
 from cms.serializers import MenuItemShortSerializer, PostSerializer
+from cms.permissions import PostPermission
 
 
 class MenuItemViewSet(viewsets.ReadOnlyModelViewSet):
@@ -36,6 +35,8 @@ class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     permission_classes = (PostPermission,)
+    filterset_fields = ['sites', ]
+
 
     @action(detail=False)
     def visible(self, request):
