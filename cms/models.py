@@ -24,7 +24,7 @@ class Post(models.Model):
     show_after = models.DateTimeField(verbose_name='zobrazuj od')
     disable_after = models.DateTimeField(verbose_name='zobrazuj do')
     sites = models.ManyToManyField(Site)
-    
+
     def is_visible(self):
         return now() > self.show_after and now() < self.disable_after
     is_visible.short_description = "Viditeľný"
