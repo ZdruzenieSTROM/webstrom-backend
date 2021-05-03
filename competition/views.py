@@ -254,53 +254,53 @@ class ProblemViewSet(viewsets.ModelViewSet):
         if not zipfile.is_zipfile(zfile):
             raise exceptions.ParseError(
                 detail='Attached file is not a zip file')
-        zfile = zipfile.ZipFile(zfile)
-        if zfile.testzip():
-            raise exceptions.ParseError(detail='Zip file is corrupted')
-        pdf_files = [name for name in zfile.namelist()
-                     if name.endswith('.pdf')]
-        errors = []
-        for filename in pdf_files:
-            try:
-                parts = filename.rstrip('.pdf').split('-')
-                score = int(parts[0])
-                problem_pk = int(parts[-2])
-                registration_pk = int(parts[-1])
-                event_reg = EventRegistration.objects.get(pk=registration_pk)
-                solution = Solution.objects.get(semester_registration=event_reg,
-                                                problem=problem_pk)
-            except (IndexError, ValueError, AssertionError):
-                errors.append({
-                    'filename': filename,
-                    'status': 'Cannot parse file'
-                })
-                continue
-            except EventRegistration.DoesNotExist:
-                errors.append({
-                    'filename': filename,
-                    'status': f'User registration with id {registration_pk} does not exist'
-                })
-                continue
-            except Solution.DoesNotExist:
-                errors.append({
-                    'filename': filename,
-                    'status': f'Solution with registration id {registration_pk}'
-                              f'and problem id {problem_pk} does not exist'
-                })
-                continue
+        with zipfile.ZipFile(zfile) as zfile:
+            if zfile.testzip():
+                raise exceptions.ParseError(detail='Zip file is corrupted')
+            pdf_files = [name for name in zfile.namelist()
+                        if name.endswith('.pdf')]
+            errors = []
+            for filename in pdf_files:
+                try:
+                    parts = filename.rstrip('.pdf').split('-')
+                    score = int(parts[0])
+                    problem_pk = int(parts[-2])
+                    registration_pk = int(parts[-1])
+                    event_reg = EventRegistration.objects.get(pk=registration_pk)
+                    solution = Solution.objects.get(semester_registration=event_reg,
+                                                    problem=problem_pk)
+                except (IndexError, ValueError, AssertionError):
+                    errors.append({
+                        'filename': filename,
+                        'status': 'Cannot parse file'
+                    })
+                    continue
+                except EventRegistration.DoesNotExist:
+                    errors.append({
+                        'filename': filename,
+                        'status': f'User registration with id {registration_pk} does not exist'
+                    })
+                    continue
+                except Solution.DoesNotExist:
+                    errors.append({
+                        'filename': filename,
+                        'status': f'Solution with registration id {registration_pk}'
+                                f'and problem id {problem_pk} does not exist'
+                    })
+                    continue
 
-            extracted_path = zfile.extract(filename, path='/tmp')
-            new_path = os.path.join(
-                settings.MEDIA_ROOT, 'solutions', solution.get_corrected_solution_file_name())
-            file_move_safe(extracted_path, new_path, allow_overwrite=True)
+                extracted_path = zfile.extract(filename, path='/tmp')
+                new_path = os.path.join(
+                    settings.MEDIA_ROOT, 'solutions', solution.get_corrected_solution_file_name())
+                file_move_safe(extracted_path, new_path, allow_overwrite=True)
 
-            solution.score = score
-            solution.corrected_solution = solution.get_corrected_solution_file_name()
-            solution.save()
-            errors.append({
-                'filename': filename,
-                'status': f'OK - points: {score}'
-            })
+                solution.score = score
+                solution.corrected_solution = solution.get_corrected_solution_file_name()
+                solution.save()
+                errors.append({
+                    'filename': filename,
+                    'status': f'OK - points: {score}'
+                })
         return Response(json.dumps(errors))
 
 
