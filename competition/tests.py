@@ -361,7 +361,7 @@ class TestSolution(APITestCase, PermissionTestMixin):
 
     def test_add_positive_vote(self):
         ''' add_positive_vote OK'''
-        self.check_permissions(self.URL_PREFIX + '/0/add_positive_vote/',
+        self.check_permissions(self.URL_PREFIX + '/0/add-positive-vote/',
                                'POST',
                                self.ONLY_STAFF_OK_RESPONSES, {})
         vote = models.Solution.objects.get(pk=0).vote
@@ -369,7 +369,7 @@ class TestSolution(APITestCase, PermissionTestMixin):
 
     def test_add_negative_vote(self):
         ''' add_negative_vote OK'''
-        self.check_permissions(self.URL_PREFIX + '/0/add_negative_vote/',
+        self.check_permissions(self.URL_PREFIX + '/0/add-negative-vote/',
                                'POST',
                                self.ONLY_STAFF_OK_RESPONSES, {})
         vote = models.Solution.objects.get(pk=0).vote
@@ -378,7 +378,7 @@ class TestSolution(APITestCase, PermissionTestMixin):
     def test_remove_vote(self):
         ''' remove_vote OK'''
         models.Solution.objects.get(pk=0).set_vote(1)
-        self.check_permissions(self.URL_PREFIX + '/0/remove_vote/',
+        self.check_permissions(self.URL_PREFIX + '/0/remove-vote/',
                                'POST',
                                self.ONLY_STAFF_OK_RESPONSES, {})
         vote = models.Solution.objects.get(pk=0).vote

@@ -350,19 +350,19 @@ class SolutionViewSet(viewsets.ModelViewSet):
     queryset = Solution.objects.all()
     serializer_class = SolutionSerializer
 
-    @action(methods=['post'], detail=True,
+    @action(methods=['post'], detail=True, url_path='add-positive-vote',
             permission_classes=[IsAdminUser])
     def add_positive_vote(self, request, pk=None):
         self.get_object().set_vote(Vote.POSITIVE)
         return Response('Pridaný pozitívny hlas.', status=status.HTTP_200_OK)
 
-    @action(methods=['post'], detail=True,
+    @action(methods=['post'], detail=True, url_path='add-negative-vote',
             permission_classes=[IsAdminUser])
     def add_negative_vote(self, request, pk=None):
         self.get_object().set_vote(Vote.NEGATIVE)
         return Response('Pridaný negatívny hlas.', status=status.HTTP_200_OK)
 
-    @action(methods=['post'], detail=True,
+    @action(methods=['post'], detail=True, url_path='remove-vote',
             permission_classes=[IsAdminUser])
     def remove_vote(self, request, pk=None):
         self.get_object().set_vote(Vote.NONE)
