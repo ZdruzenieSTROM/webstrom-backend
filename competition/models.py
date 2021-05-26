@@ -621,15 +621,15 @@ class UnspecifiedPublication(models.Model):
         return self.event.can_user_modify(user)
 
 
-@ receiver(post_save, sender=SemesterPublication)
+@receiver(post_save, sender=SemesterPublication)
 def make_thumbnail_on_creation(sender, instance, created, **kwargs):
     # pylint: disable=unused-argument
     if created:
         instance.generate_thumbnail()
 
 
-@ receiver(post_save, sender=SemesterPublication)
-@ receiver(post_save, sender=UnspecifiedPublication)
+@receiver(post_save, sender=SemesterPublication)
+@receiver(post_save, sender=UnspecifiedPublication)
 def make_name_on_creation(sender, instance, created, **kwargs):
     # pylint: disable=unused-argument
     if created:
