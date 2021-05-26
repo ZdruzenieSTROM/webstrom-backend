@@ -314,7 +314,7 @@ class SeriesViewSet(viewsets.ModelViewSet):
     permission_classes = (CompetitionRestrictedPermission,)
     http_method_names = ['get', 'head']
 
-    @ action(methods=['get'], detail=True)
+    @action(methods=['get'], detail=True)
     def results(self, request, pk=None):
         series = self.get_object()
         if series.frozen_results is not None:
@@ -328,7 +328,7 @@ class SeriesViewSet(viewsets.ModelViewSet):
         results = utils.rank_results(results)
         return Response(results, status=status.HTTP_200_OK)
 
-    @ action(methods=['get'], detail=True)
+    @action(methods=['get'], detail=True)
     def stats(self, request, pk=None):
         problems = self.get_object().problems
         stats = []
@@ -336,7 +336,7 @@ class SeriesViewSet(viewsets.ModelViewSet):
             stats.append(problem.get_stats())
         return Response(stats, status=status.HTTP_200_OK)
 
-    @ action(methods=['get'], detail=False)
+    @action(methods=['get'], detail=False)
     def current(self, request):
         items = Series.objects.all()\
             .filter(complete=False)\

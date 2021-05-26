@@ -62,12 +62,6 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-# class VoteSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = models.Vote
-#         fields = '__all__'
-
-
 class SolutionSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Solution
