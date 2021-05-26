@@ -460,6 +460,15 @@ class EventRegistration(models.Model):
         return self.event.can_user_modify(user)
 
 
+class Vote(models.IntegerChoices):
+    '''
+    Enum hlasov
+    '''
+    NEGATIVE = -1, 'negatívny'
+    NONE = 0, 'žiaden'
+    POSITIVE = 1, 'pozitívny'
+
+
 class Solution(models.Model):
     """
     Popisuje riešenie úlohy od užívateľa. Obsahuje nahraté aj opravné riešenie, body
@@ -479,6 +488,9 @@ class Solution(models.Model):
 
     score = models.PositiveSmallIntegerField(
         verbose_name='body', null=True, blank=True)
+
+    vote = models.IntegerField(choices=Vote.choices,
+                               default=Vote.NONE)
 
     uploaded_at = models.DateTimeField(
         verbose_name='dátum pridania', auto_now_add=True)
@@ -505,25 +517,9 @@ class Solution(models.Model):
     def can_user_modify(self, user):
         return self.problem.can_user_modify(user)
 
-
-class Vote(models.Model):
-    class Meta:
-        verbose_name = 'hlas'
-        verbose_name_plural = 'hlasy'
-    solution = models.OneToOneField(
-        Solution, on_delete=models.CASCADE, related_name='votes')
-    is_positive = models.BooleanField(verbose_name='Pozitívny hlas')
-    comment = models.CharField(
-        verbose_name='Komentár', max_length=200, help_text='Dôvod udelenia hlasu')
-
-    def __str__(self):
-        pos = 'Kladný' if self.is_positive else 'Záporný'
-        return f'{pos} hlas za {self.solution.problem} pre '\
-               f'{self.solution.semester_registration.profile.user.get_full_name()}'
-
-    def to_num(self):
-        return 1 if self.is_positive else -1
-
+    def set_vote(self, vote):
+        self.vote = vote
+        self.save()
 
 
 class SemesterPublication(models.Model):
