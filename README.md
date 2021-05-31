@@ -3,8 +3,8 @@
 Naklonuj si projekt z GitHubu:
 
 ```shell
-git clone https://github.com/zdruzeniestrom/webstrom
-cd webstrom
+git clone https://github.com/zdruzeniestrom/webstrom-backend
+cd webstrom-backend
 ```
 
 Vytvor a aktivuj prostredie pre python:
