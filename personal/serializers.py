@@ -1,33 +1,35 @@
+from django_typomatic import ts_interface
+
 from rest_framework import serializers
 
 from personal.models import County, District, Profile, School
 from competition.models import Grade
 
-
+@ts_interface()
 class CountySerializer(serializers.ModelSerializer):
     class Meta:
         model = County
         fields = '__all__'
 
-
+@ts_interface()
 class DistrictSerializer(serializers.ModelSerializer):
     class Meta:
         model = District
         fields = '__all__'
 
-
+@ts_interface()
 class SchoolSerializer(serializers.ModelSerializer):
     class Meta:
         model = School
         fields = '__all__'
 
-
+@ts_interface()
 class SchoolShortSerializer(serializers.ModelSerializer):
     class Meta:
         model = School
         exclude = ['email', 'district']
 
-
+@ts_interface()
 class ProfileSerializer(serializers.ModelSerializer):
     grade = serializers.IntegerField()
 
@@ -66,7 +68,7 @@ class ProfileSerializer(serializers.ModelSerializer):
             gdpr=validated_data['gdpr']
         )
 
-
+@ts_interface()
 class ProfileCreateSerializer(serializers.ModelSerializer):
     grade = serializers.IntegerField()
 
@@ -106,13 +108,13 @@ class ProfileCreateSerializer(serializers.ModelSerializer):
             gdpr=validated_data['gdpr']
         )
 
-
+@ts_interface()
 class ProfileShortSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = ['first_name', 'last_name', 'nickname']
 
-
+@ts_interface()
 class ProfileMailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
