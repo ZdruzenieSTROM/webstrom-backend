@@ -3,19 +3,19 @@ from rest_framework import serializers
 
 from cms import models
 
-@ts_interface()
+@ts_interface(context='cms')
 class MenuItemShortSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.MenuItem
         exclude = ['priority', 'sites']
 
-@ts_interface()
+@ts_interface(context='cms')
 class PostLinkSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.PostLink
         exclude = ['post']
 
-@ts_interface()
+@ts_interface(context='cms')
 class PostSerializer(serializers.ModelSerializer):
     links = PostLinkSerializer(many=True)
 

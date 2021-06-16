@@ -17,7 +17,7 @@ from personal.serializers import ProfileCreateSerializer
 from competition.models import Grade
 
 
-@ts_interface()
+@ts_interface(context='user')
 class LoginSerializer(serializers.Serializer):
     # pylint: disable=W0223
     email = serializers.EmailField(required=False, allow_blank=True)
@@ -69,7 +69,7 @@ class LoginSerializer(serializers.Serializer):
         attrs['user'] = user
         return attrs
 
-@ts_interface()
+@ts_interface(context='user')
 class TokenSerializer(serializers.ModelSerializer):
     """
     Serializer pre Token model.
@@ -79,7 +79,7 @@ class TokenSerializer(serializers.ModelSerializer):
         model = TokenModel
         fields = ('key',)
 
-@ts_interface()
+@ts_interface(context='user')
 class UserDetailsSerializer(serializers.ModelSerializer):
     """
     Serializer pre User model spolu s Profile modelom
@@ -125,7 +125,7 @@ class UserDetailsSerializer(serializers.ModelSerializer):
         return instance
 
 
-@ts_interface()
+@ts_interface(context='user')
 class RegisterSerializer(serializers.Serializer):
     # pylint: disable=w0223
     # pylint: disable=w0221
@@ -221,12 +221,12 @@ class RegisterSerializer(serializers.Serializer):
                 [EMAIL_ALERT]
             )
 
-@ts_interface()
+@ts_interface(context='user')
 class VerifyEmailSerializer(serializers.Serializer):
     # pylint: disable=w0223
     key = serializers.CharField()
 
-@ts_interface()
+@ts_interface(context='user')
 class PasswordChangeSerializer(serializers.Serializer):
     # pylint: disable=w0223
     # pylint: disable=w0221
@@ -271,7 +271,7 @@ class PasswordChangeSerializer(serializers.Serializer):
     def save(self):
         self.set_password_form.save()
 
-@ts_interface()
+@ts_interface(context='user')
 class UserShortSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
