@@ -4,6 +4,7 @@ django-allauth==0.43.0
 django-crispy-forms==1.9.2
 djangorestframework==3.12.1
 django-filter==2.4.0
+django-typomatic==1.5.0
 pdf2image==1.14.0
 Pillow==8.1.1
 python-magic==0.4.18

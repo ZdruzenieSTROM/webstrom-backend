@@ -1,27 +1,28 @@
+from django_typomatic import ts_interface
 from rest_framework import serializers
 
 from personal.serializers import ProfileShortSerializer, SchoolShortSerializer
 from competition import models
 
-
+@ts_interface(context='competition')
 class UnspecifiedPublicationSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.UnspecifiedPublication
         fields = '__all__'
 
-
+@ts_interface(context='competition')
 class SemesterPublicationSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.SemesterPublication
         fields = '__all__'
 
-
+@ts_interface(context='competition')
 class RegistrationLinkSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.RegistrationLink
         fields = '__all__'
 
-
+@ts_interface(context='competition')
 class EventSerializer(serializers.ModelSerializer):
     unspecifiedpublication_set = UnspecifiedPublicationSerializer(many=True)
     registration_links = RegistrationLinkSerializer(many=True)
@@ -30,7 +31,7 @@ class EventSerializer(serializers.ModelSerializer):
         model = models.Event
         fields = '__all__'
 
-
+@ts_interface(context='competition')
 class CompetitionSerializer(serializers.ModelSerializer):
     event_set = EventSerializer(many=True)
 
@@ -38,7 +39,7 @@ class CompetitionSerializer(serializers.ModelSerializer):
         model = models.Competition
         fields = '__all__'
 
-
+@ts_interface(context='competition')
 class EventRegistrationSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.EventRegistration
@@ -48,25 +49,25 @@ class EventRegistrationSerializer(serializers.ModelSerializer):
         slug_field='tag', many=False, read_only=True)
     profile = ProfileShortSerializer(many=False)
 
-
+@ts_interface(context='competition')
 class ProblemSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Problem
         fields = '__all__'
         read_only_fields = ['series']
 
-
+@ts_interface(context='competition')
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Comment
         fields = '__all__'
 
-
+@ts_interface(context='competition')
 class SolutionSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Solution
         fields = '__all__'
-    # votes = VoteSerializer(many=True)
+
 
 
 # class ProblemStatsSerializer(serializers.Serializer):
@@ -75,12 +76,14 @@ class SolutionSerializer(serializers.ModelSerializer):
 #   mean = serializers.FloatField()
 #
 
+@ts_interface(context='competition')
 class SeriesSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Series
         exclude = ['sum_method']
 
 
+@ts_interface(context='competition')
 class SeriesWithProblemsSerializer(serializers.ModelSerializer):
     problems = ProblemSerializer(many=True)
 
@@ -97,6 +100,7 @@ class SeriesWithProblemsSerializer(serializers.ModelSerializer):
         return series
 
 
+@ts_interface(context='competition')
 class SemesterSerializer(serializers.ModelSerializer):
     series_set = SeriesSerializer(many=True)
 
@@ -111,7 +115,7 @@ class SemesterSerializer(serializers.ModelSerializer):
             models.Series.objects.create(semester=semester, **series)
         return semester
 
-
+@ts_interface(context='competition')
 class SemesterWithProblemsSerializer(serializers.ModelSerializer):
     series_set = SeriesWithProblemsSerializer(many=True)
     semesterpublication_set = SemesterPublicationSerializer(many=True)
@@ -138,12 +142,14 @@ class SemesterWithProblemsSerializer(serializers.ModelSerializer):
         return semester
 
 
+@ts_interface(context='competition')
 class LateTagSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.LateTag
         exclude = ['comment']
 
 
+@ts_interface(context='competition')
 class GradeSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Grade
