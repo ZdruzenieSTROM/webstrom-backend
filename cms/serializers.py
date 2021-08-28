@@ -1,5 +1,6 @@
 from django_typomatic import ts_interface
 from rest_framework import serializers
+from drf_writable_nested.serializers import WritableNestedModelSerializer
 
 from cms import models
 
@@ -16,16 +17,9 @@ class PostLinkSerializer(serializers.ModelSerializer):
         exclude = ['post']
 
 @ts_interface(context='cms')
-class PostSerializer(serializers.ModelSerializer):
+class PostSerializer(WritableNestedModelSerializer):
     links = PostLinkSerializer(many=True)
 
     class Meta:
         model = models.Post
         fields = '__all__'
-
-    def create(self, validated_data):
-        post_links_data = validated_data.pop('links')
-        post = models.Post.objects.create(**validated_data)
-        for post_link_data in post_links_data:
-            models.PostLink.objects.create(post=post, **post_link_data)
-        return post
