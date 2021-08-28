@@ -158,17 +158,17 @@ class RegisterSerializer(serializers.Serializer):
                 'Musíš podvrdiť, že si si vedomý spracovania osobných údajov.')
         return profile
 
-    def validate(self, data):
-        if data['password1'] != data['password2']:
+    def validate(self, attr):
+        if attr['password1'] != attr['password2']:
             raise serializers.ValidationError("Zadané heslá sa nezhodujú.")
 
         # ak je zadana skola "ina skola", musi byt nejaky description skoly
-        if (data['profile']['school'].code == self.OTHER_SCHOOL_CODE and
-                len(data['new_school_description']) == 0):
+        if (attr['profile']['school'].code == self.OTHER_SCHOOL_CODE and
+                len(attr['new_school_description']) == 0):
             raise serializers.ValidationError(
                 'Musíš zadať popis tvojej školy.')
 
-        return data
+        return attr
 
     def get_cleaned_data(self):
         return {
