@@ -49,8 +49,8 @@ class UserManager(BaseUserManager):
                 )
         elif not isinstance(backend, str):
             raise TypeError(
-                'backend must be a dotted import path string (got %r).'
-                % backend
+                f'backend must be a dotted import path string (got {backend}).'
+
             )
         else:
             backend = auth.load_backend(backend)
