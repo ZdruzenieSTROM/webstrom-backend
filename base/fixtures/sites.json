@@ -1,7 +1,7 @@
 [
     {
         "model": "sites.site",
-        "pk": 1,
+        "pk": 0,
         "fields": {
             "domain": "seminar.strom.sk",
             "name": "STROM"
@@ -9,7 +9,7 @@
     },
     {
         "model": "sites.site",
-        "pk": 2,
+        "pk": 1,
         "fields": {
             "domain": "matik.strom.sk",
             "name": "Matik"
@@ -17,7 +17,7 @@
     },
     {
         "model": "sites.site",
-        "pk": 3,
+        "pk": 2,
         "fields": {
             "domain": "malynar.strom.sk",
             "name": "Malyn\u00e1r"

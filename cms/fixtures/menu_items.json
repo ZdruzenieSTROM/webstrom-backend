@@ -7,9 +7,9 @@
             "caption": "Zadania",
             "url": "/zadania/",
             "sites": [
+                0,
                 1,
-                2,
-                3
+                2
             ]
         }
     },
@@ -21,9 +21,9 @@
             "caption": "Výsledky",
             "url": "/vysledky/",
             "sites": [
+                0,
                 1,
-                2,
-                3
+                2
             ]
         }
     },
@@ -35,7 +35,7 @@
             "caption": "Matboj",
             "url": "/matboj/",
             "sites": [
-                1
+                0
             ]
         }
     },
@@ -47,7 +47,7 @@
             "caption": "Lomihlav",
             "url": "/lomihlav/",
             "sites": [
-                2
+                1
             ]
         }
     },
@@ -59,7 +59,7 @@
             "caption": "Mamut",
             "url": "/mamut/",
             "sites": [
-                3
+                2
             ]
         }
     },
@@ -71,9 +71,9 @@
             "caption": "TMM",
             "url": "/tmm/",
             "sites": [
+                0,
                 1,
-                2,
-                3
+                2
             ]
         }
     },
@@ -85,8 +85,8 @@
             "caption": "Minisústredenia",
             "url": "/minisustredenia/",
             "sites": [
-                2,
-                3
+                1,
+                2
             ]
         }
     },
@@ -98,9 +98,9 @@
             "caption": "Ochrana osobných údajov",
             "url": "/gdpr/",
             "sites": [
+                0,
                 1,
-                2,
-                3
+                2
             ]
         }
     }

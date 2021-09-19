@@ -10,7 +10,7 @@
             "competition_type": 0,
             "min_years_until_graduation": 0,
             "sites": [
-                1
+                0
             ],
             "permission_group": [
                 1
@@ -26,7 +26,7 @@
             "competition_type": 0,
             "min_years_until_graduation": 4,
             "sites": [
-                2
+                1
             ],
             "permission_group": [
                 2
@@ -42,7 +42,7 @@
             "competition_type": 0,
             "min_years_until_graduation": 7,
             "sites": [
-                3
+                2
             ],
             "permission_group": [
                 2
@@ -58,7 +58,7 @@
             "competition_type": 1,
             "min_years_until_graduation": 0,
             "sites": [
-                1
+                0
             ],
             "permission_group": [
                 1
@@ -74,7 +74,7 @@
             "start_year": "2001",
             "min_years_until_graduation": 4,
             "sites": [
-                2
+                1
             ],
             "permission_group": [
                 2
@@ -90,7 +90,7 @@
             "start_year": "2001",
             "min_years_until_graduation": 7,
             "sites": [
-                3
+                2
             ],
             "permission_group": [
                 2
@@ -105,9 +105,9 @@
             "competition_type": 1,
             "start_year": "2019",
             "sites": [
+                0,
                 1,
-                2,
-                3
+                2
             ],
             "permission_group": [
                 1,
@@ -123,9 +123,9 @@
             "start_year": "2001",
             "competition_type": 2,
             "sites": [
+                0,
                 1,
-                2,
-                3
+                2
             ],
             "permission_group": [
                 1
