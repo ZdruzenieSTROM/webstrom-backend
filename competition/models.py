@@ -120,6 +120,12 @@ class Event(models.Model):
         verbose_name_plural = 'ročníky súťaží'
         ordering = ['-school_year', ]
 
+    SEASON_CHOICES = [
+        (0, 'Zimný'),
+        (1, 'Letný'),
+        (2, '')
+    ]
+
     competition = models.ForeignKey(
         Competition, null=True, on_delete=models.CASCADE)
 
@@ -127,6 +133,9 @@ class Event(models.Model):
     school_year = models.CharField(
         verbose_name='školský rok', max_length=10, blank=True,
         validators=[school_year_validator])
+
+
+    season_code = models.PositiveSmallIntegerField(choices=SEASON_CHOICES,default=2)
 
     start = models.DateTimeField(verbose_name='dátum začiatku súťaže')
     end = models.DateTimeField(verbose_name='dátum konca súťaže')
@@ -142,10 +151,18 @@ class Event(models.Model):
         if self.semester:
             return str(self.semester)
 
-        return f'{self.competition.name}, {self.year}. ročník'
+        return f'{self.competition.name}, {self.year}. ročník - {self.season_code}'
 
     def can_user_modify(self, user):
         return self.competition.can_user_modify(user)
+
+    @property
+    def season(self):
+        return self.get_season_code_display()
+
+    @property
+    def season_short(self):
+        return self.get_season_code_display()[:3].lower()
 
 
 class Semester(Event):
@@ -159,12 +176,7 @@ class Semester(Event):
         verbose_name_plural = 'semestre'
         ordering = ['-year', '-season_code', ]
 
-    SEASON_CHOICES = [
-        (0, 'Zimný'),
-        (1, 'Letný'),
-    ]
 
-    season_code = models.PositiveSmallIntegerField(choices=SEASON_CHOICES)
     late_tags = models.ManyToManyField(
         LateTag, verbose_name='Stavy omeškania', blank=True)
     frozen_results = models.TextField(
@@ -181,13 +193,7 @@ class Semester(Event):
     def freeze_results(self, results):
         self.frozen_results = results
 
-    @cached_property
-    def season(self):
-        return self.get_season_code_display()
 
-    @cached_property
-    def season_short(self):
-        return self.get_season_code_display()[:3].lower()
 
     @cached_property
     def is_active(self):
