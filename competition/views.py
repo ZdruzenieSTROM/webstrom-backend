@@ -385,6 +385,13 @@ class SolutionViewSet(viewsets.ModelViewSet):
         return response
 
 
+class SemesterListViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset=Semester.objects.all()
+    serializer_class = SemesterSerializer
+    permission_classes = (CompetitionRestrictedPermission,)
+    http_method_names = ['get', 'post', 'head']
+    filterset_fields = ['competition']
+
 class SemesterViewSet(viewsets.ModelViewSet):
     queryset = Semester.objects.all()
     serializer_class = SemesterWithProblemsSerializer
