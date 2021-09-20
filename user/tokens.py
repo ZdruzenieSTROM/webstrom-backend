@@ -43,7 +43,7 @@ class EmailVerificationTokenGenerator:
             self._make_hash_value(user, timestamp),
             secret=self.secret
         ).hexdigest()[::2]
-        return '%s-%s' % (timestamp_b36, hash_string)
+        return f'{timestamp_b36}-{hash_string}'
 
     def _make_hash_value(self, user, timestamp):
         return str(user.pk) + str(user.verified_email) + str(timestamp)

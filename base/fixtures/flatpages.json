@@ -10,9 +10,9 @@
             "template_name": "",
             "registration_required": false,
             "sites": [
+                0,
                 1,
-                2,
-                3
+                2
             ]
         }
     }

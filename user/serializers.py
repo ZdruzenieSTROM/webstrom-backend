@@ -2,6 +2,8 @@ from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth.forms import SetPasswordForm
 from django.core.mail import send_mail
 
+from django_typomatic import ts_interface
+
 from rest_framework import serializers, exceptions
 
 from allauth.account.adapter import get_adapter
@@ -15,6 +17,7 @@ from personal.serializers import ProfileCreateSerializer
 from competition.models import Grade
 
 
+@ts_interface(context='user')
 class LoginSerializer(serializers.Serializer):
     # pylint: disable=W0223
     email = serializers.EmailField(required=False, allow_blank=True)
@@ -66,7 +69,7 @@ class LoginSerializer(serializers.Serializer):
         attrs['user'] = user
         return attrs
 
-
+@ts_interface(context='user')
 class TokenSerializer(serializers.ModelSerializer):
     """
     Serializer pre Token model.
@@ -76,7 +79,7 @@ class TokenSerializer(serializers.ModelSerializer):
         model = TokenModel
         fields = ('key',)
 
-
+@ts_interface(context='user')
 class UserDetailsSerializer(serializers.ModelSerializer):
     """
     Serializer pre User model spolu s Profile modelom
@@ -122,6 +125,7 @@ class UserDetailsSerializer(serializers.ModelSerializer):
         return instance
 
 
+@ts_interface(context='user')
 class RegisterSerializer(serializers.Serializer):
     # pylint: disable=w0223
     # pylint: disable=w0221
@@ -154,17 +158,17 @@ class RegisterSerializer(serializers.Serializer):
                 'Musíš podvrdiť, že si si vedomý spracovania osobných údajov.')
         return profile
 
-    def validate(self, data):
-        if data['password1'] != data['password2']:
+    def validate(self, attrs):
+        if attrs['password1'] != attrs['password2']:
             raise serializers.ValidationError("Zadané heslá sa nezhodujú.")
 
         # ak je zadana skola "ina skola", musi byt nejaky description skoly
-        if (data['profile']['school'].code == self.OTHER_SCHOOL_CODE and
-                len(data['new_school_description']) == 0):
+        if (attrs['profile']['school'].code == self.OTHER_SCHOOL_CODE and
+                len(attrs['new_school_description']) == 0):
             raise serializers.ValidationError(
                 'Musíš zadať popis tvojej školy.')
 
-        return data
+        return attrs
 
     def get_cleaned_data(self):
         return {
@@ -217,12 +221,12 @@ class RegisterSerializer(serializers.Serializer):
                 [EMAIL_ALERT]
             )
 
-
+@ts_interface(context='user')
 class VerifyEmailSerializer(serializers.Serializer):
     # pylint: disable=w0223
     key = serializers.CharField()
 
-
+@ts_interface(context='user')
 class PasswordChangeSerializer(serializers.Serializer):
     # pylint: disable=w0223
     # pylint: disable=w0221
@@ -267,7 +271,7 @@ class PasswordChangeSerializer(serializers.Serializer):
     def save(self):
         self.set_password_form.save()
 
-
+@ts_interface(context='user')
 class UserShortSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
