@@ -3,11 +3,12 @@ import sqlite3
 from django.core.management import BaseCommand
 from django.utils import timezone
 from django.utils.dateparse import parse_datetime
+from django.db.models import Q
 import pytz
 from allauth.account.utils import user_email, user_username, setup_user_email
 from allauth.account.models import EmailAddress
 
-from competition.models import Semester, Series, Problem, Competition
+from competition.models import Semester, Series, Problem, Competition, Grade
 from user.models import User
 from personal.models import Profile, School
 from competition.utils import get_school_year_by_date
@@ -35,7 +36,7 @@ COMPETITION_ID_MAPPING = {
 USERS_QUERY = '''
 SELECT user.email,user.is_staff,user.is_active,user.first_name,user.last_name, user.date_joined,
         user.username,user.is_superuser,user.password,phone_number,parent_phone_number,
-        classlevel,school.name AS school_name,addr.street AS school_street,addr.city AS school_city
+        classlevel,school.name AS school_name,addr.street AS school_street,addr.city AS school_city,addr.postal_number AS school_zip_code
 FROM auth_user AS user
 INNER JOIN profiles_userprofile AS prof ON prof.user_id=user.id
 INNER JOIN schools_school AS school ON prof.school_id=school.id
@@ -59,11 +60,23 @@ def localize(date):
 
 
 def to_school_year(year, competition):
-    return get_school_year_by_date(datetime.date(day=1, month=10, year=competition.start_year + year))
+    return get_school_year_by_date(
+        datetime.date(day=1, month=10, year=competition.start_year + year)
+    )
 
 
 def estimate_school(user):
-    return School.objects.first()
+    school = School.objects.filter(name=user['school_name'])
+    if school.count() == 1:
+        return school.first()
+    school = School.objects.filter(
+        Q(street=user['school_street']),
+        Q(zip_code=user['school_zip_code'].replace(
+            ' ', '')) | Q(city=user['school_city'])
+    )
+    if school.count() == 1:
+        return school.first()
+    return School.objects.get_unspecified_value()
 
 
 class Command(BaseCommand):
@@ -151,13 +164,19 @@ class Command(BaseCommand):
             # new_user.set_password(user['password'])
             new_user.save()
             school = estimate_school(user)
+            try:
+                grade = Grade.objects.get(
+                    tag=user['classlevel']).get_year_of_graduation_by_date()
+            except Grade.DoesNotExist:
+                grade = 2000
+
             profile = Profile(
                 first_name=user['first_name'],
                 last_name=user['last_name'],
                 user=new_user,
                 nickname=user['username'],
                 school=school,
-                year_of_graduation=2020,
+                year_of_graduation=grade,
                 phone=user['phone_number'],
                 parent_phone=user['parent_phone_number'],
                 gdpr=True
