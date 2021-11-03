@@ -1,9 +1,23 @@
+from django.contrib.flatpages.models import FlatPage
 from django.contrib.sites.models import Site
 from django.db import models
 from django.utils.timezone import now
 
+from competition.models import Competition
+from .querysets import VisibilityQuerySet
 
-class Post(models.Model):
+
+class ModelWithVisibility(models.Model):
+    visible_after = models.DateTimeField(verbose_name='Zobrazuj od')
+    visible_until = models.DateTimeField(verbose_name='Zobrazuj do')
+
+    objects = VisibilityQuerySet.as_manager()
+
+    class Meta:
+        abstract = True
+
+
+class Post(ModelWithVisibility):
     class Meta:
         verbose_name = 'príspevok'
         verbose_name_plural = 'príspevky'
@@ -21,12 +35,11 @@ class Post(models.Model):
     added_at = models.DateTimeField(verbose_name='pridané',
                                     auto_now_add=True,
                                     editable=False)
-    show_after = models.DateTimeField(verbose_name='zobrazuj od')
-    disable_after = models.DateTimeField(verbose_name='zobrazuj do')
+
     sites = models.ManyToManyField(Site)
 
     def is_visible(self):
-        return now() > self.show_after and now() < self.disable_after
+        return now() > self.visible_after and now() < self.visible_until
     is_visible.short_description = "Viditeľný"
     is_visible = property(is_visible)
 
@@ -75,3 +88,28 @@ class MenuItem(models.Model):
 
     # TODO: Pridať oprávnenia a umožniť tak vedúcovské položky v menu
     # zobrazované aj možno niekde inde
+
+
+class InfoBanner(ModelWithVisibility):
+    class Meta:
+        verbose_name = 'Informácia v pohyblivom baneri'
+        verbose_name_plural = 'Informácie v pohyblivom baneri'
+
+    message = models.CharField(
+        verbose_name='správa',
+        help_text='Správa sa zobrazí v baneri. Správa musí byť stručná - jedna krátka veta.',
+        max_length=200)
+    pages = models.ManyToManyField(FlatPage)
+    sites = models.ManyToManyField(Site)
+    competitions = models.ManyToManyField(Competition)
+
+
+class MessageTemplate():
+    class Meta:
+        verbose_name = 'Generické správy pre banner a posty'
+        verbose_name_plural = 'Generické správy pre banner a posty'
+
+    message = models.CharField(
+        verbose_name='Generická správa',
+        help_text='Generické správy pre banner a posty',
+        max_length=200)
