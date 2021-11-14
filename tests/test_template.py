@@ -18,7 +18,6 @@ class TestTest(TestCase):
     # add fixtures to fill the db
     fixtures = get_app_fixtures([
         'base',
-        'cms',
     ])
 
     def setUp(self):
