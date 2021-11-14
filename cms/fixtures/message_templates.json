@@ -1,0 +1,34 @@
+[
+    {
+        "model": "cms.MessageTemplate",
+        "pk": 0,
+        "fields": {
+            "name": "Termín série",
+            "message": "Termín série {deadline}"
+        }
+    },
+    {
+        "model": "cms.MessageTemplate",
+        "pk": 1,
+        "fields": {
+            "name": "Termín súťaže",
+            "message": "{name} sa bude konať {start}"
+        }
+    },
+    {
+        "model": "cms.MessageTemplate",
+        "pk": 2,
+        "fields": {
+            "name": "Termín série",
+            "message": "Termín série {neexistujuci_placeholder}"
+        }
+    },
+    {
+        "model": "cms.MessageTemplate",
+        "pk": 3,
+        "fields": {
+            "name": "Odovzdávajte iba online",
+            "message": "Svoje riešenia odovzdávajte iba online!"
+        }
+    }
+]

@@ -3,7 +3,7 @@ from django.contrib.sites.models import Site
 from django.db import models
 from django.utils.timezone import now
 
-from competition.models import Competition
+from competition.models import Event, Series
 from .querysets import VisibilityQuerySet
 
 
@@ -15,6 +15,28 @@ class ModelWithVisibility(models.Model):
 
     class Meta:
         abstract = True
+
+
+class MessageTemplate(models.Model):
+    class Meta:
+        verbose_name = 'Generické správy pre banner a posty'
+        verbose_name_plural = 'Generické správy pre banner a posty'
+
+    name = models.CharField(
+        verbose_name='Názov',
+        help_text='Pomenovanie generickej správy. Slúži pre orientáciu',
+        max_length=50)
+    message = models.CharField(
+        verbose_name='Generická správa',
+        help_text='Generické správy pre banner a posty',
+        max_length=200)
+    is_active = models.BooleanField(verbose_name='Aktívna', default=True)
+
+    def render_with(self, event):
+        try:
+            return self.message.format(**event.__dict__,)
+        except KeyError:
+            return ''
 
 
 class Post(ModelWithVisibility):
@@ -99,17 +121,17 @@ class InfoBanner(ModelWithVisibility):
         verbose_name='správa',
         help_text='Správa sa zobrazí v baneri. Správa musí byť stručná - jedna krátka veta.',
         max_length=200)
-    pages = models.ManyToManyField(FlatPage)
-    sites = models.ManyToManyField(Site)
-    competitions = models.ManyToManyField(Competition)
+    page = models.ForeignKey(FlatPage, on_delete=models.CASCADE, null=True)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, null=True)
+    series = models.ForeignKey(Series, on_delete=models.CASCADE, null=True)
+    message_template = models.ForeignKey(
+        MessageTemplate, on_delete=models.PROTECT, null=True)
 
-
-class MessageTemplate():
-    class Meta:
-        verbose_name = 'Generické správy pre banner a posty'
-        verbose_name_plural = 'Generické správy pre banner a posty'
-
-    message = models.CharField(
-        verbose_name='Generická správa',
-        help_text='Generické správy pre banner a posty',
-        max_length=200)
+    def render_message(self):
+        if self.message_template is None:
+            return self.message
+        if self.event is not None:
+            return self.message_template.render_with(self.event)
+        if self.series is not None:
+            return self.message_template.render_with(self.series)
+        return self.message_template.render_with({})

@@ -21,8 +21,8 @@ class TestPosts(APITestCase, PermissionTestMixin):
         'short_text',
         'details',
         'added_at',
-        'show_after',
-        'disable_after'
+        'visible_after',
+        'visible_until'
     ]
 
     def setUp(self):

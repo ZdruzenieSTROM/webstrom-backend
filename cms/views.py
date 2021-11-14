@@ -52,7 +52,7 @@ class PostViewSet(viewsets.ModelViewSet):
 class InfoBannerViewSet(viewsets.ModelViewSet):
     serializer_class = InfoBannerSerializer
     queryset = InfoBanner.objects.visible()
-    filterset_fields = ['competition', 'flatpages', 'sites']
+    filterset_fields = ['event', 'page', 'series']
 
 
 class MessageTemplateViewSet(viewsets.ModelViewSet):

@@ -30,9 +30,11 @@ class PostSerializer(WritableNestedModelSerializer):
 
 @ts_interface(context='cms')
 class InfoBannerSerializer(serializers.ModelSerializer):
+    rendered_message = serializers.CharField(source='render_message')
+
     class Meta:
         model = models.InfoBanner
-        fields = ['message']
+        fields = ['rendered_message']
 
 
 @ts_interface(context='cms')

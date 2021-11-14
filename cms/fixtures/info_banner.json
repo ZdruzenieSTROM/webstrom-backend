@@ -1,0 +1,54 @@
+[
+    {
+        "model": "cms.InfoBanner",
+        "pk": 0,
+        "fields": {
+            "message": "Toto je úplne špeciálne exkluzívna správa",
+            "page": 1,
+            "series": null,
+            "event": null,
+            "message_template": null,
+            "visible_after": "2021-01-01T20:00:00+02:00",
+            "visible_until": "2022-05-01T20:00:00+02:00"
+        }
+    },
+    {
+        "model": "cms.InfoBanner",
+        "pk": 1,
+        "fields": {
+            "message": "Táto séria extrémne cool",
+            "page": null,
+            "series": 1,
+            "event": null,
+            "message_template": null,
+            "visible_after": "2021-01-01T20:00:00+02:00",
+            "visible_until": "2022-05-01T20:00:00+02:00"
+        }
+    },
+    {
+        "model": "cms.InfoBanner",
+        "pk": 2,
+        "fields": {
+            "message": "",
+            "page": null,
+            "series": 0,
+            "event": null,
+            "message_template": 0,
+            "visible_after": "2021-01-01T20:00:00+02:00",
+            "visible_until": "2022-05-01T20:00:00+02:00"
+        }
+    },
+    {
+        "model": "cms.InfoBanner",
+        "pk": 3,
+        "fields": {
+            "message": "",
+            "page": null,
+            "series": 0,
+            "event": null,
+            "message_template": 3,
+            "visible_after": "2021-01-01T20:00:00+02:00",
+            "visible_until": "2022-05-01T20:00:00+02:00"
+        }
+    }
+]
