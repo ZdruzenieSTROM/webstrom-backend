@@ -1,5 +1,6 @@
 from django.contrib.flatpages.models import FlatPage
 from django.contrib.sites.models import Site
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.timezone import now
 
@@ -38,10 +39,7 @@ class MessageTemplate(models.Model):
     is_active = models.BooleanField(verbose_name='Aktívna', default=True)
 
     def render_with(self, event):
-        try:
-            return self.message.format(**event.__dict__,)
-        except KeyError:
-            return ''
+        return self.message.format(**event.__dict__,)
 
 
 class Post(ModelWithVisibility):
@@ -126,6 +124,13 @@ class InfoBanner(ModelWithVisibility):
     series = models.ForeignKey(Series, on_delete=models.CASCADE, null=True)
     message_template = models.ForeignKey(
         MessageTemplate, on_delete=models.PROTECT, null=True)
+
+    def clean(self):
+        try:
+            self.render_message()
+        except KeyError as key_error:
+            raise ValidationError(
+                'Template správy nie je kompatibilný s priradenou akciou') from key_error
 
     def render_message(self):
         if self.message_template is None:
