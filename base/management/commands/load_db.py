@@ -1,31 +1,35 @@
 import datetime
 import sqlite3
 from django.core.management import BaseCommand
-from django.utils import timezone
 from django.utils.dateparse import parse_datetime
 from django.db.models import Q
 import pytz
-from allauth.account.utils import user_email, user_username, setup_user_email
 from allauth.account.models import EmailAddress
 
 from competition.models import Semester, Series, Problem, Competition, Grade
+from competition.utils import get_school_year_by_date
 from user.models import User
 from personal.models import Profile, School
-from competition.utils import get_school_year_by_date
 
 
-SERIES_QUERY = '''SELECT id,number,submission_deadline, sum_method,season_id
-FROM competitions_series'''
+SERIES_QUERY = '''
+    SELECT id,number,submission_deadline, sum_method,season_id
+    FROM competitions_series
+'''
 
-SEMESTER_QUERY = ''' SELECT id,competition_id,end,name,year,number,start FROM competitions_season'''
+SEMESTER_QUERY = '''
+    SELECT id,competition_id,end,name,year,number,start 
+    FROM competitions_season
+'''
 
 PROBLEM_QUERY = '''
-SELECT text,series.id AS series_id,season.id AS season_id,season.name,submission_deadline,series.sum_method,season.competition_id,year, inset.position AS position, problem.id AS id
-FROM competitions_season AS season
-INNER JOIN competitions_series AS series ON series.season_id=season.id
-INNER JOIN problems_problemset AS problemset ON series.problemset_id=problemset.id
-INNER JOIN problems_probleminset AS inset ON inset.problemset_id=problemset.id
-INNER JOIN problems_problem AS problem ON problem.id=inset.problem_id'''
+    SELECT text,series.id AS series_id,season.id AS season_id,season.name,submission_deadline,series.sum_method,season.competition_id,year, inset.position AS position, problem.id AS id
+    FROM competitions_season AS season
+    INNER JOIN competitions_series AS series ON series.season_id=season.id
+    INNER JOIN problems_problemset AS problemset ON series.problemset_id=problemset.id
+    INNER JOIN problems_probleminset AS inset ON inset.problemset_id=problemset.id
+    INNER JOIN problems_problem AS problem ON problem.id=inset.problem_id
+'''
 
 COMPETITION_ID_MAPPING = {
     1: Competition.objects.get(pk=1),
@@ -34,14 +38,15 @@ COMPETITION_ID_MAPPING = {
 }
 
 USERS_QUERY = '''
-SELECT user.email,user.is_staff,user.is_active,user.first_name,user.last_name, user.date_joined,
-        user.username,user.is_superuser,user.password,phone_number,parent_phone_number,
-        classlevel,school.name AS school_name,addr.street AS school_street,addr.city AS school_city,addr.postal_number AS school_zip_code
-FROM auth_user AS user
-INNER JOIN profiles_userprofile AS prof ON prof.user_id=user.id
-INNER JOIN schools_school AS school ON prof.school_id=school.id
-INNER JOIN schools_address AS addr ON school.address_id=addr.id
-WHERE email<>''
+    SELECT user.email,user.is_staff,user.is_active,user.first_name,user.last_name, user.date_joined,
+            user.username,user.is_superuser,user.password,phone_number,parent_phone_number,
+            classlevel,school.name AS school_name,addr.street AS school_street,
+            addr.city AS school_city,addr.postal_number AS school_zip_code
+    FROM auth_user AS user
+    INNER JOIN profiles_userprofile AS prof ON prof.user_id=user.id
+    INNER JOIN schools_school AS school ON prof.school_id=school.id
+    INNER JOIN schools_address AS addr ON school.address_id=addr.id
+    WHERE email<>''
 '''
 
 SUM_METHOD_DICT = {
