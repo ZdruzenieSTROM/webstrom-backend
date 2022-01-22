@@ -1,6 +1,7 @@
 from django.contrib.sites.models import Site
 from django.db import models
 from django.utils.timezone import now
+from .querysets import VisibleQuerySet
 
 
 class Post(models.Model):
@@ -24,6 +25,8 @@ class Post(models.Model):
     show_after = models.DateTimeField(verbose_name='zobrazuj od')
     disable_after = models.DateTimeField(verbose_name='zobrazuj do')
     sites = models.ManyToManyField(Site)
+
+    objects = VisibleQuerySet.as_manager()
 
     def is_visible(self):
         return now() > self.show_after and now() < self.disable_after

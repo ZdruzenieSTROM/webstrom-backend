@@ -386,16 +386,18 @@ class SolutionViewSet(viewsets.ModelViewSet):
 
 
 class SemesterListViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset=Semester.objects.all()
+    queryset = Semester.objects.all()
     serializer_class = SemesterSerializer
     permission_classes = (CompetitionRestrictedPermission,)
     http_method_names = ['get', 'post', 'head']
     filterset_fields = ['competition']
 
+
 class SemesterViewSet(viewsets.ModelViewSet):
     queryset = Semester.objects.all()
     serializer_class = SemesterWithProblemsSerializer
     permission_classes = (CompetitionRestrictedPermission,)
+    filterset_fields = ['competition']
     http_method_names = ['get', 'post', 'head']
 
     def perform_create(self, serializer):
@@ -492,9 +494,9 @@ class SemesterViewSet(viewsets.ModelViewSet):
     @action(methods=['get'], detail=False)
     def current(self, request):
         items = Semester.objects.all()\
-            .filter(start__lt=timezone.now())\
-            .filter(end__gt=timezone.now())\
-            .order_by('-end')
+            .filter(
+                start__lt=timezone.now(), end__gt=timezone.now()
+        ).order_by('-end')
         if items.count() > 0:
             serializer = SemesterWithProblemsSerializer(items[0], many=False)
             return Response(serializer.data)
@@ -505,9 +507,9 @@ class SemesterViewSet(viewsets.ModelViewSet):
     @action(methods=['get'], detail=False, url_path='current-results')
     def current_results(self, request):
         items = Semester.objects.all()\
-            .filter(start__lt=timezone.now())\
-            .filter(end__gt=timezone.now())\
-            .order_by('-end')
+            .filter(
+                start__lt=timezone.now(), end__gt=timezone.now()
+        ).order_by('-end')
         if items.count() > 0:
             semester = items[0]
             current_results = SemesterViewSet.semester_results(semester)
@@ -575,6 +577,13 @@ class EventViewSet(viewsets.ModelViewSet):
         )
 
         return Response(status=status.HTTP_201_CREATED)
+
+    def active(self):
+        """Get all active events"""
+        now = timezone.now()
+        active_events = self.get_queryset().filter(start__lte=now, end__gte=now)
+        serializer = self.serializer_class(active_events, many=True)
+        return Response(serializer.data)
 
 
 class EventRegistrationViewSet(viewsets.ModelViewSet):
