@@ -13,6 +13,11 @@ class ModelWithVisibility(models.Model):
 
     objects = VisibilityQuerySet.as_manager()
 
+    def is_visible(self):
+        return now() > self.visible_after and now() < self.visible_until
+    is_visible.short_description = "Viditeľný"
+    is_visible = property(is_visible)
+
     class Meta:
         abstract = True
 
@@ -59,11 +64,6 @@ class Post(ModelWithVisibility):
                                     editable=False)
 
     sites = models.ManyToManyField(Site)
-
-    def is_visible(self):
-        return now() > self.visible_after and now() < self.visible_until
-    is_visible.short_description = "Viditeľný"
-    is_visible = property(is_visible)
 
     def __str__(self):
         return f'{self.pk}-{self.caption}'
