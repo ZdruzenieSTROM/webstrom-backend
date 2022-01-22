@@ -3,7 +3,6 @@ from django.contrib.sites.models import Site
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.timezone import now
-from .querysets import VisibleQuerySet
 
 from competition.models import Event, Series
 from .querysets import VisibilityQuerySet
