@@ -1,8 +1,13 @@
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from cms.models import MenuItem, Post
-from cms.serializers import MenuItemShortSerializer, PostSerializer
+from cms.models import MenuItem, Post, InfoBanner, MessageTemplate
+from cms.serializers import (
+    MenuItemShortSerializer,
+    PostSerializer,
+    InfoBannerSerializer,
+    MessageTemplateSerializer
+)
 from cms.permissions import PostPermission
 
 
@@ -37,10 +42,19 @@ class PostViewSet(viewsets.ModelViewSet):
     permission_classes = (PostPermission,)
     filterset_fields = ['sites', ]
 
-
     @action(detail=False)
     def visible(self, request):
-        posts = Post.objects.all()
-        posts = [p for p in posts if p.is_visible]
+        posts = Post.objects.visible()
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data)
+
+
+class InfoBannerViewSet(viewsets.ModelViewSet):
+    serializer_class = InfoBannerSerializer
+    queryset = InfoBanner.objects.visible()
+    filterset_fields = ['event', 'page', 'series']
+
+
+class MessageTemplateViewSet(viewsets.ModelViewSet):
+    serializer_class = MessageTemplateSerializer
+    queryset = MessageTemplate.objects.all()

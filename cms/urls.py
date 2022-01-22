@@ -9,6 +9,8 @@ app_name = 'cms'
 router = DefaultRouter()
 router.register(r'post', views.PostViewSet)
 router.register(r'menu-item', views.MenuItemViewSet)
+router.register(r'info-banner', views.InfoBannerViewSet)
+router.register(r'message-template', views.MessageTemplateViewSet)
 
 
 urlpatterns = [

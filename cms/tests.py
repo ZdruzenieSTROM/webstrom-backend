@@ -9,10 +9,9 @@ class TestPosts(APITestCase, PermissionTestMixin):
 
     fixtures = get_app_fixtures([
         'base',
-        'cms',
         'personal',
         'user'
-    ])
+    ]) + ['posts.json', 'post_links.json']
 
     post_expected_keys = [
         'id',
@@ -21,8 +20,8 @@ class TestPosts(APITestCase, PermissionTestMixin):
         'short_text',
         'details',
         'added_at',
-        'show_after',
-        'disable_after'
+        'visible_after',
+        'visible_until'
     ]
 
     def setUp(self):
@@ -59,10 +58,9 @@ class TestMenuItems(APITestCase, PermissionTestMixin):
 
     fixtures = get_app_fixtures([
         'base',
-        'cms',
         'personal',
         'user'
-    ])
+    ]) + ['menu_items.json']
 
     def setUp(self):
         self.create_users()

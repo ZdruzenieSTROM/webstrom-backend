@@ -70,5 +70,7 @@ class Command(BaseCommand):
                      'solutions',
                      'posts',
                      'post_links',
-                     'menu_items'
+                     'menu_items',
+                     'message_templates',
+                     'info_banner'
                      )
