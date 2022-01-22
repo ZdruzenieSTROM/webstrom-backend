@@ -1,9 +1,9 @@
-from django.db import models
-from django.utils import timezone
+
+from django.db.models import QuerySet
+from django.utils.timezone import now
 
 
-class VisibleQuerySet(models.QuerySet):
-    def visible(self, date=None):
-        if date is None:
-            date = timezone.now()
-        return self.filter(show_after_lt=date, disable_after_gt=date)
+class VisibilityQuerySet(QuerySet):
+    def visible(self):
+        today = now()
+        return self.filter(visible_after__lte=today, visible_until__gte=today)

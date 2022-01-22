@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from cms.models import MenuItem, Post, PostLink
+from cms.models import MenuItem, Post, PostLink, InfoBanner, MessageTemplate
 
 
 @admin.register(MenuItem)
@@ -23,8 +23,8 @@ class PostAdmin(admin.ModelAdmin):
         'short_text',
         'details',
         'added_at',
-        'show_after',
-        'disable_after',
+        'visible_after',
+        'visible_until',
         'is_visible'
     )
 
@@ -35,4 +35,23 @@ class PostLinkAdmin(admin.ModelAdmin):
         '__str__',
         'caption',
         'url',
+    )
+
+
+@admin.register(MessageTemplate)
+class MessageTemplateAdmin(admin.ModelAdmin):
+    list_display = (
+        'name',
+        'message',
+        'is_active'
+    )
+
+
+@admin.register(InfoBanner)
+class InfoBannerAdmin(admin.ModelAdmin):
+    list_display = (
+        'message',
+        'visible_after',
+        'visible_until',
+        'message_template'
     )
