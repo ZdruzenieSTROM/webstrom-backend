@@ -181,7 +181,7 @@ class TestSemester(APITestCase, PermissionTestMixin):
     def test_public_points_permission(self):
         self.check_permissions(self.URL_PREFIX + '/',
                                'GET', self.PUBLIC_OK_RESPONSES, {})
-        self.check_permissions(self.URL_PREFIX + '/current',
+        self.check_permissions(self.URL_PREFIX + '/current/0',
                                'GET', self.PUBLIC_OK_RESPONSES, {})
         self.check_permissions(self.URL_PREFIX + '/0/results',
                                'GET', self.PUBLIC_OK_RESPONSES, {})
