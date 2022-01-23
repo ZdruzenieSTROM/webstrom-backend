@@ -8,7 +8,6 @@ from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.core.files.move import file_move_safe
 from django.http import HttpResponse
-from django.utils import timezone
 
 from rest_framework import exceptions, status, viewsets, mixins
 from rest_framework.decorators import action
@@ -165,10 +164,8 @@ class ProblemViewSet(viewsets.ModelViewSet):
             permission_classes=[IsAuthenticated])
     def add_comment(self, request, pk=None):
         problem = self.get_object()
-
         problem.add_comment(
             request.data['text'], request.user, problem.can_user_modify(request.user))
-
         return Response("Komentár bol pridaný", status=status.HTTP_201_CREATED)
 
     @action(methods=['get'], detail=True, permission_classes=[IsAdminUser])
@@ -491,30 +488,20 @@ class SemesterViewSet(viewsets.ModelViewSet):
 
         return Response(schools, status=status.HTTP_200_OK)
 
-    @action(methods=['get'], detail=False)
-    def current(self, request):
-        items = Semester.objects.all()\
-            .filter(
-                start__lt=timezone.now(), end__gt=timezone.now()
-        ).order_by('-end')
-        if items.count() > 0:
-            serializer = SemesterWithProblemsSerializer(items[0], many=False)
-            return Response(serializer.data)
-
-        serializer = SemesterWithProblemsSerializer(items, many=True)
+    @action(methods=['get'], detail=False, url_path=r'current/(?P<competition_id>\d+)')
+    def current(self, request, competition_id=None):
+        current_semester = self.get_queryset().filter(
+            competition=competition_id).current()
+        serializer = SemesterWithProblemsSerializer(
+            current_semester, many=False)
         return Response(serializer.data)
 
-    @action(methods=['get'], detail=False, url_path='current-results')
-    def current_results(self, request):
-        items = Semester.objects.all()\
-            .filter(
-                start__lt=timezone.now(), end__gt=timezone.now()
-        ).order_by('-end')
-        if items.count() > 0:
-            semester = items[0]
-            current_results = SemesterViewSet.semester_results(semester)
-            return Response(current_results, status=status.HTTP_201_CREATED)
-        return Response([], status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    @action(methods=['get'], detail=False, url_path=r'current-results/(?P<competition_id>\d+)')
+    def current_results(self, request, competition_id=None):
+        current_semester = self.get_queryset().filter(
+            competition=competition_id).current()
+        current_results = SemesterViewSet.semester_results(current_semester)
+        return Response(current_results, status=status.HTTP_201_CREATED)
 
     @action(methods=['get'], detail=True)
     def participants(self, request, pk=None):
@@ -578,10 +565,10 @@ class EventViewSet(viewsets.ModelViewSet):
 
         return Response(status=status.HTTP_201_CREATED)
 
+    @action(methods=['post'], detail=False, permission_classes=[IsAuthenticated])
     def active(self):
         """Get all active events"""
-        now = timezone.now()
-        active_events = self.get_queryset().filter(start__lte=now, end__gte=now)
+        active_events = self.get_queryset().active()
         serializer = self.serializer_class(active_events, many=True)
         return Response(serializer.data)
 
