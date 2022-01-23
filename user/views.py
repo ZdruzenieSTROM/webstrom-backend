@@ -45,7 +45,8 @@ sensitive_post_parameters_m = method_decorator(
 
 
 class LoginView(GenericAPIView):
-    #pylint: disable=W0201
+    """Login"""
+    #pylint: disable=attribute-defined-outside-init
     permission_classes = (AllowAny,)
     serializer_class = LoginSerializer
     token_model = TokenModel
@@ -93,7 +94,8 @@ class LoginView(GenericAPIView):
 
 
 class LogoutView(APIView):
-    #pylint: disable=w0613
+    """Odhlásenie užívateľa"""
+    #pylint: disable=unused-argument
     permission_classes = (AllowAny,)
 
     def get(self, request, *args, **kwargs):
@@ -103,7 +105,6 @@ class LogoutView(APIView):
         return self.logout(request)
 
     def logout(self, request):
-        print(request.user)
 
         try:
             request.user.auth_token.delete()
@@ -121,6 +122,7 @@ class LogoutView(APIView):
 
 
 class UserDetailsView(RetrieveUpdateAPIView):
+    """Používateľ spolu s profilom"""
     serializer_class = UserDetailsSerializer
     permission_classes = (IsAuthenticated,)
 
@@ -129,8 +131,7 @@ class UserDetailsView(RetrieveUpdateAPIView):
 
 
 class RegisterView(CreateAPIView):
-    #pylint: disable=w0212
-    #pylint: disable=E1101
+    """Registrácia užívateľa"""
     serializer_class = RegisterSerializer
     permission_classes = [AllowAny, ]
     token_model = TokenModel
@@ -152,14 +153,15 @@ class RegisterView(CreateAPIView):
     def perform_create(self, serializer):
         user = serializer.save(self.request)
 
-        complete_signup(self.request._request, user,
-                        allauth_settings.EMAIL_VERIFICATION,
+        complete_signup(self.request._request, user,  # pylint: disable=protected-access
+                        allauth_settings.EMAIL_VERIFICATION,  # pylint: disable=no-member
                         None)
         return user
 
 
 class VerifyEmailView(APIView, ConfirmEmailView):
-    #pylint: disable=w0221
+    """Emailová verifikácia užívateľa"""
+    #pylint: disable=arguments-differ
     permission_classes = (AllowAny,)
     allowed_methods = ('POST', 'OPTIONS', 'HEAD')
 
@@ -179,7 +181,8 @@ class VerifyEmailView(APIView, ConfirmEmailView):
 
 
 class PasswordChangeView(GenericAPIView):
-    # pylint: disable=w0613
+    """Zmena hesla"""
+    # pylint: disable=unused-argument
     serializer_class = PasswordChangeSerializer
     permission_classes = (IsAuthenticated,)
 
@@ -293,5 +296,6 @@ def profile_update(request):
 
 
 class UserProfileView(DetailView):
+    """Profil užívateľa"""
     template_name = 'user/profile_view.html'
     model = Profile

@@ -14,7 +14,7 @@ from base.serializers import FlatPageSerializer
 
 class FlatPageViewSet(viewsets.ModelViewSet):
     """
-    Obsluhuje API endpoint pre statické stránky
+    Statické stránky
     """
     queryset = FlatPage.objects.all()
     serializer_class = FlatPageSerializer
@@ -29,6 +29,7 @@ class FlatPageViewSet(viewsets.ModelViewSet):
 
 
 class SwaggerSchemaView(APIView):
+    """Prehľad API pointov"""
     permission_classes = [IsAdminUser]
     renderer_classes = [
         renderers.OpenAPIRenderer,
