@@ -41,4 +41,4 @@ class InfoBannerSerializer(serializers.ModelSerializer):
 class MessageTemplateSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.MessageTemplate
-        field = ['message']
+        fields = ['message']
