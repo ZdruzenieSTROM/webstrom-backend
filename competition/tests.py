@@ -96,9 +96,9 @@ class TestSeries(APITestCase, PermissionTestMixin):
         self.create_users()
 
     def test_get_series_current(self):
-        '''/current format ok'''
+        '''/current/0 format ok'''
         self.get_client()
-        response = self.client.get(self.URL_PREFIX + '/current', {}, 'json')
+        response = self.client.get(self.URL_PREFIX + '/current/0', {}, 'json')
         self.assertEqual(response.status_code, 200)
         series_assert_format(self, response.json())
 
@@ -151,8 +151,8 @@ class TestSemester(APITestCase, PermissionTestMixin):
         self.create_users()
 
     def test_get_semester_current(self):
-        '''/current format ok'''
-        response = self.client.get(self.URL_PREFIX + '/current', {}, 'json')
+        '''/current/0 format ok'''
+        response = self.client.get(self.URL_PREFIX + '/current/0', {}, 'json')
         self.assertEqual(response.status_code, 200)
         semester_assert_format(self, response.json())
 

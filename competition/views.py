@@ -333,10 +333,11 @@ class SeriesViewSet(viewsets.ModelViewSet):
             stats.append(problem.get_stats())
         return Response(stats, status=status.HTTP_200_OK)
 
-    @action(methods=['get'], detail=False)
-    def current(self, request):
-        items = Series.objects.all()\
-            .filter(complete=False)\
+    @action(methods=['get'], detail=False, url_path=r'current/(?P<competition_id>\d+)')
+    def current(self, request, competition_id=None):
+        items = Semester.objects.filter(
+            competition=competition_id
+        ).current().series_set.filter(complete=False)\
             .order_by('-deadline')\
             .first()
         serializer = SeriesWithProblemsSerializer(items, many=False)
