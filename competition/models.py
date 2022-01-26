@@ -24,6 +24,7 @@ from base.utils import mime_type
 from base.validators import school_year_validator
 from personal.models import Profile, School
 from competition import utils
+from competition.querysets import ActiveQuerySet
 from user.models import User
 
 
@@ -134,11 +135,13 @@ class Event(models.Model):
         verbose_name='školský rok', max_length=10, blank=True,
         validators=[school_year_validator])
 
-
-    season_code = models.PositiveSmallIntegerField(choices=SEASON_CHOICES,default=2)
+    season_code = models.PositiveSmallIntegerField(
+        choices=SEASON_CHOICES, default=2)
 
     start = models.DateTimeField(verbose_name='dátum začiatku súťaže')
     end = models.DateTimeField(verbose_name='dátum konca súťaže')
+
+    objects = ActiveQuerySet.as_manager()
 
     def is_user_registered(self, user):
         return EventRegistration.objects.filter(event=self.pk, user=user).exists()
@@ -176,7 +179,6 @@ class Semester(Event):
         verbose_name_plural = 'semestre'
         ordering = ['-year', '-season_code', ]
 
-
     late_tags = models.ManyToManyField(
         LateTag, verbose_name='Stavy omeškania', blank=True)
     frozen_results = models.TextField(
@@ -192,8 +194,6 @@ class Semester(Event):
 
     def freeze_results(self, results):
         self.frozen_results = results
-
-
 
     @cached_property
     def is_active(self):
