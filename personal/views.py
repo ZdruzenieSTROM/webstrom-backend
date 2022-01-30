@@ -13,17 +13,20 @@ from personal.serializers import (CountySerializer, DistrictSerializer,
 
 
 class CountyViewSet(viewsets.ReadOnlyModelViewSet):
+    """Kraje"""
     queryset = County.objects.all()
     serializer_class = CountySerializer
 
 
 class DistrictViewSet(viewsets.ReadOnlyModelViewSet):
+    """Okresy"""
     queryset = District.objects.all()
     serializer_class = DistrictSerializer
     filterset_fields = ['county', ]
 
 
 class SchoolViewSet(viewsets.ReadOnlyModelViewSet):
+    """Školy"""
     queryset = School.objects.all()
     serializer_class = SchoolSerializer
     filterset_fields = ['district', ]
@@ -32,6 +35,7 @@ class SchoolViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class ProfileViewSet(viewsets.ModelViewSet):
+    """Užívateľské profily"""
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
     filterset_fields = ['school', 'year_of_graduation', ]
@@ -42,6 +46,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
     # pylint: disable=inconsistent-return-statements
     @action(methods=['get', 'put'], detail=False, permission_classes=[IsAuthenticated])
     def myprofile(self, request):
+        """Vráti profil prihláseného používateľa"""
         if request.method == 'GET':
             profile = Profile.objects.get(user=request.user)
             serializer = ProfileSerializer(profile)

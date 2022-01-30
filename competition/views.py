@@ -98,18 +98,21 @@ def generate_result_row(
 
 
 class CompetitionViewSet(viewsets.ReadOnlyModelViewSet):
+    """Naše aktivity"""
     queryset = Competition.objects.all()
     serializer_class = CompetitionSerializer
     permission_classes = (CompetitionRestrictedPermission,)
 
 
 class CommentViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+    """Komentáre(otázky) k úlohám"""
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     permission_classes = (CommentPermission, )
 
     @action(methods=['post'], detail=True)
     def publish(self, request, pk=None):
+        """Publikovanie, teda zverejnenie komentára"""
         comment = self.get_object()
         comment.publish()
         comment.save()
@@ -118,6 +121,7 @@ class CommentViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
 
     @action(methods=['post'], detail=True)
     def hide(self, request, pk=None):
+        """Skrytie komentára"""
         comment = self.get_object()
         comment.hide()
         comment.save()
@@ -126,6 +130,7 @@ class CommentViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
 
     @action(methods=['post'], detail=True)
     def edit(self, request, pk=None):
+        """Upravenie existujúceho komentára"""
         comment = self.get_object()
         comment.change_text(request.data['text'])
         comment.save()
@@ -142,10 +147,10 @@ class ProblemViewSet(viewsets.ModelViewSet):
     permission_classes = (CompetitionRestrictedPermission,)
 
     def perform_create(self, serializer):
-        '''
-        Vola sa pri vytvarani objektu,
+        """
+        Volá sa pri vytvarani objektu,
         checkuju sa tu permissions, ci user vie vytvorit problem v danej sutazi
-        '''
+        """
         series = serializer.validated_data['series']
         if series.can_user_modify(self.request.user):
             serializer.save()
@@ -155,6 +160,7 @@ class ProblemViewSet(viewsets.ModelViewSet):
 
     @action(methods=['get'], detail=True)
     def comments(self, request, pk=None):
+        """Vráti komentáre (otázky) k úlohe"""
         comments_objects = self.get_object().get_comments(request.user)
         comments_serialized = map(
             (lambda obj: CommentSerializer(obj).data), comments_objects)
@@ -163,6 +169,7 @@ class ProblemViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True, url_path=r'add-comment',
             permission_classes=[IsAuthenticated])
     def add_comment(self, request, pk=None):
+        """Pridá komentár (otázku) k úlohe"""
         problem = self.get_object()
         problem.add_comment(
             request.data['text'], request.user, problem.can_user_modify(request.user))
@@ -170,10 +177,12 @@ class ProblemViewSet(viewsets.ModelViewSet):
 
     @action(methods=['get'], detail=True, permission_classes=[IsAdminUser])
     def stats(self, request, pk=None):
+        """Vráti štatistiky úlohy (histogram, počet riešiteľov...)"""
         return Response(self.get_object().get_stats())
 
     @action(methods=['post'], detail=True, url_name='upload-solution')
     def upload_solution(self, request, pk=None):
+        """Nahrá užívateľské riešenie k úlohe"""
         problem = self.get_object()
 
         if not request.user.is_authenticated:
@@ -206,6 +215,7 @@ class ProblemViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, url_path='my-solution')
     def my_solution(self, request, pk=None):
+        """Vráti riešenie k úlohe pre práve prihláseného užívateľa"""
         problem = self.get_object()
         if not request.user.is_authenticated:
             raise exceptions.PermissionDenied('Je potrebné sa prihlásiť')
@@ -221,6 +231,7 @@ class ProblemViewSet(viewsets.ModelViewSet):
     @action(methods=['get'], detail=True, permission_classes=[IsAdminUser],
             url_path='download-solutions')
     def download_solutions(self, request, pk=None):
+        """Vráti .zip archív všetkých užívateľských riešení k úlohe"""
         solutions = self.get_object().solution_set.all()
         # Open StringIO to grab in-memory ZIP contents
         stream = BytesIO()
@@ -245,6 +256,7 @@ class ProblemViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True, permission_classes=[IsAdminUser],
             url_path='upload-corrected')
     def upload_solutions_with_points(self, request, pk=None):
+        """Nahrá .zip archív s opravenými riešeniami (pdf-kami)."""
         if 'file' not in request.data:
             raise exceptions.ParseError(detail='No file attached')
         zfile = request.data['file']
@@ -313,6 +325,7 @@ class SeriesViewSet(viewsets.ModelViewSet):
 
     @action(methods=['get'], detail=True)
     def results(self, request, pk=None):
+        """Vráti výsledkovku pre sériu"""
         series = self.get_object()
         if series.frozen_results is not None:
             return series.frozen_results
@@ -327,6 +340,7 @@ class SeriesViewSet(viewsets.ModelViewSet):
 
     @action(methods=['get'], detail=True)
     def stats(self, request, pk=None):
+        """Vráti štatistiky (histogramy, počty riešiteľov) všetkých úloh v sérií"""
         problems = self.get_object().problems
         stats = []
         for problem in problems:
@@ -335,6 +349,7 @@ class SeriesViewSet(viewsets.ModelViewSet):
 
     @action(methods=['get'], detail=False, url_path=r'current/(?P<competition_id>\d+)')
     def current(self, request, competition_id=None):
+        """Vráti aktuálnu sériu"""
         items = Semester.objects.filter(
             competition=competition_id
         ).current().series_set.filter(complete=False)\
@@ -345,29 +360,34 @@ class SeriesViewSet(viewsets.ModelViewSet):
 
 
 class SolutionViewSet(viewsets.ModelViewSet):
+    """Užívateľské riešenia"""
     queryset = Solution.objects.all()
     serializer_class = SolutionSerializer
 
     @action(methods=['post'], detail=True, url_path='add-positive-vote',
             permission_classes=[IsAdminUser])
     def add_positive_vote(self, request, pk=None):
+        """Pridá riešeniu kladný hlas"""
         self.get_object().set_vote(Vote.POSITIVE)
         return Response('Pridaný pozitívny hlas.', status=status.HTTP_200_OK)
 
     @action(methods=['post'], detail=True, url_path='add-negative-vote',
             permission_classes=[IsAdminUser])
     def add_negative_vote(self, request, pk=None):
+        """Pridá riešeniu negatívny hlas"""
         self.get_object().set_vote(Vote.NEGATIVE)
         return Response('Pridaný negatívny hlas.', status=status.HTTP_200_OK)
 
     @action(methods=['post'], detail=True, url_path='remove-vote',
             permission_classes=[IsAdminUser])
     def remove_vote(self, request, pk=None):
+        """Odoberie riešeniu hlas"""
         self.get_object().set_vote(Vote.NONE)
         return Response('Hlas Odobraný.', status=status.HTTP_200_OK)
 
     @action(methods=['get'], detail=True, url_path='download-solution')
     def download_solution(self, request, pk=None):
+        """Stiahne riešenie"""
         solution = self.get_object()
         response = HttpResponse(
             solution.solution, content_type='application/pdf')
@@ -376,6 +396,7 @@ class SolutionViewSet(viewsets.ModelViewSet):
 
     @action(methods=['get'], detail=True, url_path='download-corrected')
     def download_corrected(self, request, pk=None):
+        """Stiahne opravenú verziu riešenia"""
         solution = self.get_object()
         response = HttpResponse(
             solution.solution, content_type='application/pdf')
@@ -384,6 +405,7 @@ class SolutionViewSet(viewsets.ModelViewSet):
 
 
 class SemesterListViewSet(viewsets.ReadOnlyModelViewSet):
+    """Zoznam semestrov (iba základné informácie)"""
     queryset = Semester.objects.all()
     serializer_class = SemesterSerializer
     permission_classes = (CompetitionRestrictedPermission,)
@@ -392,6 +414,7 @@ class SemesterListViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class SemesterViewSet(viewsets.ModelViewSet):
+    """Semestre - aj so sériami a problémami"""
     queryset = Semester.objects.all()
     serializer_class = SemesterWithProblemsSerializer
     permission_classes = (CompetitionRestrictedPermission,)
@@ -399,10 +422,10 @@ class SemesterViewSet(viewsets.ModelViewSet):
     http_method_names = ['get', 'post', 'head']
 
     def perform_create(self, serializer):
-        '''
+        """
         Vola sa pri vytvarani objektu,
         checkuju sa tu permissions, ci user vie vytvorit semester v danej sutazi
-        '''
+        """
         competition = serializer.validated_data['competition']
         if competition.can_user_modify(self.request.user):
             serializer.save()
@@ -412,6 +435,7 @@ class SemesterViewSet(viewsets.ModelViewSet):
 
     @staticmethod
     def semester_results(semester):
+        """Vyrobí výsledky semestra"""
         if semester.frozen_results is not None:
             return semester.frozen_results
         results = []
@@ -424,12 +448,14 @@ class SemesterViewSet(viewsets.ModelViewSet):
 
     @action(methods=['get'], detail=True)
     def results(self, request, pk=None):
+        """Vráti výsledkovku semestra"""
         semester = self.get_object()
         current_results = SemesterViewSet.semester_results(semester)
         return Response(current_results, status=status.HTTP_200_OK)
 
     @action(methods=['get'], detail=True, permission_classes=[IsAdminUser])
     def schools(self, request, pk=None):
+        """Vráti školy, ktorých žiaci boli zapojený do semestra"""
         schools = School.objects.filter(eventregistration__event=pk)\
             .distinct()\
             .order_by('city', 'street')
@@ -439,6 +465,7 @@ class SemesterViewSet(viewsets.ModelViewSet):
     @action(methods=['get'], detail=True,
             url_path='offline-schools', permission_classes=[IsAdminUser])
     def offline_schools(self, request, pk=None):
+        """Vráti školy, ktorých aspoň nejaký žiaci odovzdali papierové riešenia"""
         schools = School.objects.filter(eventregistration__event=pk)\
             .filter(eventregistration__solution__is_online=False)\
             .distinct()\
@@ -450,6 +477,7 @@ class SemesterViewSet(viewsets.ModelViewSet):
             url_path=r'invitations/(?P<num_participants>\d+)/(?P<num_substitutes>\d+)',
             permission_classes=[IsAdminUser])
     def invitations(self, request, pk=None, num_participants=32, num_substitutes=20):
+        """Vráti TeXovský kus zdrojáku pre výrobu pozvánky na sústredenie pre účastníka"""
         semester = self.get_object()
         num_participants = int(num_participants)
         num_substitutes = int(num_substitutes)
@@ -467,6 +495,7 @@ class SemesterViewSet(viewsets.ModelViewSet):
             url_path=r'school-invitations/(?P<num_participants>\d+)/(?P<num_substitutes>\d+)',
             permission_classes=[IsAdminUser])
     def school_invitations(self, request, pk=None, num_participants=32, num_substitutes=20):
+        """Vráti TeXovský kus zdrojáku pre výrobu pozvánky na sústredenie pre školu"""
         num_participants = int(num_participants)
         num_substitutes = int(num_substitutes)
         semester = self.get_object()
@@ -491,6 +520,7 @@ class SemesterViewSet(viewsets.ModelViewSet):
 
     @action(methods=['get'], detail=False, url_path=r'current/(?P<competition_id>\d+)')
     def current(self, request, competition_id=None):
+        """Vráti aktuálny semester"""
         current_semester = self.get_queryset().filter(
             competition=competition_id).current()
         serializer = SemesterWithProblemsSerializer(
@@ -499,6 +529,7 @@ class SemesterViewSet(viewsets.ModelViewSet):
 
     @action(methods=['get'], detail=False, url_path=r'current-results/(?P<competition_id>\d+)')
     def current_results(self, request, competition_id=None):
+        """Vráti výsledky pre aktuálny semester"""
         current_semester = self.get_queryset().filter(
             competition=competition_id).current()
         current_results = SemesterViewSet.semester_results(current_semester)
@@ -506,6 +537,7 @@ class SemesterViewSet(viewsets.ModelViewSet):
 
     @action(methods=['get'], detail=True)
     def participants(self, request, pk=None):
+        """Vráti všetkých užívateľov zapojených do semestra"""
         semester = self.get_object()
         participants_id = []
 
@@ -523,6 +555,7 @@ class SemesterViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def post(self, request, format_post):
+        """Založí nový semester"""
         serializer = SemesterSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -531,16 +564,17 @@ class SemesterViewSet(viewsets.ModelViewSet):
 
 
 class EventViewSet(viewsets.ModelViewSet):
+    """Ročníky akcií (napríklad Matboj 2021)"""
     queryset = Event.objects.all()
     serializer_class = EventSerializer
     filterset_fields = ['school_year', 'competition', ]
     permission_classes = (CompetitionRestrictedPermission,)
 
     def perform_create(self, serializer):
-        '''
+        """
         Vola sa pri vytvarani objektu,
         checkuju sa tu permissions, ci user vie vytvorit event v danej sutazi
-        '''
+        """
         competition = serializer.validated_data['competition']
         if competition.can_user_modify(self.request.user):
             serializer.save()
@@ -550,6 +584,7 @@ class EventViewSet(viewsets.ModelViewSet):
 
     @action(methods=['post'], detail=True, permission_classes=[IsAuthenticated])
     def register(self, request, pk=None):
+        """Registruje prihláseného užívateľa na akciu"""
         event = self.get_object()
         profile = request.user.profile
         # TODO: Overiť či sa môže registrovať ... či nie je starý
@@ -575,6 +610,7 @@ class EventViewSet(viewsets.ModelViewSet):
 
 
 class EventRegistrationViewSet(viewsets.ModelViewSet):
+    """Registrácie na akcie"""
     queryset = EventRegistration.objects.all()
     serializer_class = EventRegistrationSerializer
     filterset_fields = ['event', 'profile', ]
@@ -582,6 +618,7 @@ class EventRegistrationViewSet(viewsets.ModelViewSet):
 
 
 class UnspecifiedPublicationViewSet(viewsets.ModelViewSet):
+    """Publikácie(výsledky, brožúrky ... nie časopis)"""
     queryset = UnspecifiedPublication.objects.all()
     serializer_class = UnspecifiedPublicationSerializer
     permission_classes = (CompetitionRestrictedPermission,)
@@ -600,6 +637,7 @@ class UnspecifiedPublicationViewSet(viewsets.ModelViewSet):
 
     @action(methods=['get'], detail=True, url_path='download')
     def download_publication(self, request, pk=None):
+        """Stiahne súbor publikácie"""
         publication = self.get_object()
         response = HttpResponse(
             publication.file, content_type=mime_type(publication.file))
@@ -608,6 +646,7 @@ class UnspecifiedPublicationViewSet(viewsets.ModelViewSet):
 
     @action(methods=['post'], detail=False, url_path='upload', permission_classes=[IsAdminUser])
     def upload_publication(self, request):
+        """Nahrá súbor publikácie"""
         if 'file' not in request.data:
             raise exceptions.ParseError(detail='Request neobsahoval súbor')
 
@@ -626,12 +665,14 @@ class UnspecifiedPublicationViewSet(viewsets.ModelViewSet):
 
 
 class SemesterPublicationViewSet(viewsets.ModelViewSet):
+    """Časáky"""
     queryset = SemesterPublication.objects.all()
     serializer_class = SemesterPublicationSerializer
     permission_classes = (CompetitionRestrictedPermission,)
 
     @action(methods=['get'], detail=True, url_path='download')
     def download_publication(self, request, pk=None):
+        """Stiahne časopis"""
         publication = self.get_object()
         response = HttpResponse(
             publication.file, content_type=mime_type(publication.file))
@@ -640,6 +681,7 @@ class SemesterPublicationViewSet(viewsets.ModelViewSet):
 
     @action(methods=['post'], detail=False, url_path='upload', permission_classes=[IsAdminUser])
     def upload_publication(self, request):
+        """Uploadne časopis"""
         if 'file' not in request.data:
             raise exceptions.ParseError(detail='Request neobsahoval súbor')
 
@@ -668,10 +710,12 @@ class SemesterPublicationViewSet(viewsets.ModelViewSet):
 
 
 class GradeViewSet(viewsets.ReadOnlyModelViewSet):
+    """Ročníky riešiteľov (Z9,S1 ...)"""
     queryset = Grade.objects.filter(is_active=True).all()
     serializer_class = GradeSerializer
 
 
 class LateTagViewSet(viewsets.ReadOnlyModelViewSet):
+    """Omeškania"""
     queryset = LateTag.objects.all()
     serializer_class = LateTagSerializer
