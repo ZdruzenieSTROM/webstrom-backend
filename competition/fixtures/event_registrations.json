@@ -3,7 +3,7 @@
         "model": "competition.eventregistration",
         "pk": 0,
         "fields": {
-            "profile": 8,
+            "profile": 18,
             "school": "000598071",
             "grade": 12,
             "event": 0
@@ -13,7 +13,7 @@
         "model": "competition.eventregistration",
         "pk": 1,
         "fields": {
-            "profile": 9,
+            "profile": 19,
             "school": "000598071",
             "grade": 11,
             "event": 0
@@ -23,7 +23,7 @@
         "model": "competition.eventregistration",
         "pk": 2,
         "fields": {
-            "profile": 10,
+            "profile": 20,
             "school": "000598071",
             "grade": 10,
             "event": 0
@@ -33,7 +33,7 @@
         "model": "competition.eventregistration",
         "pk": 3,
         "fields": {
-            "profile": 11,
+            "profile": 21,
             "school": "000598071",
             "grade": 9,
             "event": 0
@@ -43,7 +43,7 @@
         "model": "competition.eventregistration",
         "pk": 4,
         "fields": {
-            "profile": 12,
+            "profile": 22,
             "school": "000598071",
             "grade": 11,
             "event": 0
@@ -53,7 +53,7 @@
         "model": "competition.eventregistration",
         "pk": 6,
         "fields": {
-            "profile": 8,
+            "profile": 18,
             "school": "000598071",
             "grade": 11,
             "event": 2
@@ -63,7 +63,7 @@
         "model": "competition.eventregistration",
         "pk": 7,
         "fields": {
-            "profile": 9,
+            "profile": 19,
             "school": "000598071",
             "grade": 10,
             "event": 2
@@ -73,7 +73,7 @@
         "model": "competition.eventregistration",
         "pk": 8,
         "fields": {
-            "profile": 10,
+            "profile": 20,
             "school": "000598071",
             "grade": 10,
             "event": 1
@@ -83,7 +83,7 @@
         "model": "competition.eventregistration",
         "pk": 9,
         "fields": {
-            "profile": 11,
+            "profile": 21,
             "school": "000598071",
             "grade": 9,
             "event": 1
