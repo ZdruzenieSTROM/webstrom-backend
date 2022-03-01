@@ -79,3 +79,9 @@ Nainštaluj si (opäť, vo vnútri svojho virtual environmentu) package `autopep
 ```
 "editor.formatOnSave": true,
 ```
+# Migrácia starej databázy
+
+Pre načítanie dát zo starej stránky si najrpv potrebuješ stiahnuť starú databázu k sebe. Potom vybrané dáta z nej načítaš pomocou príkazu:
+```
+python manage.py loadb <cesta k databázi>
+```
