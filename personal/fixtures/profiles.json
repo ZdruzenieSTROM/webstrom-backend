@@ -1,23 +1,9 @@
 [
     {
         "model": "personal.Profile",
-        "pk": 2,
+        "pk": 14,
         "fields": {
-            "user": 2,
-            "first_name": "",
-            "last_name": "",
-            "nickname": "",
-            "school": 0,
-            "year_of_graduation": 0,
-            "phone": "",
-            "parent_phone": ""
-        }
-    },
-    {
-        "model": "personal.Profile",
-        "pk": 4,
-        "fields": {
-            "user": 4,
+            "user": 20,
             "first_name": "\ud83e\udd89",
             "last_name": "\ud83e\udd89",
             "nickname": "\ud83e\udd89",
@@ -29,7 +15,7 @@
     },
     {
         "model": "personal.Profile",
-        "pk": 5,
+        "pk": 15,
         "fields": {
             "user": 47,
             "first_name": "Pat",
@@ -42,7 +28,7 @@
     },
     {
         "model": "personal.Profile",
-        "pk": 6,
+        "pk": 16,
         "fields": {
             "user": 42,
             "first_name": "Mat",
@@ -55,9 +41,9 @@
     },
     {
         "model": "personal.Profile",
-        "pk": 7,
+        "pk": 17,
         "fields": {
-            "user": 3,
+            "user": 17,
             "first_name": "\ud83d\ude65\ud83d\udd4f\ud83d\udd45\ud83d\udd79\ud83d\udda8\ud83d\uddf0\ud83d\udde2\ud83d\udddd\ud83d\udddc\ud83d\uddce\ud83d\uddd1\ud83d\udde1\ud83d\uddff\ud83d\uddfa\ud83e\udd49\ud83e\udd36\ud83e\udd00\ud83e\udd68\ud83e\uddc1\ud83d\ude67",
             "last_name": "\ud83d\ude6c\ud83e\udeb5\ud83e\ude78\ud83e\uded5\ud83e\uded3\ud83e\ude90\ud83e\ude80\ud83e\ude86\ud83e\udea6\ud83e\udec0\ud83e\udec2\ud83d\ude6e",
             "nickname": "\ud83d\ude75////////\ud83d\ude75\ud83d\ude7f\ud83d\ude7f\ud83d\ude7f\ud83d\ude7f\ud83d\ude7f\ud83d\ude7f\ud83d\ude7f\ud83d\ude7f\ud83d\ude7f\ud83d\ude7f\ud83d\ude7f\ud83d\ude75",
@@ -68,9 +54,9 @@
     },
     {
         "model": "personal.Profile",
-        "pk": 8,
+        "pk": 18,
         "fields": {
-            "user": 5,
+            "user": 15,
             "first_name": "Ucastnik",
             "last_name": "Jeden",
             "school": 160997,
@@ -81,9 +67,9 @@
     },
     {
         "model": "personal.Profile",
-        "pk": 9,
+        "pk": 19,
         "fields": {
-            "user": 6,
+            "user": 16,
             "first_name": "Ucastnik",
             "last_name": "Dva",
             "school": 160997,
@@ -94,9 +80,9 @@
     },
     {
         "model": "personal.Profile",
-        "pk": 10,
+        "pk": 20,
         "fields": {
-            "user": 7,
+            "user": 17,
             "first_name": "Ucastnik",
             "last_name": "Tri",
             "school": "000598071",
@@ -107,9 +93,9 @@
     },
     {
         "model": "personal.Profile",
-        "pk": 11,
+        "pk": 21,
         "fields": {
-            "user": 8,
+            "user": 18,
             "first_name": "Ucastnik",
             "last_name": "Styri",
             "school": "000160997",
@@ -120,53 +106,13 @@
     },
     {
         "model": "personal.Profile",
-        "pk": 12,
+        "pk": 22,
         "fields": {
-            "user": 9,
+            "user": 19,
             "first_name": "Ucastnik",
             "last_name": "Pat",
             "school": "000160997",
             "year_of_graduation": 2025,
-            "phone": "+421912345678",
-            "parent_phone": "+421912345678"
-        }
-    },
-    {
-        "model": "personal.Profile",
-        "pk": 13,
-        "fields": {
-            "user": 10,
-            "first_name": "Ucastnik",
-            "last_name": "Sest",
-            "school": "000160997",
-            "year_of_graduation": 2022,
-            "phone": "+421912345678",
-            "parent_phone": "+421912345678"
-        }
-    },
-    {
-        "model": "personal.Profile",
-        "pk": 14,
-        "fields": {
-            "user": 11,
-            "first_name": "Veducko",
-            "last_name": "Kristin",
-            "nickname": "Kikita",
-            "school": "000598071",
-            "year_of_graduation": 2016,
-            "phone": "+421912345678"
-        }
-    },
-    {
-        "model": "personal.Profile",
-        "pk": 15,
-        "fields": {
-            "user": 12,
-            "first_name": "Veducko ",
-            "last_name": "Janik",
-            "nickname": "Chalan z bicom",
-            "school": "000160997",
-            "year_of_graduation": 2021,
             "phone": "+421912345678",
             "parent_phone": "+421912345678"
         }
