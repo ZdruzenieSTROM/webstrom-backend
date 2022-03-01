@@ -43,7 +43,7 @@ class PostViewSet(viewsets.ModelViewSet):
     @action(detail=False)
     def visible(self, request):
         """Iba príspevky viditeľné pre užívateľov"""
-        posts = Post.objects.visible()
+        posts = self.filter_queryset(self.get_queryset()).visible()
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data)
 
