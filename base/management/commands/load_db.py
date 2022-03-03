@@ -6,7 +6,10 @@ from django.db.models import Q
 import pytz
 from allauth.account.models import EmailAddress
 
-from competition.models import Semester, Series, Problem, Competition, Grade
+from competition.models import (
+    EventRegistration, Semester, Series,
+    Problem, Competition, Grade, Solution
+)
 from competition.utils import get_school_year_by_date
 from user.models import User
 from personal.models import Profile, School
@@ -37,16 +40,29 @@ COMPETITION_ID_MAPPING = {
     3: Competition.objects.get(pk=2)
 }
 
-USERS_QUERY = '''
-    SELECT user.email,user.is_staff,user.is_active,user.first_name,user.last_name, user.date_joined,
-            user.username,user.is_superuser,user.password,phone_number,parent_phone_number,
-            classlevel,school.name AS school_name,addr.street AS school_street,
+SCHOOL_QUERY = '''
+    SELECT school.id,school.name AS school_name,addr.street AS school_street,
             addr.city AS school_city,addr.postal_number AS school_zip_code
+    FROM schools_school AS school
+    INNER JOIN schools_address AS addr ON school.address_id=addr.id
+'''
+
+USERS_QUERY = '''
+    SELECT user.id,user.email,user.is_staff,user.is_active,user.first_name,user.last_name, user.date_joined,
+            user.username,user.is_superuser,user.password,phone_number,parent_phone_number,
+            classlevel,prof.school_id AS school_id
     FROM auth_user AS user
     INNER JOIN profiles_userprofile AS prof ON prof.user_id=user.id
-    INNER JOIN schools_school AS school ON prof.school_id=school.id
-    INNER JOIN schools_address AS addr ON school.address_id=addr.id
-    WHERE email<>''
+    WHERE last_name<>''
+'''
+
+SOLUTION_QUERY = '''
+    SELECT id,score,problem_id,user_id
+    FROM problems_usersolution
+'''
+SEMESTERREG_QUERY = '''
+    SELECT id,user_id,season_id,classlevel,school_id
+    FROM profiles_userseasonregistration
 '''
 
 SUM_METHOD_DICT = {
@@ -54,6 +70,9 @@ SUM_METHOD_DICT = {
     'SUCET_SERIE_32': '',
     'SUCET_SERIE_MATIK': '',
     'SUCET_SERIE_MALYNAR': '',
+    'SUCET_SERIE_46': '',
+    'SUCET_SERIE_MALYNAR_31': '',
+    'SUCET_SERIE_MATIK_35': ''
 }
 
 
@@ -81,7 +100,7 @@ def estimate_school(user):
     )
     if school.count() == 1:
         return school.first()
-    return School.objects.get_unspecified_value()
+    raise School.DoesNotExist
 
 
 class Command(BaseCommand):
@@ -145,51 +164,99 @@ class Command(BaseCommand):
         problem_id_mapping = self._load_problems(conn, series_id_mapping)
         return semester_id_mapping, series_id_mapping, problem_id_mapping
 
-    def _load_users(self, conn):
+    def _load_users(self, conn, school_id_map):
+        user_id_mapping = {}
         cursor = conn.cursor()
         cursor.execute(USERS_QUERY)
         users = cursor.fetchall()
         for user in users:
-            new_user = User.objects.create_user(
-                email=user['email'],
-                verified_email=True,
-                is_staff=user['is_staff'],
-                is_active=user['is_active'],
-                date_joined=localize(user['date_joined']),
+            new_user = None
+            if user['email'] != '':
+                new_user = User.objects.create_user(
+                    email=user['email'],
+                    verified_email=True,
+                    is_staff=user['is_staff'],
+                    is_active=user['is_active'],
+                    date_joined=localize(user['date_joined']),
 
-            )
-            email_address = EmailAddress(
-                user=new_user,
-                email=user['email'],
-                verified=True,
-                primary=True
-            )
-            email_address.save()
-            new_user.password = user['password']
-            # new_user.set_password(user['password'])
-            new_user.save()
-            school = estimate_school(user)
+                )
+                user_id_mapping[user['id']] = new_user
+                EmailAddress.objects.create(
+                    user=new_user,
+                    email=user['email'],
+                    verified=True,
+                    primary=True
+                )
+                new_user.password = user['password']
+                # new_user.set_password(user['password'])
+                new_user.save()
             try:
                 grade = Grade.objects.get(
                     tag=user['classlevel']).get_year_of_graduation_by_date()
             except Grade.DoesNotExist:
                 grade = 2000
 
-            profile = Profile(
+            Profile.objects.create(
                 first_name=user['first_name'],
                 last_name=user['last_name'],
                 user=new_user,
                 nickname=user['username'],
-                school=school,
+                school=school_id_map.get(
+                    user['school_id'], School.objects.get_unspecified_value()),
                 year_of_graduation=grade,
-                phone=user['phone_number'],
-                parent_phone=user['parent_phone_number'],
+                phone=user['phone_number'] or '',
+                parent_phone=user['parent_phone_number'] or '',
                 gdpr=True
             )
-            profile.save()
+        return user_id_mapping
 
-    def _load_results(self, conn):
-        pass
+    def _create_school_mapping(self, conn):
+        school_id_mapping = {None: School.objects.get_unspecified_value()}
+        cursor = conn.cursor()
+        cursor.execute(SCHOOL_QUERY)
+        schools = cursor.fetchall()
+        success_counter = 0
+        for school in schools:
+            try:
+                school_id = estimate_school(school)
+                school_id_mapping[school['id']] = school_id
+                success_counter += 1
+            except School.DoesNotExist:
+                print(f'Nepodarilo sa matchnút {school}')
+                school_id_mapping[school['id']
+                                  ] = School.objects.get_unspecified_value()
+        print(
+            f'Úspešne pripárovaných {success_counter}/{len(school_id_mapping)}')
+        return school_id_mapping
+
+    def _load_user_registrations(self, conn, user_id_map, season_id_map, school_id_map):
+        cursor = conn.cursor()
+        cursor.execute(SEMESTERREG_QUERY)
+        user_registrations = cursor.fetchall()
+        for user_registration in user_registrations:
+            EventRegistration.objects.create(
+                profile=user_id_map[user_registration['user_id']].profile,
+                school=school_id_map[user_registration['school_id']],
+                grade=Grade.objects.get(tag=user_registration['classlevel']),
+                event=season_id_map[user_registration['season_id']]
+            )
+
+    def _load_solutions(self, conn, problem_id_map, user_id_map):
+        cursor = conn.cursor()
+        cursor.execute(SOLUTION_QUERY)
+        solutions = cursor.fetchall()
+        for solution in solutions:
+            problem = Problem.objects.get(
+                pk=problem_id_map[solution['problem_id']]
+            )
+            Solution.objects.create(
+                problem=problem,
+                semester_registration=EventRegistration.objects.get(
+                    event=problem.series.semester,
+                    profile=user_id_map[solution['user_id']]),
+                score=solution['score'],
+                uploaded_at=solution['added_at']
+            )
 
     def add_arguments(self, parser):
         # Positional arguments
@@ -206,9 +273,15 @@ class Command(BaseCommand):
                     row_dict[col[0]] = row[idx]
                 return row_dict
             conn.row_factory = dict_factory
-            self._load_competitions(conn)
-            self._load_users(conn)
-            self._load_results(conn)
+            semester_id_map, _, problem_id_map = self._load_competitions(
+                conn)
+            school_id_map = self._create_school_mapping(conn)
+            user_id_map = self._load_users(conn, school_id_map)
+            print(f'Načítaných {len(user_id_map)} používateľov')
+            self._load_user_registrations(
+                conn, user_id_map, semester_id_map, school_id_map)
+            print(f'Načítané registrácie')
+            self._load_solutions(conn, problem_id_map, user_id_map)
         finally:
             if conn:
                 conn.close()

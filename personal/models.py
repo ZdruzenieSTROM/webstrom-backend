@@ -84,7 +84,7 @@ class Profile(models.Model):
     last_name = models.CharField(verbose_name='priezvisko', max_length=150)
 
     user = models.OneToOneField(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, primary_key=True)
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
 
     nickname = models.CharField(
         verbose_name='prezývka', max_length=32, blank=True, )
