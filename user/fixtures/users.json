@@ -53,8 +53,8 @@
         "pk": 2,
         "fields": {
             "user": 2,
-            "first_name": "Martin",
-            "last_name": "Mihalik",
+            "first_name": "Vedúci",
+            "last_name": "Strom",
             "school": 1,
             "year_of_graduation": 2019
         }
@@ -87,10 +87,10 @@
         "pk": 3,
         "fields": {
             "user": 3,
-            "first_name": "Gabriela",
-            "last_name": "Genciova",
+            "first_name": "Vedúci",
+            "last_name": "Kríčky",
             "school": 1,
-            "year_of_graduation": 2023
+            "year_of_graduation": 2024
         }
     },
     {
@@ -98,7 +98,7 @@
         "pk": 3,
         "fields": {
             "user": 3,
-            "email": "veduci_krickov@strom.sk",
+            "email": "veduci_kricky@strom.sk",
             "verified": true,
             "primary": true
         }
@@ -107,13 +107,10 @@
         "model": "user.User",
         "pk": 4,
         "fields": {
-            "email": "ucastnik@strom.sk",
+            "email": "ucastnik_strom@strom.sk",
             "password": "pbkdf2_sha256$180000$NyzwabHNPn2K$sTirqoFPMkLZpnUHkCpzUFZnAsbGM7Bp2+EoN8sOuQA=",
             "is_superuser": false,
-            "is_staff": false,
-            "groups": [
-                2
-            ]
+            "is_staff": false
         }
     },
     {
@@ -121,10 +118,10 @@
         "pk": 4,
         "fields": {
             "user": 4,
-            "first_name": "Frederik",
-            "last_name": "Tenai",
-            "school": 1,
-            "year_of_graduation": 2030
+            "first_name": "Účastník",
+            "last_name": "Strom",
+            "school": "000598071",
+            "year_of_graduation": 2024
         }
     },
     {
@@ -132,7 +129,100 @@
         "pk": 4,
         "fields": {
             "user": 4,
-            "email": "ucastnik@strom.sk",
+            "email": "ucastnik_strom@strom.sk",
+            "verified": true,
+            "primary": true
+        }
+    },
+    {
+        "model": "user.User",
+        "pk": 5,
+        "fields": {
+            "email": "ucastnik_matik@strom.sk",
+            "password": "pbkdf2_sha256$180000$NyzwabHNPn2K$sTirqoFPMkLZpnUHkCpzUFZnAsbGM7Bp2+EoN8sOuQA=",
+            "is_superuser": false,
+            "is_staff": false
+        }
+    },
+    {
+        "model": "personal.Profile",
+        "pk": 5,
+        "fields": {
+            "user": 5,
+            "first_name": "Účastník",
+            "last_name": "Matik",
+            "school": "000598071",
+            "year_of_graduation": 2027
+        }
+    },
+    {
+        "model": "account.emailaddress",
+        "pk": 5,
+        "fields": {
+            "user": 5,
+            "email": "ucastnik_matik@strom.sk",
+            "verified": true,
+            "primary": true
+        }
+    },
+    {
+        "model": "user.User",
+        "pk": 6,
+        "fields": {
+            "email": "ucastnik_malynar@strom.sk",
+            "password": "pbkdf2_sha256$180000$NyzwabHNPn2K$sTirqoFPMkLZpnUHkCpzUFZnAsbGM7Bp2+EoN8sOuQA=",
+            "is_superuser": false,
+            "is_staff": false
+        }
+    },
+    {
+        "model": "personal.Profile",
+        "pk": 6,
+        "fields": {
+            "user": 6,
+            "first_name": "Účastník",
+            "last_name": "Malynár",
+            "school": "000598071",
+            "year_of_graduation": 2030
+        }
+    },
+    {
+        "model": "account.emailaddress",
+        "pk": 6,
+        "fields": {
+            "user": 6,
+            "email": "ucastnik_malynar@strom.sk",
+            "verified": true,
+            "primary": true
+        }
+    },
+    {
+        "model": "user.User",
+        "pk": 7,
+        "fields": {
+            "email": "nahodny_vysokoskolak@strom.sk",
+            "password": "pbkdf2_sha256$180000$NyzwabHNPn2K$sTirqoFPMkLZpnUHkCpzUFZnAsbGM7Bp2+EoN8sOuQA=",
+            "is_superuser": false,
+            "is_staff": false
+        }
+    },
+    {
+        "model": "personal.Profile",
+        "pk": 7,
+        "fields": {
+            "user": 7,
+            "first_name": "Náhodný",
+            "last_name": "Vysokoškolák",
+            "school": 1,
+            "year_of_graduation": 2015
+        }
+    },
+    {
+        "model": "account.emailaddress",
+        "pk": 7,
+        "fields": {
+            "user": 7,
+            "email": "nahodny_vysokoskolak@strom.sk",
             "verified": true,
             "primary": true
         }
