@@ -1,8 +1,10 @@
 import datetime
+import unidecode
+import re
 import sqlite3
 from django.core.management import BaseCommand
 from django.utils.dateparse import parse_datetime
-from django.db.models import Q
+from django.db.models import Q, F
 import pytz
 from allauth.account.models import EmailAddress
 
@@ -21,7 +23,7 @@ SERIES_QUERY = '''
 '''
 
 SEMESTER_QUERY = '''
-    SELECT id,competition_id,end,name,year,number,start 
+    SELECT id,competition_id,end,name,year,number,start
     FROM competitions_season
 '''
 
@@ -53,11 +55,11 @@ USERS_QUERY = '''
             classlevel,prof.school_id AS school_id
     FROM auth_user AS user
     INNER JOIN profiles_userprofile AS prof ON prof.user_id=user.id
-    WHERE last_name<>''
+    WHERE last_name<>'' OR user.id IN (SELECT user_id FROM profiles_userseasonregistration)
 '''
 
 SOLUTION_QUERY = '''
-    SELECT id,score,problem_id,user_id
+    SELECT id,score,problem_id,user_id,added_at
     FROM problems_usersolution
 '''
 SEMESTERREG_QUERY = '''
@@ -89,17 +91,58 @@ def to_school_year(year, competition):
     )
 
 
-def estimate_school(user):
-    school = School.objects.filter(name=user['school_name'])
-    if school.count() == 1:
-        return school.first()
-    school = School.objects.filter(
-        Q(street=user['school_street']),
-        Q(zip_code=user['school_zip_code'].replace(
-            ' ', '')) | Q(city=user['school_city'])
+def get_type(name):
+    clean_name = unidecode.unidecode(name.lower())
+    if 'gymnazium' in clean_name:
+        return 0
+    elif 'stredna' in clean_name or 'ss' in clean_name:
+        return 1
+    elif 'zakladna' in clean_name or 'zs' in clean_name:
+        return 2
+    elif 'spojena skola' in clean_name:
+        return 3
+
+
+def estimate_school(school_dict):
+    type = get_type(school_dict['school_name'])
+    city_regex = r'^'+re.escape(school_dict['school_city'])+r'(-.*)?$'
+    schools_in_city = School.objects.filter(
+        Q(zip_code=school_dict['school_zip_code'].replace(' ', '')) |
+        Q(city__regex=city_regex)
     )
-    if school.count() == 1:
-        return school.first()
+    schools = schools_in_city.filter(
+        name__iexact=school_dict['school_name'].lower())
+    if schools.count() == 1:
+        return schools.first()
+
+    # Filter by type
+    schools = [school for school in schools_in_city if get_type(
+        school.name) == type]
+    if len(schools) == 1:
+        return schools[0]
+
+    # Filter by address
+    def match_address(addr1, addr2):
+        def parse(addr):
+            street = ''.join(filter(lambda ch: ch.isalpha(), addr))
+            street = unidecode.unidecode(street.lower()).replace(' ', '')
+            number = re.search(r'(\d+/)?(\d+)', addr)
+            if number is not None:
+                number = number.group(2)
+            return street, number
+        street1, number1 = parse(addr1)
+        street2, number2 = parse(addr2)
+        if street1 == street2:
+            if number1 is None or number2 is None or number1 == number2:
+                return True
+        return False
+
+    schools = [school for school in schools
+               if match_address(school.street, school_dict['school_street'])]
+    if len(schools) == 1:
+        return schools[0]
+    print(schools)
+    #     x = input()
     raise School.DoesNotExist
 
 
@@ -180,7 +223,7 @@ class Command(BaseCommand):
                     date_joined=localize(user['date_joined']),
 
                 )
-                user_id_mapping[user['id']] = new_user
+
                 EmailAddress.objects.create(
                     user=new_user,
                     email=user['email'],
@@ -196,7 +239,7 @@ class Command(BaseCommand):
             except Grade.DoesNotExist:
                 grade = 2000
 
-            Profile.objects.create(
+            profile = Profile.objects.create(
                 first_name=user['first_name'],
                 last_name=user['last_name'],
                 user=new_user,
@@ -208,6 +251,7 @@ class Command(BaseCommand):
                 parent_phone=user['parent_phone_number'] or '',
                 gdpr=True
             )
+            user_id_mapping[user['id']] = profile
         return user_id_mapping
 
     def _create_school_mapping(self, conn):
@@ -234,10 +278,14 @@ class Command(BaseCommand):
         cursor.execute(SEMESTERREG_QUERY)
         user_registrations = cursor.fetchall()
         for user_registration in user_registrations:
+            try:
+                grade = Grade.objects.get(tag=user_registration['classlevel'])
+            except Grade.DoesNotExist:
+                grade = Grade.objects.get(tag='XX')
             EventRegistration.objects.create(
-                profile=user_id_map[user_registration['user_id']].profile,
+                profile=user_id_map[user_registration['user_id']],
                 school=school_id_map[user_registration['school_id']],
-                grade=Grade.objects.get(tag=user_registration['classlevel']),
+                grade=grade,
                 event=season_id_map[user_registration['season_id']]
             )
 
@@ -246,17 +294,21 @@ class Command(BaseCommand):
         cursor.execute(SOLUTION_QUERY)
         solutions = cursor.fetchall()
         for solution in solutions:
-            problem = Problem.objects.get(
-                pk=problem_id_map[solution['problem_id']]
-            )
-            Solution.objects.create(
-                problem=problem,
-                semester_registration=EventRegistration.objects.get(
-                    event=problem.series.semester,
-                    profile=user_id_map[solution['user_id']]),
-                score=solution['score'],
-                uploaded_at=solution['added_at']
-            )
+            try:
+                Solution.objects.create(
+                    problem=problem_id_map[solution['problem_id']],
+                    semester_registration=EventRegistration.objects.get(
+                        event=problem_id_map[solution['problem_id']
+                                             ].series.semester,
+                        profile=user_id_map[solution['user_id']]),
+                    score=solution['score'],
+                    uploaded_at=solution['added_at']
+                )
+            except EventRegistration.DoesNotExist:
+                print(problem_id_map[solution['problem_id']
+                                     ].series.semester)
+                print(user_id_map[solution['user_id']])
+                print('-'*30)
 
     def add_arguments(self, parser):
         # Positional arguments
@@ -273,15 +325,15 @@ class Command(BaseCommand):
                     row_dict[col[0]] = row[idx]
                 return row_dict
             conn.row_factory = dict_factory
-            semester_id_map, _, problem_id_map = self._load_competitions(
-                conn)
+            # semester_id_map, _, problem_id_map = self._load_competitions(
+            #     conn)
             school_id_map = self._create_school_mapping(conn)
-            user_id_map = self._load_users(conn, school_id_map)
-            print(f'Načítaných {len(user_id_map)} používateľov')
-            self._load_user_registrations(
-                conn, user_id_map, semester_id_map, school_id_map)
-            print(f'Načítané registrácie')
-            self._load_solutions(conn, problem_id_map, user_id_map)
+            # user_id_map = self._load_users(conn, school_id_map)
+            # print(f'Načítaných {len(user_id_map)} používateľov')
+            # self._load_user_registrations(
+            #     conn, user_id_map, semester_id_map, school_id_map)
+            # print(f'Načítané registrácie')
+            # self._load_solutions(conn, problem_id_map, user_id_map)
         finally:
             if conn:
                 conn.close()
