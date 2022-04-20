@@ -29,7 +29,7 @@ class SeminarViewsTest(APITestCase):
                          models.Seminar.objects.create(name="Matik"),
                          models.Seminar.objects.create(name="Strom")]
 
-    URL_PREFIX = '/problem_database/seminars'
+    URL_PREFIX = '/problem-database/seminars'
 
     def test_can_browse_all_seminars(self):
         response = self.client.get(self.URL_PREFIX, {}, 'json')
@@ -73,7 +73,7 @@ class ActivityTypeViewsTest(APITestCase):
                                models.ActivityType.objects.create(
                                    name="Lomihlav", seminar=seminar2)]
 
-    URL_PREFIX = '/problem_database/activity_types'
+    URL_PREFIX = '/problem-database/activity-types'
 
     def test_can_browse_all_activity_types(self):
         response = self.client.get(self.URL_PREFIX, {}, 'json')
@@ -172,7 +172,7 @@ class ProblemTagTest(APITestCase):
             models.ProblemTag.objects.create(problem=problems[1], tag=tags[1])
         ]
 
-    URL_PREFIX = '/problem_database/problem_tags'
+    URL_PREFIX = '/problem-database/problem-tags'
 
     def test_can_browse_all_problem_tags(self):
         response = self.client.get(self.URL_PREFIX, {}, 'json')
