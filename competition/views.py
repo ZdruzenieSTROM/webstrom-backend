@@ -604,7 +604,7 @@ class EventViewSet(viewsets.ModelViewSet):
         return Response(status=status.HTTP_201_CREATED)
 
     @action(methods=['get'], detail=True, permission_classes=[IsAuthenticated])
-    def can_pariticpate(self, request, pk=None):
+    def can_participate(self, request, pk=None):
         event = self.get_object()
         return Response(
             {'can-participate': event.can_user_participate(request.user)},
