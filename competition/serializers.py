@@ -63,6 +63,19 @@ class ProblemSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ['series']
 
+    submitted = serializers.SerializerMethodField(
+        'submitted_solution')
+
+    def submitted_solution(self, obj):
+        semester_registration = models.EventRegistration.get_registration_by_profile_and_event(
+            self.context['request'].user.profile, obj.series.semester)
+        try:
+            solution = obj.solution_set.get(
+                semester_registration=semester_registration)
+        except models.Solution.DoesNotExist:
+            return None
+        return SolutionSerializer(solution).data
+
 
 @ts_interface(context='competition')
 class CommentSerializer(serializers.ModelSerializer):
