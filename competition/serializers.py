@@ -67,6 +67,8 @@ class ProblemSerializer(serializers.ModelSerializer):
         'submitted_solution')
 
     def submitted_solution(self, obj):
+        if self.context['request'].user.is_anonymous:
+            return None
         semester_registration = models.EventRegistration.get_registration_by_profile_and_event(
             self.context['request'].user.profile, obj.series.semester)
         try:
