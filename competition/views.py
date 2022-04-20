@@ -589,10 +589,10 @@ class EventViewSet(viewsets.ModelViewSet):
         profile = request.user.profile
         if not event.can_user_participate(request.user):
             return Response('Používateľa nie je možné registrovať - Zlá veková kategória',
-                            status=status.HTTP_409_CONFLICT)
+                            status=status.HTTP_422_UNPROCESSABLE_ENTITY)
         if EventRegistration.get_registration_by_profile_and_event(
                 profile, event):
-            return Response(status=status.HTTP_409_CONFLICT)
+            return Response('Používateľ je už zaregistrovaný', status=status.HTTP_409_CONFLICT)
         EventRegistration.objects.create(
             event=event,
             school=profile.school,
