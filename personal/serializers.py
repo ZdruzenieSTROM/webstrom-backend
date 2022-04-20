@@ -4,6 +4,7 @@ from rest_framework import serializers
 
 from personal.models import County, District, Profile, School
 from competition.models import Grade
+#from competition.serializers import GradeSerializer
 
 
 @ts_interface(context='personal')
@@ -36,6 +37,7 @@ class SchoolShortSerializer(serializers.ModelSerializer):
 
 @ts_interface(context='personal')
 class ProfileSerializer(serializers.ModelSerializer):
+    #grade_info = GradeSerializer(many=True)
     grade = serializers.IntegerField()
 
     class Meta:
