@@ -159,6 +159,9 @@ class Event(models.Model):
     def can_user_modify(self, user):
         return self.competition.can_user_modify(user)
 
+    def can_user_participate(self, user):
+        return self.competition.can_user_participate(user)
+
     @property
     def season(self):
         return self.get_season_code_display()
