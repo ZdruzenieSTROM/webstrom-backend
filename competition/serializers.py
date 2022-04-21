@@ -3,6 +3,7 @@ from rest_framework import serializers
 
 from personal.serializers import ProfileShortSerializer, SchoolShortSerializer
 from competition import models
+from user.models import User
 
 
 @ts_interface(context='competition')
@@ -67,16 +68,20 @@ class ProblemSerializer(serializers.ModelSerializer):
         'submitted_solution')
 
     def submitted_solution(self, obj):
-        if self.context['request'].user.is_anonymous:
-            return None
-        semester_registration = models.EventRegistration.get_registration_by_profile_and_event(
-            self.context['request'].user.profile, obj.series.semester)
-        try:
-            solution = obj.solution_set.get(
-                semester_registration=semester_registration)
-        except models.Solution.DoesNotExist:
-            return None
-        return SolutionSerializer(solution).data
+        if 'request' in self.context:
+            if self.context['request'].user.is_anonymous:
+                return None
+            try:
+                semester_registration = models.EventRegistration.get_registration_by_profile_and_event(
+                    self.context['request'].user.profile, obj.series.semester)
+            except User.profile.RelatedObjectDoesNotExist:
+                return None
+            try:
+                solution = obj.solution_set.get(
+                    semester_registration=semester_registration)
+            except models.Solution.DoesNotExist:
+                return None
+            return SolutionSerializer(solution).data
 
 
 @ts_interface(context='competition')

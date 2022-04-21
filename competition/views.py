@@ -146,6 +146,11 @@ class ProblemViewSet(viewsets.ModelViewSet):
     serializer_class = ProblemSerializer
     permission_classes = (CompetitionRestrictedPermission,)
 
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context.update({"request": self.request})
+        return context
+
     def perform_create(self, serializer):
         """
         Volá sa pri vytvarani objektu,
@@ -323,6 +328,11 @@ class SeriesViewSet(viewsets.ModelViewSet):
     permission_classes = (CompetitionRestrictedPermission,)
     http_method_names = ['get', 'head']
 
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context.update({"request": self.request})
+        return context
+
     @action(methods=['get'], detail=True)
     def results(self, request, pk=None):
         """Vráti výsledkovku pre sériu"""
@@ -420,6 +430,11 @@ class SemesterViewSet(viewsets.ModelViewSet):
     permission_classes = (CompetitionRestrictedPermission,)
     filterset_fields = ['competition']
     http_method_names = ['get', 'post', 'head']
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context.update({"request": self.request})
+        return context
 
     def perform_create(self, serializer):
         """
