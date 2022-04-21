@@ -10,7 +10,7 @@ class ModelWithParticipationSerializer(serializers.ModelSerializer):
     is_registered = serializers.SerializerMethodField('get_is_registered')
 
     def get_can_participate(self, obj):
-        if 'request' in self.context:
+        if 'request' in self.context and hasattr(self.context['request'].user, 'profile'):
             return obj.can_user_participate(self.context['request'].user)
         return None
 
