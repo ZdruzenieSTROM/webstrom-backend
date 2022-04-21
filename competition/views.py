@@ -180,7 +180,9 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
         """Vráti komentáre (otázky) k úlohe"""
         comments_objects = self.get_object().get_comments(request.user)
         comments_serialized = map(
-            (lambda obj: CommentSerializer(obj, context={'request': request}).data), comments_objects)
+            (lambda obj: CommentSerializer(
+                obj, context={'request': request}).data),
+            comments_objects)
         return Response(comments_serialized, status=status.HTTP_200_OK)
 
     @action(methods=['post'], detail=True, url_path=r'add-comment',
