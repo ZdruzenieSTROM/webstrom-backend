@@ -13,7 +13,6 @@ from rest_framework import exceptions, status, viewsets, mixins
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
-from competition import serializers
 from webstrom import settings
 
 from base.utils import mime_type
