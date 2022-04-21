@@ -82,6 +82,7 @@ class ProblemSerializer(serializers.ModelSerializer):
             except models.Solution.DoesNotExist:
                 return None
             return SolutionSerializer(solution).data
+        return None
 
 
 @ts_interface(context='competition')
