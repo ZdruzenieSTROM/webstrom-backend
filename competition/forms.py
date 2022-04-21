@@ -81,10 +81,9 @@ class ProfileCreationForm(ProfileForm):
                   'school_name', 'school_not_found', 'school_info',
                   'grade', 'phone', 'parent_phone', 'gdpr', ]
 
-    def save(self, user, commit=True):
+    def save(self, commit=True):
         # pylint: disable=arguments-differ
         profile = super().save(commit=False)
-        profile.user = user
 
         profile.year_of_graduation = \
             self.cleaned_data['grade'].get_year_of_graduation_by_date()

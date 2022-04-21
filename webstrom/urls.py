@@ -12,7 +12,7 @@ urlpatterns = [
     path('base/', include('base.urls')),
     # Dočasná cesta pre allauth bez rest frameworku
     path('accounts/', include('allauth.urls')),
-    path('problem_database/', include('problem_database.urls'))
+    path('problem-database/', include('problem_database.urls'))
 ]
 
 # Pri vývoji servuj media files priamo z djanga
