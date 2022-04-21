@@ -112,7 +112,8 @@ class CommentSerializer(serializers.ModelSerializer):
     edit_allowed = serializers.SerializerMethodField('can_edit')
 
     def can_edit(self, obj):
-        return obj.can_user_modify(self.context['request'].user)
+        if 'request' in self.context:
+            return obj.can_user_modify(self.context['request'].user)
 
 
 @ts_interface(context='competition')
