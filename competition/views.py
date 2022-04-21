@@ -104,11 +104,20 @@ class CompetitionViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = (CompetitionRestrictedPermission,)
 
 
-class CommentViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+class CommentViewSet(
+    mixins.RetrieveModelMixin,
+    mixins.DestroyModelMixin,
+    viewsets.GenericViewSet
+):
     """Komentáre(otázky) k úlohám"""
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     permission_classes = (CommentPermission, )
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context.update({"request": self.request})
+        return context
 
     @action(methods=['post'], detail=True)
     def publish(self, request, pk=None):
