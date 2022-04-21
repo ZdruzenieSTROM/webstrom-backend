@@ -289,6 +289,12 @@ class Series(models.Model):
     def can_user_modify(self, user):
         return self.semester.can_user_modify(user)
 
+    def can_user_modify(self, user):
+        return self.semester.can_user_modify(user)
+
+    def can_user_participate(self, user):
+        return self.semester.can_user_participate(user)
+
 
 class Problem(models.Model):
     """
@@ -459,6 +465,7 @@ class EventRegistration(models.Model):
         try:
             registration = EventRegistration.objects.get(
                 profile=profile, event=event)
+
         except EventRegistration.DoesNotExist:
             registration = None
 
