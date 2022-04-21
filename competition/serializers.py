@@ -5,6 +5,23 @@ from personal.serializers import ProfileShortSerializer, SchoolShortSerializer
 from competition import models
 
 
+class ModelWithParticipationSerializer(serializers.ModelSerializer):
+    can_pariticipate = serializers.SerializerMethodField('get_can_participate')
+    is_registered = serializers.SerializerMethodField('get_is_registered')
+
+    def get_can_participate(self, obj):
+        if 'request' in self.context:
+            return obj.can_user_participate(self.context['request'].user)
+        return None
+
+    def get_is_registered(self, obj):
+        if 'request' in self.context and hasattr(self.context['request'].user, 'profile'):
+            return models.EventRegistration.get_registration_by_profile_and_event(
+                self.context['request'].user.profile, obj
+            ) == None
+        return None
+
+
 @ts_interface(context='competition')
 class UnspecifiedPublicationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -27,7 +44,7 @@ class RegistrationLinkSerializer(serializers.ModelSerializer):
 
 
 @ts_interface(context='competition')
-class EventSerializer(serializers.ModelSerializer):
+class EventSerializer(ModelWithParticipationSerializer):
     unspecifiedpublication_set = UnspecifiedPublicationSerializer(many=True)
     registration_links = RegistrationLinkSerializer(many=True)
 
@@ -152,7 +169,7 @@ class SemesterSerializer(serializers.ModelSerializer):
 
 
 @ts_interface(context='competition')
-class SemesterWithProblemsSerializer(serializers.ModelSerializer):
+class SemesterWithProblemsSerializer(ModelWithParticipationSerializer):
     series_set = SeriesWithProblemsSerializer(many=True)
     semesterpublication_set = SemesterPublicationSerializer(many=True)
     unspecifiedpublication_set = UnspecifiedPublicationSerializer(many=True)

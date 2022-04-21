@@ -13,6 +13,7 @@ from rest_framework import exceptions, status, viewsets, mixins
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
+from competition import serializers
 from webstrom import settings
 
 from base.utils import mime_type
@@ -42,6 +43,14 @@ from competition.serializers import (CompetitionSerializer,
 from competition.permissions import CommentPermission
 
 # pylint: disable=unused-argument
+
+
+class ModelViewSetWithSerializerContext(viewsets.ModelViewSet):
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context.update({"request": self.request})
+        return context
 
 
 def generate_result_row(
@@ -147,18 +156,13 @@ class CommentViewSet(
         return Response("Komentár bol upravený.", status=status.HTTP_200_OK)
 
 
-class ProblemViewSet(viewsets.ModelViewSet):
+class ProblemViewSet(ModelViewSetWithSerializerContext):
     """
     Obsluhuje API endpoint pre Úlohy
     """
     queryset = Problem.objects.all()
     serializer_class = ProblemSerializer
     permission_classes = (CompetitionRestrictedPermission,)
-
-    def get_serializer_context(self):
-        context = super().get_serializer_context()
-        context.update({"request": self.request})
-        return context
 
     def perform_create(self, serializer):
         """
@@ -328,7 +332,7 @@ class ProblemViewSet(viewsets.ModelViewSet):
         return Response(json.dumps(errors))
 
 
-class SeriesViewSet(viewsets.ModelViewSet):
+class SeriesViewSet(ModelViewSetWithSerializerContext):
     """
     Obsluhuje API endpoint pre Úlohy
     """
@@ -336,11 +340,6 @@ class SeriesViewSet(viewsets.ModelViewSet):
     serializer_class = SeriesWithProblemsSerializer
     permission_classes = (CompetitionRestrictedPermission,)
     http_method_names = ['get', 'head']
-
-    def get_serializer_context(self):
-        context = super().get_serializer_context()
-        context.update({"request": self.request})
-        return context
 
     @action(methods=['get'], detail=True)
     def results(self, request, pk=None):
@@ -432,18 +431,13 @@ class SemesterListViewSet(viewsets.ReadOnlyModelViewSet):
     filterset_fields = ['competition']
 
 
-class SemesterViewSet(viewsets.ModelViewSet):
+class SemesterViewSet(ModelViewSetWithSerializerContext):
     """Semestre - aj so sériami a problémami"""
     queryset = Semester.objects.all()
     serializer_class = SemesterWithProblemsSerializer
     permission_classes = (CompetitionRestrictedPermission,)
     filterset_fields = ['competition']
     http_method_names = ['get', 'post', 'head']
-
-    def get_serializer_context(self):
-        context = super().get_serializer_context()
-        context.update({"request": self.request})
-        return context
 
     def perform_create(self, serializer):
         """
@@ -587,7 +581,7 @@ class SemesterViewSet(viewsets.ModelViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class EventViewSet(viewsets.ModelViewSet):
+class EventViewSet(ModelViewSetWithSerializerContext):
     """Ročníky akcií (napríklad Matboj 2021)"""
     queryset = Event.objects.all()
     serializer_class = EventSerializer
