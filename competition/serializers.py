@@ -3,7 +3,6 @@ from rest_framework import serializers
 
 from personal.serializers import ProfileShortSerializer, SchoolShortSerializer
 from competition import models
-from user.models import User
 
 
 @ts_interface(context='competition')
