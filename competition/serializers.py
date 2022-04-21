@@ -69,13 +69,15 @@ class ProblemSerializer(serializers.ModelSerializer):
 
     def submitted_solution(self, obj):
         if 'request' in self.context:
-            if self.context['request'].user.is_anonymous:
+            if (
+                self.context['request'].user.is_anonymous or
+                not hasattr(self.context['request'].user, 'profile')
+            ):
                 return None
-            try:
-                semester_registration = models.EventRegistration.get_registration_by_profile_and_event(
-                    self.context['request'].user.profile, obj.series.semester)
-            except User.profile.RelatedObjectDoesNotExist:
-                return None
+
+            semester_registration = models.EventRegistration.get_registration_by_profile_and_event(
+                self.context['request'].user.profile, obj.series.semester)
+
             try:
                 solution = obj.solution_set.get(
                     semester_registration=semester_registration)
