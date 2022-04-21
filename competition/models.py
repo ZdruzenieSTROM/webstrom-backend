@@ -65,6 +65,7 @@ class Competition(models.Model):
                                               verbose_name='Skupiny práv')
 
     def can_user_participate(self, user):
+        # TODO: Only active
         if self.min_years_until_graduation:
             return user.profile.year_of_graduation-utils.get_school_year_start_by_date() \
                 >= self.min_years_until_graduation
@@ -160,6 +161,7 @@ class Event(models.Model):
         return self.competition.can_user_modify(user)
 
     def can_user_participate(self, user):
+        # TODO: Only active
         return self.competition.can_user_participate(user)
 
     @property
@@ -286,6 +288,9 @@ class Series(models.Model):
 
     def can_user_modify(self, user):
         return self.semester.can_user_modify(user)
+
+    def can_user_participate(self, user):
+        return self.semester.can_user_participate(user)
 
 
 class Problem(models.Model):
@@ -457,6 +462,7 @@ class EventRegistration(models.Model):
         try:
             registration = EventRegistration.objects.get(
                 profile=profile, event=event)
+
         except EventRegistration.DoesNotExist:
             registration = None
 

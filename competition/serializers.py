@@ -5,6 +5,26 @@ from personal.serializers import ProfileShortSerializer, SchoolShortSerializer
 from competition import models
 
 
+class ModelWithParticipationSerializer(serializers.ModelSerializer):
+    can_pariticipate = serializers.SerializerMethodField('get_can_participate')
+    is_registered = serializers.SerializerMethodField('get_is_registered')
+
+    def get_can_participate(self, obj):
+        if 'request' in self.context and hasattr(self.context['request'].user, 'profile'):
+            return obj.can_user_participate(self.context['request'].user)
+        return None
+
+    def get_event(self, obj):
+        return obj
+
+    def get_is_registered(self, obj):
+        if 'request' in self.context and hasattr(self.context['request'].user, 'profile'):
+            return models.EventRegistration.get_registration_by_profile_and_event(
+                self.context['request'].user.profile, self.get_event(obj)
+            ) is None
+        return None
+
+
 @ts_interface(context='competition')
 class UnspecifiedPublicationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -27,7 +47,7 @@ class RegistrationLinkSerializer(serializers.ModelSerializer):
 
 
 @ts_interface(context='competition')
-class EventSerializer(serializers.ModelSerializer):
+class EventSerializer(ModelWithParticipationSerializer):
     unspecifiedpublication_set = UnspecifiedPublicationSerializer(many=True)
     registration_links = RegistrationLinkSerializer(many=True)
 
@@ -95,7 +115,9 @@ class CommentSerializer(serializers.ModelSerializer):
     edit_allowed = serializers.SerializerMethodField('can_edit')
 
     def can_edit(self, obj):
-        return obj.can_user_modify(self.context['request'].user)
+        if 'request' in self.context:
+            return obj.can_user_modify(self.context['request'].user)
+        return None
 
 
 @ts_interface(context='competition')
@@ -119,13 +141,20 @@ class SeriesSerializer(serializers.ModelSerializer):
 
 
 @ts_interface(context='competition')
-class SeriesWithProblemsSerializer(serializers.ModelSerializer):
+class SeriesWithProblemsSerializer(ModelWithParticipationSerializer):
     problems = ProblemSerializer(many=True)
+    can_submit = serializers.SerializerMethodField('get_can_submit')
 
     class Meta:
         model = models.Series
         exclude = ['sum_method']
         read_only_fields = ['semester']
+
+    def get_can_submit(self, obj):
+        return obj.can_submit
+
+    def get_event(self, obj):
+        return obj.semester
 
     def create(self, validated_data):
         problem_data = validated_data.pop('problems')
@@ -152,7 +181,7 @@ class SemesterSerializer(serializers.ModelSerializer):
 
 
 @ts_interface(context='competition')
-class SemesterWithProblemsSerializer(serializers.ModelSerializer):
+class SemesterWithProblemsSerializer(ModelWithParticipationSerializer):
     series_set = SeriesWithProblemsSerializer(many=True)
     semesterpublication_set = SemesterPublicationSerializer(many=True)
     unspecifiedpublication_set = UnspecifiedPublicationSerializer(many=True)
