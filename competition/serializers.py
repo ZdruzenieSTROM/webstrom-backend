@@ -4,13 +4,11 @@ from rest_framework import serializers
 from personal.serializers import ProfileShortSerializer, SchoolShortSerializer
 from competition import models
 
-
 @ts_interface(context='competition')
 class UnspecifiedPublicationSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.UnspecifiedPublication
         fields = '__all__'
-
 
 @ts_interface(context='competition')
 class SemesterPublicationSerializer(serializers.ModelSerializer):
@@ -18,13 +16,11 @@ class SemesterPublicationSerializer(serializers.ModelSerializer):
         model = models.SemesterPublication
         fields = '__all__'
 
-
 @ts_interface(context='competition')
 class RegistrationLinkSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.RegistrationLink
         fields = '__all__'
-
 
 @ts_interface(context='competition')
 class EventSerializer(serializers.ModelSerializer):
@@ -35,7 +31,6 @@ class EventSerializer(serializers.ModelSerializer):
         model = models.Event
         fields = '__all__'
 
-
 @ts_interface(context='competition')
 class CompetitionSerializer(serializers.ModelSerializer):
     event_set = EventSerializer(many=True)
@@ -43,7 +38,6 @@ class CompetitionSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Competition
         fields = '__all__'
-
 
 @ts_interface(context='competition')
 class EventRegistrationSerializer(serializers.ModelSerializer):
@@ -55,7 +49,6 @@ class EventRegistrationSerializer(serializers.ModelSerializer):
         slug_field='tag', many=False, read_only=True)
     profile = ProfileShortSerializer(many=False)
 
-
 @ts_interface(context='competition')
 class ProblemSerializer(serializers.ModelSerializer):
     class Meta:
@@ -63,39 +56,18 @@ class ProblemSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ['series']
 
-    submitted = serializers.SerializerMethodField(
-        'submitted_solution')
-
-    def submitted_solution(self, obj):
-        if self.context['request'].user.is_anonymous:
-            return None
-        semester_registration = models.EventRegistration.get_registration_by_profile_and_event(
-            self.context['request'].user.profile, obj.series.semester)
-        try:
-            solution = obj.solution_set.get(
-                semester_registration=semester_registration)
-        except models.Solution.DoesNotExist:
-            return None
-        return SolutionSerializer(solution).data
-
-
 @ts_interface(context='competition')
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Comment
         fields = '__all__'
 
-    edit_allowed = serializers.SerializerMethodField('can_edit')
-
-    def can_edit(self, obj):
-        return obj.can_user_modify(self.context['request'].user)
-
-
 @ts_interface(context='competition')
 class SolutionSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Solution
         fields = '__all__'
+
 
 
 # class ProblemStatsSerializer(serializers.Serializer):
@@ -143,7 +115,6 @@ class SemesterSerializer(serializers.ModelSerializer):
             models.Series.objects.create(semester=semester, **series)
         return semester
 
-
 @ts_interface(context='competition')
 class SemesterWithProblemsSerializer(serializers.ModelSerializer):
     series_set = SeriesWithProblemsSerializer(many=True)
@@ -183,3 +154,5 @@ class GradeSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Grade
         exclude = ['is_active']
+        read_only_fields = ['semesterpublication_set',
+                            'unspecifiedpublication_set']

@@ -587,12 +587,10 @@ class EventViewSet(viewsets.ModelViewSet):
         """Registruje prihláseného užívateľa na akciu"""
         event = self.get_object()
         profile = request.user.profile
-        if not event.can_user_participate(request.user):
-            return Response('Používateľa nie je možné registrovať - Zlá veková kategória',
-                            status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+        # TODO: Overiť či sa môže registrovať ... či nie je starý
         if EventRegistration.get_registration_by_profile_and_event(
                 profile, event):
-            return Response('Používateľ je už zaregistrovaný', status=status.HTTP_409_CONFLICT)
+            return Response(status=status.HTTP_409_CONFLICT)
         EventRegistration.objects.create(
             event=event,
             school=profile.school,
@@ -602,20 +600,6 @@ class EventViewSet(viewsets.ModelViewSet):
         )
 
         return Response(status=status.HTTP_201_CREATED)
-
-    @action(methods=['get'], detail=True, permission_classes=[IsAuthenticated])
-    def can_participate(self, request, pk=None):
-        event = self.get_object()
-        return Response(
-            {'can-participate': event.can_user_participate(request.user)},
-            status=status.HTTP_200_OK
-        )
-
-    @action(methods=['get'], detail=True, permission_classes=[IsAuthenticated])
-    def participants(self, request, pk=None):
-        event = self.get_object()
-        # Profile serializer
-        return event.registered_profiles()
 
     @action(methods=['post'], detail=False, permission_classes=[IsAuthenticated])
     def active(self):
