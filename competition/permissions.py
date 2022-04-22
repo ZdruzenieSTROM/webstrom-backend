@@ -10,11 +10,7 @@ class CommentPermission(permissions.BasePermission):
         can_user_modify = obj.can_user_modify(request.user)
 
         if view.action == 'retrieve':
-            if obj.published:
-                return True
-            if can_user_modify:
-                return True
-            if obj.posted_by == request.user:
+            if obj.published or can_user_modify or obj.posted_by == request.user:
                 return True
 
         if view.action in ['publish', 'hide']:
