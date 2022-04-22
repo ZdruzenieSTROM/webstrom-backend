@@ -112,7 +112,12 @@ class CommentSerializer(serializers.ModelSerializer):
         model = models.Comment
         fields = '__all__'
 
+    posted_by_name = serializers.SerializerMethodField('get_posted_by_name')
     edit_allowed = serializers.SerializerMethodField('can_edit')
+
+    def get_posted_by_name(self, obj):
+        if hasattr(obj.user, 'profile'):
+            return self.user.get_full_name()
 
     def can_edit(self, obj):
         if 'request' in self.context:
