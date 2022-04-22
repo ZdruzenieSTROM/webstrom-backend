@@ -87,9 +87,9 @@ class TestSeries(APITestCase, PermissionTestMixin):
 
     fixtures = get_app_fixtures([
         'base',
-        'competition',
+        'user',
         'personal',
-        'user'
+        'competition'
     ])
 
     def setUp(self):
@@ -142,9 +142,9 @@ class TestSemester(APITestCase, PermissionTestMixin):
 
     fixtures = get_app_fixtures([
         'base',
-        'competition',
+        'user',
         'personal',
-        'user'
+        'competition'
     ])
 
     def setUp(self):
