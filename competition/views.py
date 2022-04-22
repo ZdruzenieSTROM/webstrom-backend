@@ -199,7 +199,7 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
         """Vráti štatistiky úlohy (histogram, počet riešiteľov...)"""
         return Response(self.get_object().get_stats())
 
-    @action(methods=['post'], detail=True, url_name='upload-solution')
+    @action(methods=['post'], detail=True, url_name='upload-solution', url_path='upload-solution')
     def upload_solution(self, request, pk=None):
         """Nahrá užívateľské riešenie k úlohe"""
         problem = self.get_object()
