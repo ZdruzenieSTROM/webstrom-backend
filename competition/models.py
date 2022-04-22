@@ -204,7 +204,7 @@ class Semester(Event):
     def freeze_results(self, results):
         self.frozen_results = results
 
-    @cached_property
+    @property
     def is_active(self):
         return self.series_set.filter(complete=False).exists()
 
