@@ -65,7 +65,6 @@ class Competition(models.Model):
                                               verbose_name='Skupiny práv')
 
     def can_user_participate(self, user):
-        # TODO: Only active
         if self.min_years_until_graduation:
             return user.profile.year_of_graduation-utils.get_school_year_start_by_date() \
                 >= self.min_years_until_graduation
