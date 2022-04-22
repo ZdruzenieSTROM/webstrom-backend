@@ -161,7 +161,8 @@ class Event(models.Model):
         return self.competition.can_user_modify(user)
 
     def can_user_participate(self, user):
-        # TODO: Only active
+        if datetime.datetime.now() > self.end:
+            return False
         return self.competition.can_user_participate(user)
 
     @property
