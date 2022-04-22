@@ -1,4 +1,5 @@
 import datetime
+import json
 import unidecode
 import re
 import sqlite3
@@ -269,6 +270,7 @@ class Command(BaseCommand):
                 print(f'Nepodarilo sa matchnút {school}')
                 school_id_mapping[school['id']
                                   ] = School.objects.get_unspecified_value()
+                print(school_id_mapping)
         print(
             f'Úspešne pripárovaných {success_counter}/{len(school_id_mapping)}')
         return school_id_mapping
@@ -328,6 +330,7 @@ class Command(BaseCommand):
             # semester_id_map, _, problem_id_map = self._load_competitions(
             #     conn)
             school_id_map = self._create_school_mapping(conn)
+            json.dump(school_id_map)
             # user_id_map = self._load_users(conn, school_id_map)
             # print(f'Načítaných {len(user_id_map)} používateľov')
             # self._load_user_registrations(
