@@ -21,7 +21,7 @@ class ModelWithParticipationSerializer(serializers.ModelSerializer):
         if 'request' in self.context and hasattr(self.context['request'].user, 'profile'):
             return models.EventRegistration.get_registration_by_profile_and_event(
                 self.context['request'].user.profile, self.get_event(obj)
-            ) is None
+            ) is not None
         return None
 
 
