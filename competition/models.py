@@ -65,7 +65,6 @@ class Competition(models.Model):
                                               verbose_name='Skupiny práv')
 
     def can_user_participate(self, user):
-        # TODO: Only active
         if self.min_years_until_graduation:
             return user.profile.year_of_graduation-utils.get_school_year_start_by_date() \
                 >= self.min_years_until_graduation
@@ -157,11 +156,16 @@ class Event(models.Model):
 
         return f'{self.competition.name}, {self.year}. ročník - {self.season_code}'
 
+    @property
+    def is_active(self):
+        return datetime.datetime.now() <= self.end
+
     def can_user_modify(self, user):
         return self.competition.can_user_modify(user)
 
     def can_user_participate(self, user):
-        # TODO: Only active
+        if not self.is_active:
+            return False
         return self.competition.can_user_participate(user)
 
     @property
@@ -200,7 +204,7 @@ class Semester(Event):
     def freeze_results(self, results):
         self.frozen_results = results
 
-    @cached_property
+    @property
     def is_active(self):
         return self.series_set.filter(complete=False).exists()
 
