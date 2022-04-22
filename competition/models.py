@@ -156,11 +156,15 @@ class Event(models.Model):
 
         return f'{self.competition.name}, {self.year}. ročník - {self.season_code}'
 
+    @property
+    def is_active(self):
+        return datetime.datetime.now() <= self.end
+
     def can_user_modify(self, user):
         return self.competition.can_user_modify(user)
 
     def can_user_participate(self, user):
-        if datetime.datetime.now() > self.end:
+        if not self.is_active:
             return False
         return self.competition.can_user_participate(user)
 
