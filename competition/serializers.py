@@ -6,7 +6,7 @@ from competition import models
 
 
 class ModelWithParticipationSerializer(serializers.ModelSerializer):
-    can_pariticipate = serializers.SerializerMethodField('get_can_participate')
+    can_participate = serializers.SerializerMethodField('get_can_participate')
     is_registered = serializers.SerializerMethodField('get_is_registered')
 
     def get_can_participate(self, obj):
