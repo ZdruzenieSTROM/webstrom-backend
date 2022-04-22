@@ -25,6 +25,10 @@ class CommentPermission(permissions.BasePermission):
             if obj.posted_by == request.user:
                 return True
 
+        if view.action == 'delete':
+            if obj.posted_by == request.user or can_user_modify:
+                return True
+
         return False
 
 
