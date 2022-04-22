@@ -211,7 +211,7 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
             request.user.profile, problem.series.semester)
 
         if event_registration is None:
-            raise exceptions.MethodNotAllowed(method='upload-solutuion')
+            raise exceptions.MethodNotAllowed(method='upload-solution')
 
         if 'file' not in request.data:
             raise exceptions.ParseError(detail='Request neobsahoval súbor')
