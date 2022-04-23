@@ -1,22 +1,19 @@
 import datetime
 import json
-import unidecode
 import re
 import sqlite3
-from django.core.management import BaseCommand
-from django.utils.dateparse import parse_datetime
-from django.db.models import Q, F
+
 import pytz
+import unidecode
 from allauth.account.models import EmailAddress
-
-from competition.models import (
-    EventRegistration, Semester, Series,
-    Problem, Competition, Grade, Solution
-)
+from competition.models import (Competition, EventRegistration, Grade, Problem,
+                                Semester, Series, Solution)
 from competition.utils import get_school_year_by_date
-from user.models import User
+from django.core.management import BaseCommand
+from django.db.models import F, Q
+from django.utils.dateparse import parse_datetime
 from personal.models import Profile, School
-
+from user.models import User
 
 SERIES_QUERY = '''
     SELECT id,number,submission_deadline, sum_method,season_id

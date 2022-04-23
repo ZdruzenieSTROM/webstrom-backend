@@ -1,9 +1,11 @@
 from django_typomatic import ts_interface
-
 from rest_framework import serializers
 
-from personal.models import County, District, Profile, School
 from competition.models import Grade
+from personal.models import County, District, Profile, School
+
+#from competition.serializers import GradeSerializer
+
 
 @ts_interface(context='personal')
 class CountySerializer(serializers.ModelSerializer):
@@ -11,11 +13,13 @@ class CountySerializer(serializers.ModelSerializer):
         model = County
         fields = '__all__'
 
+
 @ts_interface(context='personal')
 class DistrictSerializer(serializers.ModelSerializer):
     class Meta:
         model = District
         fields = '__all__'
+
 
 @ts_interface(context='personal')
 class SchoolSerializer(serializers.ModelSerializer):
@@ -23,14 +27,17 @@ class SchoolSerializer(serializers.ModelSerializer):
         model = School
         fields = '__all__'
 
+
 @ts_interface(context='personal')
 class SchoolShortSerializer(serializers.ModelSerializer):
     class Meta:
         model = School
         exclude = ['email', 'district']
 
+
 @ts_interface(context='personal')
 class ProfileSerializer(serializers.ModelSerializer):
+    #grade_info = GradeSerializer(many=True)
     grade = serializers.IntegerField()
 
     class Meta:
@@ -67,6 +74,7 @@ class ProfileSerializer(serializers.ModelSerializer):
             parent_phone=validated_data['parent_phone'],
             gdpr=validated_data['gdpr']
         )
+
 
 @ts_interface(context='personal')
 class ProfileCreateSerializer(serializers.ModelSerializer):
@@ -108,11 +116,13 @@ class ProfileCreateSerializer(serializers.ModelSerializer):
             gdpr=validated_data['gdpr']
         )
 
+
 @ts_interface(context='personal')
 class ProfileShortSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = ['first_name', 'last_name', 'nickname']
+
 
 @ts_interface(context='personal')
 class ProfileMailSerializer(serializers.ModelSerializer):
@@ -120,7 +130,4 @@ class ProfileMailSerializer(serializers.ModelSerializer):
         model = Profile
         fields = ['first_name', 'last_name', 'nickname', 'email']
 
-    first_name = serializers.CharField(
-        source='user.first_name', read_only=False)
-    last_name = serializers.CharField(source='user.last_name')
     email = serializers.EmailField(source='user.email')

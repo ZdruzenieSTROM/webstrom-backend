@@ -3,7 +3,6 @@ import os
 from io import BytesIO
 
 import pdf2image
-
 from django.contrib.sites.models import Site
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
@@ -17,14 +16,13 @@ from django.shortcuts import get_object_or_404
 from django.utils.functional import cached_property
 from django.utils.timezone import now
 
-
 from base.managers import UnspecifiedValueManager
 from base.models import RestrictedFileField
 from base.utils import mime_type
 from base.validators import school_year_validator
-from personal.models import Profile, School
 from competition import utils
 from competition.querysets import ActiveQuerySet
+from personal.models import Profile, School
 from user.models import User
 
 
@@ -156,8 +154,17 @@ class Event(models.Model):
 
         return f'{self.competition.name}, {self.year}. ročník - {self.season_code}'
 
+    @property
+    def is_active(self):
+        return now() <= self.end
+
     def can_user_modify(self, user):
         return self.competition.can_user_modify(user)
+
+    def can_user_participate(self, user):
+        if not self.is_active:
+            return False
+        return self.competition.can_user_participate(user)
 
     @property
     def season(self):
@@ -195,7 +202,7 @@ class Semester(Event):
     def freeze_results(self, results):
         self.frozen_results = results
 
-    @cached_property
+    @property
     def is_active(self):
         return self.series_set.filter(complete=False).exists()
 
@@ -283,6 +290,9 @@ class Series(models.Model):
 
     def can_user_modify(self, user):
         return self.semester.can_user_modify(user)
+
+    def can_user_participate(self, user):
+        return self.semester.can_user_participate(user)
 
 
 class Problem(models.Model):
@@ -454,6 +464,7 @@ class EventRegistration(models.Model):
         try:
             registration = EventRegistration.objects.get(
                 profile=profile, event=event)
+
         except EventRegistration.DoesNotExist:
             registration = None
 

@@ -1,6 +1,6 @@
+from django.core.management import BaseCommand
 from django_typomatic import generate_ts
 
-from django.core.management import BaseCommand
 
 class Command(BaseCommand):
     def handle(self, *args, **options):

@@ -65,6 +65,7 @@ disable=duplicate-code,
         no-self-use,
         missing-docstring,
         too-many-ancestors,
+        wrong-import-order
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option

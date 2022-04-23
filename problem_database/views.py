@@ -1,10 +1,10 @@
 # Create your views here.
-from rest_framework import status, viewsets
-from rest_framework.response import Response
-from rest_framework.filters import SearchFilter
 from django_filters.rest_framework import DjangoFilterBackend
-from problem_database import models
-from problem_database import serializers
+from rest_framework import status, viewsets
+from rest_framework.filters import SearchFilter
+from rest_framework.response import Response
+
+from problem_database import models, serializers
 
 # Filterset umoznuju pouzit URL v tvare profile/districts/?county=1
 # Search filter umoznuju pouzit URL v tvare profile/schools/?search=Alej

@@ -1,5 +1,6 @@
 from allauth.account.adapter import DefaultAccountAdapter
 from django.core.mail import send_mail
+
 from webstrom.settings import EMAIL_NO_REPLY
 
 

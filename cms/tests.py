@@ -1,5 +1,6 @@
 from rest_framework.test import APITestCase
-from tests.test_utils import get_app_fixtures, PermissionTestMixin
+
+from tests.test_utils import PermissionTestMixin, get_app_fixtures
 
 
 class TestPosts(APITestCase, PermissionTestMixin):

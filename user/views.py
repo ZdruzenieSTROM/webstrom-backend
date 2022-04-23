@@ -17,7 +17,8 @@ from django.views.generic import DetailView
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import MethodNotAllowed
-from rest_framework.generics import CreateAPIView, GenericAPIView, RetrieveUpdateAPIView
+from rest_framework.generics import (CreateAPIView, GenericAPIView,
+                                     RetrieveUpdateAPIView)
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -26,16 +27,11 @@ from competition.forms import ProfileCreationForm, ProfileUpdateForm
 from competition.models import Grade, Profile
 from personal.models import District, School
 from user.forms import NameUpdateForm, UserCreationForm
-from user.models import User, TokenModel
-from user.serializers import (
-    LoginSerializer,
-    PasswordChangeSerializer,
-    RegisterSerializer,
-    TokenSerializer,
-    UserDetailsSerializer,
-    VerifyEmailSerializer)
+from user.models import TokenModel, User
+from user.serializers import (LoginSerializer, PasswordChangeSerializer,
+                              RegisterSerializer, TokenSerializer,
+                              UserDetailsSerializer, VerifyEmailSerializer)
 from user.tokens import email_verification_token_generator
-
 
 sensitive_post_parameters_m = method_decorator(
     sensitive_post_parameters(

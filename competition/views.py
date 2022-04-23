@@ -4,44 +4,46 @@ import zipfile
 from io import BytesIO
 from operator import itemgetter
 
+from base.utils import mime_type
 from django.core.exceptions import ValidationError
-from django.db.models import Q
 from django.core.files.move import file_move_safe
+from django.db.models import Q
 from django.http import HttpResponse
-
-from rest_framework import exceptions, status, viewsets, mixins
+from personal.models import Profile, School
+from personal.serializers import ProfileMailSerializer, SchoolSerializer
+from rest_framework import exceptions, mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from webstrom import settings
 
-from base.utils import mime_type
-
-from personal.models import School, Profile
-from personal.serializers import SchoolSerializer, ProfileMailSerializer
-from competition.models import (Competition, Event, EventRegistration, Grade,
-                                LateTag, Problem,
-                                Semester, Series, Solution, Vote, UnspecifiedPublication,
-                                SemesterPublication, Comment)
 from competition import utils
-from competition.permissions import CompetitionRestrictedPermission
-from competition.serializers import (CompetitionSerializer,
+from competition.models import (Comment, Competition, Event, EventRegistration,
+                                Grade, LateTag, Problem, Semester,
+                                SemesterPublication, Series, Solution,
+                                UnspecifiedPublication, Vote)
+from competition.permissions import (CommentPermission,
+                                     CompetitionRestrictedPermission)
+from competition.serializers import (CommentSerializer, CompetitionSerializer,
                                      EventRegistrationSerializer,
-                                     GradeSerializer,
-                                     LateTagSerializer,
-                                     ProblemSerializer,
-                                     EventSerializer,
+                                     EventSerializer, GradeSerializer,
+                                     LateTagSerializer, ProblemSerializer,
+                                     SemesterPublicationSerializer,
                                      SemesterSerializer,
                                      SemesterWithProblemsSerializer,
                                      SeriesWithProblemsSerializer,
                                      SolutionSerializer,
-                                     UnspecifiedPublicationSerializer,
-                                     SemesterPublicationSerializer,
-                                     CommentSerializer)
-
-from competition.permissions import CommentPermission
+                                     UnspecifiedPublicationSerializer)
 
 # pylint: disable=unused-argument
+
+
+class ModelViewSetWithSerializerContext(viewsets.ModelViewSet):
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context.update({"request": self.request})
+        return context
 
 
 def generate_result_row(
@@ -104,11 +106,20 @@ class CompetitionViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = (CompetitionRestrictedPermission,)
 
 
-class CommentViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+class CommentViewSet(
+    mixins.RetrieveModelMixin,
+    mixins.DestroyModelMixin,
+    viewsets.GenericViewSet
+):
     """Komentáre(otázky) k úlohám"""
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     permission_classes = (CommentPermission, )
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context.update({"request": self.request})
+        return context
 
     @action(methods=['post'], detail=True)
     def publish(self, request, pk=None):
@@ -138,7 +149,7 @@ class CommentViewSet(mixins.RetrieveModelMixin, viewsets.GenericViewSet):
         return Response("Komentár bol upravený.", status=status.HTTP_200_OK)
 
 
-class ProblemViewSet(viewsets.ModelViewSet):
+class ProblemViewSet(ModelViewSetWithSerializerContext):
     """
     Obsluhuje API endpoint pre Úlohy
     """
@@ -163,7 +174,9 @@ class ProblemViewSet(viewsets.ModelViewSet):
         """Vráti komentáre (otázky) k úlohe"""
         comments_objects = self.get_object().get_comments(request.user)
         comments_serialized = map(
-            (lambda obj: CommentSerializer(obj).data), comments_objects)
+            (lambda obj: CommentSerializer(
+                obj, context={'request': request}).data),
+            comments_objects)
         return Response(comments_serialized, status=status.HTTP_200_OK)
 
     @action(methods=['post'], detail=True, url_path=r'add-comment',
@@ -180,7 +193,7 @@ class ProblemViewSet(viewsets.ModelViewSet):
         """Vráti štatistiky úlohy (histogram, počet riešiteľov...)"""
         return Response(self.get_object().get_stats())
 
-    @action(methods=['post'], detail=True, url_name='upload-solution')
+    @action(methods=['post'], detail=True, url_name='upload-solution', url_path='upload-solution')
     def upload_solution(self, request, pk=None):
         """Nahrá užívateľské riešenie k úlohe"""
         problem = self.get_object()
@@ -192,7 +205,7 @@ class ProblemViewSet(viewsets.ModelViewSet):
             request.user.profile, problem.series.semester)
 
         if event_registration is None:
-            raise exceptions.MethodNotAllowed(method='upload-solutuion')
+            raise exceptions.MethodNotAllowed(method='upload-solution')
 
         if 'file' not in request.data:
             raise exceptions.ParseError(detail='Request neobsahoval súbor')
@@ -314,7 +327,7 @@ class ProblemViewSet(viewsets.ModelViewSet):
         return Response(json.dumps(errors))
 
 
-class SeriesViewSet(viewsets.ModelViewSet):
+class SeriesViewSet(ModelViewSetWithSerializerContext):
     """
     Obsluhuje API endpoint pre Úlohy
     """
@@ -413,7 +426,7 @@ class SemesterListViewSet(viewsets.ReadOnlyModelViewSet):
     filterset_fields = ['competition']
 
 
-class SemesterViewSet(viewsets.ModelViewSet):
+class SemesterViewSet(ModelViewSetWithSerializerContext):
     """Semestre - aj so sériami a problémami"""
     queryset = Semester.objects.all()
     serializer_class = SemesterWithProblemsSerializer
@@ -563,7 +576,7 @@ class SemesterViewSet(viewsets.ModelViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class EventViewSet(viewsets.ModelViewSet):
+class EventViewSet(ModelViewSetWithSerializerContext):
     """Ročníky akcií (napríklad Matboj 2021)"""
     queryset = Event.objects.all()
     serializer_class = EventSerializer
@@ -587,10 +600,12 @@ class EventViewSet(viewsets.ModelViewSet):
         """Registruje prihláseného užívateľa na akciu"""
         event = self.get_object()
         profile = request.user.profile
-        # TODO: Overiť či sa môže registrovať ... či nie je starý
+        if not event.can_user_participate(request.user):
+            return Response('Používateľa nie je možné registrovať - Zlá veková kategória',
+                            status=status.HTTP_422_UNPROCESSABLE_ENTITY)
         if EventRegistration.get_registration_by_profile_and_event(
                 profile, event):
-            return Response(status=status.HTTP_409_CONFLICT)
+            return Response('Používateľ je už zaregistrovaný', status=status.HTTP_409_CONFLICT)
         EventRegistration.objects.create(
             event=event,
             school=profile.school,
@@ -600,6 +615,25 @@ class EventViewSet(viewsets.ModelViewSet):
         )
 
         return Response(status=status.HTTP_201_CREATED)
+
+    @action(
+        methods=['get'],
+        detail=True,
+        permission_classes=[IsAuthenticated],
+        url_path='can-participate'
+    )
+    def can_participate(self, request, pk=None):
+        event = self.get_object()
+        return Response(
+            {'can-participate': event.can_user_participate(request.user)},
+            status=status.HTTP_200_OK
+        )
+
+    @action(methods=['get'], detail=True, permission_classes=[IsAuthenticated])
+    def participants(self, request, pk=None):
+        event = self.get_object()
+        # Profile serializer
+        return event.registered_profiles()
 
     @action(methods=['post'], detail=False, permission_classes=[IsAuthenticated])
     def active(self):

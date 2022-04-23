@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 
-import pandas as pd
+import json
+import math
 import re
+
+import pandas as pd
 import unidecode
 import wget
-import math
-import json
-
 
 kraje = 'kraje.xlsx'
 okresy = 'okresy.xlsx'

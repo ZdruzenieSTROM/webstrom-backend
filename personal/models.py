@@ -1,9 +1,8 @@
+from base.managers import UnspecifiedValueManager
+from base.validators import phone_number_validator
 from django.apps import apps
 from django.conf import settings
 from django.db import models
-
-from base.managers import UnspecifiedValueManager
-from base.validators import phone_number_validator
 
 
 class County(models.Model):
@@ -84,7 +83,11 @@ class Profile(models.Model):
     last_name = models.CharField(verbose_name='priezvisko', max_length=150)
 
     user = models.OneToOneField(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        primary_key=True,
+        related_name='profile'
+    )
 
     nickname = models.CharField(
         verbose_name='prezývka', max_length=32, blank=True, )
