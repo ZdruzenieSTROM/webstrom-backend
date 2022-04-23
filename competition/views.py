@@ -197,6 +197,7 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
     def upload_solution(self, request, pk=None):
         """Nahrá užívateľské riešenie k úlohe"""
         problem = self.get_object()
+        print('upload_solution')
 
         if not request.user.is_authenticated:
             raise exceptions.PermissionDenied('Je potrebné sa prihlásiť')
@@ -229,17 +230,19 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
     @action(detail=True, url_path='my-solution')
     def my_solution(self, request, pk=None):
         """Vráti riešenie k úlohe pre práve prihláseného užívateľa"""
-        problem = self.get_object()
+        problem: Problem = self.get_object()
         if not request.user.is_authenticated:
             raise exceptions.PermissionDenied('Je potrebné sa prihlásiť')
         event_registration = EventRegistration.get_registration_by_profile_and_event(
             request.user.profile, problem.series.semester)
         if event_registration is None:
-            raise exceptions.MethodNotAllowed(method='my-solution')
-        solution = Solution.objects.filter(
+            raise exceptions.MethodNotAllowed(
+                method='my-solution', detail='Je potrebné sa registrovať do série')
+        solution: Solution = Solution.objects.filter(
             problem=problem, semester_registration=event_registration).first()
-        serializer = SolutionSerializer(solution)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        file = solution.solution
+        return HttpResponse(
+            file, content_type='application/pdf')
 
     @action(methods=['get'], detail=True, permission_classes=[IsAdminUser],
             url_path='download-solutions')
@@ -598,7 +601,7 @@ class EventViewSet(ModelViewSetWithSerializerContext):
     @action(methods=['post'], detail=True, permission_classes=[IsAuthenticated])
     def register(self, request, pk=None):
         """Registruje prihláseného užívateľa na akciu"""
-        event = self.get_object()
+        event: Event = self.get_object()
         profile = request.user.profile
         if not event.can_user_participate(request.user):
             return Response('Používateľa nie je možné registrovať - Zlá veková kategória',
