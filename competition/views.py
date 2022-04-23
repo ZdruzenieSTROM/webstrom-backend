@@ -13,6 +13,7 @@ from personal.models import Profile, School
 from personal.serializers import ProfileMailSerializer, SchoolSerializer
 from rest_framework import exceptions, mixins, status, viewsets
 from rest_framework.decorators import action
+from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from webstrom import settings
@@ -600,12 +601,14 @@ class EventViewSet(ModelViewSetWithSerializerContext):
         """Registruje prihláseného užívateľa na akciu"""
         event = self.get_object()
         profile = request.user.profile
+        if not event.is_active:
+            raise ValidationError('Súťaž aktuálne neprebieha.')
         if not event.can_user_participate(request.user):
-            return Response('Používateľa nie je možné registrovať - Zlá veková kategória',
-                            status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+            raise ValidationError(
+                'Používateľa nie je možné registrovať - Zlá veková kategória')
         if EventRegistration.get_registration_by_profile_and_event(
                 profile, event):
-            return Response('Používateľ je už zaregistrovaný', status=status.HTTP_409_CONFLICT)
+            raise ValidationError('Používateľ je už zaregistrovaný')
         EventRegistration.objects.create(
             event=event,
             school=profile.school,
