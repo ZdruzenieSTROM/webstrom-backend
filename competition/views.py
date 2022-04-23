@@ -7,7 +7,7 @@ from operator import itemgetter
 from base.utils import mime_type
 from django.core.files.move import file_move_safe
 from django.db.models import Q
-from django.http import HttpResponse
+from django.http import FileResponse, HttpResponse
 from personal.models import Profile, School
 from personal.serializers import ProfileMailSerializer, SchoolSerializer
 from rest_framework import exceptions, mixins, status, viewsets
@@ -229,17 +229,19 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
     @action(detail=True, url_path='my-solution')
     def my_solution(self, request, pk=None):
         """Vráti riešenie k úlohe pre práve prihláseného užívateľa"""
-        problem = self.get_object()
+        problem: Problem = self.get_object()
         if not request.user.is_authenticated:
             raise exceptions.PermissionDenied('Je potrebné sa prihlásiť')
         event_registration = EventRegistration.get_registration_by_profile_and_event(
             request.user.profile, problem.series.semester)
         if event_registration is None:
-            raise exceptions.MethodNotAllowed(method='my-solution')
-        solution = Solution.objects.filter(
-            problem=problem, semester_registration=event_registration).first()
-        serializer = SolutionSerializer(solution)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+            raise exceptions.MethodNotAllowed(
+                method='my-solution', detail='Je potrebné sa registrovať do série')
+        solution: Solution = Solution.objects.filter(
+            problem=problem, semester_registration=event_registration).latest('uploaded_at')
+        file = solution.solution
+        return FileResponse(
+            file, content_type='application/pdf')
 
     @action(methods=['get'], detail=True, permission_classes=[IsAdminUser],
             url_path='download-solutions')
@@ -598,7 +600,7 @@ class EventViewSet(ModelViewSetWithSerializerContext):
     @action(methods=['post'], detail=True, permission_classes=[IsAuthenticated])
     def register(self, request, pk=None):
         """Registruje prihláseného užívateľa na akciu"""
-        event = self.get_object()
+        event: Event = self.get_object()
         profile = request.user.profile
         if not event.is_active:
             raise ValidationError('Súťaž aktuálne neprebieha.')
