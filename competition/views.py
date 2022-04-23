@@ -158,6 +158,7 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
     queryset = Problem.objects.all()
     serializer_class = ProblemSerializer
     permission_classes = (ProblemPermission,)
+    MAX_SUBMITTED_SOLUTIONS = 10
 
     def perform_create(self, serializer):
         """
@@ -215,6 +216,12 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
             late_tag=late_tag,
             is_online=True
         )
+        def solutions_count(): return len(Solution.objects.filter(
+            problem=problem, semester_registration=event_registration))
+        # delete solutions until there is less than allowed amount
+        while(solutions_count() > self.MAX_SUBMITTED_SOLUTIONS - 1):
+            Solution.objects.filter(
+                problem=problem, semester_registration=event_registration).earliest('uploaded_at').delete()
         solution.solution.save(
             solution.get_solution_file_name(), file, save=True)
 
