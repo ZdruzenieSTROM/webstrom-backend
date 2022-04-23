@@ -25,7 +25,6 @@ from user.models import User
 from competition import utils
 from competition.querysets import ActiveQuerySet
 
-
 class CompetitionType(models.Model):
     "Druh súťaže"
     class Meta:
@@ -33,7 +32,6 @@ class CompetitionType(models.Model):
         verbose_name_plural = 'Typy súťaží'
 
     name = models.CharField('typ súťaže', max_length=200)
-
 
 class Competition(models.Model):
     """
@@ -172,8 +170,6 @@ class Event(models.Model):
         return self.competition.can_user_modify(user)
 
     def can_user_participate(self, user):
-        if not self.is_active:
-            return False
         return self.competition.can_user_participate(user)
 
     @property
