@@ -3,6 +3,10 @@ import os
 from io import BytesIO
 
 import pdf2image
+from base.managers import UnspecifiedValueManager
+from base.models import RestrictedFileField
+from base.utils import mime_type
+from base.validators import school_year_validator
 from django.contrib.sites.models import Site
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
@@ -15,15 +19,20 @@ from django.dispatch import receiver
 from django.shortcuts import get_object_or_404
 from django.utils.functional import cached_property
 from django.utils.timezone import now
-
-from base.managers import UnspecifiedValueManager
-from base.models import RestrictedFileField
-from base.utils import mime_type
-from base.validators import school_year_validator
-from competition import utils
-from competition.querysets import ActiveQuerySet
 from personal.models import Profile, School
 from user.models import User
+
+from competition import utils
+from competition.querysets import ActiveQuerySet
+
+
+class CompetitionType(models.Model):
+    "Druh súťaže"
+    class Meta:
+        verbose_name = 'Typ súťaže'
+        verbose_name_plural = 'Typy súťaží'
+
+    name = models.CharField()
 
 
 class Competition(models.Model):
@@ -34,23 +43,24 @@ class Competition(models.Model):
         verbose_name = 'súťaž'
         verbose_name_plural = 'súťaže'
 
-    COMPETITION_TYPE_CHOICES = [
-        (0, 'Seminár'),
-        (1, 'Jednodňová súťaž'),
-        (2, 'Iné'),
-    ]
-
     name = models.CharField(verbose_name='názov', max_length=50)
+    slug = models.SlugField()
     start_year = models.PositiveSmallIntegerField(
         verbose_name='rok prvého ročníka súťaže', blank=True)
     description = models.TextField(verbose_name='Popis súťaže', blank=True)
     rules = models.TextField(
         verbose_name='Pravidlá súťaže', blank=True, null=True)
+    who_can_participate = models.CharField(
+        verbose_name='Pre koho je súťaž určená', blank=True,
+        max_length=50)
 
     sites = models.ManyToManyField(Site)
 
-    competition_type = models.PositiveSmallIntegerField(
-        verbose_name='typ súťaže', choices=COMPETITION_TYPE_CHOICES)
+    competition_type = models.ForeignKey(
+        CompetitionType,
+        null=True,
+        on_delete=models.SET_NULL,
+        verbose_name='typ súťaže')
 
     min_years_until_graduation = models.PositiveSmallIntegerField(
         verbose_name='Minimálny počet rokov do maturity', null=True,

@@ -1,8 +1,8 @@
 from django_typomatic import ts_interface
+from personal.serializers import ProfileShortSerializer, SchoolShortSerializer
 from rest_framework import serializers
 
 from competition import models
-from personal.serializers import ProfileShortSerializer, SchoolShortSerializer
 
 
 class ModelWithParticipationSerializer(serializers.ModelSerializer):
@@ -57,8 +57,16 @@ class EventSerializer(ModelWithParticipationSerializer):
 
 
 @ts_interface(context='competition')
+class CompetitionTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.CompetitionType
+        fields = '__all__'
+
+
+@ts_interface(context='competition')
 class CompetitionSerializer(serializers.ModelSerializer):
     event_set = EventSerializer(many=True)
+    competition_type = CompetitionTypeSerializer(many=False)
 
     class Meta:
         model = models.Competition
