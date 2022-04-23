@@ -25,6 +25,7 @@ from user.models import User
 from competition import utils
 from competition.querysets import ActiveQuerySet
 
+
 class CompetitionType(models.Model):
     "Druh súťaže"
     class Meta:
@@ -32,6 +33,7 @@ class CompetitionType(models.Model):
         verbose_name_plural = 'Typy súťaží'
 
     name = models.CharField('typ súťaže', max_length=200)
+
 
 class Competition(models.Model):
     """
@@ -612,6 +614,14 @@ class SemesterPublication(models.Model):
         return self.semester.can_user_modify(user)
 
 
+class PublicationType(models.Model):
+    class Meta:
+        verbose_name = 'Typ publikácie'
+        verbose_name_plural = 'Typy publikácií'
+
+    name = models.CharField(max_length=100, verbose_name='názov typu')
+
+
 class UnspecifiedPublication(models.Model):
     """
     Reprezentuje výsledky, brožúrku alebo akýkoľvek materiál
@@ -622,6 +632,8 @@ class UnspecifiedPublication(models.Model):
         verbose_name = 'iná publikácia'
         verbose_name_plural = 'iné publikácie'
 
+    publication_type = models.ForeignKey(PublicationType, on_delete=models.SET_DEFAULT,
+                                         default=)
     name = models.CharField(max_length=30, blank=True)
     event = models.ForeignKey(Event, null=True, on_delete=models.SET_NULL)
 
