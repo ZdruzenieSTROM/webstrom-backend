@@ -52,9 +52,15 @@ class Command(BaseCommand):
                         end=end_date,
                     )
                     year += 1
-                    UnspecifiedPublication.objects.create(
-                        name='Zadanie',
-                        event=event,
-                        file='media/zadania.pdf'
-                    )
+                    if competition.competition_type.pk in [1, 3, 5]:
+                        UnspecifiedPublication.objects.create(
+                            name='Zadanie',
+                            event=event,
+                            file='media/zadania.pdf'
+                        )
+                        UnspecifiedPublication.objects.create(
+                            name='Poradie',
+                            event=event,
+                            file='media/poradie.pdf'
+                        )
                 start += 1
