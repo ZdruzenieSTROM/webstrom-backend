@@ -6,7 +6,7 @@ from competition import models
 
 
 class ModelWithParticipationSerializer(serializers.ModelSerializer):
-    can_pariticipate = serializers.SerializerMethodField('get_can_participate')
+    can_participate = serializers.SerializerMethodField('get_can_participate')
     is_registered = serializers.SerializerMethodField('get_is_registered')
 
     def get_can_participate(self, obj):
@@ -21,7 +21,7 @@ class ModelWithParticipationSerializer(serializers.ModelSerializer):
         if 'request' in self.context and hasattr(self.context['request'].user, 'profile'):
             return models.EventRegistration.get_registration_by_profile_and_event(
                 self.context['request'].user.profile, self.get_event(obj)
-            ) is None
+            ) is not None
         return None
 
 
@@ -112,7 +112,11 @@ class CommentSerializer(serializers.ModelSerializer):
         model = models.Comment
         fields = '__all__'
 
+    posted_by_name = serializers.SerializerMethodField('get_posted_by_name')
     edit_allowed = serializers.SerializerMethodField('can_edit')
+
+    def get_posted_by_name(self, obj):
+        return obj.user.get_full_name()
 
     def can_edit(self, obj):
         if 'request' in self.context:
