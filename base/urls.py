@@ -1,5 +1,6 @@
-from rest_framework.routers import DefaultRouter
 from django.urls import path
+from rest_framework.routers import DefaultRouter
+
 from base import views
 
 app_name = 'base'

@@ -3,6 +3,7 @@ from rest_framework import serializers
 
 from problem_database import models
 
+
 @ts_interface(context='problem_database')
 class SeminarSerializer(serializers.ModelSerializer):
     class Meta:

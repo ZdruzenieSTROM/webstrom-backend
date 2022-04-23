@@ -1,8 +1,8 @@
 from django_typomatic import ts_interface
 from rest_framework import serializers
 
-from personal.serializers import ProfileShortSerializer, SchoolShortSerializer
 from competition import models
+from personal.serializers import ProfileShortSerializer, SchoolShortSerializer
 
 
 class ModelWithParticipationSerializer(serializers.ModelSerializer):

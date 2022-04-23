@@ -1,9 +1,11 @@
+from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APITestCase
-from django.test import TestCase
+
 # from user.models import User
 from personal.models import County, District, School
-from personal.serializers import CountySerializer, DistrictSerializer, SchoolSerializer
+from personal.serializers import (CountySerializer, DistrictSerializer,
+                                  SchoolSerializer)
 
 
 class TestProfile(TestCase):
