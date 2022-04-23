@@ -632,8 +632,8 @@ class UnspecifiedPublication(models.Model):
         verbose_name = 'iná publikácia'
         verbose_name_plural = 'iné publikácie'
 
-    publication_type = models.ForeignKey(PublicationType, on_delete=models.SET_DEFAULT,
-                                         default=)
+    publication_type = models.ForeignKey(
+        PublicationType, on_delete=models.SET_NULL, null=True)
     name = models.CharField(max_length=30, blank=True)
     event = models.ForeignKey(Event, null=True, on_delete=models.SET_NULL)
 

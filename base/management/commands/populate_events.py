@@ -1,7 +1,8 @@
 from datetime import datetime
 from typing import Any, Optional
 
-from competition.models import Competition, Event, UnspecifiedPublication
+from competition.models import (Competition, Event, PublicationType,
+                                UnspecifiedPublication)
 from competition.utils import get_school_year_by_date
 from django.core.management import BaseCommand
 
@@ -56,11 +57,15 @@ class Command(BaseCommand):
                         UnspecifiedPublication.objects.create(
                             name='Zadanie',
                             event=event,
-                            file='media/zadania.pdf'
+                            file='media/zadania.pdf',
+                            publication_type=PublicationType.objects.get(
+                                name='Zadania')
                         )
                         UnspecifiedPublication.objects.create(
                             name='Poradie',
                             event=event,
-                            file='media/poradie.pdf'
+                            file='media/poradie.pdf',
+                            publication_type=PublicationType.objects.get(
+                                name='Poradie')
                         )
                 start += 1

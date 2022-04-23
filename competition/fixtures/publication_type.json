@@ -1,0 +1,30 @@
+[
+    {
+        "model": "competition.PublicationType",
+        "pk": 0,
+        "fields": {
+            "name": "Zadania"
+        }
+    },
+    {
+        "model": "competition.PublicationType",
+        "pk": 1,
+        "fields": {
+            "name": "Poradie"
+        }
+    },
+    {
+        "model": "competition.PublicationType",
+        "pk": 2,
+        "fields": {
+            "name": "Brožúra"
+        }
+    },
+    {
+        "model": "competition.PublicationType",
+        "pk": 3,
+        "fields": {
+            "name": "Pozvánka"
+        }
+    }
+]
