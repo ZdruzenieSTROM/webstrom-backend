@@ -1,3 +1,5 @@
+from urllib.request import Request
+
 from rest_framework import permissions
 
 from .models import EventRegistration
@@ -53,13 +55,13 @@ class ProblemPermission(CompetitionRestrictedPermission):
     """Prístup pre Problem """
 
     def has_permission(self, request, view):
-        if request.action in ['upload-solution']:
+        if view.action in ['upload-solution']:
             return request.user.is_authenticated
 
         return super().has_permission(request, view)
 
     def has_object_permission(self, request, view, obj):
-        if request.action in ['upload-solution']:
+        if view.action in ['upload-solution']:
             return (
                 request.user.is_authenticated and
                 EventRegistration.get_registration_by_profile_and_event(
