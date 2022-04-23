@@ -32,7 +32,7 @@ class CompetitionType(models.Model):
         verbose_name = 'Typ súťaže'
         verbose_name_plural = 'Typy súťaží'
 
-    name = models.CharField()
+    name = models.CharField('typ súťaže', max_length=200)
 
 
 class Competition(models.Model):
