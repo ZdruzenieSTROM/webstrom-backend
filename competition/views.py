@@ -114,6 +114,7 @@ class CommentViewSet(
     """Komentáre(otázky) k úlohám"""
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
+    lookup_field = 'slug'
     permission_classes = (CommentPermission, )
 
     def get_serializer_context(self):
