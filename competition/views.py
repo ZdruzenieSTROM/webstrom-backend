@@ -260,6 +260,26 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
         return FileResponse(
             file, content_type='application/pdf')
 
+    @action(detail=True, url_path='corrected-solution')
+    def corrected_solution(self, request, pk=None):
+        """Vráti opravené riešenie k úlohe pre práve prihláseného užívateľa"""
+        problem: Problem = self.get_object()
+        if not request.user.is_authenticated:
+            raise exceptions.PermissionDenied('Je potrebné sa prihlásiť')
+        event_registration = EventRegistration.get_registration_by_profile_and_event(
+            request.user.profile, problem.series.semester)
+        if event_registration is None:
+            raise exceptions.MethodNotAllowed(
+                method='my-solution', detail='Je potrebné sa registrovať do série')
+        solution: Solution = Solution.objects.filter(
+            problem=problem, semester_registration=event_registration).latest('uploaded_at')
+        file = solution.corrected_solution
+        if not file:
+            raise exceptions.NotFound(
+                detail='Toto riešenie ešte nie je opravené')
+        return FileResponse(
+            file, content_type='application/pdf')
+
     @action(methods=['get'], detail=True, permission_classes=[IsAdminUser],
             url_path='download-solutions')
     def download_solutions(self, request, pk=None):
