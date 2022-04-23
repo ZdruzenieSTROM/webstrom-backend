@@ -213,10 +213,4 @@ class UnspecifiedPublicationAdmin(admin.ModelAdmin):
 class ProblemCorrectionAdmin(admin.ModelAdmin):
     list_display = (
         'problem',
-        'corrected_by',
-        'best_solution'
-    )
-
-    list_filter = (
-        'corrected_by',
     )
