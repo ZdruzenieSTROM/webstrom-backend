@@ -4,7 +4,7 @@ from django.utils import timezone
 from rest_framework.test import APITestCase
 
 from competition import models
-from tests.test_utils import get_app_fixtures, PermissionTestMixin
+from tests.test_utils import PermissionTestMixin, get_app_fixtures
 
 series_expected_keys = [
     'id',

@@ -1,7 +1,5 @@
 import os
 
-from django.contrib.messages import constants as messages
-
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -32,7 +30,6 @@ DJANGO_APPS = [
 ]
 
 THIRD_PARTY_APPS = [
-    'crispy_forms',
     'rest_framework',
     'rest_framework.authtoken',
     'django_filters',
@@ -43,12 +40,12 @@ THIRD_PARTY_APPS = [
 ]
 
 LOCAL_APPS = [
-    'base.apps.BaseConfig',
-    'competition.apps.CompetitionConfig',
-    'cms.apps.CmsConfig',
-    'user.apps.UserConfig',
-    'personal.apps.PersonalConfig',
-    'problem_database.apps.ProblemDatabaseConfig'
+    'base',
+    'competition',
+    'cms',
+    'user',
+    'personal',
+    'problem_database'
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -62,7 +59,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.contrib.sites.middleware.CurrentSiteMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
 ]
 
 ROOT_URLCONF = 'webstrom.urls'
@@ -78,7 +74,6 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'base.context_processors.sites',
             ],
             'libraries': {
                 'staticfiles': 'django.templatetags.static',
@@ -184,20 +179,6 @@ MANAGERS = [('Web', 'web@strom.sk'), ]
 
 EMAIL_NO_REPLY = 'no-reply@strom.sk'    # z tade sa odosielaju maily
 EMAIL_ALERT = 'alert-email-address@strom.sk'  # tu sa prijimaju maily
-
-# Crispy forms
-
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
-
-# Messages
-
-MESSAGE_TAGS = {
-    messages.DEBUG: 'debug',
-    messages.INFO: 'info',
-    messages.SUCCESS: 'success',
-    messages.WARNING: 'warning',
-    messages.ERROR: 'danger',
-}
 
 # Tests
 

@@ -1,9 +1,9 @@
 from django_typomatic import ts_interface
-
 from rest_framework import serializers
 
-from personal.models import County, District, Profile, School
 from competition.models import Grade
+from personal.models import County, District, Profile, School
+
 #from competition.serializers import GradeSerializer
 
 

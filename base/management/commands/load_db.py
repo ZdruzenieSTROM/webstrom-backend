@@ -1,16 +1,16 @@
 import datetime
 import sqlite3
-from django.core.management import BaseCommand
-from django.utils.dateparse import parse_datetime
-from django.db.models import Q
+
 import pytz
 from allauth.account.models import EmailAddress
+from django.core.management import BaseCommand
+from django.db.models import Q
+from django.utils.dateparse import parse_datetime
 
-from competition.models import Semester, Series, Problem, Competition, Grade
+from competition.models import Competition, Grade, Problem, Semester, Series
 from competition.utils import get_school_year_by_date
-from user.models import User
 from personal.models import Profile, School
-
+from user.models import User
 
 SERIES_QUERY = '''
     SELECT id,number,submission_deadline, sum_method,season_id

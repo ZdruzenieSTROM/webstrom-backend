@@ -25,14 +25,10 @@ jobs:
         run: pip3 install setuptools
 
       - name: Install requirements
-        run: pip3 install -r prod-requirements.txt
+        run: pip3 install -r requirements.txt
 
-      - name: Install pylint
-        run: pip3 install pylint pylint-django
-
-      # TODO: come up with a better way of discovering packages
       - name: Run pylint
-        run: python3 -m pylint --load-plugins pylint_django --django-settings-module=webstrom.settings base cms competition personal tests user webstrom problem_database
+        run: python3 manage.py lint
 
   build:
     # The type of runner that the job will run on
@@ -50,10 +46,10 @@ jobs:
         run: pip3 install setuptools
 
       - name: Install requirements
-        run: pip3 install -r prod-requirements.txt
+        run: pip3 install -r requirements.txt
 
       - name: Create and fill db
         run: python3 manage.py restoredb
 
       - name: Run django tests
-        run: python3 manage.py test --testrunner='django.test.runner.DiscoverRunner'
+        run: python3 manage.py test

@@ -3,7 +3,7 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import Permission
 
 from personal.models import Profile
-from user.forms import UserCreationForm, UserChangeForm
+from user.forms import UserChangeForm, UserCreationForm
 from user.models import User
 
 

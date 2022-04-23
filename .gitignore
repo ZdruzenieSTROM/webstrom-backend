@@ -13,16 +13,6 @@ fixtures/sources
 !fixtures/sources/*.py
 !fixtures/sources/requirements.txt
 
-# Environmenty
-env
-.env
-strom
-vevericka
-django-env
-
-# Bordel od IDE
-.vscode
-
 # React
 node_modules
 

@@ -1,8 +1,8 @@
+from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APITestCase
-from django.test import TestCase
-from problem_database import models
-from problem_database import serializers
+
+from problem_database import models, serializers
 
 
 class TestSeminar(TestCase):
