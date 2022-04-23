@@ -33,7 +33,7 @@
         "fields": {
             "priority": 300,
             "caption": "Matboj",
-            "url": "/matboj/",
+            "url": "/akcie/matboj/",
             "sites": [
                 0
             ]
@@ -45,7 +45,7 @@
         "fields": {
             "priority": 300,
             "caption": "Lomihlav",
-            "url": "/lomihlav/",
+            "url": "/akcie/lomihlav/",
             "sites": [
                 1
             ]
@@ -57,7 +57,7 @@
         "fields": {
             "priority": 300,
             "caption": "Mamut",
-            "url": "/mamut/",
+            "url": "/akcie/mamut/",
             "sites": [
                 2
             ]
@@ -69,7 +69,7 @@
         "fields": {
             "priority": 100,
             "caption": "TMM",
-            "url": "/tmm/",
+            "url": "/akcie/tmm/",
             "sites": [
                 0,
                 1,
@@ -99,6 +99,33 @@
             "url": "/gdpr/",
             "sites": [
                 0,
+                1,
+                2
+            ]
+        }
+    },
+    {
+        "model": "cms.MenuItem",
+        "pk": 8,
+        "fields": {
+            "priority": 100,
+            "caption": "Kôš",
+            "url": "/akcie/kos/",
+            "sites": [
+                0,
+                1,
+                2
+            ]
+        }
+    },
+    {
+        "model": "cms.MenuItem",
+        "pk": 5,
+        "fields": {
+            "priority": 100,
+            "caption": "Máš problém?!",
+            "url": "/akcie/mas-problem/",
+            "sites": [
                 1,
                 2
             ]
