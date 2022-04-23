@@ -103,6 +103,7 @@ class CompetitionViewSet(viewsets.ReadOnlyModelViewSet):
     """Naše aktivity"""
     queryset = Competition.objects.all()
     serializer_class = CompetitionSerializer
+    lookup_field = 'slug'
     permission_classes = (CompetitionRestrictedPermission,)
 
 
@@ -114,7 +115,6 @@ class CommentViewSet(
     """Komentáre(otázky) k úlohám"""
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
-    lookup_field = 'slug'
     permission_classes = (CommentPermission, )
 
     def get_serializer_context(self):
