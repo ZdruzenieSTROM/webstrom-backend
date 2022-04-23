@@ -2,7 +2,6 @@ import os
 from pathlib import Path
 
 from rest_framework.test import APIClient
-
 from user.models import User
 from webstrom.settings import BASE_DIR
 
@@ -44,7 +43,9 @@ class PermissionTestMixin:
         return [
             os.path.join(BASE_DIR, 'base', 'fixtures', 'sites.json'),
             os.path.join(BASE_DIR, 'competition',
-                         'fixtures', 'competitions.json')
+                         'fixtures', 'competitions.json'),
+            os.path.join(BASE_DIR, 'competition',
+                         'fixtures', 'competition_types.json')
         ] + get_app_fixtures(['personal', 'user'])
 
     def create_users(self):
