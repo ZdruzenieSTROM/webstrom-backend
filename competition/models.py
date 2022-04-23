@@ -156,7 +156,7 @@ class Event(models.Model):
 
     @property
     def is_active(self):
-        return datetime.datetime.now() <= self.end
+        return now() <= self.end
 
     def can_user_modify(self, user):
         return self.competition.can_user_modify(user)
