@@ -81,7 +81,7 @@
         "model": "cms.MenuItem",
         "pk": 6,
         "fields": {
-            "priority": 100,
+            "priority": 20,
             "caption": "Minisústredenia",
             "url": "/minisustredenia/",
             "sites": [
@@ -94,7 +94,7 @@
         "model": "cms.MenuItem",
         "pk": 7,
         "fields": {
-            "priority": 100,
+            "priority": 10,
             "caption": "Ochrana osobných údajov",
             "url": "/gdpr/",
             "sites": [
@@ -108,7 +108,7 @@
         "model": "cms.MenuItem",
         "pk": 8,
         "fields": {
-            "priority": 100,
+            "priority": 50,
             "caption": "Kôš",
             "url": "/akcie/kos/",
             "sites": [
@@ -122,7 +122,7 @@
         "model": "cms.MenuItem",
         "pk": 5,
         "fields": {
-            "priority": 100,
+            "priority": 250,
             "caption": "Máš problém?!",
             "url": "/akcie/mas-problem/",
             "sites": [
