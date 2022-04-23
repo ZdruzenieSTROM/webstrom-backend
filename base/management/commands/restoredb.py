@@ -61,6 +61,7 @@ class Command(BaseCommand):
                      'dummy_users',
                      'profiles',
                      'profiles_more',
+                     'competition_types',
                      'competitions',
                      'grades',
                      'late_tags',

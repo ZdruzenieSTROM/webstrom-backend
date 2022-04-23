@@ -1,0 +1,44 @@
+[
+    {
+        "model": "competition.CompetitionType",
+        "pk": 0,
+        "fields": {
+            "name": "Seminár"
+        }
+    },
+    {
+        "model": "competition.CompetitionType",
+        "pk": 1,
+        "fields": {
+            "name": "Jednodňová tímová súťaž"
+        }
+    },
+    {
+        "model": "competition.CompetitionType",
+        "pk": 2,
+        "fields": {
+            "name": "Tábor"
+        }
+    },
+    {
+        "model": "competition.CompetitionType",
+        "pk": 3,
+        "fields": {
+            "name": "Šifrovacia hra"
+        }
+    },
+    {
+        "model": "competition.CompetitionType",
+        "pk": 4,
+        "fields": {
+            "name": "Robotická tímová súťaž"
+        }
+    },
+    {
+        "model": "competition.CompetitionType",
+        "pk": 5,
+        "fields": {
+            "name": "Individuálna online súťaž"
+        }
+    }
+]
