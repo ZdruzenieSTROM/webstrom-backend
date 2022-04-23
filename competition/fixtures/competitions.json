@@ -160,6 +160,7 @@
             "name": "Máš problém?!",
             "who_can_participate": "4. - 9. ročník ZŠ",
             "competition_type": 5,
+            "start_year": 2021,
             "description": "Jednotlivci riešia úlohy a odovzdávajú iba výsledky. Súťaž trvá 60 minút.",
             "rules": "Máš problém?! je súťaž určená pre žiakov 4. - 9. ročníka ZŠ alebo prímy až kvarty OG (ale môžu sa zapojiť aj mladší). Súťažia jednotlivci v dvoch kategóriách: mladší (4. - 6. ročník ZŠ, príma) a starší (7. - 9. ročník ZŠ, sekunda až kvarta). V súťaži sa odovzdávajú len výsledky a je na ňu 60 minút.\n\nSúťaží sa na [samostatnej stránke](https://masproblem.strom.sk/login), rovnako tam nájdete aj poradie a **registráciu**. Na jeseň roku 2021 sa súťaž uskutoční 3.11.2021 od 11:00 do 17:00, pričom si môžeš vybrať kedy si súťaž spustíš (odporúčame však začať do 16:00, aby si mal dosť času na súťaženie).\n\nPoradie sa vyhodnocuje zvlášť pre každý ročník, a to najskôr podľa najvyššej dosiahnutej úrovne, z ktorej ste vyriešili aspoň 1 problém, potom podľa počtu správnych výsledkov a nakoniec podľa času odovzdania poslednej úlohy.\n\nProblémy sú rozdelené do úrovní označených od A po F. Mladší začínajú na úrovni A a končia úrovňou E. Starší začínajú úrovňou B a končia na úrovni F.  Na začiatku viete riešiť len problémy z úrovne, ktorú máte otvorenú. Presné počty problémov v daných úrovniach a počty problémov potrebných na odomknutie ďalšej úrovne nájdete v tabuľke. Počas celého priebehu súťaže môžete riešiť problémy zo všetkých úrovní, ktoré už máte odomknuté. **Úlohy na jednej úrovni nie sú zoradené podľa obtiažnosti.**\n\n| úroveň | počet problémov v úrovni (mladší) | počet problémov, ktorý je potrebný na danej úrovni vyriešiť na postup do ďalšej (mladší)| počet problémov v úrovni (starší) | počet problémov, ktorý je potrebný na danej úrovni vyriešiť na postup do ďalšej (starší) |\n|:-:|:-:|:-:|:-:|:-:|\n| A | 8 | 4 | 0 | 0 |\n| B | 6 | 3 | 6 | 3 |\n| C | 4 | 2 | 4 | 2 |\n| D | 4 | 2 | 4 | 2 |\n| E | 2 | 0 | 2 | 2 |\n| F | 0 | 0 | 2 | 0 |\n\nPoplatok za účasť na súťaži je vo výške 3€. Tento poplatok je potrebné uhradiť na účet združenia STROM - SK59 0900 0000 0004 4262 6916. Do poznámky pre príjemcu je potrebné uviesť \"Máš problém - meno účastníka\". Ako variabilný symbol je potrebné uviesť registračný kód, ktorý vám príde v maili po registrácii.\n\nNajúspešnejší z vás dostanú diplom a tí, ktorí sa umiestnia na prvých 3 miestach v rámci svojho ročníka, získajú aj vecné ceny. Víťaz z každého ročníka bude navyše pozvaný ako riadny účastník na najbližšie sústredenie. :)\n\n"
         }
@@ -170,6 +171,7 @@
         "fields": {
             "name": "RBA",
             "who_can_participate": "1. ročník ZŠ - 4. ročník SŠ",
+            "start_year": "2010",
             "competition_type": 4,
             "description": "Tímová robotická súťaž v troch kategóriách: Vlastný model, Racing a Robotická výzva"
         }
@@ -180,6 +182,7 @@
         "fields": {
             "name": "Denný tábor",
             "who_can_participate": "3. - 7. ročník ZŠ",
+            "start_year": "2022",
             "competition_type": 2,
             "description": "Denny tabor - fajne to bude"
         }
