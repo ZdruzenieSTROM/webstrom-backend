@@ -64,6 +64,6 @@ class ProblemPermission(CompetitionRestrictedPermission):
                 request.user.is_authenticated and
                 EventRegistration.get_registration_by_profile_and_event(
                     request.user.profile, obj.series.semester)
-            )
+            ) and obj.series.can_submit
 
-        return super().has_permission(request, view)
+        return super().has_object_permission(request, view, obj)

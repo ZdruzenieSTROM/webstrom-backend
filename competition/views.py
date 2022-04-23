@@ -200,10 +200,6 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
         problem = self.get_object()
         event_registration = EventRegistration.get_registration_by_profile_and_event(
             request.user.profile, problem.series.semester)
-
-        if event_registration is None:
-            raise exceptions.MethodNotAllowed(method='upload-solution')
-
         if 'file' not in request.data:
             raise exceptions.ParseError(detail='Request neobsahoval súbor')
 
