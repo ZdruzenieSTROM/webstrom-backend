@@ -1,6 +1,6 @@
 from django_typomatic import ts_interface
-from rest_framework import serializers
 from drf_writable_nested.serializers import WritableNestedModelSerializer
+from rest_framework import serializers
 
 from cms import models
 

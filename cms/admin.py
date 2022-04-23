@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from cms.models import MenuItem, Post, PostLink, InfoBanner, MessageTemplate
+from cms.models import InfoBanner, MenuItem, MessageTemplate, Post, PostLink
 
 
 @admin.register(MenuItem)

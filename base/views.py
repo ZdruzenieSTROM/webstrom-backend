@@ -1,13 +1,14 @@
 from django.contrib.flatpages.models import FlatPage
-from rest_framework import viewsets, status
+from rest_framework import status, viewsets
 from rest_framework.decorators import action
+from rest_framework.permissions import (DjangoModelPermissionsOrAnonReadOnly,
+                                        IsAdminUser)
 from rest_framework.response import Response
-from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly, IsAdminUser
 from rest_framework.schemas import SchemaGenerator
 from rest_framework.views import APIView
 from rest_framework_swagger import renderers
-from base.serializers import FlatPageSerializer
 
+from base.serializers import FlatPageSerializer
 
 # Create your views here.
 

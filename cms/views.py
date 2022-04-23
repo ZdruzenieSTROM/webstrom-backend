@@ -1,14 +1,11 @@
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from cms.models import MenuItem, Post, InfoBanner, MessageTemplate
-from cms.serializers import (
-    MenuItemShortSerializer,
-    PostSerializer,
-    InfoBannerSerializer,
-    MessageTemplateSerializer
-)
+
+from cms.models import InfoBanner, MenuItem, MessageTemplate, Post
 from cms.permissions import PostPermission
+from cms.serializers import (InfoBannerSerializer, MenuItemShortSerializer,
+                             MessageTemplateSerializer, PostSerializer)
 
 
 class MenuItemViewSet(viewsets.ReadOnlyModelViewSet):

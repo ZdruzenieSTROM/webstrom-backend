@@ -4,42 +4,36 @@ import zipfile
 from io import BytesIO
 from operator import itemgetter
 
+from base.utils import mime_type
 from django.core.exceptions import ValidationError
-from django.db.models import Q
 from django.core.files.move import file_move_safe
+from django.db.models import Q
 from django.http import HttpResponse
-
-from rest_framework import exceptions, status, viewsets, mixins
+from personal.models import Profile, School
+from personal.serializers import ProfileMailSerializer, SchoolSerializer
+from rest_framework import exceptions, mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from webstrom import settings
 
-from base.utils import mime_type
-
-from personal.models import School, Profile
-from personal.serializers import SchoolSerializer, ProfileMailSerializer
-from competition.models import (Competition, Event, EventRegistration, Grade,
-                                LateTag, Problem,
-                                Semester, Series, Solution, Vote, UnspecifiedPublication,
-                                SemesterPublication, Comment)
 from competition import utils
-from competition.permissions import CompetitionRestrictedPermission
-from competition.serializers import (CompetitionSerializer,
+from competition.models import (Comment, Competition, Event, EventRegistration,
+                                Grade, LateTag, Problem, Semester,
+                                SemesterPublication, Series, Solution,
+                                UnspecifiedPublication, Vote)
+from competition.permissions import (CommentPermission,
+                                     CompetitionRestrictedPermission)
+from competition.serializers import (CommentSerializer, CompetitionSerializer,
                                      EventRegistrationSerializer,
-                                     GradeSerializer,
-                                     LateTagSerializer,
-                                     ProblemSerializer,
-                                     EventSerializer,
+                                     EventSerializer, GradeSerializer,
+                                     LateTagSerializer, ProblemSerializer,
+                                     SemesterPublicationSerializer,
                                      SemesterSerializer,
                                      SemesterWithProblemsSerializer,
                                      SeriesWithProblemsSerializer,
                                      SolutionSerializer,
-                                     UnspecifiedPublicationSerializer,
-                                     SemesterPublicationSerializer,
-                                     CommentSerializer)
-
-from competition.permissions import CommentPermission
+                                     UnspecifiedPublicationSerializer)
 
 # pylint: disable=unused-argument
 
@@ -622,7 +616,12 @@ class EventViewSet(ModelViewSetWithSerializerContext):
 
         return Response(status=status.HTTP_201_CREATED)
 
-    @action(methods=['get'], detail=True, permission_classes=[IsAuthenticated], url_path='can-participate')
+    @action(
+        methods=['get'],
+        detail=True,
+        permission_classes=[IsAuthenticated],
+        url_path='can-participate'
+    )
     def can_participate(self, request, pk=None):
         event = self.get_object()
         return Response(

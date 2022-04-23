@@ -5,6 +5,7 @@ from django.db import models
 from django.utils.timezone import now
 
 from competition.models import Event, Series
+
 from .querysets import VisibilityQuerySet
 
 
