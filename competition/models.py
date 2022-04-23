@@ -25,6 +25,7 @@ from user.models import User
 from competition import utils
 from competition.querysets import ActiveQuerySet
 
+
 class CompetitionType(models.Model):
     "Druh súťaže"
     class Meta:
@@ -32,6 +33,7 @@ class CompetitionType(models.Model):
         verbose_name_plural = 'Typy súťaží'
 
     name = models.CharField('typ súťaže', max_length=200)
+
 
 class Competition(models.Model):
     """
@@ -317,6 +319,7 @@ class Problem(models.Model):
         Series, verbose_name='úloha zaradená do série',
         related_name='problems',
         on_delete=models.CASCADE,)
+    image = models.ImageField(verbose_name='Obrázok k úlohe', null=True)
 
     def __str__(self):
         return f'{self.series.semester.competition.name}-{self.series.semester.year}' \
