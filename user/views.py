@@ -1,6 +1,8 @@
 from allauth.account import app_settings as allauth_settings
 from allauth.account.utils import complete_signup
 from allauth.account.views import ConfirmEmailView
+from competition.forms import ProfileCreationForm, ProfileUpdateForm
+from competition.models import Grade, Profile
 from django.contrib import messages
 from django.contrib.auth import login as django_login
 from django.contrib.auth import logout as django_logout
@@ -14,6 +16,7 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.generic import DetailView
+from personal.models import District, School
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import MethodNotAllowed
@@ -23,9 +26,6 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from competition.forms import ProfileCreationForm, ProfileUpdateForm
-from competition.models import Grade, Profile
-from personal.models import District, School
 from user.forms import NameUpdateForm, UserCreationForm
 from user.models import TokenModel, User
 from user.serializers import (LoginSerializer, PasswordChangeSerializer,
@@ -60,7 +60,7 @@ class LoginView(GenericAPIView):
         self.token = self.create_token(self.token_model, self.user)
 
         # Vytvorí django session.
-        # self.process_login()
+        self.process_login()
 
     def get_response(self):
         serializer_class = TokenSerializer
