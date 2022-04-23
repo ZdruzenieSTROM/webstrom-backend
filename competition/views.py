@@ -103,6 +103,7 @@ class CompetitionViewSet(viewsets.ReadOnlyModelViewSet):
     """Naše aktivity"""
     queryset = Competition.objects.all()
     serializer_class = CompetitionSerializer
+    lookup_field = 'slug'
     permission_classes = (CompetitionRestrictedPermission,)
 
 

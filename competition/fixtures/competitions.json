@@ -4,6 +4,7 @@
         "pk": 0,
         "fields": {
             "name": "STROM",
+            "slug": "strom",
             "start_year": "1976",
             "who_can_participate": "1. - 4. ročník SŠ",
             "description": "Každý polrok účastníci riešia dve série po 6 úloh a posielajú nám svoje riešenie vrátane postupu, ako k výsledku došli. My ich opravíme a aj s komentárom zašleme naspäť. Najlepších čaká 5-dňové sústredenie.",
@@ -23,6 +24,7 @@
         "pk": 1,
         "fields": {
             "name": "Matik",
+            "slug": "matik",
             "start_year": "1987",
             "competition_type": 0,
             "description": "Každý polrok účastníci riešia dve série po 6 úloh a posielajú nám svoje riešenie vrátane postupu, ako k výsledku došli. My ich opravíme a aj s komentárom zašleme naspäť. Najlepších čaká 5-dňové sústredenie.",
@@ -42,6 +44,7 @@
         "pk": 2,
         "fields": {
             "name": "Malynár",
+            "slug": "malynar",
             "start_year": "1991",
             "competition_type": 0,
             "who_can_participate": "4. - 6. ročník ZŠ",
@@ -61,6 +64,7 @@
         "pk": 3,
         "fields": {
             "name": "Matboj",
+            "slug": "matboj",
             "start_year": "2001",
             "competition_type": 1,
             "description": "Štvorčlenné tímy riešia 3 série po 12 úloh. Na každú sériu majú 20 minút. Na konci časového limitu spíšu svoje výsledky do odpoveďového hárku.",
@@ -80,6 +84,7 @@
         "pk": 4,
         "fields": {
             "name": "Lomihlav",
+            "slug": "lomihlav",
             "competition_type": 1,
             "start_year": "2001",
             "description": "Štvorčlenné tímy sa snažia postupne vyriešiť čo najviac úloh. Okrem klasických úloh riešia aj hlavolamy a hádanky ako bonusy.",
@@ -99,6 +104,7 @@
         "pk": 5,
         "fields": {
             "name": "Mamut",
+            "slug": "mamut",
             "competition_type": 1,
             "start_year": "2001",
             "description": "Päťčlenné tímy sa snažia postupne vyriešiť čo najviac úloh. Súťaž sa odohráva vonku. Riešenie úloh je spestrené športovými aktivitami.",
@@ -118,6 +124,7 @@
         "pk": 6,
         "fields": {
             "name": "Kôš",
+            "slug": "kos",
             "competition_type": 3,
             "start_year": "2019",
             "description": "Tímy postupne rišia šifry. Hra prebieha fyzicky v Košiciach a zároveň online.",
@@ -139,6 +146,7 @@
         "pk": 7,
         "fields": {
             "name": "TMM",
+            "slug": "tmm",
             "start_year": "2001",
             "competition_type": 2,
             "who_can_participate": "6. ročník ZŠ - 2. ročník SŠ",
@@ -158,6 +166,7 @@
         "pk": 8,
         "fields": {
             "name": "Máš problém?!",
+            "slug": "mas-problem",
             "who_can_participate": "4. - 9. ročník ZŠ",
             "competition_type": 5,
             "start_year": 2021,
@@ -170,6 +179,7 @@
         "pk": 9,
         "fields": {
             "name": "RBA",
+            "slug": "rba",
             "who_can_participate": "1. ročník ZŠ - 4. ročník SŠ",
             "start_year": "2010",
             "competition_type": 4,
@@ -181,6 +191,7 @@
         "pk": 10,
         "fields": {
             "name": "Denný tábor",
+            "slug": "denny-tabor",
             "who_can_participate": "3. - 7. ročník ZŠ",
             "start_year": "2022",
             "competition_type": 2,
