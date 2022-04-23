@@ -23,7 +23,8 @@ from competition.models import (Comment, Competition, Event, EventRegistration,
                                 SemesterPublication, Series, Solution,
                                 UnspecifiedPublication, Vote)
 from competition.permissions import (CommentPermission,
-                                     CompetitionRestrictedPermission)
+                                     CompetitionRestrictedPermission,
+                                     ProblemPermission)
 from competition.serializers import (CommentSerializer, CompetitionSerializer,
                                      EventRegistrationSerializer,
                                      EventSerializer, GradeSerializer,
@@ -155,7 +156,7 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
     """
     queryset = Problem.objects.all()
     serializer_class = ProblemSerializer
-    permission_classes = (CompetitionRestrictedPermission,)
+    permission_classes = (ProblemPermission,)
 
     def perform_create(self, serializer):
         """
@@ -197,10 +198,6 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
     def upload_solution(self, request, pk=None):
         """Nahrá užívateľské riešenie k úlohe"""
         problem = self.get_object()
-
-        if not request.user.is_authenticated:
-            raise exceptions.PermissionDenied('Je potrebné sa prihlásiť')
-
         event_registration = EventRegistration.get_registration_by_profile_and_event(
             request.user.profile, problem.series.semester)
 
