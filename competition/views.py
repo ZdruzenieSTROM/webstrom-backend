@@ -5,7 +5,6 @@ from io import BytesIO
 from operator import itemgetter
 
 from base.utils import mime_type
-from django.core.exceptions import ValidationError
 from django.core.files.move import file_move_safe
 from django.db.models import Q
 from django.http import HttpResponse
@@ -719,6 +718,7 @@ class SemesterPublicationViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=False, url_path='upload', permission_classes=[IsAdminUser])
     def upload_publication(self, request):
         """Uploadne časopis"""
+        # TODO: Prerobiť na serializer a standardny request
         if 'file' not in request.data:
             raise exceptions.ParseError(detail='Request neobsahoval súbor')
 
