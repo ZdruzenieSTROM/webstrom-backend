@@ -112,7 +112,7 @@ class ProblemSerializer(serializers.ModelSerializer):
 
     submitted = serializers.SerializerMethodField(
         'submitted_solution')
-    correction = ProblemCorrectionSerializer(many=False)
+    #correction = ProblemCorrectionSerializer(many=False,)
 
     def submitted_solution(self, obj):
         if 'request' in self.context:

@@ -685,7 +685,7 @@ class ProblemCorrection(models.Model):
         verbose_name_plural = 'opravene ulohy'
 
     problem = models.OneToOneField(
-        Problem, on_delete=models.CASCADE, related_name='correction')
+        Problem, on_delete=models.CASCADE, related_name='correction', null=True, primary_key=False)
     correct_solution_text = models.TextField(verbose_name='vzorak')
     best_solution = models.ManyToManyField(
         Solution, verbose_name='najkrajšie riešenia')
