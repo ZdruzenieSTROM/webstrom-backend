@@ -8,7 +8,7 @@ from base.utils import mime_type
 from django.core.exceptions import ValidationError
 from django.core.files.move import file_move_safe
 from django.db.models import Q
-from django.http import HttpResponse
+from django.http import FileResponse, HttpResponse
 from personal.models import Profile, School
 from personal.serializers import ProfileMailSerializer, SchoolSerializer
 from rest_framework import exceptions, mixins, status, viewsets
@@ -197,7 +197,6 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
     def upload_solution(self, request, pk=None):
         """Nahrá užívateľské riešenie k úlohe"""
         problem = self.get_object()
-        print('upload_solution')
 
         if not request.user.is_authenticated:
             raise exceptions.PermissionDenied('Je potrebné sa prihlásiť')
@@ -241,7 +240,7 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
         solution: Solution = Solution.objects.filter(
             problem=problem, semester_registration=event_registration).latest('uploaded_at')
         file = solution.solution
-        return HttpResponse(
+        return FileResponse(
             file, content_type='application/pdf')
 
     @action(methods=['get'], detail=True, permission_classes=[IsAdminUser],
