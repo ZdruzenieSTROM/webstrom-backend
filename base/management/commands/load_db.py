@@ -10,7 +10,8 @@ from competition.models import (Competition, EventRegistration, Grade, Problem,
                                 Semester, Series, Solution)
 from competition.utils import get_school_year_by_date
 from django.core.management import BaseCommand
-from django.db.models import F, Q
+from django.db.models import Q
+from django.forms.models import model_to_dict
 from django.utils.dateparse import parse_datetime
 from personal.models import Profile, School
 from user.models import User
@@ -99,10 +100,11 @@ def get_type(name):
         return 2
     elif 'spojena skola' in clean_name:
         return 3
+    return 4
 
 
 def estimate_school(school_dict):
-    type = get_type(school_dict['school_name'])
+    school_type = get_type(school_dict['school_name'])
     city_regex = r'^'+re.escape(school_dict['school_city'])+r'(-.*)?$'
     schools_in_city = School.objects.filter(
         Q(zip_code=school_dict['school_zip_code'].replace(' ', '')) |
@@ -115,7 +117,7 @@ def estimate_school(school_dict):
 
     # Filter by type
     schools = [school for school in schools_in_city if get_type(
-        school.name) == type]
+        school.name) == school_type]
     if len(schools) == 1:
         return schools[0]
 
@@ -253,23 +255,29 @@ class Command(BaseCommand):
         return user_id_mapping
 
     def _create_school_mapping(self, conn):
-        school_id_mapping = {None: School.objects.get_unspecified_value()}
+        school_id_mapping = {}  # {None: School.objects.get_unspecified_value()}
         cursor = conn.cursor()
         cursor.execute(SCHOOL_QUERY)
         schools = cursor.fetchall()
-        success_counter = 0
-        for school in schools:
-            try:
-                school_id = estimate_school(school)
-                school_id_mapping[school['id']] = school_id
-                success_counter += 1
-            except School.DoesNotExist:
-                print(f'Nepodarilo sa matchnút {school}')
-                school_id_mapping[school['id']
-                                  ] = School.objects.get_unspecified_value()
-                print(school_id_mapping)
-        print(
-            f'Úspešne pripárovaných {success_counter}/{len(school_id_mapping)}')
+        with open('school.csv', 'w', encoding='utf-8') as f:
+            success_counter = 0
+            for school in schools:
+                try:
+                    school_id = estimate_school(school)
+                    school_id_mapping[school['id']] = school_id.pk
+                    success_counter += 1
+                except School.DoesNotExist:
+                    print(f'Nepodarilo sa matchnút {school}')
+                    school_id_mapping[school['id']
+                                      ] = None  # School.objects.get_unspecified_value()
+                    print(school_id_mapping)
+                old_school = ';'.join([str(x) for x in school.values()])
+                new_school = ';'.join([str(x) for x in model_to_dict(
+                    school_id).values()]) if school_id_mapping[school['id']] is not None else ';'*7
+                f.write(
+                    old_school+';' + str(school_id_mapping[school['id']])+';'+new_school+'\n')
+            print(
+                f'Úspešne pripárovaných {success_counter}/{len(school_id_mapping)}')
         return school_id_mapping
 
     def _load_user_registrations(self, conn, user_id_map, season_id_map, school_id_map):
@@ -327,7 +335,8 @@ class Command(BaseCommand):
             # semester_id_map, _, problem_id_map = self._load_competitions(
             #     conn)
             school_id_map = self._create_school_mapping(conn)
-            json.dump(school_id_map)
+            json.dump(school_id_map, open(
+                'schools.json', 'w', encoding='utf-8'))
             # user_id_map = self._load_users(conn, school_id_map)
             # print(f'Načítaných {len(user_id_map)} používateľov')
             # self._load_user_registrations(

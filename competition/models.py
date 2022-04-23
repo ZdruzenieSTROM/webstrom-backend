@@ -3,6 +3,10 @@ import os
 from io import BytesIO
 
 import pdf2image
+from base.managers import UnspecifiedValueManager
+from base.models import RestrictedFileField
+from base.utils import mime_type
+from base.validators import school_year_validator
 from django.contrib.sites.models import Site
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
@@ -15,15 +19,11 @@ from django.dispatch import receiver
 from django.shortcuts import get_object_or_404
 from django.utils.functional import cached_property
 from django.utils.timezone import now
-
-from base.managers import UnspecifiedValueManager
-from base.models import RestrictedFileField
-from base.utils import mime_type
-from base.validators import school_year_validator
-from competition import utils
-from competition.querysets import ActiveQuerySet
 from personal.models import Profile, School
 from user.models import User
+
+from competition import utils
+from competition.querysets import ActiveQuerySet
 
 
 class Competition(models.Model):
