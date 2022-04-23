@@ -679,6 +679,7 @@ class RegistrationLink(models.Model):
 
 
 class ProblemCorrection(models.Model):
+    # TODO: Add images
     class Meta:
         verbose_name = 'opravenie úlohy'
         verbose_name_plural = 'opravene ulohy'
