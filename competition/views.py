@@ -239,7 +239,7 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
             raise exceptions.MethodNotAllowed(
                 method='my-solution', detail='Je potrebné sa registrovať do série')
         solution: Solution = Solution.objects.filter(
-            problem=problem, semester_registration=event_registration).first()
+            problem=problem, semester_registration=event_registration).latest('uploaded_at')
         file = solution.solution
         return HttpResponse(
             file, content_type='application/pdf')
