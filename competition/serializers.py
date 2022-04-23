@@ -106,8 +106,8 @@ class ProblemSerializer(serializers.ModelSerializer):
                 self.context['request'].user.profile, obj.series.semester)
 
             try:
-                solution = obj.solution_set.get(
-                    semester_registration=semester_registration)
+                solution = obj.solution_set.filter(
+                    semester_registration=semester_registration).latest('uploaded_at')
             except models.Solution.DoesNotExist:
                 return None
             return SolutionSerializer(solution).data
