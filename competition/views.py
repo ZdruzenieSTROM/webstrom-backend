@@ -622,7 +622,7 @@ class EventViewSet(ModelViewSetWithSerializerContext):
 
         return Response(status=status.HTTP_201_CREATED)
 
-    @action(methods=['get'], detail=True, permission_classes=[IsAuthenticated])
+    @action(methods=['get'], detail=True, permission_classes=[IsAuthenticated], url_path='can-participate')
     def can_participate(self, request, pk=None):
         event = self.get_object()
         return Response(
