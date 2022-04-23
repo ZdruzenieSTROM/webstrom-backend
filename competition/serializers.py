@@ -85,6 +85,25 @@ class EventRegistrationSerializer(serializers.ModelSerializer):
 
 
 @ts_interface(context='competition')
+class ProblemCorrectionSerializer(serializers.ModelSerializer):
+    corrected_by = serializers.SerializerMethodField('get_corrected_by')
+    best_solution = serializers.SerializerMethodField('get_best_solution')
+
+    class Meta:
+        model = models.ProblemCorrection
+        fields = []
+
+    def get_corrected_by(self, obj):
+        return [user.get_full_name() for user in obj.corrected_by.all()]
+
+    def get_best_solution(self, obj):
+        return [
+            solution.semester_registration.profile.full_name()
+            for solution in obj.best_solution.all()
+        ]
+
+
+@ts_interface(context='competition')
 class ProblemSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Problem
@@ -93,6 +112,7 @@ class ProblemSerializer(serializers.ModelSerializer):
 
     submitted = serializers.SerializerMethodField(
         'submitted_solution')
+    correction = ProblemCorrectionSerializer(many=False)
 
     def submitted_solution(self, obj):
         if 'request' in self.context:
@@ -114,7 +134,7 @@ class ProblemSerializer(serializers.ModelSerializer):
         return None
 
 
-@ts_interface(context='competition')
+@ ts_interface(context='competition')
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Comment
@@ -132,7 +152,7 @@ class CommentSerializer(serializers.ModelSerializer):
         return None
 
 
-@ts_interface(context='competition')
+@ ts_interface(context='competition')
 class SolutionSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Solution
@@ -145,14 +165,14 @@ class SolutionSerializer(serializers.ModelSerializer):
 #   mean = serializers.FloatField()
 #
 
-@ts_interface(context='competition')
+@ ts_interface(context='competition')
 class SeriesSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Series
         exclude = ['sum_method']
 
 
-@ts_interface(context='competition')
+@ ts_interface(context='competition')
 class SeriesWithProblemsSerializer(ModelWithParticipationSerializer):
     problems = ProblemSerializer(many=True)
     can_submit = serializers.SerializerMethodField('get_can_submit')
@@ -176,7 +196,7 @@ class SeriesWithProblemsSerializer(ModelWithParticipationSerializer):
         return series
 
 
-@ts_interface(context='competition')
+@ ts_interface(context='competition')
 class SemesterSerializer(serializers.ModelSerializer):
     series_set = SeriesSerializer(many=True)
 
@@ -192,7 +212,7 @@ class SemesterSerializer(serializers.ModelSerializer):
         return semester
 
 
-@ts_interface(context='competition')
+@ ts_interface(context='competition')
 class SemesterWithProblemsSerializer(ModelWithParticipationSerializer):
     series_set = SeriesWithProblemsSerializer(many=True)
     semesterpublication_set = SemesterPublicationSerializer(many=True)
@@ -219,14 +239,14 @@ class SemesterWithProblemsSerializer(ModelWithParticipationSerializer):
         return semester
 
 
-@ts_interface(context='competition')
+@ ts_interface(context='competition')
 class LateTagSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.LateTag
         exclude = ['comment']
 
 
-@ts_interface(context='competition')
+@ ts_interface(context='competition')
 class GradeSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Grade

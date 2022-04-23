@@ -676,3 +676,16 @@ class RegistrationLink(models.Model):
 
     def can_user_modify(self, user):
         return self.event.can_user_modify(user)
+
+
+class ProblemCorrection(models.Model):
+    class Meta:
+        verbose_name = 'opravenie úlohy'
+        verbose_name_plural = 'opravene ulohy'
+
+    problem = models.OneToOneField(
+        Problem, on_delete=models.CASCADE, related_name='correction')
+    correct_solution_text = models.TextField(verbose_name='vzorak')
+    best_solution = models.ManyToManyField(
+        Solution, verbose_name='najkrajšie riešenia')
+    corrected_by = models.ManyToManyField(User, verbose_name='opravovatelia')
