@@ -22,11 +22,45 @@
         "fields": {
             "url": "minisustredenia",
             "title": "Minisústredenia",
-            "content": "Tu bude dáky rozumný text o minisústredkách v **Markdowne**.\n\nMinisústredko 1\n-----\nPopis.",
+            "content": "Združenie Strom už poznáte vďaka dlhoročnej tradícií matematických súťaží, akými sú Mamut, Lomihlav alebo Matboj.  Okrem nich Strom organizuje aj mnoho iných aktivít zameraných na popularizáciu matematiky a prípravu talentovaných žiakov na Matematické olympiády. Z našich aktivít majú výrazne najväčší vplyv na žiakov matematické sústredenia, na ktoré sú za odmenu pozývaní najúspešnejší riešitelia našich súťaží. Naším cieľom je zaujať krásou matematiky čo najviac žiakov, avšak máme pocit, že obchádzame veľkú skupinu žiakov, ktorí neriešia naše semináre. Preto by sme radi niektoré zážitkové a vzdelávacie aktivity, ktoré robíme, priniesli trošku bližšie aj k tejto skupine žiakov, v podobe krátkeho matematického sústredenia priamo na Školách.\n\nV spolupráci so školami organizujeme 1 alebo 2-dňové matematické sústredenia pre 20 až 40 žiakov 6. - 9. ročníka. Sústredenia prebiehajú priamo v priestoroch školy počas vyučovania približne od 8:00 do 15:00 hod.  \nProgram zahŕňa rôzne aktivity, ktoré sú hravou formou zamerané na matematiku, rozvíjanie logického myslenia a tímovú prácu. Podrobný program nájdete nižšie. Cena za sústredenie pre jedného účastníka je 6,00€ za dvojdňové sústredenie, 4,00€ za jednodňové (dvojdňové však preferujeme). Ak máte záujem o takéto sústredenie na vašej škole, kontaktujte nás prosím na minisustredenia@strom.sk\n\n### Program sústredenia\n\nKaždý deň sústredenia bude má nasledovný priebeh:\n\n|8:00 - 10:00|prednášky|\n|-|-|\n|**10:00 - 11:00**|**matboj**|\n|**11:00 - 12:00**|**športy**|\n|**12:00 - 12:30**|**obed**|\n|**12:30 - 14:30**|**náboj/hra**|\n\n\nČasy sú orientačné a medzi aktivitami budú krátke prestávky.\n\n### Podrobnejší popis jednotlivých aktivít\n\n*   **Prednášky:** Úlohou prednášok je uviesť žiakov do nových častí matematiky. Cieľom tohto programu je ukázať žiakom niečo pekné a zaujímavé v matematike a nechať ich danú problematiku skúmať a objavovať. Na každý deň sústredenia máme prichystané 2 témy, to znamená, že za dvojdňové sústredenie deťom ukážeme 4 rôzne témy, ktoré sa so školskými rokmi obmieňajú. Tieto témy sú podávané deťom vhodnou formou vzhľadom na ich vedomosti.\n*   **Matboj:** Ide o logickú hru, ktorej pravidlá sú účastníkom vysvetlené pred začiatkom. Následne prebieha v tejto logickej hre súťaž jednotlivcov. Matboj je veľmi populárnou aktivitou, pretože účastníkom prináša nový druh zábavy, ktorým si často krátia aj svoj voľný čas a navyše, šancu vyhrať má každý, keďže všetci začínajú na rovnakej úrovni. Ten, ktorému sa bude v súťaži dariť najviac, neostane bez odmeny.\n*   **Športy:** Aby si žiaci oddýchli od matematiky, zahrajú si netradičné športy, v ktorých je treba využívať okrem fyzickej sily a šikovnosti aj strategické či logické myslenie.\n*   **Obed:** Tento program nie je nič špeciálne, no ak je to možné, radi by sme obedovali spolu so žiakmi v školskej jedálni. Detaily ako počet obedov a čas obedu by sme si potom dohodli pri ďalšej komunikácii - budeme vďační, ak nám obedy zabezpečíte.\n*   **Náboj:** Náboj je matematická súťaž, v ktorej tímy riešia pripravenú sadu príkladov. Tradične má táto súťaž pridaný rozmer, ktorý tvorí motiváciu pre riešenie príkladov, a je v podstate paralelne prebiehajúcou hrou, v ktorej správne vyriešené príklady predstavujú kľúč k úspechu (napr. body za vyriešené príklady budú predstavovať platidlo). Tímový duch a charakteristický zážitkový rozmer tejto osvedčenej hry rok čo rok presviedča deti, že aj riešenie príkladov môže byť nezvyčajnou zábavou.\n*   **Hra:** Poobedná hra prináša účastníkom možnosť sa angažovať v tímoch využívajúc svoje poznatky a vedomosti. Vzájomné súperenie medzi skupinkami účastníkov sa nikdy nezaobíde bez zábavy a strategického premýšľania, predsa zvíťaziť chce každý. \n\n### Naše požiadavky\n\nK tomu, aby sme mohli minisústredenie zorganizovať na vašej škole, potrebujeme nasledovné:\n\n*   aspoň 2 voľné triedy alebo iné adekvátne miestnosti, ktoré budú k dispozícii počas celých dní minisústredenia\n*   prístup k ihrisku alebo inej adekvátnej vonkajšej ploche\n*   miestnosť menších rozmerov na uskladnenie našich vecí sa zíde, avšak nie je nevyhnutnosťou\n*   radi by sme každý deň vyplnili úplným programom, neradi skracujeme niektoré z jeho častí, program tak prichádza o kvalitu\n*   budeme vďační za obedy pre organizátorov",
             "enable_comments": false,
             "template_name": "",
             "registration_required": false,
             "sites": [
+                1,
+                2
+            ]
+        }
+    },
+    {
+        "model": "flatpages.flatpage",
+        "pk": 3,
+        "fields": {
+            "url": "podporte-nas",
+            "title": "Podporte nás",
+            "content": "Dajte nám peniažky pls",
+            "enable_comments": false,
+            "template_name": "",
+            "registration_required": false,
+            "sites": [
+                0,
+                1,
+                2
+            ]
+        }
+    },
+    {
+        "model": "flatpages.flatpage",
+        "pk": 3,
+        "fields": {
+            "url": "kontakty",
+            "title": "Kontakty",
+            "content": "Nas mail je info@strom.sk",
+            "enable_comments": false,
+            "template_name": "",
+            "registration_required": false,
+            "sites": [
+                0,
                 1,
                 2
             ]
