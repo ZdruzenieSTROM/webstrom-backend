@@ -216,7 +216,7 @@ class Command(BaseCommand):
         for user in users:
             new_user = None
             if user['email'] != '':
-                new_user = User.objects.create_user(
+                new_user = User.objects.create(
                     email=user['email'],
                     verified_email=True,
                     is_staff=user['is_staff'],
@@ -347,8 +347,8 @@ class Command(BaseCommand):
             # json.dump(school_id_map, open(
             #     'schools.json', 'w', encoding='utf-8'))
             school_id_map = self._get_school_mapping_from_file(
-                path.join('base','management','commands','schools_mapping.json'))
-            user_id_map=self._load_users(conn, school_id_map)
+                path.join('base', 'management', 'commands', 'schools_mapping.json'))
+            user_id_map = self._load_users(conn, school_id_map)
             print(f'Načítaných {len(user_id_map)} používateľov')
             self._load_user_registrations(
                 conn, user_id_map, semester_id_map, school_id_map)
