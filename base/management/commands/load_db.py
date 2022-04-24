@@ -95,11 +95,11 @@ def get_type(name):
     clean_name = unidecode.unidecode(name.lower())
     if 'gymnazium' in clean_name:
         return 0
-    elif 'stredna' in clean_name or 'ss' in clean_name:
+    if 'stredna' in clean_name or 'ss' in clean_name:
         return 1
-    elif 'zakladna' in clean_name or 'zs' in clean_name:
+    if 'zakladna' in clean_name or 'zs' in clean_name:
         return 2
-    elif 'spojena skola' in clean_name:
+    if 'spojena skola' in clean_name:
         return 3
     return 4
 
