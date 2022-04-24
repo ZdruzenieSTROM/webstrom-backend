@@ -3,7 +3,6 @@ from allauth.account.utils import setup_user_email
 from allauth.utils import email_address_exists
 from competition.models import Grade
 from django.contrib.auth import authenticate, get_user_model
-from django.contrib.auth.forms import SetPasswordForm
 from django.core.mail import send_mail
 from django_typomatic import ts_interface
 from personal.models import Profile
@@ -11,7 +10,7 @@ from personal.serializers import ProfileCreateSerializer
 from rest_framework import exceptions, serializers
 from webstrom.settings import EMAIL_ALERT, EMAIL_NO_REPLY
 
-from user.models import TokenModel, User
+from user.models import TokenModel
 
 
 @ts_interface(context='user')
