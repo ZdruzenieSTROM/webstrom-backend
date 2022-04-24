@@ -21,7 +21,7 @@ class ActiveQuerySet(models.QuerySet):
         "Akcie ktoré sú už ukončnené"
         if date is None:
             date = timezone.now()
-        return
+        return self.filter(end__lt=date).order_by('-end')
 
     def current(self, date=None):
         """Aktuálny semester na zobrazenie"""

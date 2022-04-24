@@ -148,6 +148,8 @@ class Event(models.Model):
 
     start = models.DateTimeField(verbose_name='dátum začiatku súťaže')
     end = models.DateTimeField(verbose_name='dátum konca súťaže')
+    additional_name = models.CharField(
+        max_length=50, verbose_name='Prísvlastok súťaže', null=True)
 
     objects = ActiveQuerySet.as_manager()
 
@@ -676,8 +678,8 @@ class RegistrationLink(models.Model):
         verbose_name = 'link na registráciu'
         verbose_name_plural = 'linky na registráciu'
 
-    event = models.ForeignKey(
-        Event, related_name='registration_links', on_delete=models.CASCADE)
+    event = models.OneToOneField(
+        Event, related_name='registration_link', on_delete=models.CASCADE)
     url = models.URLField(verbose_name='url registrácie')
     start = models.DateTimeField(verbose_name='Začiatok registrácie')
     end = models.DateTimeField(verbose_name='Koniec registrácie')
