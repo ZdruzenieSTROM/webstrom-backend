@@ -287,6 +287,8 @@ class TestCompetition(APITestCase, PermissionTestMixin):
         'description',
         'rules',
         'competition_type',
+        'upcoming_or_current_event',
+        'history_events',
         'min_years_until_graduation',
     ]
 
@@ -305,7 +307,7 @@ class TestCompetition(APITestCase, PermissionTestMixin):
         self.get_client()
         for key in self.competition_expected_keys:
             self.assertIn(key, comp)
-        self.assertEqual(len(comp['event_set']), num_events)
+        self.assertEqual(len(comp['history_events']), num_events)
 
     def test_get_competition_list(self):
         '''/ format OK'''

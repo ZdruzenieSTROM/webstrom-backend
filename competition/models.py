@@ -148,6 +148,8 @@ class Event(models.Model):
 
     start = models.DateTimeField(verbose_name='dátum začiatku súťaže')
     end = models.DateTimeField(verbose_name='dátum konca súťaže')
+    additional_name = models.CharField(
+        max_length=50, verbose_name='Prísvlastok súťaže', null=True)
 
     objects = ActiveQuerySet.as_manager()
 
@@ -615,6 +617,14 @@ class SemesterPublication(models.Model):
         return self.semester.can_user_modify(user)
 
 
+class PublicationType(models.Model):
+    class Meta:
+        verbose_name = 'Typ publikácie'
+        verbose_name_plural = 'Typy publikácií'
+
+    name = models.CharField(max_length=100, verbose_name='názov typu')
+
+
 class UnspecifiedPublication(models.Model):
     """
     Reprezentuje výsledky, brožúrku alebo akýkoľvek materiál
@@ -625,6 +635,8 @@ class UnspecifiedPublication(models.Model):
         verbose_name = 'iná publikácia'
         verbose_name_plural = 'iné publikácie'
 
+    publication_type = models.ForeignKey(
+        PublicationType, on_delete=models.SET_NULL, null=True)
     name = models.CharField(max_length=30, blank=True)
     event = models.ForeignKey(Event, null=True, on_delete=models.SET_NULL)
 
@@ -667,8 +679,8 @@ class RegistrationLink(models.Model):
         verbose_name = 'link na registráciu'
         verbose_name_plural = 'linky na registráciu'
 
-    event = models.ForeignKey(
-        Event, related_name='registration_links', on_delete=models.CASCADE)
+    event = models.OneToOneField(
+        Event, related_name='registration_link', on_delete=models.CASCADE)
     url = models.URLField(verbose_name='url registrácie')
     start = models.DateTimeField(verbose_name='Začiatok registrácie')
     end = models.DateTimeField(verbose_name='Koniec registrácie')

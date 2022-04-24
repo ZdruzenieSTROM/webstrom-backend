@@ -49,7 +49,7 @@ class RegistrationLinkSerializer(serializers.ModelSerializer):
 @ts_interface(context='competition')
 class EventSerializer(ModelWithParticipationSerializer):
     unspecifiedpublication_set = UnspecifiedPublicationSerializer(many=True)
-    registration_links = RegistrationLinkSerializer(many=True)
+    registration_link = RegistrationLinkSerializer(many=False)
 
     class Meta:
         model = models.Event
@@ -65,12 +65,23 @@ class CompetitionTypeSerializer(serializers.ModelSerializer):
 
 @ts_interface(context='competition')
 class CompetitionSerializer(serializers.ModelSerializer):
-    event_set = EventSerializer(many=True)
     competition_type = CompetitionTypeSerializer(many=False)
+    upcoming_or_current_event = serializers.SerializerMethodField(
+        'get_upcoming_or_current')
+    history_events = serializers.SerializerMethodField('get_history_events')
 
     class Meta:
         model = models.Competition
         fields = '__all__'
+
+    def get_upcoming_or_current(self, obj):
+        try:
+            return EventSerializer(obj.event_set.upcoming_or_current()).data
+        except models.Event.DoesNotExist:
+            return None
+
+    def get_history_events(self, obj):
+        return EventSerializer(obj.event_set.history(), many=True).data
 
 
 @ts_interface(context='competition')
