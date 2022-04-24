@@ -2,6 +2,7 @@ import datetime
 import json
 import re
 import sqlite3
+from os import path
 
 import pytz
 import unidecode
@@ -270,7 +271,6 @@ class Command(BaseCommand):
                     print(f'Nepodarilo sa matchnút {school}')
                     school_id_mapping[school['id']
                                       ] = None  # School.objects.get_unspecified_value()
-                    print(school_id_mapping)
                 old_school = ';'.join([str(x) for x in school.values()])
                 new_school = ';'.join([str(x) for x in model_to_dict(
                     school_id).values()]) if school_id_mapping[school['id']] is not None else ';'*7
@@ -317,6 +317,13 @@ class Command(BaseCommand):
                 print(user_id_map[solution['user_id']])
                 print('-'*30)
 
+    def _get_school_mapping_from_file(self, file_name):
+        with open(file_name, 'r', encoding='utf-8') as mapping_file:
+            mapping = json.load(mapping_file)
+        for key in mapping:
+            mapping[key] = School.objects.get(pk=mapping[key])
+        return mapping
+
     def add_arguments(self, parser):
         # Positional arguments
         parser.add_argument('db', type=str)
@@ -332,17 +339,21 @@ class Command(BaseCommand):
                     row_dict[col[0]] = row[idx]
                 return row_dict
             conn.row_factory = dict_factory
-            # semester_id_map, _, problem_id_map = self._load_competitions(
-            #     conn)
-            school_id_map = self._create_school_mapping(conn)
-            json.dump(school_id_map, open(
-                'schools.json', 'w', encoding='utf-8'))
-            # user_id_map = self._load_users(conn, school_id_map)
-            # print(f'Načítaných {len(user_id_map)} používateľov')
-            # self._load_user_registrations(
-            #     conn, user_id_map, semester_id_map, school_id_map)
-            # print(f'Načítané registrácie')
-            # self._load_solutions(conn, problem_id_map, user_id_map)
+            semester_id_map, _, problem_id_map = self._load_competitions(
+                conn)
+            # In case of auto-mapping
+            # school_id_map = self._create_school_mapping(conn)
+            # Save mapping
+            # json.dump(school_id_map, open(
+            #     'schools.json', 'w', encoding='utf-8'))
+            school_id_map = self._get_school_mapping_from_file(
+                path.join('base','management','commands','schools_mapping.json'))
+            user_id_map=self._load_users(conn, school_id_map)
+            print(f'Načítaných {len(user_id_map)} používateľov')
+            self._load_user_registrations(
+                conn, user_id_map, semester_id_map, school_id_map)
+            print('Načítané registrácie')
+            self._load_solutions(conn, problem_id_map, user_id_map)
         finally:
             if conn:
                 conn.close()

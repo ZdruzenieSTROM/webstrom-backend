@@ -55,7 +55,7 @@ class Command(BaseCommand):
                      'counties',
                      'districts',
                      'schools',
-                     'schools_special',
+                     # 'schools_special',
                      'groups',
                      'users',
                      'dummy_users',

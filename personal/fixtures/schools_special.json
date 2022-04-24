@@ -1,7 +1,7 @@
 [
     {
         "model": "personal.School",
-        "pk": 0,
+        "pk": "0",
         "fields": {
             "district": 0,
             "name": "Iná škola"
@@ -9,7 +9,7 @@
     },
     {
         "model": "personal.School",
-        "pk": 1,
+        "pk": "1",
         "fields": {
             "district": 0,
             "name": "Bez školy"
