@@ -3,12 +3,11 @@ import sqlite3
 
 import pytz
 from allauth.account.models import EmailAddress
+from competition.models import Competition, Grade, Problem, Semester, Series
+from competition.utils import get_school_year_by_date
 from django.core.management import BaseCommand
 from django.db.models import Q
 from django.utils.dateparse import parse_datetime
-
-from competition.models import Competition, Grade, Problem, Semester, Series
-from competition.utils import get_school_year_by_date
 from personal.models import Profile, School
 from user.models import User
 
@@ -146,6 +145,8 @@ class Command(BaseCommand):
         return semester_id_mapping, series_id_mapping, problem_id_mapping
 
     def _load_users(self, conn):
+        # pylint: disable=no-value-for-parameter
+
         cursor = conn.cursor()
         cursor.execute(USERS_QUERY)
         users = cursor.fetchall()
@@ -156,7 +157,6 @@ class Command(BaseCommand):
                 is_staff=user['is_staff'],
                 is_active=user['is_active'],
                 date_joined=localize(user['date_joined']),
-
             )
             email_address = EmailAddress(
                 user=new_user,
