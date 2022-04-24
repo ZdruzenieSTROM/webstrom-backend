@@ -1,9 +1,7 @@
 from django.contrib import admin, messages
 from django.http import HttpResponseRedirect
 from django.utils.html import format_html
-from django_admin_listfilter_dropdown.filters import (ChoiceDropdownFilter,
-                                                      DropdownFilter,
-                                                      RelatedDropdownFilter)
+from django_admin_listfilter_dropdown.filters import RelatedDropdownFilter
 
 from competition.models import (Comment, Event, EventRegistration, Problem,
                                 ProblemCorrection, Semester,
