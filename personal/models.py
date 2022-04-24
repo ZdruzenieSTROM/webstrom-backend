@@ -85,7 +85,8 @@ class Profile(models.Model):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        primary_key=True,
+        primary_key=False,
+        null=True,
         related_name='profile'
     )
 

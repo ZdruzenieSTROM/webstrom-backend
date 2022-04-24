@@ -1,0 +1,15 @@
+[
+    {
+        "model": "personal.School",
+        "pk": "037874098",
+        "fields": {
+            "district": 702,
+            "name": "Z\u00e1kladn\u00e1 \u0161kola",
+            "street": "Puga\u010devova 1381/7",
+            "city": "Humenn\u00e9",
+            "zip_code": "06601",
+            "email": "skola@zspugacevhe.sk",
+            "abbreviation": "ZPuga7HE"
+        }
+    }
+]

@@ -1,7 +1,7 @@
 [
     {
         "model": "personal.School",
-        "pk": 0,
+        "pk": "0",
         "fields": {
             "district": 0,
             "name": "Iná škola"
@@ -9,10 +9,500 @@
     },
     {
         "model": "personal.School",
-        "pk": 1,
+        "pk": "1",
         "fields": {
             "district": 0,
             "name": "Bez školy"
+        }
+    },
+    {
+        "model": "personal.School",
+        "pk": "2",
+        "fields": {
+            "district": 104,
+            "name": "Fakulta matematiky, fyziky a informatiky Univerzity Komensk\u00e9ho",
+            "street": "",
+            "city": "",
+            "zip_code": "",
+            "email": "",
+            "abbreviation": ""
+        }
+    },
+    {
+        "model": "personal.School",
+        "pk": "3",
+        "fields": {
+            "district": 105,
+            "name": "S\u00fakromn\u00e1 z\u00e1kladn\u00e1 \u0161kola Znievska 2",
+            "street": "",
+            "city": "",
+            "zip_code": "",
+            "email": "",
+            "abbreviation": ""
+        }
+    },
+    {
+        "model": "personal.School",
+        "pk": "4",
+        "fields": {
+            "district": 901,
+            "name": "Gymn\u00e1zium t\u0159. kpt. Jaro\u0161e 14",
+            "street": "",
+            "city": "",
+            "zip_code": "",
+            "email": "",
+            "abbreviation": ""
+        }
+    },
+    {
+        "model": "personal.School",
+        "pk": "5",
+        "fields": {
+            "district": 901,
+            "name": "Gymn\u00e1zium T. G. Masaryka 1260",
+            "street": "",
+            "city": "",
+            "zip_code": "",
+            "email": "",
+            "abbreviation": ""
+        }
+    },
+    {
+        "model": "personal.School",
+        "pk": "6",
+        "fields": {
+            "district": 901,
+            "name": "Fakulta Informatiky Masarykovej Univerzity",
+            "street": "",
+            "city": "",
+            "zip_code": "",
+            "email": "",
+            "abbreviation": ""
+        }
+    },
+    {
+        "model": "personal.School",
+        "pk": "7",
+        "fields": {
+            "district": 901,
+            "name": "Univerzita Karlova, Matematicko-fyzik\u00e1ln\u00ed fakulta",
+            "street": "",
+            "city": "",
+            "zip_code": "",
+            "email": "",
+            "abbreviation": ""
+        }
+    },
+    {
+        "model": "personal.School",
+        "pk": "8",
+        "fields": {
+            "district": 102,
+            "name": "Gymn\u00e1zium Jura Hronca",
+            "street": "",
+            "city": "",
+            "zip_code": "",
+            "email": "",
+            "abbreviation": ""
+        }
+    },
+    {
+        "model": "personal.School",
+        "pk": "9",
+        "fields": {
+            "district": 901,
+            "name": "Cirkevn\u00e1 z\u00e1kladn\u00e1 \u0161kola sv. \u013dudmily",
+            "street": "",
+            "city": "",
+            "zip_code": "",
+            "email": "",
+            "abbreviation": ""
+        }
+    },
+    {
+        "model": "personal.School",
+        "pk": "10",
+        "fields": {
+            "district": 901,
+            "name": "Mendelovo gymn\u00e1zium Komensk\u00e9ho 5",
+            "street": "",
+            "city": "",
+            "zip_code": "",
+            "email": "",
+            "abbreviation": ""
+        }
+    },
+    {
+        "model": "personal.School",
+        "pk": "11",
+        "fields": {
+            "district": 901,
+            "name": "Gymn\u00e1zium Smetan\u016fv okruh 2",
+            "street": "",
+            "city": "",
+            "zip_code": "",
+            "email": "",
+            "abbreviation": ""
+        }
+    },
+    {
+        "model": "personal.School",
+        "pk": "12",
+        "fields": {
+            "district": 901,
+            "name": "Gymn\u00e1zium Tyr\u0161ovo n\u00e1m. 970",
+            "street": "",
+            "city": "",
+            "zip_code": "",
+            "email": "",
+            "abbreviation": ""
+        }
+    },
+    {
+        "model": "personal.School",
+        "pk": "13",
+        "fields": {
+            "district": 901,
+            "name": "Gymn\u00e1zium J\u00edrovcova 8",
+            "street": "",
+            "city": "",
+            "zip_code": "",
+            "email": "",
+            "abbreviation": ""
+        }
+    },
+    {
+        "model": "personal.School",
+        "pk": "14",
+        "fields": {
+            "district": 901,
+            "name": "Slezsk\u00e9 gymn\u00e1zium",
+            "street": "",
+            "city": "",
+            "zip_code": "",
+            "email": "",
+            "abbreviation": ""
+        }
+    },
+    {
+        "model": "personal.School",
+        "pk": "15",
+        "fields": {
+            "district": 710,
+            "name": "Cirevn\u00e9 gymn\u00e1zium sv. Mikul\u00e1\u0161a",
+            "street": "",
+            "city": "",
+            "zip_code": "",
+            "email": "",
+            "abbreviation": ""
+        }
+    },
+    {
+        "model": "personal.School",
+        "pk": "16",
+        "fields": {
+            "district": 103,
+            "name": "\u0160kola pre Mim. Nad. Deti a Gymn\u00e1zium Skalick\u00e1 cesta 1",
+            "street": "",
+            "city": "",
+            "zip_code": "",
+            "email": "",
+            "abbreviation": ""
+        }
+    },
+    {
+        "model": "personal.School",
+        "pk": "17",
+        "fields": {
+            "district": 101,
+            "name": "LEAF Academy",
+            "street": "",
+            "city": "",
+            "zip_code": "",
+            "email": "",
+            "abbreviation": ""
+        }
+    },
+    {
+        "model": "personal.School",
+        "pk": "18",
+        "fields": {
+            "district": 901,
+            "name": "Hants East Rural High School",
+            "street": "",
+            "city": "",
+            "zip_code": "",
+            "email": "",
+            "abbreviation": ""
+        }
+    },
+    {
+        "model": "personal.School",
+        "pk": "19",
+        "fields": {
+            "district": 102,
+            "name": "S\u00fakromn\u00e1 zakladn\u00e1 \u0161kola Bajkalsk\u00e1 20",
+            "street": "",
+            "city": "",
+            "zip_code": "",
+            "email": "",
+            "abbreviation": ""
+        }
+    },
+    {
+        "model": "personal.School",
+        "pk": "20",
+        "fields": {
+            "district": 102,
+            "name": "Z\u00e1kladn\u00e1 \u0161kola Ko\u0161ick\u00e1",
+            "street": "",
+            "city": "",
+            "zip_code": "",
+            "email": "",
+            "abbreviation": ""
+        }
+    },
+    {
+        "model": "personal.School",
+        "pk": "21",
+        "fields": {
+            "district": 901,
+            "name": "Univerzita Karlova, P\u0159\u00edrodov\u011bdeck\u00e1 fakulta",
+            "street": "",
+            "city": "",
+            "zip_code": "",
+            "email": "",
+            "abbreviation": ""
+        }
+    },
+    {
+        "model": "personal.School",
+        "pk": "22",
+        "fields": {
+            "district": 0,
+            "name": "Z\u00e1kladn\u00e1 \u0161kola s materskou \u0161kolou Ga\u0161tanov\u00e1 56",
+            "street": "",
+            "city": "",
+            "zip_code": "",
+            "email": "",
+            "abbreviation": ""
+        }
+    },
+    {
+        "model": "personal.School",
+        "pk": "23",
+        "fields": {
+            "district": 901,
+            "name": "\u5b66\u7fd2\u9662\u9ad8\u7b49\u79d1",
+            "street": "",
+            "city": "",
+            "zip_code": "",
+            "email": "",
+            "abbreviation": ""
+        }
+    },
+    {
+        "model": "personal.School",
+        "pk": "25",
+        "fields": {
+            "district": 901,
+            "name": "Z\u00e1kladn\u00ed \u0161kola Mohylov\u00e1 Praha 5",
+            "street": "",
+            "city": "",
+            "zip_code": "",
+            "email": "",
+            "abbreviation": ""
+        }
+    },
+    {
+        "model": "personal.School",
+        "pk": "26",
+        "fields": {
+            "district": 901,
+            "name": "K\u0159es\u0165ansk\u00e9 gymn\u00e1zium v Praze 10",
+            "street": "",
+            "city": "",
+            "zip_code": "",
+            "email": "",
+            "abbreviation": ""
+        }
+    },
+    {
+        "model": "personal.School",
+        "pk": "28",
+        "fields": {
+            "district": 901,
+            "name": "PS 107",
+            "street": "",
+            "city": "",
+            "zip_code": "",
+            "email": "",
+            "abbreviation": ""
+        }
+    },
+    {
+        "model": "personal.School",
+        "pk": "29",
+        "fields": {
+            "district": 901,
+            "name": "FZ\u0160 O.Chlupa",
+            "street": "",
+            "city": "",
+            "zip_code": "",
+            "email": "",
+            "abbreviation": ""
+        }
+    },
+    {
+        "model": "personal.School",
+        "pk": "30",
+        "fields": {
+            "district": 901,
+            "name": "Schule Schmitten",
+            "street": "",
+            "city": "",
+            "zip_code": "",
+            "email": "",
+            "abbreviation": ""
+        }
+    },
+    {
+        "model": "personal.School",
+        "pk": "31",
+        "fields": {
+            "district": 901,
+            "name": "Gymn\u00e1zium Christiana Dopplera Praha",
+            "street": "",
+            "city": "",
+            "zip_code": "",
+            "email": "",
+            "abbreviation": ""
+        }
+    },
+    {
+        "model": "personal.School",
+        "pk": "32",
+        "fields": {
+            "district": 901,
+            "name": "Gymn\u00e1zium Ji\u0159\u00edho Gutha-Jarkovsk\u00e9ho",
+            "street": "",
+            "city": "",
+            "zip_code": "",
+            "email": "",
+            "abbreviation": ""
+        }
+    },
+    {
+        "model": "personal.School",
+        "pk": "33",
+        "fields": {
+            "district": 0,
+            "name": "Malostransk\u00e9 gymn\u00e1zium, Praha 1",
+            "street": "",
+            "city": "",
+            "zip_code": "",
+            "email": "",
+            "abbreviation": ""
+        }
+    },
+    {
+        "model": "personal.School",
+        "pk": "34",
+        "fields": {
+            "district": 104,
+            "name": "SZ\u0160 & Gymn\u00e1zium CENADA",
+            "street": "",
+            "city": "",
+            "zip_code": "",
+            "email": "",
+            "abbreviation": ""
+        }
+    },
+    {
+        "model": "personal.School",
+        "pk": "35",
+        "fields": {
+            "district": 0,
+            "name": "Greenbrier Elementary School",
+            "street": "",
+            "city": "",
+            "zip_code": "",
+            "email": "",
+            "abbreviation": ""
+        }
+    },
+    {
+        "model": "personal.School",
+        "pk": "37",
+        "fields": {
+            "district": 104,
+            "name": "S\u00fakromn\u00e1 Z\u0160 Dev\u00edn, Kreme\u013esk\u00e1",
+            "street": "",
+            "city": "",
+            "zip_code": "",
+            "email": "",
+            "abbreviation": ""
+        }
+    },
+    {
+        "model": "personal.School",
+        "pk": "38",
+        "fields": {
+            "district": 901,
+            "name": "Village School",
+            "street": "",
+            "city": "",
+            "zip_code": "",
+            "email": "",
+            "abbreviation": ""
+        }
+    },
+    {
+        "model": "personal.School",
+        "pk": "39",
+        "fields": {
+            "district": 901,
+            "name": "Institut Saint-Andr\u00e9",
+            "street": "",
+            "city": "",
+            "zip_code": "",
+            "email": "",
+            "abbreviation": ""
+        }
+    },
+    {
+        "model": "personal.School",
+        "pk": "40",
+        "fields": {
+            "district": 901,
+            "name": "Z\u0160 Balabenka",
+            "street": "",
+            "city": "",
+            "zip_code": "",
+            "email": "",
+            "abbreviation": ""
+        }
+    },
+    {
+        "model": "personal.School",
+        "pk": "41",
+        "fields": {
+            "district": 802,
+            "name": "Univerzita Pavla Jozefa \u0160af\u00e1rika v Ko\u0161iciach, Pr\u00edrodovedeck\u00e1 fakulta",
+            "street": "",
+            "city": "",
+            "zip_code": "",
+            "email": "",
+            "abbreviation": ""
+        }
+    },
+    {
+        "model": "personal.District",
+        "pk": "903",
+        "fields": {
+            "name": "Zahrani\u010die",
+            "abbreviation": "",
+            "county": 9
         }
     }
 ]
