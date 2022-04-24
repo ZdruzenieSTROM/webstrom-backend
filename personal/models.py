@@ -1,9 +1,8 @@
+from base.managers import UnspecifiedValueManager
+from base.validators import phone_number_validator
 from django.apps import apps
 from django.conf import settings
 from django.db import models
-
-from base.managers import UnspecifiedValueManager
-from base.validators import phone_number_validator
 
 
 class County(models.Model):
@@ -126,3 +125,6 @@ class Profile(models.Model):
 
     def __str__(self):
         return str(self.user)
+
+    def full_name(self):
+        return f'{self.first_name} {self.last_name}'

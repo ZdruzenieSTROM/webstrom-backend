@@ -85,6 +85,25 @@ class EventRegistrationSerializer(serializers.ModelSerializer):
 
 
 @ts_interface(context='competition')
+class ProblemCorrectionSerializer(serializers.ModelSerializer):
+    corrected_by = serializers.SerializerMethodField('get_corrected_by')
+    best_solution = serializers.SerializerMethodField('get_best_solution')
+
+    class Meta:
+        model = models.ProblemCorrection
+        fields = []
+
+    def get_corrected_by(self, obj):
+        return [user.get_full_name() for user in obj.corrected_by.all()]
+
+    def get_best_solution(self, obj):
+        return [
+            solution.semester_registration.profile.full_name()
+            for solution in obj.best_solution.all()
+        ]
+
+
+@ts_interface(context='competition')
 class ProblemSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Problem
@@ -93,6 +112,7 @@ class ProblemSerializer(serializers.ModelSerializer):
 
     submitted = serializers.SerializerMethodField(
         'submitted_solution')
+    #correction = ProblemCorrectionSerializer(many=False,)
 
     def submitted_solution(self, obj):
         if 'request' in self.context:
