@@ -73,7 +73,7 @@ class CompetitionSerializer(serializers.ModelSerializer):
         model = models.Competition
         fields = '__all__'
 
-    def get_upcoming(self, obj):
+    def get_upcoming_or_current(self, obj):
         return EventSerializer(obj.event_set.upcoming()).data
 
     def get_history_events(self, obj):
