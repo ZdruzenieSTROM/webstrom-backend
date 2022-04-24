@@ -274,7 +274,7 @@ class Series(models.Model):
         """
         max_late_tag_value = self.semester.late_tags.aggregate(
             models.Max('upper_bound'))['upper_bound__max']
-        if not max_late_tag_value:
+        if max_late_tag_value is None:
             max_late_tag_value = datetime.timedelta(0)
         return now() < self.deadline + max_late_tag_value
 
