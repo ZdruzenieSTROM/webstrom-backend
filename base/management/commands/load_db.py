@@ -231,15 +231,11 @@ class Command(BaseCommand):
                 )
                 new_user.password = user['password']
                 new_user.save()
-            else:
-                print('fuha')
             try:
                 grade = Grade.objects.get(
                     tag=user['classlevel']).get_year_of_graduation_by_date()
             except Grade.DoesNotExist:
                 grade = 2000
-            if new_user is not None:
-                print(f'{new_user.pk} {new_user.email}')
             profile = Profile.objects.create(
                 first_name=user['first_name'],
                 last_name=user['last_name'],
@@ -260,7 +256,7 @@ class Command(BaseCommand):
         cursor = conn.cursor()
         cursor.execute(SCHOOL_QUERY)
         schools = cursor.fetchall()
-        with open('school.csv', 'w', encoding='utf-8') as f:
+        with open('school.csv', 'w', encoding='utf-8') as school_file:
             success_counter = 0
             for school in schools:
                 try:
@@ -274,7 +270,7 @@ class Command(BaseCommand):
                 old_school = ';'.join([str(x) for x in school.values()])
                 new_school = ';'.join([str(x) for x in model_to_dict(
                     school_id).values()]) if school_id_mapping[school['id']] is not None else ';'*7
-                f.write(
+                school_file.write(
                     old_school+';' + str(school_id_mapping[school['id']])+';'+new_school+'\n')
             print(
                 f'Úspešne pripárovaných {success_counter}/{len(school_id_mapping)}')
