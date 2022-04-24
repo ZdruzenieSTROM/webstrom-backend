@@ -142,8 +142,6 @@ def estimate_school(school_dict):
                if match_address(school.street, school_dict['school_street'])]
     if len(schools) == 1:
         return schools[0]
-    print(schools)
-    #     x = input()
     raise School.DoesNotExist
 
 
@@ -232,14 +230,16 @@ class Command(BaseCommand):
                     primary=True
                 )
                 new_user.password = user['password']
-                # new_user.set_password(user['password'])
                 new_user.save()
+            else:
+                print('fuha')
             try:
                 grade = Grade.objects.get(
                     tag=user['classlevel']).get_year_of_graduation_by_date()
             except Grade.DoesNotExist:
                 grade = 2000
-
+            if new_user is not None:
+                print(f'{new_user.pk} {new_user.email}')
             profile = Profile.objects.create(
                 first_name=user['first_name'],
                 last_name=user['last_name'],
@@ -256,7 +256,7 @@ class Command(BaseCommand):
         return user_id_mapping
 
     def _create_school_mapping(self, conn):
-        school_id_mapping = {}  # {None: School.objects.get_unspecified_value()}
+        school_id_mapping = {None: School.objects.get_unspecified_value()}
         cursor = conn.cursor()
         cursor.execute(SCHOOL_QUERY)
         schools = cursor.fetchall()
@@ -320,9 +320,10 @@ class Command(BaseCommand):
     def _get_school_mapping_from_file(self, file_name):
         with open(file_name, 'r', encoding='utf-8') as mapping_file:
             mapping = json.load(mapping_file)
+        new_mapping = {None: School.objects.get_unspecified_value()}
         for key in mapping:
-            mapping[key] = School.objects.get(pk=mapping[key])
-        return mapping
+            new_mapping[int(key)] = School.objects.get(pk=mapping[key])
+        return new_mapping
 
     def add_arguments(self, parser):
         # Positional arguments
