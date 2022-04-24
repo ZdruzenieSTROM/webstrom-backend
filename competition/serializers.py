@@ -102,7 +102,7 @@ class ProblemCorrectionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.ProblemCorrection
-        fields = []
+        fields = ['corrected_by', 'best_solution']
 
     def get_corrected_by(self, obj):
         return [user.get_full_name() for user in obj.corrected_by.all()]
