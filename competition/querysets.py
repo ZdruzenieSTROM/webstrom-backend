@@ -15,7 +15,7 @@ class ActiveQuerySet(models.QuerySet):
         """Najbližšia akcia"""
         if date is None:
             date = timezone.now()
-        return self.filter(end__gte=date).order_by('end').first()
+        return self.filter(end__gte=date).earliest('end')
 
     def history(self, date=None):
         "Akcie ktoré sú už ukončnené"
