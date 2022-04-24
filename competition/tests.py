@@ -287,7 +287,7 @@ class TestCompetition(APITestCase, PermissionTestMixin):
         'description',
         'rules',
         'competition_type',
-        'upcoming_event',
+        'upcoming_or_current_event',
         'history_events',
         'min_years_until_graduation',
     ]

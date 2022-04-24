@@ -66,7 +66,8 @@ class CompetitionTypeSerializer(serializers.ModelSerializer):
 @ts_interface(context='competition')
 class CompetitionSerializer(serializers.ModelSerializer):
     competition_type = CompetitionTypeSerializer(many=False)
-    upcoming_event = serializers.SerializerMethodField('get_upcoming')
+    upcoming_or_current_event = serializers.SerializerMethodField(
+        'get_upcoming_or_current')
     history_events = serializers.SerializerMethodField('get_history_events')
 
     class Meta:
@@ -74,7 +75,10 @@ class CompetitionSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def get_upcoming_or_current(self, obj):
-        return EventSerializer(obj.event_set.upcoming()).data
+        try:
+            return EventSerializer(obj.event_set.upcoming_or_current()).data
+        except models.Event.DoesNotExist:
+            return None
 
     def get_history_events(self, obj):
         return EventSerializer(obj.event_set.history(), many=True).data
