@@ -1,3 +1,5 @@
+import json
+import os
 from datetime import datetime
 from typing import Any, Optional
 
@@ -9,28 +11,27 @@ from django.utils.timezone import now
 
 
 class Command(BaseCommand):
-    COMPETITION_CANCELED = {
-        3: [2020, 2021],
-        4: [2020, 2021],
-        5: [2020, 2021],
-        6: [],
-        7: [],
-        8: [],
-        9: [2020, 2021],
-        10: []
-    }
-    COMPETITION_USUAL_DATE = {
-        3: ((31, 10), (31, 10)),
-        4: ((1, 12), (1, 12)),
-        5: ((1, 6), (1, 6)),
-        6: ((1, 9), (1, 9)),
-        7: ((1, 8), (8, 8)),
-        8: ((1, 10), (1, 10)),
-        9: ((1, 6), (1, 6)),
-        10: ((1, 10), (1, 10))
-    }
+
+    def add_arguments(self, parser):
+        # Positional arguments
+        parser.add_argument('folder_path', type=str)
+
+    def _get_dates(self, file_path):
+        with open(file_path, 'r', encoding='utf-8')
+        json.load()
 
     def handle(self, *args: Any, **options: Any) -> Optional[str]:
+        folder_root = options['folder_path']
+        folders = os.listdir(folder_root)
+        for folder in folders:
+            try:
+                competition = Competition.objects.get(slug=folder)
+            except Competition.DoesNotExist:
+                print(f'Skipping folder `{folder}`,'
+                      ' because competition with slug `{folder}` does not exist')
+                continue
+
+    def tmp(self):
         for competition in Competition.objects.all():
             if competition.competition_type.pk == 0:
                 # Semesters are loaded by different command
