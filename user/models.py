@@ -6,6 +6,8 @@ from rest_framework.authtoken.models import Token
 
 
 class User(AbstractUser):
+    # pylint: disable=E1101
+
     username = None
     first_name = None
     last_name = None
@@ -17,6 +19,15 @@ class User(AbstractUser):
     USERNAME_FIELD = 'email'
     EMAIL_FIELD = 'email'
     REQUIRED_FIELDS = []
+
+    def get_full_name(self):
+        return f'{self.profile.first_name.strip()} {self.profile.last_name.strip()}'
+
+    def get_full_name_camel_case(self):
+        return f'{self.profile.first_name.strip()}{self.profile.last_name.strip()}'
+
+    def get_short_name(self):
+        return self.profile.first_name
 
 
 @receiver(email_confirmed)
