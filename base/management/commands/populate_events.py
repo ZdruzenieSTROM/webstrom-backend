@@ -5,6 +5,7 @@ from competition.models import (Competition, Event, PublicationType,
                                 UnspecifiedPublication)
 from competition.utils import get_school_year_by_date
 from django.core.management import BaseCommand
+from django.utils.timezone import now
 
 
 class Command(BaseCommand):
@@ -36,7 +37,7 @@ class Command(BaseCommand):
                 continue
             start = competition.start_year
             year = 1
-            while start < datetime.today().year:
+            while start < now().year:
                 if start not in self.COMPETITION_CANCELED[competition.pk]:
                     usual_date = self.COMPETITION_USUAL_DATE[competition.pk]
                     start_date = datetime(

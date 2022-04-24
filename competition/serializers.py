@@ -67,10 +67,15 @@ class CompetitionTypeSerializer(serializers.ModelSerializer):
 class CompetitionSerializer(serializers.ModelSerializer):
     event_set = EventSerializer(many=True)
     competition_type = CompetitionTypeSerializer(many=False)
+    upcoming_event = serializers.SerializerMethodField('get_upcoming')
+    serializers.
 
     class Meta:
         model = models.Competition
         fields = '__all__'
+
+    def get_upcoming(self, obj):
+        pass
 
 
 @ts_interface(context='competition')
