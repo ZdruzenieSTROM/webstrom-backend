@@ -30,7 +30,7 @@ class SchoolViewSet(viewsets.ReadOnlyModelViewSet):
     """Školy"""
     queryset = School.objects.all()
     serializer_class = SchoolSerializer
-    filterset_fields = ['district', ]
+    filterset_fields = ['district', 'district__county']
     filter_backends = [DjangoFilterBackend, SearchFilter]
     search_fields = ['name', 'street']
 
