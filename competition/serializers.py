@@ -1,8 +1,8 @@
 from django_typomatic import ts_interface
+from personal.serializers import ProfileShortSerializer, SchoolShortSerializer
 from rest_framework import serializers
 
 from competition import models
-from personal.serializers import ProfileShortSerializer, SchoolShortSerializer
 
 
 class ModelWithParticipationSerializer(serializers.ModelSerializer):
@@ -49,7 +49,7 @@ class RegistrationLinkSerializer(serializers.ModelSerializer):
 @ts_interface(context='competition')
 class EventSerializer(ModelWithParticipationSerializer):
     unspecifiedpublication_set = UnspecifiedPublicationSerializer(many=True)
-    registration_links = RegistrationLinkSerializer(many=True)
+    registration_link = RegistrationLinkSerializer(many=False)
 
     class Meta:
         model = models.Event
@@ -57,12 +57,31 @@ class EventSerializer(ModelWithParticipationSerializer):
 
 
 @ts_interface(context='competition')
+class CompetitionTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.CompetitionType
+        fields = '__all__'
+
+
+@ts_interface(context='competition')
 class CompetitionSerializer(serializers.ModelSerializer):
-    event_set = EventSerializer(many=True)
+    competition_type = CompetitionTypeSerializer(many=False)
+    upcoming_or_current_event = serializers.SerializerMethodField(
+        'get_upcoming_or_current')
+    history_events = serializers.SerializerMethodField('get_history_events')
 
     class Meta:
         model = models.Competition
         fields = '__all__'
+
+    def get_upcoming_or_current(self, obj):
+        try:
+            return EventSerializer(obj.event_set.upcoming_or_current()).data
+        except models.Event.DoesNotExist:
+            return None
+
+    def get_history_events(self, obj):
+        return EventSerializer(obj.event_set.history(), many=True).data
 
 
 @ts_interface(context='competition')
@@ -77,6 +96,25 @@ class EventRegistrationSerializer(serializers.ModelSerializer):
 
 
 @ts_interface(context='competition')
+class ProblemCorrectionSerializer(serializers.ModelSerializer):
+    corrected_by = serializers.SerializerMethodField('get_corrected_by')
+    best_solution = serializers.SerializerMethodField('get_best_solution')
+
+    class Meta:
+        model = models.ProblemCorrection
+        fields = []
+
+    def get_corrected_by(self, obj):
+        return [user.get_full_name() for user in obj.corrected_by.all()]
+
+    def get_best_solution(self, obj):
+        return [
+            solution.semester_registration.profile.full_name()
+            for solution in obj.best_solution.all()
+        ]
+
+
+@ts_interface(context='competition')
 class ProblemSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Problem
@@ -85,6 +123,7 @@ class ProblemSerializer(serializers.ModelSerializer):
 
     submitted = serializers.SerializerMethodField(
         'submitted_solution')
+    #correction = ProblemCorrectionSerializer(many=False,)
 
     def submitted_solution(self, obj):
         if 'request' in self.context:
@@ -98,8 +137,8 @@ class ProblemSerializer(serializers.ModelSerializer):
                 self.context['request'].user.profile, obj.series.semester)
 
             try:
-                solution = obj.solution_set.get(
-                    semester_registration=semester_registration)
+                solution = obj.solution_set.filter(
+                    semester_registration=semester_registration).latest('uploaded_at')
             except models.Solution.DoesNotExist:
                 return None
             return SolutionSerializer(solution).data
@@ -116,7 +155,7 @@ class CommentSerializer(serializers.ModelSerializer):
     edit_allowed = serializers.SerializerMethodField('can_edit')
 
     def get_posted_by_name(self, obj):
-        return obj.user.get_full_name()
+        return obj.posted_by.get_full_name()
 
     def can_edit(self, obj):
         if 'request' in self.context:

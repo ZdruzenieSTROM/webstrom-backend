@@ -5,14 +5,14 @@ from io import BytesIO
 from operator import itemgetter
 
 from base.utils import mime_type
-from django.core.exceptions import ValidationError
 from django.core.files.move import file_move_safe
 from django.db.models import Q
-from django.http import HttpResponse
+from django.http import FileResponse, HttpResponse
 from personal.models import Profile, School
 from personal.serializers import ProfileMailSerializer, SchoolSerializer
 from rest_framework import exceptions, mixins, status, viewsets
 from rest_framework.decorators import action
+from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from webstrom import settings
@@ -23,7 +23,8 @@ from competition.models import (Comment, Competition, Event, EventRegistration,
                                 SemesterPublication, Series, Solution,
                                 UnspecifiedPublication, Vote)
 from competition.permissions import (CommentPermission,
-                                     CompetitionRestrictedPermission)
+                                     CompetitionRestrictedPermission,
+                                     ProblemPermission)
 from competition.serializers import (CommentSerializer, CompetitionSerializer,
                                      EventRegistrationSerializer,
                                      EventSerializer, GradeSerializer,
@@ -103,6 +104,7 @@ class CompetitionViewSet(viewsets.ReadOnlyModelViewSet):
     """Naše aktivity"""
     queryset = Competition.objects.all()
     serializer_class = CompetitionSerializer
+    lookup_field = 'slug'
     permission_classes = (CompetitionRestrictedPermission,)
 
 
@@ -155,7 +157,8 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
     """
     queryset = Problem.objects.all()
     serializer_class = ProblemSerializer
-    permission_classes = (CompetitionRestrictedPermission,)
+    permission_classes = (ProblemPermission,)
+    MAX_SUBMITTED_SOLUTIONS = 10
 
     def perform_create(self, serializer):
         """
@@ -197,16 +200,8 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
     def upload_solution(self, request, pk=None):
         """Nahrá užívateľské riešenie k úlohe"""
         problem = self.get_object()
-
-        if not request.user.is_authenticated:
-            raise exceptions.PermissionDenied('Je potrebné sa prihlásiť')
-
         event_registration = EventRegistration.get_registration_by_profile_and_event(
             request.user.profile, problem.series.semester)
-
-        if event_registration is None:
-            raise exceptions.MethodNotAllowed(method='upload-solution')
-
         if 'file' not in request.data:
             raise exceptions.ParseError(detail='Request neobsahoval súbor')
 
@@ -221,6 +216,15 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
             late_tag=late_tag,
             is_online=True
         )
+
+        def solutions_count():
+            return len(Solution.objects.filter(
+                problem=problem, semester_registration=event_registration))
+        # delete solutions until there is less than allowed amount
+        while solutions_count() > self.MAX_SUBMITTED_SOLUTIONS - 1:
+            Solution.objects.filter(
+                problem=problem, semester_registration=event_registration)\
+                .earliest('uploaded_at').delete()
         solution.solution.save(
             solution.get_solution_file_name(), file, save=True)
 
@@ -229,17 +233,32 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
     @action(detail=True, url_path='my-solution')
     def my_solution(self, request, pk=None):
         """Vráti riešenie k úlohe pre práve prihláseného užívateľa"""
-        problem = self.get_object()
-        if not request.user.is_authenticated:
-            raise exceptions.PermissionDenied('Je potrebné sa prihlásiť')
+        problem: Problem = self.get_object()
         event_registration = EventRegistration.get_registration_by_profile_and_event(
             request.user.profile, problem.series.semester)
-        if event_registration is None:
-            raise exceptions.MethodNotAllowed(method='my-solution')
-        solution = Solution.objects.filter(
-            problem=problem, semester_registration=event_registration).first()
-        serializer = SolutionSerializer(solution)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        solution: Solution = Solution.objects.filter(
+            problem=problem, semester_registration=event_registration).latest('uploaded_at')
+        file = solution.solution
+        if not file:
+            raise exceptions.NotFound(
+                detail='Zatiaľ nebolo nahraté žiadne riešenie')
+        return FileResponse(
+            file, content_type='application/pdf')
+
+    @action(detail=True, url_path='corrected-solution')
+    def corrected_solution(self, request, pk=None):
+        """Vráti opravené riešenie k úlohe pre práve prihláseného užívateľa"""
+        problem: Problem = self.get_object()
+        event_registration = EventRegistration.get_registration_by_profile_and_event(
+            request.user.profile, problem.series.semester)
+        solution: Solution = Solution.objects.filter(
+            problem=problem, semester_registration=event_registration).latest('uploaded_at')
+        file = solution.corrected_solution
+        if not file:
+            raise exceptions.NotFound(
+                detail='Toto riešenie ešte nie je opravené')
+        return FileResponse(
+            file, content_type='application/pdf')
 
     @action(methods=['get'], detail=True, permission_classes=[IsAdminUser],
             url_path='download-solutions')
@@ -598,14 +617,16 @@ class EventViewSet(ModelViewSetWithSerializerContext):
     @action(methods=['post'], detail=True, permission_classes=[IsAuthenticated])
     def register(self, request, pk=None):
         """Registruje prihláseného užívateľa na akciu"""
-        event = self.get_object()
+        event: Event = self.get_object()
         profile = request.user.profile
+        if not event.is_active:
+            raise ValidationError('Súťaž aktuálne neprebieha.')
         if not event.can_user_participate(request.user):
-            return Response('Používateľa nie je možné registrovať - Zlá veková kategória',
-                            status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+            raise ValidationError(
+                'Používateľa nie je možné registrovať - Zlá veková kategória')
         if EventRegistration.get_registration_by_profile_and_event(
                 profile, event):
-            return Response('Používateľ je už zaregistrovaný', status=status.HTTP_409_CONFLICT)
+            raise ValidationError('Používateľ je už zaregistrovaný')
         EventRegistration.objects.create(
             event=event,
             school=profile.school,
@@ -716,6 +737,7 @@ class SemesterPublicationViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=False, url_path='upload', permission_classes=[IsAdminUser])
     def upload_publication(self, request):
         """Uploadne časopis"""
+        # TODO: Prerobiť na serializer a standardny request
         if 'file' not in request.data:
             raise exceptions.ParseError(detail='Request neobsahoval súbor')
 

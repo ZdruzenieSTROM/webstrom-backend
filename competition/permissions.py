@@ -1,5 +1,7 @@
 from rest_framework import permissions
 
+from .models import EventRegistration
+
 
 class CommentPermission(permissions.BasePermission):
     """
@@ -21,7 +23,7 @@ class CommentPermission(permissions.BasePermission):
             if obj.posted_by == request.user:
                 return True
 
-        if view.action == 'delete':
+        if view.action == 'destroy':
             if obj.posted_by == request.user or can_user_modify:
                 return True
 
@@ -45,3 +47,23 @@ class CompetitionRestrictedPermission(permissions.BasePermission):
             return True
 
         return obj.can_user_modify(request.user)
+
+
+class ProblemPermission(CompetitionRestrictedPermission):
+    """Prístup pre Problem """
+
+    def has_permission(self, request, view):
+        if view.action in ['upload-solution', 'my-solution', 'corrected-solution']:
+            return request.user.is_authenticated
+
+        return super().has_permission(request, view)
+
+    def has_object_permission(self, request, view, obj):
+        if view.action in ['upload-solution', 'my-solution', 'corrected-solution']:
+            return (
+                request.user.is_authenticated and
+                EventRegistration.get_registration_by_profile_and_event(
+                    request.user.profile, obj.series.semester)
+            ) and obj.series.can_submit
+
+        return super().has_object_permission(request, view, obj)

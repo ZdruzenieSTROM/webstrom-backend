@@ -1,7 +1,7 @@
 from typing import Any, Optional
 
 from django.conf import settings
-from django.core.management import BaseCommand, call_command
+from django.core.management import BaseCommand
 from pylint.lint import Run as run_pylint
 
 
