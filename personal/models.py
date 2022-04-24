@@ -58,6 +58,8 @@ class School(models.Model):
 
     objects = UnspecifiedValueManager(unspecified_value_pk=0)
 
+    d
+
     @property
     def printable_zip_code(self):
         return self.zip_code[:3]+' '+self.zip_code[3:]
