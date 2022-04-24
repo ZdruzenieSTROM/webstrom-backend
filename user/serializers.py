@@ -1,17 +1,16 @@
 from allauth.account.adapter import get_adapter
 from allauth.account.utils import setup_user_email
 from allauth.utils import email_address_exists
+from competition.models import Grade
 from django.contrib.auth import authenticate, get_user_model
-from django.contrib.auth.forms import SetPasswordForm
 from django.core.mail import send_mail
 from django_typomatic import ts_interface
-from rest_framework import exceptions, serializers
-
-from competition.models import Grade
 from personal.models import Profile
 from personal.serializers import ProfileCreateSerializer
-from user.models import TokenModel, User
+from rest_framework import exceptions, serializers
 from webstrom.settings import EMAIL_ALERT, EMAIL_NO_REPLY
+
+from user.models import TokenModel
 
 
 @ts_interface(context='user')
@@ -66,6 +65,7 @@ class LoginSerializer(serializers.Serializer):
         attrs['user'] = user
         return attrs
 
+
 @ts_interface(context='user')
 class TokenSerializer(serializers.ModelSerializer):
     """
@@ -75,6 +75,7 @@ class TokenSerializer(serializers.ModelSerializer):
     class Meta:
         model = TokenModel
         fields = ('key',)
+
 
 @ts_interface(context='user')
 class UserDetailsSerializer(serializers.ModelSerializer):
@@ -217,59 +218,3 @@ class RegisterSerializer(serializers.Serializer):
                 EMAIL_NO_REPLY,
                 [EMAIL_ALERT]
             )
-
-@ts_interface(context='user')
-class VerifyEmailSerializer(serializers.Serializer):
-    # pylint: disable=w0223
-    key = serializers.CharField()
-
-@ts_interface(context='user')
-class PasswordChangeSerializer(serializers.Serializer):
-    # pylint: disable=w0223
-    # pylint: disable=w0221
-    # pylint: disable=w0201
-    old_password = serializers.CharField(max_length=128)
-    new_password1 = serializers.CharField(max_length=128)
-    new_password2 = serializers.CharField(max_length=128)
-
-    set_password_form_class = SetPasswordForm
-
-    def __init__(self, *args, **kwargs):
-        self.old_password_field_enabled = True
-        super().__init__(*args, **kwargs)
-
-        if not self.old_password_field_enabled:
-            self.fields.pop('old_password')
-
-        self.request = self.context.get('request')
-        self.user = getattr(self.request, 'user', None)
-
-    def validate_old_password(self, value):
-        invalid_password_conditions = (
-            self.old_password_field_enabled,
-            self.user,
-            not self.user.check_password(value)
-        )
-
-        if all(invalid_password_conditions):
-            err_msg = "Staré heslo bolo zadané nesprávne."
-            raise serializers.ValidationError(err_msg)
-        return value
-
-    def validate(self, attrs):
-        self.set_password_form = self.set_password_form_class(
-            user=self.user, data=attrs
-        )
-
-        if not self.set_password_form.is_valid():
-            raise serializers.ValidationError(self.set_password_form.errors)
-        return attrs
-
-    def save(self):
-        self.set_password_form.save()
-
-@ts_interface(context='user')
-class UserShortSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['email', ]
