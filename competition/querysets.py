@@ -11,8 +11,8 @@ class ActiveQuerySet(models.QuerySet):
             start__lt=date, end__gt=date
         )
 
-    def upcoming(self, date=None):
-        """Najbližšia akcia"""
+    def upcoming_or_current(self, date=None):
+        """Najbližšia alebo aktuálna akcia"""
         if date is None:
             date = timezone.now()
         return self.filter(end__gte=date).earliest('end')
