@@ -1,8 +1,10 @@
 from django.contrib import admin, messages
 from django.http import HttpResponseRedirect
 from django.utils.html import format_html
+from django_admin_listfilter_dropdown.filters import RelatedDropdownFilter
 
-from competition.models import (Event, Problem, ProblemCorrection, Semester,
+from competition.models import (Comment, Event, EventRegistration, Problem,
+                                ProblemCorrection, Semester,
                                 SemesterPublication, Series, Solution,
                                 UnspecifiedPublication)
 
@@ -209,8 +211,52 @@ class UnspecifiedPublicationAdmin(admin.ModelAdmin):
         return super().response_change(request, obj)
 
 
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
+    list_display = (
+        '__str__',
+        'problem',
+        'text',
+        'posted_at',
+        'posted_by',
+        'published',
+    )
+
+    list_filter = (
+        ('posted_by', RelatedDropdownFilter),
+        ('problem', RelatedDropdownFilter),
+        'published',
+    )
+
+
+@admin.register(EventRegistration)
+class EventRegistrationAdmin(admin.ModelAdmin):
+    list_display = (
+        # '__str__',
+        'profile',
+        'school',
+        'grade',
+        'event',
+    )
+
+    list_filter = (
+        ('profile', RelatedDropdownFilter),
+        ('school', RelatedDropdownFilter),
+        ('grade', RelatedDropdownFilter),
+        ('event', RelatedDropdownFilter),
+    )
+
+    ordering = (
+        'event',
+    )
+
+
 @admin.register(ProblemCorrection)
 class ProblemCorrectionAdmin(admin.ModelAdmin):
     list_display = (
         'problem',
+    )
+
+    list_filter = (
+        ('problem', RelatedDropdownFilter),
     )
