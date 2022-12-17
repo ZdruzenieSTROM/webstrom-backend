@@ -36,6 +36,13 @@ class SchoolShortSerializer(serializers.ModelSerializer):
 
 
 @ts_interface(context='personal')
+class SchoolProfileSerializer(serializers.ModelField):
+    class Meta:
+        model = School
+        fields = ['code', 'district', 'district__county']
+
+
+@ts_interface(context='personal')
 class ProfileSerializer(serializers.ModelSerializer):
     #grade_info = GradeSerializer(many=True)
     grade = serializers.IntegerField()
@@ -47,6 +54,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         read_only_fields = ['first_name', 'last_name',
                             'email', ]  # 'year_of_graduation',
         email = serializers.EmailField(source='user.email')
+        school = SchoolProfileSerializer()
         extra_kwargs = {
             'grade': {
                 'validators': []
