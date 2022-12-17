@@ -1,8 +1,8 @@
 from django_typomatic import ts_interface
-from personal.serializers import ProfileShortSerializer, SchoolShortSerializer
 from rest_framework import serializers
 
 from competition import models
+from personal.serializers import ProfileShortSerializer, SchoolShortSerializer
 
 
 class ModelWithParticipationSerializer(serializers.ModelSerializer):
@@ -26,16 +26,9 @@ class ModelWithParticipationSerializer(serializers.ModelSerializer):
 
 
 @ts_interface(context='competition')
-class UnspecifiedPublicationSerializer(serializers.ModelSerializer):
+class PublicationSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.UnspecifiedPublication
-        fields = '__all__'
-
-
-@ts_interface(context='competition')
-class SemesterPublicationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.SemesterPublication
+        model = models.Publication
         fields = '__all__'
 
 
@@ -48,7 +41,7 @@ class RegistrationLinkSerializer(serializers.ModelSerializer):
 
 @ts_interface(context='competition')
 class EventSerializer(ModelWithParticipationSerializer):
-    unspecifiedpublication_set = UnspecifiedPublicationSerializer(many=True)
+    publication_set = PublicationSerializer(many=True)
     registration_link = RegistrationLinkSerializer(many=False)
 
     class Meta:
@@ -226,8 +219,7 @@ class SemesterSerializer(serializers.ModelSerializer):
 @ts_interface(context='competition')
 class SemesterWithProblemsSerializer(ModelWithParticipationSerializer):
     series_set = SeriesWithProblemsSerializer(many=True)
-    semesterpublication_set = SemesterPublicationSerializer(many=True)
-    unspecifiedpublication_set = UnspecifiedPublicationSerializer(many=True)
+    publication_set = PublicationSerializer(many=True)
 
     class Meta:
         model = models.Semester

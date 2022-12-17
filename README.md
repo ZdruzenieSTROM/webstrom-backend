@@ -39,10 +39,9 @@ pip install -r prod-requirements.txt
 
 (bez linteru a formátovaču a podobne).
 
-**Package `pdf2image` a `python-magic` používajú externé knižnice, zariaď, aby si ich mal nainštalované**
+**Package `python-magic` používa externé knižnice, zariaď, aby si ich mal nainštalované**
 
 **Dokumentácie**
-* [pdf2image](https://pypi.org/project/pdf2image/)
 * [python-magic](https://pypi.org/project/python-magic/)
 
 Vytvor a naplň databázu:

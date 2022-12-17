@@ -1,11 +1,11 @@
 from datetime import datetime
 from typing import Any, Optional
 
-from competition.models import (Competition, Event, PublicationType,
-                                UnspecifiedPublication)
-from competition.utils import get_school_year_by_date
 from django.core.management import BaseCommand
 from django.utils.timezone import now
+
+from competition.models import Competition, Event, Publication, PublicationType
+from competition.utils import get_school_year_by_date
 
 
 class Command(BaseCommand):
@@ -55,14 +55,14 @@ class Command(BaseCommand):
                     )
                     year += 1
                     if competition.competition_type.pk in [1, 3, 5]:
-                        UnspecifiedPublication.objects.create(
+                        Publication.objects.create(
                             name='Zadanie',
                             event=event,
                             file='media/zadania.pdf',
                             publication_type=PublicationType.objects.get(
                                 name='Zadania')
                         )
-                        UnspecifiedPublication.objects.create(
+                        Publication.objects.create(
                             name='Poradie',
                             event=event,
                             file='media/poradie.pdf',
