@@ -557,8 +557,8 @@ class Publication(models.Model):
     zverejnený k nejakému Eventu, respektíve semestru.
     """
     class Meta:
-        verbose_name = 'iná publikácia'
-        verbose_name_plural = 'iné publikácie'
+        verbose_name = 'Publikácia'
+        verbose_name_plural = 'Publikácie'
 
     publication_type = models.ForeignKey(
         PublicationType, on_delete=models.SET_NULL, null=True)
