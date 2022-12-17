@@ -58,6 +58,7 @@ class Command(BaseCommand):
                      'schools',
                      'groups',
                      'users',
+                     'publication_type',
                      'dummy_users',
                      'profiles',
                      'profiles_more',

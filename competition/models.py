@@ -519,7 +519,7 @@ class Solution(models.Model):
     # V prípade, že riešenie prišlo po termíne nastaví sa na príslušný tag
     late_tag = models.ForeignKey(
         LateTag, verbose_name='Stavy omeškania',
-        on_delete=models.SET_NULL, null=True)
+        on_delete=models.SET_NULL, null=True, blank=True)
 
     is_online = models.BooleanField(
         verbose_name='internetové riešenie', default=False)
@@ -550,6 +550,9 @@ class PublicationType(models.Model):
 
     name = models.CharField(max_length=100, verbose_name='názov typu')
 
+    def __str__(self):
+        return self.name
+
 
 class Publication(models.Model):
     """
@@ -557,8 +560,8 @@ class Publication(models.Model):
     zverejnený k nejakému Eventu, respektíve semestru.
     """
     class Meta:
-        verbose_name = 'iná publikácia'
-        verbose_name_plural = 'iné publikácie'
+        verbose_name = 'Publikácia'
+        verbose_name_plural = 'Publikácie'
 
     publication_type = models.ForeignKey(
         PublicationType, on_delete=models.SET_NULL, null=True)
