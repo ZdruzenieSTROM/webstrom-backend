@@ -228,8 +228,7 @@ class SemesterWithProblemsSerializer(ModelWithParticipationSerializer):
     def create(self, validated_data):
         all_series_data = validated_data.pop('series_set')
         late_tags = validated_data.pop('late_tags')
-        validated_data.pop('semesterpublication_set')
-        validated_data.pop('unspecifiedpublication_set')
+        validated_data.pop('publication_set')
         semester = models.Semester.objects.create(**validated_data)
         for series_data in all_series_data:
             problems_data = series_data.pop('problems')

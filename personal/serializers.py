@@ -36,28 +36,57 @@ class SchoolShortSerializer(serializers.ModelSerializer):
 
 
 @ts_interface(context='personal')
+class SchoolProfileSerializer(serializers.ModelSerializer):
+    district = DistrictSerializer(many=False)
+    verbose_name = serializers.SerializerMethodField('get_verbose_name')
+
+    class Meta:
+        model = School
+        fields = ['code', 'district', 'verbose_name']
+
+    def get_verbose_name(self, obj):
+        return str(obj)
+
+
+@ts_interface(context='personal')
 class ProfileSerializer(serializers.ModelSerializer):
     #grade_info = GradeSerializer(many=True)
     grade = serializers.IntegerField()
+    school = SchoolProfileSerializer(many=False, read_only=True)
+    is_student = serializers.SerializerMethodField('get_is_student')
+    has_school = serializers.SerializerMethodField('get_has_school')
+    school_id = serializers.IntegerField()
 
     class Meta:
         model = Profile
         fields = ['first_name', 'last_name', 'nickname', 'school',
-                  'phone', 'parent_phone', 'gdpr', 'grade']
+                  'phone', 'parent_phone', 'gdpr', 'grade', 'is_student', 'has_school', 'school_id']
         read_only_fields = ['first_name', 'last_name',
-                            'email', ]  # 'year_of_graduation',
+                            'email', 'is_student', 'has_school', 'school']  # 'year_of_graduation',
         email = serializers.EmailField(source='user.email')
+
         extra_kwargs = {
             'grade': {
                 'validators': []
+            },
+            'school_id': {
+                'write_only': True,
             }
         }
 
+    def get_is_student(self, obj):
+        return obj.school != School.objects.get(pk=1)
+
+    def get_has_school(self, obj):
+        return obj.school != School.objects.get(pk=0) and obj.school != School.objects.get(pk=1)
+
     def update(self, instance, validated_data):
         grade = Grade.objects.get(pk=validated_data.pop('grade'))
+        school_id = Grade.objects.get(pk=validated_data.pop('school_id'))
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
 
+        instance.school = School.objects.get(pk=school_id)
         instance.year_of_graduation = grade.get_year_of_graduation_by_date()
         instance.save()
         return instance

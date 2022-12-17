@@ -257,8 +257,7 @@ class TestAPISemester(APITestCase, PermissionTestMixin):
                     "complete": False
                 }
             ],
-            "semesterpublication_set": [],
-            "unspecifiedpublication_set": [],
+            "publication_set": [],
             "year": 42,
             "school_year": "2017/2018",
             "start": "2017-10-02T22:00:00Z",
