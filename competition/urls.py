@@ -16,6 +16,7 @@ router.register(r'publication', views.PublicationViewSet)
 router.register(r'comment', views.CommentViewSet)
 router.register(r'late-tag', views.LateTagViewSet)
 router.register(r'grade', views.GradeViewSet)
+router.register(r'problem-administration', views.ProblemAdministrationViewSet)
 router.register(r'event-registration', views.EventRegistrationViewSet)
 
 urlpatterns = []
