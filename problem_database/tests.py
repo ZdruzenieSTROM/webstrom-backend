@@ -16,7 +16,7 @@ class TestSeminar(TestCase):
     def test_seminar_check_title(self):
         mod = self.setUp()
         self.assertTrue(isinstance(mod, models.Seminar))
-        self.assertEqual(mod.__str__(), 'Malynár')
+        self.assertEqual(str(mod), 'Malynár')
 
 
 class SeminarViewsTest(APITestCase):
@@ -56,7 +56,7 @@ class TestActivityType(TestCase):
     def test_activity_type_check_title(self):
         mod = self.setUp()
         self.assertTrue(isinstance(mod, models.ActivityType))
-        self.assertEqual(mod.__str__(), 'Mamut')
+        self.assertEqual(str(mod), 'Mamut')
 
 
 class ActivityTypeViewsTest(APITestCase):
@@ -130,7 +130,7 @@ class TestActivity(TestCase):
     def test_activity_type_check_title(self):
         mod = self.setUp()
         self.assertTrue(isinstance(mod, models.Activity))
-        self.assertEqual(mod.__str__(), 'Mamut 2020')
+        self.assertEqual(str(mod), 'Mamut 2020')
 
 
 class TestProblemTag(TestCase):
@@ -147,7 +147,7 @@ class TestProblemTag(TestCase):
     def test_problem_tag_check_title(self):
         mod = self.setUp()
         self.assertTrue(isinstance(mod, models.ProblemTag))
-        self.assertEqual(mod.__str__(), 'Lorem?, Výroková logika')
+        self.assertEqual(str(mod), 'Lorem?, Výroková logika')
 
 
 class ProblemTagTest(APITestCase):
