@@ -41,7 +41,7 @@ class RegistrationLinkSerializer(serializers.ModelSerializer):
 
 @ts_interface(context='competition')
 class EventSerializer(ModelWithParticipationSerializer):
-    unspecifiedpublication_set = PublicationSerializer(many=True)
+    publication_set = PublicationSerializer(many=True)
     registration_link = RegistrationLinkSerializer(many=False)
 
     class Meta:
