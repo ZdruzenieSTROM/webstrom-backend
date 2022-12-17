@@ -24,6 +24,7 @@ from competition.serializers import (CommentSerializer, CompetitionSerializer,
                                      EventRegistrationSerializer,
                                      EventSerializer, GradeSerializer,
                                      LateTagSerializer, ProblemSerializer,
+                                     ProblemWithSolutionsSerializer,
                                      PublicationSerializer, SemesterSerializer,
                                      SemesterWithProblemsSerializer,
                                      SeriesWithProblemsSerializer,
@@ -340,6 +341,12 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
                     'status': f'OK - points: {score}'
                 })
         return Response(json.dumps(errors))
+
+
+class ProblemAdministrationViewSet(ModelViewSetWithSerializerContext):
+    queryset = Problem.objects.all()
+    serializer_class = ProblemWithSolutionsSerializer
+    permission_classes = (IsAdminUser,)
 
 
 class SeriesViewSet(ModelViewSetWithSerializerContext):

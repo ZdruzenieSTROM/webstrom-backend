@@ -163,11 +163,32 @@ class SolutionSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+@ts_interface(context='competition')
+class SolutionAdministrationSerializer(serializers.ModelSerializer):
+    semester_registration = EventRegistrationSerializer()
+
+    class Meta:
+        model = models.Solution
+        fields = ['id', 'corrected_solution', 'vote',
+                  'late_tag', 'score', 'semester_registration']
+        read_only_fields = ['corrected_solution',
+                            'id', 'semester_registration']
+
+
+@ts_interface(context='competition')
+class ProblemWithSolutionsSerializer(serializers.ModelSerializer):
+    solution_set = SolutionAdministrationSerializer(many=True)
+
+    class Meta:
+        model = models.Problem
+        fields = ['solution_set', 'text', 'order']
+
 # class ProblemStatsSerializer(serializers.Serializer):
 #    historgram = HistrogramItemSerializer(many=True)
 #    num_solutions = serializers.IntegerField()
 #   mean = serializers.FloatField()
 #
+
 
 @ts_interface(context='competition')
 class SeriesSerializer(serializers.ModelSerializer):
