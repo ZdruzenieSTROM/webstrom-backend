@@ -4,24 +4,20 @@ import zipfile
 from io import BytesIO
 from operator import itemgetter
 
-from base.utils import mime_type
 from django.core.files.move import file_move_safe
 from django.db.models import Q
 from django.http import FileResponse, HttpResponse
-from personal.models import Profile, School
-from personal.serializers import ProfileMailSerializer, SchoolSerializer
 from rest_framework import exceptions, mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
-from webstrom import settings
 
+from base.utils import mime_type
 from competition import utils
 from competition.models import (Comment, Competition, Event, EventRegistration,
-                                Grade, LateTag, Problem, Semester,
-                                SemesterPublication, Series, Solution,
-                                UnspecifiedPublication, Vote)
+                                Grade, LateTag, Problem, Publication, Semester,
+                                Series, Solution, Vote)
 from competition.permissions import (CommentPermission,
                                      CompetitionRestrictedPermission,
                                      ProblemPermission)
@@ -29,12 +25,13 @@ from competition.serializers import (CommentSerializer, CompetitionSerializer,
                                      EventRegistrationSerializer,
                                      EventSerializer, GradeSerializer,
                                      LateTagSerializer, ProblemSerializer,
-                                     SemesterPublicationSerializer,
-                                     SemesterSerializer,
+                                     PublicationSerializer, SemesterSerializer,
                                      SemesterWithProblemsSerializer,
                                      SeriesWithProblemsSerializer,
-                                     SolutionSerializer,
-                                     UnspecifiedPublicationSerializer)
+                                     SolutionSerializer)
+from personal.models import Profile, School
+from personal.serializers import ProfileMailSerializer, SchoolSerializer
+from webstrom import settings
 
 # pylint: disable=unused-argument
 
@@ -672,10 +669,10 @@ class EventRegistrationViewSet(viewsets.ModelViewSet):
     permission_classes = (CompetitionRestrictedPermission,)
 
 
-class UnspecifiedPublicationViewSet(viewsets.ModelViewSet):
+class PublicationViewSet(viewsets.ModelViewSet):
     """Publikácie(výsledky, brožúrky ... nie časopis)"""
-    queryset = UnspecifiedPublication.objects.all()
-    serializer_class = UnspecifiedPublicationSerializer
+    queryset = Publication.objects.all()
+    serializer_class = PublicationSerializer
     permission_classes = (CompetitionRestrictedPermission,)
 
     def perform_create(self, serializer):
@@ -710,58 +707,12 @@ class UnspecifiedPublicationViewSet(viewsets.ModelViewSet):
             raise exceptions.ParseError(detail='Nesprávny formát')
 
         event = Event.objects.filter(pk=request.data['event']).first()
-        publication = UnspecifiedPublication.objects.create(
+        publication = Publication.objects.create(
             file=file,
             event=event
         )
         publication.generate_name()
         publication.file.save(publication.name, file)
-        return Response(status=status.HTTP_201_CREATED)
-
-
-class SemesterPublicationViewSet(viewsets.ModelViewSet):
-    """Časáky"""
-    queryset = SemesterPublication.objects.all()
-    serializer_class = SemesterPublicationSerializer
-    permission_classes = (CompetitionRestrictedPermission,)
-
-    @action(methods=['get'], detail=True, url_path='download')
-    def download_publication(self, request, pk=None):
-        """Stiahne časopis"""
-        publication = self.get_object()
-        response = HttpResponse(
-            publication.file, content_type=mime_type(publication.file))
-        response['Content-Disposition'] = f'attachment; filename="{publication.name}"'
-        return response
-
-    @action(methods=['post'], detail=False, url_path='upload', permission_classes=[IsAdminUser])
-    def upload_publication(self, request):
-        """Uploadne časopis"""
-        # TODO: Prerobiť na serializer a standardny request
-        if 'file' not in request.data:
-            raise exceptions.ParseError(detail='Request neobsahoval súbor')
-
-        file = request.data['file']
-        if mime_type(file) != 'application/pdf':
-            raise exceptions.ParseError(detail='Nesprávny formát')
-
-        semester = Semester.objects.filter(pk=request.data['semester']).first()
-        primary_key = request.data['semester']
-        if SemesterPublication.objects.filter(semester=semester) \
-            .filter(~Q(pk=primary_key), order=request.data['order']) \
-                .exists():
-            raise ValidationError({
-                'order': 'Časopis s týmto číslom už v danom semestri existuje',
-            })
-
-        publication = SemesterPublication.objects.create(
-            file=file,
-            semester=semester,
-            order=request.data['order'],
-        )
-        publication.generate_name()
-        publication.file.save(
-            publication.name, file)
         return Response(status=status.HTTP_201_CREATED)
 
 
