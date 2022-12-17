@@ -1,14 +1,8 @@
 import datetime
-import os
-from io import BytesIO
 
-import pdf2image
 from django.contrib.sites.models import Site
-from django.core.exceptions import ValidationError
-from django.core.files.base import ContentFile
 from django.core.validators import validate_slug
 from django.db import models
-from django.db.models import Q
 from django.db.models.constraints import UniqueConstraint
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -18,7 +12,6 @@ from django.utils.timezone import now
 
 from base.managers import UnspecifiedValueManager
 from base.models import RestrictedFileField
-from base.utils import mime_type
 from base.validators import school_year_validator
 from competition import utils
 from competition.querysets import ActiveQuerySet
