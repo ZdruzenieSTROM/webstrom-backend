@@ -82,11 +82,11 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         grade = Grade.objects.get(pk=validated_data.pop('grade'))
-        school_id = School.objects.get(pk=validated_data.pop('school_id'))
+        school = School.objects.get(pk=validated_data.pop('school_id'))
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
 
-        instance.school = School.objects.get(pk=school_id)
+        instance.school = school
         instance.year_of_graduation = grade.get_year_of_graduation_by_date()
         instance.save()
         return instance
