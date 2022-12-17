@@ -120,7 +120,7 @@
     },
     {
         "model": "cms.MenuItem",
-        "pk": 5,
+        "pk": 10,
         "fields": {
             "priority": 250,
             "caption": "Máš problém?!",
@@ -144,5 +144,5 @@
                 2
             ]
         }
-    },
+    }
 ]
