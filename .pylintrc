@@ -64,7 +64,6 @@ confidence=
 # --disable=W".
 disable=duplicate-code,
         fixme,
-        no-self-use,
         missing-docstring,
         too-many-ancestors,
         wrong-import-order
