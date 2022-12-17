@@ -1,29 +1,22 @@
 import datetime
-import os
-from io import BytesIO
 
-import pdf2image
-from base.managers import UnspecifiedValueManager
-from base.models import RestrictedFileField
-from base.utils import mime_type
-from base.validators import school_year_validator
 from django.contrib.sites.models import Site
-from django.core.exceptions import ValidationError
-from django.core.files.base import ContentFile
 from django.core.validators import validate_slug
 from django.db import models
-from django.db.models import Q
 from django.db.models.constraints import UniqueConstraint
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.shortcuts import get_object_or_404
 from django.utils.functional import cached_property
 from django.utils.timezone import now
-from personal.models import Profile, School
-from user.models import User
 
+from base.managers import UnspecifiedValueManager
+from base.models import RestrictedFileField
+from base.validators import school_year_validator
 from competition import utils
 from competition.querysets import ActiveQuerySet
+from personal.models import Profile, School
+from user.models import User
 
 
 class CompetitionType(models.Model):
@@ -550,73 +543,6 @@ class Solution(models.Model):
         self.save()
 
 
-class SemesterPublication(models.Model):
-    """
-    Časopis
-    """
-    class Meta:
-        verbose_name = 'časopis'
-        verbose_name_plural = 'časopisy'
-
-    name = models.CharField(max_length=30, blank=True)
-    semester = models.ForeignKey(
-        Semester, null=True, on_delete=models.SET_NULL)
-    order = models.PositiveSmallIntegerField()
-    file = RestrictedFileField(
-        upload_to='publications/semester_publication/%Y',
-        content_types=['application/pdf'],
-        verbose_name='súbor')
-    thumbnail = models.ImageField(
-        upload_to='publications/thumbnails/%Y',
-        blank=True,
-        verbose_name='náhľad')
-
-    def validate_unique(self, exclude=None):
-        if SemesterPublication.objects.filter(semester=self.semester) \
-                .filter(~Q(pk=self.pk), order=self.order) \
-                .exists():
-            raise ValidationError({
-                'order': 'Časopis s týmto číslom už v danom semestri existuje',
-            })
-
-    def generate_thumbnail(self, forced=False):
-        if mime_type(self.file) != 'application/pdf':
-            return
-
-        if self.thumbnail and not forced:
-            return
-
-        with self.file.open(mode='rb') as file:
-            pil_image = pdf2image.convert_from_bytes(
-                file.read(), first_page=1, last_page=1)[0]
-
-        png_image_bytes = BytesIO()
-        pil_image.save(png_image_bytes, format='png')
-        png_image_bytes.seek(0)
-
-        thumbnail_filename = os.path.splitext(
-            os.path.basename(self.file.name))[0] + '.png'
-
-        if self.thumbnail:
-            self.thumbnail.delete()
-
-        self.thumbnail.save(
-            thumbnail_filename, ContentFile(png_image_bytes.read()))
-
-    def __str__(self):
-        return self.name
-
-    def generate_name(self, forced=False):
-        if self.name and not forced:
-            return
-
-        self.name = f'{self.semester.competition}-{self.semester.year}-{self.order}'
-        self.save()
-
-    def can_user_modify(self, user):
-        return self.semester.can_user_modify(user)
-
-
 class PublicationType(models.Model):
     class Meta:
         verbose_name = 'Typ publikácie'
@@ -625,11 +551,10 @@ class PublicationType(models.Model):
     name = models.CharField(max_length=100, verbose_name='názov typu')
 
 
-class UnspecifiedPublication(models.Model):
+class Publication(models.Model):
     """
-    Reprezentuje výsledky, brožúrku alebo akýkoľvek materiál
-    zverejnený k nejakému Eventu okrem časopisov. Časopisy majú
-    vlastnú triedu SemesterPublication.
+    Reprezentuje výsledky, brožúrku, časopis alebo akýkoľvek materiál
+    zverejnený k nejakému Eventu, respektíve semestru.
     """
     class Meta:
         verbose_name = 'iná publikácia'
@@ -659,15 +584,7 @@ class UnspecifiedPublication(models.Model):
         return self.event.can_user_modify(user)
 
 
-@receiver(post_save, sender=SemesterPublication)
-def make_thumbnail_on_creation(sender, instance, created, **kwargs):
-    # pylint: disable=unused-argument
-    if created:
-        instance.generate_thumbnail()
-
-
-@receiver(post_save, sender=SemesterPublication)
-@receiver(post_save, sender=UnspecifiedPublication)
+@receiver(post_save, sender=Publication)
 def make_name_on_creation(sender, instance, created, **kwargs):
     # pylint: disable=unused-argument
     if created:
