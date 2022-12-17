@@ -116,7 +116,7 @@ class ProblemSerializer(serializers.ModelSerializer):
 
     submitted = serializers.SerializerMethodField(
         'submitted_solution')
-    #correction = ProblemCorrectionSerializer(many=False,)
+    # correction = ProblemCorrectionSerializer(many=False,)
 
     def submitted_solution(self, obj):
         if 'request' in self.context:
@@ -165,14 +165,14 @@ class SolutionSerializer(serializers.ModelSerializer):
 
 @ts_interface(context='competition')
 class SolutionAdministrationSerializer(serializers.ModelSerializer):
-    semester_registration = EventRegistrationSerializer()
+    semester_registration = EventRegistrationSerializer(read_only=True)
 
     class Meta:
         model = models.Solution
         fields = ['id', 'corrected_solution', 'vote',
                   'late_tag', 'score', 'semester_registration']
         read_only_fields = ['corrected_solution',
-                            'id', 'semester_registration']
+                            'semester_registration']
 
 
 @ts_interface(context='competition')
@@ -182,6 +182,8 @@ class ProblemWithSolutionsSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Problem
         fields = ['solution_set', 'text', 'order']
+        read_only_fields = ['text', 'order']
+
 
 # class ProblemStatsSerializer(serializers.Serializer):
 #    historgram = HistrogramItemSerializer(many=True)

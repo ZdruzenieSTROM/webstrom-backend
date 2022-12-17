@@ -28,6 +28,7 @@ from competition.serializers import (CommentSerializer, CompetitionSerializer,
                                      PublicationSerializer, SemesterSerializer,
                                      SemesterWithProblemsSerializer,
                                      SeriesWithProblemsSerializer,
+                                     SolutionAdministrationSerializer,
                                      SolutionSerializer)
 from personal.models import Profile, School
 from personal.serializers import ProfileMailSerializer, SchoolSerializer
@@ -347,6 +348,18 @@ class ProblemAdministrationViewSet(ModelViewSetWithSerializerContext):
     queryset = Problem.objects.all()
     serializer_class = ProblemWithSolutionsSerializer
     permission_classes = (IsAdminUser,)
+
+    @action(methods=['post'], detail=True, url_path='upload-points')
+    def upload_points(self, request, pk=None):
+        problem = self.get_object()
+        solutions = request.data['solution_set']
+        for solution_dict in solutions:
+            solution = Solution.objects.get(pk=solution_dict['id'])
+            if solution.problem != problem:
+                continue
+            solution.score = solution_dict['score']
+            solution.save()
+        return Response(status=status.HTTP_200_OK)
 
 
 class SeriesViewSet(ModelViewSetWithSerializerContext):
