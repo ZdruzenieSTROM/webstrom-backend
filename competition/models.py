@@ -550,6 +550,9 @@ class PublicationType(models.Model):
 
     name = models.CharField(max_length=100, verbose_name='názov typu')
 
+    def __str__(self):
+        return self.name
+
 
 class Publication(models.Model):
     """
