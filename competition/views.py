@@ -28,7 +28,6 @@ from competition.serializers import (CommentSerializer, CompetitionSerializer,
                                      PublicationSerializer, SemesterSerializer,
                                      SemesterWithProblemsSerializer,
                                      SeriesWithProblemsSerializer,
-                                     SolutionAdministrationSerializer,
                                      SolutionSerializer)
 from personal.models import Profile, School
 from personal.serializers import ProfileMailSerializer, SchoolSerializer
