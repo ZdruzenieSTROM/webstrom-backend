@@ -71,7 +71,7 @@ def generate_praticipant_invitations(
 
 
 def dot_product(solutions, weights):
-    return sum([s*w for s, w in zip(solutions, weights)])
+    return sum(s*w for s, w in zip(solutions, weights))
 
 
 def solutions_to_list_of_points(solutions):

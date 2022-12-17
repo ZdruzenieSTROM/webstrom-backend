@@ -35,7 +35,7 @@ class TestCounty(TestCase):
     def test_county_check_title(self):
         mod = self.setUp()
         self.assertTrue(isinstance(mod, County))
-        self.assertEqual(mod.__str__(), 'Testovaci kraj')
+        self.assertEqual(str(mod), 'Testovaci kraj')
 
 
 class CountyViewsTest(APITestCase):
@@ -75,7 +75,7 @@ class TestDistrict(TestCase):
     def test_district_check_title(self):
         mod = self.setUp()
         self.assertTrue(isinstance(mod, District))
-        self.assertEqual(mod.__str__(), 'Testovaci okres')
+        self.assertEqual(str(mod), 'Testovaci okres')
 
 
 class DistrictViewsTest(APITestCase):
@@ -141,7 +141,7 @@ class TestSchoolWithoutAddress(TestCase):
     def test_school_check_title(self):
         mod = self.setUp()
         self.assertTrue(isinstance(mod, School))
-        self.assertEqual(mod.__str__(), 'Gymnázium, Poštová 9')
+        self.assertEqual(str(mod), 'Gymnázium, Poštová 9')
 
 
 class TestSchoolWithAddress(TestCase):
@@ -164,7 +164,7 @@ class TestSchoolWithAddress(TestCase):
     def test_school_check_title(self):
         mod = self.setUp()
         self.assertTrue(isinstance(mod, School))
-        self.assertEqual(mod.__str__(), 'Gymnázium, Poštová 9, Košice')
+        self.assertEqual(str(mod), 'Gymnázium, Poštová 9, Košice')
 
     def test_printable_zip_code(self):
         mod = self.setUp()
