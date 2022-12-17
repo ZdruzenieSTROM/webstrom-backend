@@ -31,33 +31,42 @@ class Command(BaseCommand):
                 print(f'Skipping folder `{folder}`,'
                       f' because competition with slug `{folder}` does not exist')
                 continue
-            event_dict = self._get_dates(os.path.join(folder_root, folder, 'dates.json')))
+            event_dict = self._get_dates(
+                os.path.join(folder_root, folder, 'dates.json'))
             for folder, date in event_dict.items():
-                files=os.listdir(os.path.join(folder_root, folder))
+                files = os.listdir(os.path.join(folder_root, folder))
+                event = Event.objects.create(
+                    start=date,
+                    end=date
+                )
+                for file in files:
+                    UnspecifiedPublication.objects.create(
+                        event=event,
 
+                    )
 
     def tmp(self):
         for competition in Competition.objects.all():
             if competition.competition_type.pk == 0:
                 # Semesters are loaded by different command
                 continue
-            start=competition.start_year
-            year=1
+            start = competition.start_year
+            year = 1
             while start < now().year:
                 if start not in self.COMPETITION_CANCELED[competition.pk]:
-                    usual_date=self.COMPETITION_USUAL_DATE[competition.pk]
-                    start_date=datetime(
+                    usual_date = self.COMPETITION_USUAL_DATE[competition.pk]
+                    start_date = datetime(
                         start, usual_date[0][1], usual_date[0][0])
-                    end_date=datetime(
+                    end_date = datetime(
                         start, usual_date[1][1], usual_date[1][0])
-                    event=Event.objects.create(
-                        competition = competition,
-                        year = year,
-                        school_year = get_school_year_by_date(
+                    event = Event.objects.create(
+                        competition=competition,
+                        year=year,
+                        school_year=get_school_year_by_date(
                             end_date),
-                        season_code = 2,
-                        start = start_date,
-                        end = end_date,
+                        season_code=2,
+                        start=start_date,
+                        end=end_date,
                     )
                     year += 1
                     if competition.competition_type.pk in [1, 3, 5]:
