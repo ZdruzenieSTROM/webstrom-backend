@@ -120,12 +120,26 @@
     },
     {
         "model": "cms.MenuItem",
-        "pk": 5,
+        "pk": 10,
         "fields": {
             "priority": 250,
             "caption": "Máš problém?!",
             "url": "/akcie/mas-problem/",
             "sites": [
+                1,
+                2
+            ]
+        }
+    },
+    {
+        "model": "cms.MenuItem",
+        "pk": 9,
+        "fields": {
+            "priority": 200,
+            "caption": "Minulé ročníky",
+            "url": "/archiv/",
+            "sites": [
+                0,
                 1,
                 2
             ]
