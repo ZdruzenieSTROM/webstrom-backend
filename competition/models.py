@@ -519,7 +519,7 @@ class Solution(models.Model):
     # V prípade, že riešenie prišlo po termíne nastaví sa na príslušný tag
     late_tag = models.ForeignKey(
         LateTag, verbose_name='Stavy omeškania',
-        on_delete=models.SET_NULL, null=True)
+        on_delete=models.SET_NULL, null=True, blank=True)
 
     is_online = models.BooleanField(
         verbose_name='internetové riešenie', default=False)
