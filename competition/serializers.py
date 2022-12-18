@@ -65,7 +65,7 @@ class CompetitionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Competition
-        fields = '__all__'
+        exclude = ['permission_group']
 
     def get_upcoming_or_current(self, obj):
         try:
