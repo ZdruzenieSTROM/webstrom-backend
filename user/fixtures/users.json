@@ -98,7 +98,7 @@
         "pk": 3,
         "fields": {
             "user": 3,
-            "email": "veduci_kricky@strom.sk",
+            "email": "veduci_krickov@strom.sk",
             "verified": true,
             "primary": true
         }
