@@ -178,10 +178,11 @@ class SolutionAdministrationSerializer(serializers.ModelSerializer):
 @ts_interface(context='competition')
 class ProblemWithSolutionsSerializer(serializers.ModelSerializer):
     solution_set = SolutionAdministrationSerializer(many=True)
+    correction = ProblemCorrectionSerializer(many=False)
 
     class Meta:
         model = models.Problem
-        fields = ['solution_set', 'text', 'order']
+        fields = ['solution_set', 'text', 'order', 'correction']
         read_only_fields = ['text', 'order']
 
 
