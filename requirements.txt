@@ -7,7 +7,7 @@ charset-normalizer==2.1.1
 colorama==0.4.6
 coreapi==2.3.3
 coreschema==0.0.4
-cryptography==38.0.4
+cryptography==39.0.1
 defusedxml==0.7.1
 dill==0.3.6
 dj-rest-auth==2.2.5
