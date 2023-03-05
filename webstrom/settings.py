@@ -170,6 +170,7 @@ USE_TZ = True
 DATETIME_FORMAT = 'd.m.Y H:i:s'
 REST_FRAMEWORK = {
     'DATETIME_FORMAT': "%d.%m.%Y %H:%M:%S",
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema'
 }
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
