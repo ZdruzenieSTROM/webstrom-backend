@@ -169,28 +169,10 @@ class SolutionAdministrationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Solution
-        fields = ['id', 'corrected_solution', 'vote',
-                  'late_tag', 'score', 'semester_registration']
+        fields = ['id', 'corrected_solution', 'vote', 'solution',
+                  'late_tag', 'score', 'semester_registration', 'is_online']
         read_only_fields = ['corrected_solution',
                             'semester_registration']
-
-
-@ts_interface(context='competition')
-class ProblemWithSolutionsSerializer(serializers.ModelSerializer):
-    solution_set = SolutionAdministrationSerializer(many=True)
-    correction = ProblemCorrectionSerializer(many=False)
-
-    class Meta:
-        model = models.Problem
-        fields = ['solution_set', 'text', 'order', 'correction']
-        read_only_fields = ['text', 'order']
-
-
-# class ProblemStatsSerializer(serializers.Serializer):
-#    historgram = HistrogramItemSerializer(many=True)
-#    num_solutions = serializers.IntegerField()
-#   mean = serializers.FloatField()
-#
 
 
 @ts_interface(context='competition')
@@ -198,6 +180,26 @@ class SeriesSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Series
         exclude = ['sum_method']
+
+
+@ts_interface(context='competition')
+class ProblemWithSolutionsSerializer(serializers.ModelSerializer):
+    solution_set = SolutionAdministrationSerializer(many=True)
+    correction = ProblemCorrectionSerializer(many=False)
+    series = SeriesSerializer()
+
+    class Meta:
+        model = models.Problem
+        fields = ['solution_set', 'text', 'order',
+                  'correction', 'series']
+        read_only_fields = ['text', 'order', 'series']
+
+
+# class ProblemStatsSerializer(serializers.Serializer):
+#    historgram = HistrogramItemSerializer(many=True)
+#    num_solutions = serializers.IntegerField()
+#   mean = serializers.FloatField()
+#
 
 
 @ts_interface(context='competition')
