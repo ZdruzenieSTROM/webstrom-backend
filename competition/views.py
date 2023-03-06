@@ -266,7 +266,7 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
         stream = BytesIO()
         with zipfile.ZipFile(stream, 'w') as zipf:
             for solution in solutions:
-                if solution.is_online and solution.solution.name is not None:
+                if solution.solution.name:
                     prefix = ''
                     if solution.late_tag is not None:
                         prefix = f'{solution.late_tag.slug}/'
@@ -449,6 +449,40 @@ class SolutionViewSet(viewsets.ModelViewSet):
             solution.solution, content_type='application/pdf')
         response['Content-Disposition'] = f'attachment; filename="{solution.corrected_solution}"'
         return response
+
+    @action(methods=['post'], detail=True,
+            url_path='upload-solution-file',
+            permission_classes=[IsAdminUser])
+    def upload_solution_file(self, request, pk=None):
+        solution: Solution = self.get_object()
+        if 'file' not in request.FILES:
+            raise exceptions.ParseError(detail='Request neobsahoval súbor')
+
+        file = request.FILES['file']
+        if mime_type(file) != 'application/pdf':
+            raise exceptions.ParseError(
+                detail='Riešenie nie je vo formáte pdf')
+        solution.solution.save(
+            solution.get_solution_file_name(), file, save=True
+        )
+        return Response(status=status.HTTP_201_CREATED)
+
+    @action(methods=['post'], detail=True,
+            url_path='upload-corrected-solution-file',
+            permission_classes=[IsAdminUser])
+    def upload_corrected_solution_file(self, request, pk=None):
+        solution: Solution = self.get_object()
+        if 'file' not in request.FILES:
+            raise exceptions.ParseError(detail='Request neobsahoval súbor')
+
+        file = request.FILES['file']
+        if mime_type(file) != 'application/pdf':
+            raise exceptions.ParseError(
+                detail='Riešenie nie je vo formáte pdf')
+        solution.corrected_solution.save(
+            solution.get_corrected_solution_file_name(), file, save=True
+        )
+        return Response(status=status.HTTP_201_CREATED)
 
 
 class SemesterListViewSet(viewsets.ReadOnlyModelViewSet):
