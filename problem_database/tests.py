@@ -65,13 +65,13 @@ class ActivityTypeViewsTest(APITestCase):
     '''
 
     def setUp(self):
-        seminar1 = models.Seminar.objects.create(name='Malynár')
-        seminar2 = models.Seminar.objects.create(name='Matik')
-        self.activity_types = [models.ActivityType.objects.create(name="Malynár", seminar=seminar1),
+        self.seminar1 = models.Seminar.objects.create(name='Malynár')
+        self.seminar2 = models.Seminar.objects.create(name='Matik')
+        self.activity_types = [models.ActivityType.objects.create(name="Malynár", seminar=self.seminar1),
                                models.ActivityType.objects.create(
-                                   name="Mamut", seminar=seminar1),
+                                   name="Mamut", seminar=self.seminar1),
                                models.ActivityType.objects.create(
-                                   name="Lomihlav", seminar=seminar2)]
+                                   name="Lomihlav", seminar=self.seminar2)]
 
     URL_PREFIX = '/problem-database/activity-types'
 
@@ -89,7 +89,8 @@ class ActivityTypeViewsTest(APITestCase):
             )
 
     def test_filter_activity_types(self):
-        response = self.client.get(self.URL_PREFIX + '?seminar=2', {}, 'json')
+        response = self.client.get(
+            f'{self.URL_PREFIX}/?seminar={self.seminar2.pk}', {}, 'json')
 
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.assertEqual(1, len(response.data))
@@ -100,7 +101,8 @@ class ActivityTypeViewsTest(APITestCase):
             response.data
         )
 
-        response = self.client.get(self.URL_PREFIX + '?seminar=1', {}, 'json')
+        response = self.client.get(
+            f'{self.URL_PREFIX}/?seminar={self.seminar1.pk}', {}, 'json')
 
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.assertEqual(2, len(response.data))
