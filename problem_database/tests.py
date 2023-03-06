@@ -89,7 +89,7 @@ class ActivityTypeViewsTest(APITestCase):
             )
 
     def test_filter_activity_types(self):
-        response = self.client.get(self.URL_PREFIX + '/?seminar=2', {}, 'json')
+        response = self.client.get(self.URL_PREFIX + '?seminar=2', {}, 'json')
 
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.assertEqual(1, len(response.data))
@@ -100,7 +100,7 @@ class ActivityTypeViewsTest(APITestCase):
             response.data
         )
 
-        response = self.client.get(self.URL_PREFIX + '/?seminar=1', {}, 'json')
+        response = self.client.get(self.URL_PREFIX + '?seminar=1', {}, 'json')
 
         self.assertEqual(status.HTTP_200_OK, response.status_code)
         self.assertEqual(2, len(response.data))
