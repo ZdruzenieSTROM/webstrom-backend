@@ -67,11 +67,13 @@ class ActivityTypeViewsTest(APITestCase):
     def setUp(self):
         self.seminar1 = models.Seminar.objects.create(name='Malynár')
         self.seminar2 = models.Seminar.objects.create(name='Matik')
-        self.activity_types = [models.ActivityType.objects.create(name="Malynár", seminar=self.seminar1),
-                               models.ActivityType.objects.create(
-                                   name="Mamut", seminar=self.seminar1),
-                               models.ActivityType.objects.create(
-                                   name="Lomihlav", seminar=self.seminar2)]
+        self.activity_types = [
+            models.ActivityType.objects.create(
+                name="Malynár", seminar=self.seminar1),
+            models.ActivityType.objects.create(
+                name="Mamut", seminar=self.seminar1),
+            models.ActivityType.objects.create(
+                name="Lomihlav", seminar=self.seminar2)]
 
     URL_PREFIX = '/problem-database/activity-types'
 
