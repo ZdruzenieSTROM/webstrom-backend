@@ -62,3 +62,15 @@ class ProfileViewSet(viewsets.ModelViewSet):
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
 
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(methods=['get'], detail=False, permission_classes=[IsAuthenticated])
+    def mypermissions(self, request):
+        is_staff = request.user.is_staff
+        competition_set = set()
+        for group in request.user.groups.all():
+            for competition in group.competition_permissions.all():
+                competition_set.add(competition.pk)
+        return Response({
+            'is_staff': is_staff,
+            'competition_permissions': competition_set,
+        }, status=status.HTTP_200_OK)
