@@ -63,7 +63,8 @@ class Competition(models.Model):
 
     permission_group = models.ManyToManyField('auth.Group',
                                               blank=True,
-                                              verbose_name='Skupiny práv')
+                                              verbose_name='Skupiny práv',
+                                              related_name='competition_permissions')
 
     def can_user_participate(self, user):
         if self.min_years_until_graduation:
