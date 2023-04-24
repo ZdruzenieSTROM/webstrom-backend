@@ -116,7 +116,13 @@ class ProblemSerializer(serializers.ModelSerializer):
 
     submitted = serializers.SerializerMethodField(
         'submitted_solution')
+    num_comments = serializers.SerializerMethodField(
+        'get_num_comments')
     # correction = ProblemCorrectionSerializer(many=False,)
+
+    def get_num_comments(self, obj):
+        """Get number of comments related to problem"""
+        return len(list(obj.get_comments(self.context['request'].user)))
 
     def submitted_solution(self, obj):
         if 'request' in self.context:
