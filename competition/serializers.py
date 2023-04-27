@@ -1,3 +1,4 @@
+from django.contrib.auth.models import AnonymousUser
 from django_typomatic import ts_interface
 from rest_framework import serializers
 
@@ -122,7 +123,7 @@ class ProblemSerializer(serializers.ModelSerializer):
 
     def get_num_comments(self, obj):
         """Get number of comments related to problem"""
-        return len(list(obj.get_comments(self.context['request'].user)))
+        return len(list(obj.get_comments(AnonymousUser)))
 
     def submitted_solution(self, obj):
         if 'request' in self.context:
