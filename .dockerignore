@@ -1,0 +1,10 @@
+.git
+
+__pycache__
+
+.github
+.vscode
+
+emails
+
+README.md
