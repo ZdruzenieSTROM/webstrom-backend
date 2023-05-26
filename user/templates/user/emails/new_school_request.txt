@@ -1,0 +1,7 @@
+Na webe sa zaregistroval nový používateľ a nenašiel svoju školu.
+
+Email: {{email}}
+Meno: {{first_name}} {{last_name}}
+Škola: {{school_info}}
+
+Prosím doplňte školu a priraďte mu ju.
