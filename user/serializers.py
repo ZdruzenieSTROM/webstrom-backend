@@ -1,16 +1,17 @@
 from allauth.account.adapter import get_adapter
 from allauth.account.utils import setup_user_email
 from allauth.utils import email_address_exists
-from competition.models import Grade
 from django.contrib.auth import authenticate, get_user_model
 from django.core.mail import send_mail
+from django.template.loader import render_to_string
 from django_typomatic import ts_interface
+from rest_framework import exceptions, serializers
+
+from competition.models import Grade
 from personal.models import Profile
 from personal.serializers import ProfileCreateSerializer
-from rest_framework import exceptions, serializers
-from webstrom.settings import EMAIL_ALERT, EMAIL_NO_REPLY
-
 from user.models import TokenModel
+from webstrom.settings import EMAIL_ALERT, EMAIL_NO_REPLY
 
 
 @ts_interface(context='user')
@@ -203,18 +204,20 @@ class RegisterSerializer(serializers.Serializer):
         '''
         if school.code == self.OTHER_SCHOOL_CODE:
             email = self.validated_data['email']
-            name = self.validated_data['profile']['first_name']\
-                + self.validated_data['profile']['last_name']
+            first_name = self.validated_data['profile']['first_name']
+            last_name = self.validated_data['profile']['last_name']
             school_info = self.validated_data['new_school_description']
             send_mail(
                 'Žiadosť o pridanie novej školy',
-                f'''Na webe sa zaregistroval nový používateľ a nenašiel svoju školu.
-                Email: {email}
-                Meno: {name}
-                Škola: {school_info}
-
-                Prosím doplňte školu a priraďte mu ju.
-                ''',
+                render_to_string(
+                    'user/emails/new_school_request.txt',
+                    {
+                        'email': email,
+                        'first_name': first_name,
+                        'last_name': last_name,
+                        'school_info': school_info
+                    },
+                ),
                 EMAIL_NO_REPLY,
                 [EMAIL_ALERT]
             )
