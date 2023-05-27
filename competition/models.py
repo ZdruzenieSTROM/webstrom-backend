@@ -344,7 +344,7 @@ class Problem(models.Model):
         def filter_by_permissions(obj):
             if user.is_staff:
                 return True
-            if obj.published:
+            if obj.state == CommentPublishState.PUBLISHED:
                 return True
             if obj.posted_by == user:
                 return True
@@ -352,20 +352,29 @@ class Problem(models.Model):
 
         return filter(filter_by_permissions, Comment.objects.filter(problem=self))
 
-    def add_comment(self, text, user_id, published=0):
-        Comment.create_comment(
-            _text=text,
-            _problem_id=self.pk,
-            _posted_by=user_id,
-            _published=published
+    def add_comment(self, text, user, also_publish):
+        Comment.objects.create(
+            problem=Problem.objects.get(pk=self.pk),
+            text=text,
+            posted_by=user,
+            state=CommentPublishState.PUBLISHED if also_publish
+            else CommentPublishState.WAITING_FOR_REVIEW,
         )
+
+
+class CommentPublishState(models.IntegerChoices):
+    '''
+    Enum hlasov
+    '''
+    WAITING_FOR_REVIEW = 1, 'čaká'
+    PUBLISHED = 2, 'zverejnený'
+    HIDDEN = 3, 'skrytý'
 
 
 class Comment(models.Model):
     class Meta:
         verbose_name = 'komentár'
         verbose_name_plural = 'komentáre'
-
         ordering = ['posted_at']
 
     problem = models.ForeignKey(
@@ -377,27 +386,27 @@ class Comment(models.Model):
     posted_by = models.ForeignKey(
         User, verbose_name='autor komentára',
         on_delete=models.CASCADE)
-    published = models.BooleanField(
-        verbose_name='komentár publikovaný')
+    state = models.IntegerField(
+        choices=CommentPublishState.choices,
+        verbose_name='komentár publikovaný',
+        default=CommentPublishState.WAITING_FOR_REVIEW
+    )
+    hidden_response = models.TextField(
+        null=True, blank=True, verbose_name='Skrytá odpoveď na komentár')
 
     def publish(self):
-        self.published = True
+        self.state = CommentPublishState.PUBLISHED
+        self.hidden_response = None
 
-    def hide(self):
-        self.published = False
+    def hide(self, message: str):
+        self.state = CommentPublishState.HIDDEN
+        self.hidden_response = message
 
     def change_text(self, new_text):
-        self.text = new_text
-
-    @staticmethod
-    def create_comment(_text, _problem_id, _posted_by, _published):
-        comment = Comment.objects.create(
-            problem=Problem.objects.get(pk=_problem_id),
-            text=_text,
-            published=_published,
-            posted_by=_posted_by
-        )
-        comment.save()
+        if self.state != CommentPublishState.PUBLISHED:
+            self.text = new_text
+        else:
+            raise ValueError('Published comment can not be changed')
 
     def can_user_modify(self, user):
         return self.problem.can_user_modify(user)
