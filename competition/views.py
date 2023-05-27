@@ -1,10 +1,9 @@
-import json
 import os
 import zipfile
 from io import BytesIO
 from operator import itemgetter
 
-from django.core.files.move import file_move_safe
+from django.core.files import File
 from django.http import FileResponse, HttpResponse
 from rest_framework import exceptions, mixins, status, viewsets
 from rest_framework.decorators import action
@@ -31,7 +30,6 @@ from competition.serializers import (CommentSerializer, CompetitionSerializer,
                                      SolutionSerializer)
 from personal.models import Profile, School
 from personal.serializers import ProfileMailSerializer, SchoolSerializer
-from webstrom import settings
 
 # pylint: disable=unused-argument
 
@@ -286,19 +284,24 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
             url_path='upload-corrected')
     def upload_solutions_with_points(self, request, pk=None):
         """Nahrá .zip archív s opravenými riešeniami (pdf-kami)."""
+
         if 'file' not in request.data:
             raise exceptions.ParseError(detail='No file attached')
+
         zfile = request.data['file']
+
         if not zipfile.is_zipfile(zfile):
-            raise exceptions.ParseError(
-                detail='Attached file is not a zip file')
+            raise exceptions.ParseError(detail='Attached file is not a zip file')
+
         with zipfile.ZipFile(zfile) as zfile:
             if zfile.testzip():
                 raise exceptions.ParseError(detail='Zip file is corrupted')
-            pdf_files = [name for name in zfile.namelist()
-                         if name.endswith('.pdf')]
+
+            parsed_filenames = []
             errors = []
-            for filename in pdf_files:
+
+            # TODO: checks file are really pdfs
+            for filename in filter(lambda filename: filename.endswith('.pdf'), zfile.namelist()):
                 try:
                     parts = filename.rstrip('.pdf').split('-')
                     score = int(parts[0])
@@ -328,19 +331,19 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
                     })
                     continue
 
-                extracted_path = zfile.extract(filename, path='/tmp')
-                new_path = os.path.join(
-                    settings.MEDIA_ROOT, 'solutions', solution.get_corrected_solution_file_name())
-                file_move_safe(extracted_path, new_path, allow_overwrite=True)
+                parsed_filenames.append((filename, score, solution))
 
-                solution.score = score
-                solution.corrected_solution = solution.get_corrected_solution_file_name()
-                solution.save()
-                errors.append({
-                    'filename': filename,
-                    'status': f'OK - points: {score}'
-                })
-        return Response(json.dumps(errors))
+            if errors:
+                return Response(errors, status=status.HTTP_400_BAD_REQUEST)
+
+            for filename, score, solution in parsed_filenames:
+                with zfile.open(filename) as corrected_solution:
+                    solution.score = score
+                    solution.corrected_solution = File(corrected_solution)
+
+                    solution.save()
+
+            return Response()
 
 
 class ProblemAdministrationViewSet(ModelViewSetWithSerializerContext):
