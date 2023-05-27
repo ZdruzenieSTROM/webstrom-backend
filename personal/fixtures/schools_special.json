@@ -279,7 +279,7 @@
         "model": "personal.School",
         "pk": "22",
         "fields": {
-            "district": 0,
+            "district": 511,
             "name": "Z\u00e1kladn\u00e1 \u0161kola s materskou \u0161kolou Ga\u0161tanov\u00e1 56",
             "street": "",
             "city": "",
@@ -396,7 +396,7 @@
         "model": "personal.School",
         "pk": "33",
         "fields": {
-            "district": 0,
+            "district": 901,
             "name": "Malostransk\u00e9 gymn\u00e1zium, Praha 1",
             "street": "",
             "city": "",
@@ -422,7 +422,7 @@
         "model": "personal.School",
         "pk": "35",
         "fields": {
-            "district": 0,
+            "district": 901,
             "name": "Greenbrier Elementary School",
             "street": "",
             "city": "",
