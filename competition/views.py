@@ -223,7 +223,10 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
     @action(methods=['post'], detail=True, url_name='upload-solution', url_path='upload-solution')
     def upload_solution(self, request, pk=None):
         """Nahrá užívateľské riešenie k úlohe"""
-        problem = self.get_object()
+        problem: Problem = self.get_object()
+        if not problem.series.can_submit:
+            raise exceptions.ValidationError(
+                detail='Túto úlohu už nie je možné odovzdať.')
         event_registration = EventRegistration.get_registration_by_profile_and_event(
             request.user.profile, problem.series.semester)
         if 'file' not in request.FILES:
@@ -234,6 +237,11 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
             raise exceptions.ParseError(
                 detail='Riešenie nie je vo formáte pdf')
         late_tag = problem.series.get_actual_late_flag()
+        existing_solutions = Solution.objects.filter(
+            problem=problem, semester_registration=event_registration)
+        if len(existing_solutions) > 0 and late_tag is not None and not late_tag.can_resubmit:
+            raise exceptions.ValidationError(
+                detail='Túto úlohu už nie je možné odovzdať znova.')
         solution = Solution.objects.create(
             problem=problem,
             semester_registration=event_registration,
@@ -241,11 +249,8 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
             is_online=True
         )
 
-        def solutions_count():
-            return len(Solution.objects.filter(
-                problem=problem, semester_registration=event_registration))
         # delete solutions until there is less than allowed amount
-        while solutions_count() > self.MAX_SUBMITTED_SOLUTIONS - 1:
+        while len(existing_solutions) > self.MAX_SUBMITTED_SOLUTIONS - 1:
             Solution.objects.filter(
                 problem=problem, semester_registration=event_registration)\
                 .earliest('uploaded_at').delete()
@@ -320,7 +325,8 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
         zfile = request.data['file']
 
         if not zipfile.is_zipfile(zfile):
-            raise exceptions.ParseError(detail='Attached file is not a zip file')
+            raise exceptions.ParseError(
+                detail='Attached file is not a zip file')
 
         with zipfile.ZipFile(zfile) as zfile:
             if zfile.testzip():

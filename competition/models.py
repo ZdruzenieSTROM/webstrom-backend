@@ -1,4 +1,5 @@
 import datetime
+from typing import Optional
 
 from django.contrib.sites.models import Site
 from django.core.validators import validate_slug
@@ -107,6 +108,8 @@ class LateTag(models.Model):
     upper_bound = models.DurationField(
         verbose_name='maximálna dĺžka omeškania')
     comment = models.TextField(verbose_name='komentár pre opravovateľa')
+    can_resubmit = models.BooleanField(
+        verbose_name='Možnosť prepísať odovzdané riešenie')
 
     def __str__(self):
         return self.name
@@ -272,7 +275,7 @@ class Series(models.Model):
             max_late_tag_value = datetime.timedelta(0)
         return now() < self.deadline + max_late_tag_value
 
-    def get_actual_late_flag(self):
+    def get_actual_late_flag(self) -> Optional[LateTag]:
         """
         Vráti late flag, ktorý má byť v tomto okamihu priradený riešeniu,
         teda jeho aktuálne omeškanie
