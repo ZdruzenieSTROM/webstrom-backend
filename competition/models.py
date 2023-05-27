@@ -109,7 +109,7 @@ class LateTag(models.Model):
         verbose_name='maximálna dĺžka omeškania')
     comment = models.TextField(verbose_name='komentár pre opravovateľa')
     can_resubmit = models.BooleanField(
-        verbose='Možnosť prepísať odovzdané riešenie')
+        verbose_name='Možnosť prepísať odovzdané riešenie')
 
     def __str__(self):
         return self.name
