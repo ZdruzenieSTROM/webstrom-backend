@@ -14,8 +14,9 @@ from rest_framework.response import Response
 from base.utils import mime_type
 from competition import utils
 from competition.models import (Comment, Competition, Event, EventRegistration,
-                                Grade, LateTag, Problem, Publication, Semester,
-                                Series, Solution, Vote)
+                                Grade, LateTag, Problem, Publication,
+                                PublicationType, Semester, Series, Solution,
+                                Vote)
 from competition.permissions import (CommentPermission,
                                      CompetitionRestrictedPermission,
                                      ProblemPermission)
@@ -725,7 +726,7 @@ class EventRegistrationViewSet(viewsets.ModelViewSet):
 
 
 class PublicationViewSet(viewsets.ModelViewSet):
-    """Publikácie(výsledky, brožúrky ... nie časopis)"""
+    """Publikácie(výsledky, brožúrky, časopisy, ...)"""
     queryset = Publication.objects.all()
     serializer_class = PublicationSerializer
     permission_classes = (CompetitionRestrictedPermission,)
@@ -761,12 +762,22 @@ class PublicationViewSet(viewsets.ModelViewSet):
         if mime_type(file) not in ['application/pdf', 'application/zip']:
             raise exceptions.ParseError(detail='Nesprávny formát')
 
-        event = Event.objects.filter(pk=request.data['event']).first()
-        publication = Publication.objects.create(
-            file=file,
-            event=event
-        )
-        publication.generate_name()
+        event = Event.objects.filter(pk=int(request.data['event'])).first()
+        publication_type = PublicationType.objects.get(
+            name=request.data['publication_type'])
+        order = int(request.data.get('order'))
+
+        publication = Publication.objects.filter(
+            event=event, order=order).first()
+        if publication is None:
+            publication = Publication.objects.create(
+                file=file,
+                event=event,
+                order=order,
+                publication_type=publication_type
+            )
+            publication.generate_name()
+
         publication.file.save(publication.name, file)
         return Response(status=status.HTTP_201_CREATED)
 
