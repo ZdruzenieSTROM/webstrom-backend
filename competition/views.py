@@ -237,23 +237,20 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
             raise exceptions.ParseError(
                 detail='Riešenie nie je vo formáte pdf')
         late_tag = problem.series.get_actual_late_flag()
-        existing_solution = Solution.objects.filter(
-            problem=problem, semester_registration=event_registration).first()
-        if existing_solution is None or late_tag is None or late_tag.can_resubmit:
-            solution = Solution.objects.create(
-                problem=problem,
-                semester_registration=event_registration,
-                late_tag=late_tag,
-                is_online=True
-            )
-        raise exceptions.ValidationError(
-            detail='Túto úlohu už nie je možné odovzdať znova.')
+        existing_solutions = Solution.objects.filter(
+            problem=problem, semester_registration=event_registration)
+        if len(existing_solutions) > 0 and late_tag is not None and not late_tag.can_resubmit:
+            raise exceptions.ValidationError(
+                detail='Túto úlohu už nie je možné odovzdať znova.')
+        solution = Solution.objects.create(
+            problem=problem,
+            semester_registration=event_registration,
+            late_tag=late_tag,
+            is_online=True
+        )
 
-        def solutions_count():
-            return len(Solution.objects.filter(
-                problem=problem, semester_registration=event_registration))
         # delete solutions until there is less than allowed amount
-        while solutions_count() > self.MAX_SUBMITTED_SOLUTIONS - 1:
+        while len(existing_solutions) > self.MAX_SUBMITTED_SOLUTIONS - 1:
             Solution.objects.filter(
                 problem=problem, semester_registration=event_registration)\
                 .earliest('uploaded_at').delete()
