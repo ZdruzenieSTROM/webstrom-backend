@@ -198,7 +198,7 @@ class ProblemWithSolutionsSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Problem
         fields = ['solution_set', 'text', 'order',
-                  'correction', 'series']
+                  'correction', 'series', 'solution_pdf']
         read_only_fields = ['text', 'order', 'series']
 
 
