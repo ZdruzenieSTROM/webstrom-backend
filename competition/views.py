@@ -239,7 +239,7 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
         late_tag = problem.series.get_actual_late_flag()
         existing_solution = Solution.objects.filter(
             problem=problem, semester_registration=event_registration).first()
-        if existing_solution is None or late_tag.can_resubmit:
+        if existing_solution is None or late_tag is None or late_tag.can_resubmit:
             solution = Solution.objects.create(
                 problem=problem,
                 semester_registration=event_registration,
