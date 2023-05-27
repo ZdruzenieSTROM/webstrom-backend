@@ -141,13 +141,14 @@ class CommentAdmin(admin.ModelAdmin):
         'text',
         'posted_at',
         'posted_by',
-        'published',
+        'state',
+        'hidden_response'
     )
 
     list_filter = (
         ('posted_by', RelatedDropdownFilter),
         ('problem', RelatedDropdownFilter),
-        'published',
+        'state',
     )
 
 
