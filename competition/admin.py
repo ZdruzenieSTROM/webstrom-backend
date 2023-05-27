@@ -2,9 +2,9 @@ from django.contrib import admin, messages
 from django.http import HttpResponseRedirect
 from django_admin_listfilter_dropdown.filters import RelatedDropdownFilter
 
-from competition.models import (Comment, Event, EventRegistration, Problem,
-                                ProblemCorrection, Publication, Semester,
-                                Series, Solution)
+from competition.models import (Comment, Event, EventRegistration, LateTag,
+                                Problem, ProblemCorrection, Publication,
+                                Semester, Series, Solution)
 
 
 @admin.register(Series)
@@ -181,4 +181,12 @@ class ProblemCorrectionAdmin(admin.ModelAdmin):
 
     list_filter = (
         ('problem', RelatedDropdownFilter),
+    )
+
+
+@admin.register(LateTag)
+class LateTagAdmin(admin.ModelAdmin):
+    list_display = (
+        'name',
+        'upper_bound'
     )
