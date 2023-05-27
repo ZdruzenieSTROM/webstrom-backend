@@ -563,6 +563,7 @@ class Publication(models.Model):
     class Meta:
         verbose_name = 'Publikácia'
         verbose_name_plural = 'Publikácie'
+        ordering = ['order', ]
 
     publication_type = models.ForeignKey(
         PublicationType, on_delete=models.SET_NULL, null=True)
