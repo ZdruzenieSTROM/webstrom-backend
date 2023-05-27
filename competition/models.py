@@ -352,11 +352,13 @@ class Problem(models.Model):
 
         return filter(filter_by_permissions, Comment.objects.filter(problem=self))
 
-    def add_comment(self, text, user_id):
-        Comment.create_comment(
-            _text=text,
-            _problem_id=self.pk,
-            _posted_by=user_id
+    def add_comment(self, text, user, also_publish):
+        Comment.objects.create(
+            problem=Problem.objects.get(pk=self.pk),
+            text=text,
+            posted_by=user,
+            state=CommentPublishState.PUBLISHED if also_publish
+            else CommentPublishState.WAITING_FOR_REVIEW,
         )
 
 
@@ -385,7 +387,10 @@ class Comment(models.Model):
         User, verbose_name='autor komentára',
         on_delete=models.CASCADE)
     state = models.IntegerField(
-        choices=CommentPublishState.choices, verbose_name='komentár publikovaný', default=CommentPublishState.WAITING_FOR_REVIEW)
+        choices=CommentPublishState.choices,
+        verbose_name='komentár publikovaný',
+        default=CommentPublishState.WAITING_FOR_REVIEW
+    )
     hidden_response = models.TextField(
         null=True, blank=True, verbose_name='Skrytá odpoveď na komentár')
 
@@ -402,15 +407,6 @@ class Comment(models.Model):
             self.text = new_text
         else:
             raise ValueError('Published comment can not be changed')
-
-    @staticmethod
-    def create_comment(_text, _problem_id, _posted_by):
-        comment = Comment.objects.create(
-            problem=Problem.objects.get(pk=_problem_id),
-            text=_text,
-            posted_by=_posted_by
-        )
-        comment.save()
 
     def can_user_modify(self, user):
         return self.problem.can_user_modify(user)

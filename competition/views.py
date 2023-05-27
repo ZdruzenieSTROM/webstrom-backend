@@ -4,7 +4,9 @@ from io import BytesIO
 from operator import itemgetter
 
 from django.core.files import File
+from django.core.mail import send_mail
 from django.http import FileResponse, HttpResponse
+from django.template.loader import render_to_string
 from rest_framework import exceptions, mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
@@ -31,6 +33,7 @@ from competition.serializers import (CommentSerializer, CompetitionSerializer,
                                      SolutionSerializer)
 from personal.models import Profile, School
 from personal.serializers import ProfileMailSerializer, SchoolSerializer
+from webstrom.settings import EMAIL_ALERT, EMAIL_NO_REPLY
 
 # pylint: disable=unused-argument
 
@@ -124,6 +127,14 @@ class CommentViewSet(
         """Publikovanie, teda zverejnenie komentára"""
         comment = self.get_object()
         comment.publish()
+
+        send_mail(
+            'Zverejnený komentár',
+            render_to_string('competition/emails/comment_published.txt'),
+            EMAIL_NO_REPLY,
+            [comment.posted_by.email],
+        )
+
         comment.save()
 
         return Response("Komentár bol publikovaný.", status=status.HTTP_200_OK)
@@ -133,6 +144,14 @@ class CommentViewSet(
         """Skrytie komentára"""
         comment = self.get_object()
         comment.hide(message=request.data.get('hidden_response'))
+
+        send_mail(
+            'Skrytý komentár',
+            render_to_string('competition/emails/comment_hidden.txt'),
+            EMAIL_NO_REPLY,
+            [comment.posted_by.email],
+        )
+
         comment.save()
 
         return Response("Komentár bol skrytý.", status=status.HTTP_200_OK)
@@ -183,8 +202,17 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
     def add_comment(self, request, pk=None):
         """Pridá komentár (otázku) k úlohe"""
         problem = self.get_object()
-        problem.add_comment(
-            request.data['text'], request.user, problem.can_user_modify(request.user))
+        also_publish = problem.can_user_modify(request.user)
+
+        problem.add_comment(request.data['text'], request.user, also_publish)
+
+        send_mail(
+            'Nový komentár',
+            render_to_string('competition/emails/comment_added.txt'),
+            EMAIL_NO_REPLY,
+            [EMAIL_ALERT],
+        )
+
         return Response("Komentár bol pridaný", status=status.HTTP_201_CREATED)
 
     @action(methods=['get'], detail=True, permission_classes=[IsAdminUser])
