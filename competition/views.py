@@ -225,7 +225,7 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
         """Nahrá užívateľské riešenie k úlohe"""
         problem: Problem = self.get_object()
         if not problem.series.can_submit:
-            raise exceptions.MethodNotAllowed(
+            raise exceptions.ValidationError(
                 detail='Túto úlohu už nie je možné odovzdať.')
         event_registration = EventRegistration.get_registration_by_profile_and_event(
             request.user.profile, problem.series.semester)
@@ -246,7 +246,7 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
                 late_tag=late_tag,
                 is_online=True
             )
-        raise exceptions.MethodNotAllowed(
+        raise exceptions.ValidationError(
             detail='Túto úlohu už nie je možné odovzdať znova.')
 
         def solutions_count():
