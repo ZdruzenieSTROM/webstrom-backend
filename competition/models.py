@@ -574,11 +574,17 @@ class Publication(models.Model):
         content_types=['application/pdf', 'application/zip'],
         verbose_name='súbor')
 
+    order = models.PositiveSmallIntegerField(
+        verbose_name='poradie', null=True, blank=True)
+
     def generate_name(self, forced=False):
         if self.name and not forced:
             return
 
-        self.name = f'{self.event.competition}-{self.event.year}'
+        if self.order:
+            self.name = f'{self.order}'
+        else:
+            self.name = type.name
         self.save()
 
     def __str__(self):
