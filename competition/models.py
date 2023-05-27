@@ -316,6 +316,9 @@ class Problem(models.Model):
         related_name='problems',
         on_delete=models.CASCADE,)
     image = models.ImageField(verbose_name='Obrázok k úlohe', null=True)
+    solution_pdf = models.FileField(
+        verbose_name='Vzorové riešenie', null=True, blank=True,
+        upload_to='model_solutions/')
 
     def __str__(self):
         return f'{self.series.semester.competition.name}-{self.series.semester.year}' \
