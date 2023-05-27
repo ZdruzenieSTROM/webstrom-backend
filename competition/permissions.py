@@ -1,6 +1,6 @@
 from rest_framework import permissions
 
-from .models import EventRegistration
+from .models import CommentPublishState, EventRegistration
 
 
 class CommentPermission(permissions.BasePermission):
@@ -12,7 +12,7 @@ class CommentPermission(permissions.BasePermission):
         can_user_modify = obj.can_user_modify(request.user)
 
         if view.action == 'retrieve':
-            if obj.published or can_user_modify or obj.posted_by == request.user:
+            if obj.state == CommentPublishState.PUBLISHED or can_user_modify or obj.posted_by == request.user:
                 return True
 
         if view.action in ['publish', 'hide']:
