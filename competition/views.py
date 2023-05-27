@@ -237,13 +237,17 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
             raise exceptions.ParseError(
                 detail='Riešenie nie je vo formáte pdf')
         late_tag = problem.series.get_actual_late_flag()
-        if late_tag.
-        solution = Solution.objects.create(
-            problem=problem,
-            semester_registration=event_registration,
-            late_tag=late_tag,
-            is_online=True
-        )
+        existing_solution = Solution.objects.filter(
+            problem=problem, semester_registration=event_registration).first()
+        if existing_solution is None or late_tag.can_resubmit:
+            solution = Solution.objects.create(
+                problem=problem,
+                semester_registration=event_registration,
+                late_tag=late_tag,
+                is_online=True
+            )
+        raise exceptions.MethodNotAllowed(
+            detail='Túto úlohu už nie je možné odovzdať znova.')
 
         def solutions_count():
             return len(Solution.objects.filter(
