@@ -1,5 +1,0 @@
-Používateľ {{ user.get_full_name }} (id {{ user.pk }}) pri registrácii požiadal o pridanie nasledujúcej školy do databázy:
-
-Kraj: {{ school_county }}
-
-{{ school }}
