@@ -762,14 +762,19 @@ class PublicationViewSet(viewsets.ModelViewSet):
         event = Event.objects.filter(pk=int(request.data['event'])).first()
         publication_type = PublicationType.objects.get(
             name=request.data['publication_type'])
+        order = int(request.data.get('order'))
 
-        publication = Publication.objects.create(
-            file=file,
-            event=event,
-            order=int(request.data.get('order')),
-            publication_type=publication_type
-        )
-        publication.generate_name()
+        publication = Publication.objects.filter(
+            event=event, order=order).first()
+        if publication is None:
+            publication = Publication.objects.create(
+                file=file,
+                event=event,
+                order=order,
+                publication_type=publication_type
+            )
+            publication.generate_name()
+
         publication.file.save(publication.name, file)
         return Response(status=status.HTTP_201_CREATED)
 
