@@ -133,7 +133,7 @@ class CommentViewSet(
     def hide(self, request, pk=None):
         """Skrytie komentára"""
         comment = self.get_object()
-        comment.hide()
+        comment.hide(message=request.data.get('hidden_response'))
         comment.save()
 
         return Response("Komentár bol skrytý.", status=status.HTTP_200_OK)
