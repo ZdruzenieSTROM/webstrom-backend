@@ -259,6 +259,23 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
 
         return Response(status=status.HTTP_201_CREATED)
 
+    @action(methods=['post'], detail=True, url_name='upload-model-solution',
+            url_path='upload-model-solution',  permission_classes=[IsAdminUser])
+    def upload_model_solution(self, request, pk=None):
+        """Nahrá užívateľské riešenie k úlohe"""
+        problem: Problem = self.get_object()
+        if 'file' not in request.FILES:
+            raise exceptions.ParseError(detail='Request neobsahoval súbor')
+        file = request.FILES['file']
+        if mime_type(file) != 'application/pdf':
+            raise exceptions.ParseError(
+                detail='Riešenie nie je vo formáte pdf')
+        problem.solution_pdf.save(
+            f'vzorak-{problem.pk}.pdf', file, save=True
+        )
+
+        return Response(status=status.HTTP_201_CREATED)
+
     @action(detail=True, url_path='my-solution')
     def my_solution(self, request, pk=None):
         """Vráti riešenie k úlohe pre práve prihláseného užívateľa"""
