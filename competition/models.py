@@ -315,7 +315,8 @@ class Problem(models.Model):
         Series, verbose_name='úloha zaradená do série',
         related_name='problems',
         on_delete=models.CASCADE,)
-    image = models.ImageField(verbose_name='Obrázok k úlohe', null=True)
+    image = models.ImageField(
+        verbose_name='Obrázok k úlohe', null=True, blank=True)
     solution_pdf = models.FileField(
         verbose_name='Vzorové riešenie', null=True, blank=True,
         upload_to='model_solutions/')
