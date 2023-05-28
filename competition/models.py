@@ -1,7 +1,9 @@
 import datetime
 from typing import Optional
 
+from django.conf import settings
 from django.contrib.sites.models import Site
+from django.core.files.storage import FileSystemStorage
 from django.core.validators import validate_slug
 from django.db import models
 from django.db.models.constraints import UniqueConstraint
@@ -18,6 +20,8 @@ from competition import utils
 from competition.querysets import ActiveQuerySet
 from personal.models import Profile, School
 from user.models import User
+
+private_storage = FileSystemStorage(location=settings.PRIVATE_STORAGE_ROOT)
 
 
 class CompetitionType(models.Model):
@@ -318,9 +322,12 @@ class Problem(models.Model):
         Series, verbose_name='úloha zaradená do série',
         related_name='problems',
         on_delete=models.CASCADE,)
-    image = models.ImageField(
+    image = RestrictedFileField(
+        content_types=['image/svg+xml', 'image/png'],
+        upload_to='problem_images/',
         verbose_name='Obrázok k úlohe', null=True, blank=True)
-    solution_pdf = models.FileField(
+    solution_pdf = RestrictedFileField(
+        content_types=['application/pdf'],
         verbose_name='Vzorové riešenie', null=True, blank=True,
         upload_to='model_solutions/')
 
@@ -519,9 +526,13 @@ class Solution(models.Model):
     semester_registration = models.ForeignKey(
         EventRegistration, on_delete=models.CASCADE)
 
-    solution = models.FileField(
-        verbose_name='účastnícke riešenie', blank=True, upload_to='solutions/')
-    corrected_solution = models.FileField(
+    solution = RestrictedFileField(
+        content_types=['application/pdf'],
+        storage=private_storage,
+        verbose_name='účastnícke riešenie', blank=True, upload_to='solutions/user_solutions')
+    corrected_solution = RestrictedFileField(
+        content_types=['application/pdf'],
+        storage=private_storage,
         verbose_name='opravené riešenie', blank=True, upload_to='solutions/corrected/')
 
     score = models.PositiveSmallIntegerField(

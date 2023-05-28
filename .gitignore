@@ -5,6 +5,7 @@ db.sqlite3
 db.sqlite3-journal
 /emails
 /media
+/protected_media
 
 **/migrations/**
 !**/migrations/__init__.py
