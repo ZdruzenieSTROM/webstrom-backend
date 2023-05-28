@@ -123,7 +123,8 @@ class ProblemSerializer(serializers.ModelSerializer):
 
     def get_num_comments(self, obj):
         """Get number of comments related to problem"""
-        return len(list(obj.get_comments(AnonymousUser)))
+        user = self.context['request'].user if 'request' in self.context else AnonymousUser
+        return len(list(obj.get_comments(user)))
 
     def submitted_solution(self, obj):
         if 'request' in self.context:
