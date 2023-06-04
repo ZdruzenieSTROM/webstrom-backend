@@ -3,6 +3,7 @@ version: "3.3"
 services:
   website:
     build: .
+    image: webstrom-backend
     ports:
       - "8000:8000"
     restart: always
