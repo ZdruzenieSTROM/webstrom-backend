@@ -1,19 +1,16 @@
 name: deploy
 
-on:
-  workflow_dispatch:
+on: workflow_dispatch
 
 jobs:
   deploy:
-    name: "Deploy"
     runs-on: ubuntu-latest
     steps:
-      - name: Temporarily save SSH key to file
-        run: |
-          echo "${{ secrets.SSH_DEPLOY_KEY }}" > deploy_key
-          chmod 600 deploy_key
-      - name: Run deployment via SSH
-        run: ssh -o "StrictHostKeyChecking=no" -i deploy_key webstrom@server.strom.sk deploy-backend
-
-      - name: Clean SSH key
-        run: rm -f deploy_key
+      - uses: actions/checkout@v3
+      - uses: wshihadeh/docker-deployment-action@v2
+        with:
+          remote_docker_host: webstrom@server.strom.sk
+          ssh_private_key: ${{ secrets.WEBSTROM_DEPLOY_SSH_PRIVATE_KEY }}
+          ssh_public_key: ${{ secrets.WEBSTROM_DEPLOY_SSH_PUBLIC_KEY }}
+          stack_file_name: compose.yaml
+          args: up --build --force-recreate --detach
