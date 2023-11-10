@@ -155,25 +155,19 @@ class ProfileShortSerializer(serializers.ModelSerializer):
         model = Profile
         fields = ['first_name', 'last_name', 'nickname']
 
+
 @ts_interface(context='personal')
 class ProfileExportSerializer(serializers.ModelSerializer):
-    school_code = serializers.CharField(source='school.code')
+
     school_name = serializers.CharField(source='school.name')
     school_abbreviation = serializers.CharField(source='school.abbreviation')
-
     school_street = serializers.CharField(source='school.street')
     school_city = serializers.CharField(source='school.city')
     school_zip_code = serializers.CharField(source='school.zip_code')
-    school_email = serializers.CharField(source='school.email')
-
-    school_district = serializers.CharField(source='school.district')
-
     email = serializers.EmailField(source='user.email')
 
     class Meta:
         model = Profile
-        fields = ['school_code', 'school_name', 'school_abbreviation',
-                  'school_street', 'school_city', 'school_zip_code', 'school_email',
-                  'school_district', 'first_name', 'last_name', 'nickname', 'email']
-
-
+        fields = ['school_name', 'school_abbreviation',
+                  'school_street', 'school_city', 'school_zip_code',
+                  'first_name', 'last_name', 'nickname', 'email']
