@@ -32,7 +32,7 @@ from competition.serializers import (CommentSerializer, CompetitionSerializer,
                                      SeriesWithProblemsSerializer,
                                      SolutionSerializer)
 from personal.models import Profile, School
-from personal.serializers import ProfileMailSerializer, SchoolSerializer
+from personal.serializers import ProfileExportSerializer, SchoolSerializer
 from webstrom.settings import EMAIL_ALERT, EMAIL_NO_REPLY
 
 # pylint: disable=unused-argument
@@ -687,7 +687,7 @@ class SemesterViewSet(ModelViewSetWithSerializerContext):
                     solution.semester_registration.profile.pk)
 
         profiles = Profile.objects.only("user").filter(pk__in=participants_id)
-        serializer = ProfileMailSerializer(profiles, many=True)
+        serializer = ProfileExportSerializer(profiles, many=True)
         return Response(serializer.data)
 
     def post(self, request, format_post):
