@@ -124,8 +124,53 @@ class UserDetailsSerializer(serializers.ModelSerializer):
         return instance
 
 
+
 @ts_interface(context='user')
-class RegisterSerializer(serializers.Serializer):
+class CreateSerializer(serializers.Serializer):
+    # pylint: disable=w0223
+    # pylint: disable=w0221
+    # pylint: disable=w0201
+
+    email = serializers.EmailField(read_only=True)
+    password1 = serializers.CharField(read_only=True)
+    password2 = serializers.CharField(read_only=True)
+    profile = ProfileCreateSerializer(read_only=True, label="")
+    new_school_description = serializers.CharField(read_only=True, max_length=200, allow_blank=True)
+
+    def update(self, instance, validated_data):
+        instance.profile = validated_data.get('profile', instance.profile)
+        new_school_description = self.handle_other_school(validated_data['new_school_description'])
+        instance.new_school_description = new_school_description
+        return instance
+
+
+    def handle_other_school(self, school):
+        '''
+        Ak je zadana skola "ina skola" tak posle o tom mail.
+        '''
+        if school.code == self.OTHER_SCHOOL_CODE:
+            email = self.validated_data['email']
+            first_name = self.validated_data['profile']['first_name']
+            last_name = self.validated_data['profile']['last_name']
+            school_info = self.validated_data['new_school_description']
+            send_mail(
+                'Žiadosť o pridanie novej školy',
+                render_to_string(
+                    'user/emails/new_school_request.txt',
+                    {
+                        'email': email,
+                        'first_name': first_name,
+                        'last_name': last_name,
+                        'school_info': school_info
+                    },
+                ),
+                EMAIL_NO_REPLY,
+                [EMAIL_ALERT]
+            )
+
+
+@ts_interface(context='user')
+class RegisterSerializer(CreateSerializer):
     # pylint: disable=w0223
     # pylint: disable=w0221
     # pylint: disable=w0201
@@ -133,7 +178,7 @@ class RegisterSerializer(serializers.Serializer):
     password1 = serializers.CharField(write_only=True)
     password2 = serializers.CharField(write_only=True)
     profile = ProfileCreateSerializer(label="")
-    new_school_description = serializers.CharField(
+    new_school_description = serializers.CharField(write_only=True, 
         max_length=200, allow_blank=True)
 
     OTHER_SCHOOL_CODE = 0
