@@ -1,5 +1,6 @@
 import os
 import zipfile
+import csv
 from io import BytesIO
 from operator import itemgetter
 
@@ -7,6 +8,7 @@ from django.core.files import File
 from django.core.mail import send_mail
 from django.http import FileResponse, HttpResponse
 from django.template.loader import render_to_string
+from django.views.generic import View
 from rest_framework import exceptions, mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
@@ -688,6 +690,21 @@ class SemesterViewSet(ModelViewSetWithSerializerContext):
 
         profiles = Profile.objects.only("user").filter(pk__in=participants_id)
         serializer = ProfileExportSerializer(profiles, many=True)
+
+        #if request == 'csv':
+    
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="export.csv"'
+        
+        header = ProfileExportSerializer.Meta.fields
+        
+        writer = csv.DictWriter(response, fieldnames=header)
+        writer.writeheader()
+        for row in serializer.data:
+            writer.writerow(row)
+        
+        return response
+
         return Response(serializer.data)
 
     def post(self, request, format_post):
