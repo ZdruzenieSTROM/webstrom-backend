@@ -4,8 +4,6 @@ from rest_framework import serializers
 from competition.models import Grade
 from personal.models import County, District, Profile, School
 
-#from competition.serializers import GradeSerializer
-
 
 @ts_interface(context='personal')
 class CountySerializer(serializers.ModelSerializer):
@@ -50,20 +48,20 @@ class SchoolProfileSerializer(serializers.ModelSerializer):
 
 @ts_interface(context='personal')
 class ProfileSerializer(serializers.ModelSerializer):
-    #grade_info = GradeSerializer(many=True)
     grade = serializers.IntegerField()
+    grade_name = serializers.SerializerMethodField('get_grade_name')
     school = SchoolProfileSerializer(many=False, read_only=True)
     is_student = serializers.SerializerMethodField('get_is_student')
     has_school = serializers.SerializerMethodField('get_has_school')
     school_id = serializers.IntegerField()
+    email = serializers.EmailField(source='user.email')
 
     class Meta:
         model = Profile
-        fields = ['first_name', 'last_name', 'nickname', 'school',
+        fields = ['grade_name', 'id', 'email', 'first_name', 'last_name', 'nickname', 'school',
                   'phone', 'parent_phone', 'gdpr', 'grade', 'is_student', 'has_school', 'school_id']
-        read_only_fields = ['first_name', 'last_name',
+        read_only_fields = ['grade_name', 'id', 'first_name', 'last_name',
                             'email', 'is_student', 'has_school', 'school']  # 'year_of_graduation',
-        email = serializers.EmailField(source='user.email')
 
         extra_kwargs = {
             'grade': {
@@ -79,6 +77,11 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     def get_has_school(self, obj):
         return obj.school != School.objects.get(pk=0) and obj.school != School.objects.get(pk=1)
+
+    def get_grade_name(self, obj):
+        return Grade.get_grade_by_year_of_graduation(
+            year_of_graduation=obj.year_of_graduation
+        ).name
 
     def update(self, instance, validated_data):
         grade = Grade.objects.get(pk=validated_data.pop('grade'))
