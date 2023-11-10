@@ -14,8 +14,6 @@ from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.settings import api_settings
-from rest_framework_csv.renderers import CSVRenderer
 
 from base.utils import mime_type
 from competition import utils
@@ -560,8 +558,6 @@ class SemesterViewSet(ModelViewSetWithSerializerContext):
     permission_classes = (CompetitionRestrictedPermission,)
     filterset_fields = ['competition']
     http_method_names = ['get', 'post', 'head']
-    renderer_classes = (CSVRenderer, ) + \
-        tuple(api_settings.DEFAULT_RENDERER_CLASSES)
 
     def perform_create(self, serializer):
         """
