@@ -48,8 +48,6 @@ class SchoolProfileSerializer(serializers.ModelSerializer):
 
 @ts_interface(context='personal')
 class ProfileSerializer(serializers.ModelSerializer):
-    # grade_info = GradeSerializer(many=True)
-
     grade = serializers.IntegerField()
     grade_name = serializers.SerializerMethodField('get_grade_name')
     school = SchoolProfileSerializer(many=False, read_only=True)
