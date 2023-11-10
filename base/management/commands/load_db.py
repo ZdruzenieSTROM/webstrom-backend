@@ -240,7 +240,6 @@ class Command(BaseCommand):
                 first_name=user['first_name'],
                 last_name=user['last_name'],
                 user=new_user,
-                nickname=user['username'],
                 school=school_id_map.get(
                     user['school_id'], School.objects.get_unspecified_value()),
                 year_of_graduation=grade,
