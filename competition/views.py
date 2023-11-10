@@ -677,7 +677,8 @@ class SemesterViewSet(ModelViewSetWithSerializerContext):
         current_results = SemesterViewSet.semester_results(current_semester)
         return Response(current_results, status=status.HTTP_201_CREATED)
 
-    def __get_participants(self, semester):
+    def __get_participants(self):
+        semester = self.get_object()
         participants_id = []
 
         for series in semester.series_set.all():
@@ -696,15 +697,13 @@ class SemesterViewSet(ModelViewSetWithSerializerContext):
     @action(methods=['get'], detail=True)
     def participants(self, request, pk=None):
         """Vráti všetkých užívateľov zapojených do semestra"""
-        semester = self.get_object()
-        serializer = self.__get_participants(semester)
+        serializer = self.__get_participants()
         return Response(serializer.data)
 
     @action(methods=['get'], detail=True, url_path='participants-export')
     def participants_export(self, request, pk=None):
         """Vráti všetkých užívateľov zapojených do semestra"""
-        semester = self.get_object()
-        serializer = self.__get_participants(semester)
+        serializer = self.__get_participants()
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename="export.csv"'
         header = ProfileExportSerializer.Meta.fields
