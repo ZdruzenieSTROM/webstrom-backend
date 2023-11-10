@@ -58,7 +58,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Profile
-        fields = ['grade_name', 'id', 'email', 'first_name', 'last_name', 'nickname', 'school',
+        fields = ['grade_name', 'id', 'email', 'first_name', 'last_name', 'school',
                   'phone', 'parent_phone', 'gdpr', 'grade', 'is_student', 'has_school', 'school_id']
         read_only_fields = ['grade_name', 'id', 'first_name', 'last_name',
                             'email', 'is_student', 'has_school', 'school']  # 'year_of_graduation',
@@ -99,7 +99,6 @@ class ProfileSerializer(serializers.ModelSerializer):
         return Profile.objects.create(
             first_name=validated_data['first_name'],
             last_name=validated_data['last_name'],
-            nickname=validated_data['nickname'],
             school=validated_data['school'],
             year_of_graduation=grade.get_year_of_graduation_by_date(),
             phone=validated_data['phone'],
@@ -114,7 +113,7 @@ class ProfileCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Profile
-        fields = ['first_name', 'last_name', 'nickname', 'school',
+        fields = ['first_name', 'last_name', 'school',
                   'phone', 'parent_phone', 'gdpr', 'grade']
         read_only_fields = ['grade']
         extra_kwargs = {
@@ -140,7 +139,6 @@ class ProfileCreateSerializer(serializers.ModelSerializer):
         return Profile.objects.create(
             first_name=validated_data['first_name'],
             last_name=validated_data['last_name'],
-            nickname=validated_data['nickname'],
             school=validated_data['school'],
             year_of_graduation=grade.get_year_of_graduation_by_date(),
             phone=validated_data['phone'],
@@ -153,7 +151,7 @@ class ProfileCreateSerializer(serializers.ModelSerializer):
 class ProfileShortSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
-        fields = ['first_name', 'last_name', 'nickname']
+        fields = ['first_name', 'last_name']
 
 
 @ts_interface(context='personal')
@@ -170,4 +168,4 @@ class ProfileExportSerializer(serializers.ModelSerializer):
         model = Profile
         fields = ['school_name', 'school_abbreviation',
                   'school_street', 'school_city', 'school_zip_code',
-                  'first_name', 'last_name', 'nickname', 'email']
+                  'first_name', 'last_name', 'email']

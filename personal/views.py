@@ -42,7 +42,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
     filterset_fields = ['school', 'year_of_graduation', ]
     permission_classes = [IsAdminUser]
     filter_backends = [DjangoFilterBackend, SearchFilter]
-    search_fields = ['first_name', 'last_name', 'nickname']
+    search_fields = ['first_name', 'last_name']
 
     # pylint: disable=inconsistent-return-statements
     @action(methods=['get', 'put'], detail=False, permission_classes=[IsAuthenticated])

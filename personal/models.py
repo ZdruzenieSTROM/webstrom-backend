@@ -90,9 +90,6 @@ class Profile(models.Model):
         related_name='profile'
     )
 
-    nickname = models.CharField(
-        verbose_name='prezývka', max_length=32, blank=True, )
-
     school = models.ForeignKey(
         School, on_delete=models.SET(School.objects.get_unspecified_value),
         verbose_name='škola')

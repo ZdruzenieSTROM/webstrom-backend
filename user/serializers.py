@@ -105,8 +105,6 @@ class UserDetailsSerializer(serializers.ModelSerializer):
 
         # Update Profile
         # Nie všetky polia v modeloch User a Profile sú editovateľné cez API.
-        instance.profile.nickname = profile_data.get(
-            'nickname', instance.profile.nickname)
         instance.profile.phone = profile_data.get(
             'phone', instance.profile.phone)
         instance.profile.parent_phone = profile_data.get(
@@ -186,7 +184,6 @@ class RegisterSerializer(serializers.Serializer):
         Profile.objects.create(user=user,
                                first_name=profile_data['first_name'],
                                last_name=profile_data['last_name'],
-                               nickname=profile_data['nickname'],
                                school=profile_data['school'],
                                year_of_graduation=grade.get_year_of_graduation_by_date(),
                                phone=profile_data['phone'],
