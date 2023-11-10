@@ -1,6 +1,6 @@
+import csv
 import os
 import zipfile
-import csv
 from io import BytesIO
 from operator import itemgetter
 
@@ -14,6 +14,8 @@ from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.settings import api_settings
+from rest_framework_csv.renderers import CSVRenderer
 
 from base.utils import mime_type
 from competition import utils
@@ -558,6 +560,8 @@ class SemesterViewSet(ModelViewSetWithSerializerContext):
     permission_classes = (CompetitionRestrictedPermission,)
     filterset_fields = ['competition']
     http_method_names = ['get', 'post', 'head']
+    renderer_classes = (CSVRenderer, ) + \
+        tuple(api_settings.DEFAULT_RENDERER_CLASSES)
 
     def perform_create(self, serializer):
         """
@@ -673,10 +677,7 @@ class SemesterViewSet(ModelViewSetWithSerializerContext):
         current_results = SemesterViewSet.semester_results(current_semester)
         return Response(current_results, status=status.HTTP_201_CREATED)
 
-    @action(methods=['get'], detail=True)
-    def participants(self, request, pk=None):
-        """Vráti všetkých užívateľov zapojených do semestra"""
-        semester = self.get_object()
+    def __get_participants(self, semester):
         participants_id = []
 
         for series in semester.series_set.all():
@@ -690,22 +691,28 @@ class SemesterViewSet(ModelViewSetWithSerializerContext):
 
         profiles = Profile.objects.only("user").filter(pk__in=participants_id)
         serializer = ProfileExportSerializer(profiles, many=True)
+        return serializer
 
-        #if request == 'csv':
-    
+    @action(methods=['get'], detail=True)
+    def participants(self, request, pk=None):
+        """Vráti všetkých užívateľov zapojených do semestra"""
+        semester = self.get_object()
+        serializer = self.__get_participants(semester)
+        return Response(serializer.data)
+
+    @action(methods=['get'], detail=True, url_path='participants-export')
+    def participants_export(self, request, pk=None):
+        """Vráti všetkých užívateľov zapojených do semestra"""
+        semester = self.get_object()
+        serializer = self.__get_participants(semester)
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename="export.csv"'
-        
         header = ProfileExportSerializer.Meta.fields
-        
         writer = csv.DictWriter(response, fieldnames=header)
         writer.writeheader()
         for row in serializer.data:
             writer.writerow(row)
-        
         return response
-
-        return Response(serializer.data)
 
     def post(self, request, format_post):
         """Založí nový semester"""
