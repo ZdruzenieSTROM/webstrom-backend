@@ -39,7 +39,6 @@ def generate_profile(pk, user, year, school):
             "user": user,
             "first_name": "Ucastnik ",
             "last_name": f'Priezvisko{user}',
-            "nickname": f'Prezyvka{user}',
             "school": "000160997",
             "year_of_graduation": year,
             "phone": "+421912345678",
