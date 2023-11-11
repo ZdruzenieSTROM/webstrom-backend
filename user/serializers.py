@@ -159,7 +159,7 @@ class UserDetailsSerializer(serializers.ModelSerializer):
 
 @ts_interface(context='user')
 class RegisterSerializer(UserDetailsSerializer):
-
+    # pylint: disable=arguments-differ,attribute-defined-outside-init
     email = serializers.EmailField(required=True)
     password1 = serializers.CharField(write_only=True)
     password2 = serializers.CharField(write_only=True)
