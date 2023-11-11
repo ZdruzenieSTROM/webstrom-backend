@@ -3,6 +3,7 @@ from django_typomatic import ts_interface
 from rest_framework import serializers
 
 from competition import models
+from competition.models import Problem
 from personal.serializers import ProfileShortSerializer, SchoolShortSerializer
 
 
@@ -197,13 +198,51 @@ class ProblemWithSolutionsSerializer(serializers.ModelSerializer):
     series = SeriesSerializer()
 
     histogram = serializers.SerializerMethodField('get_series_histogram')
-    total_solutions = serializers.SerializerMethodField('get_series_num_solutions')
+    total_solutions = serializers.SerializerMethodField(
+        'get_series_num_solutions')
+    tex_header = serializers.SerializerMethodField('get_tex_header')
 
     class Meta:
         model = models.Problem
         fields = ['histogram', 'total_solutions', 'solution_set', 'text', 'order',
-                  'correction', 'series', 'solution_pdf']
-        read_only_fields = ['histogram', 'num_solutions', 'text', 'order', 'series']
+                  'correction', 'series', 'solution_pdf',
+                  'tex_header']
+        read_only_fields = ['histogram', 'tex_header'
+                            'num_solutions', 'text', 'order', 'series']
+
+    def format_list_of_names(self, names: list[str]) -> str:
+        if names is None or len(names) == 0:
+            return ''
+        if len(names) == 1:
+            return names[0]
+        return ', '.join(names[:-1])+' a '+names[-1]
+
+    def format_histogram(self, histogram: list[dict[str, int]]) -> str:
+        return ''.join([f'({item["score"]},{item["count"]})' for item in histogram])
+
+    def get_tex_header(self, obj: Problem) -> str:
+        """Generuje tex hlavicku vzoraku do casaku"""
+        try:
+            corrected_by = [user.get_full_name()
+                            for user in obj.correction.corrected_by.all()]
+            corrected_suffix = 'i' if len(corrected_by) > 1 else ''
+
+            best_solutions = [user.get_full_name()
+                              for user in obj.correction.corrected_by.all()]
+            best_solution_suffix = 'e' if len(best_solutions) > 1 else 'a'
+        except Problem.correction.RelatedObjectDoesNotExist:
+            corrected_by = None
+            corrected_suffix = ''
+            best_solutions = None
+            best_solution_suffix = 'a'
+        num_solutions = self.get_series_num_solutions(obj)
+        histogram = self.get_series_histogram(obj)
+        return f'\\vzorak{{{corrected_suffix}}}'\
+            f'{{{self.format_list_of_names(corrected_by)}}}'\
+            f'{{{num_solutions}}}'\
+            f'{{{best_solution_suffix}}}'\
+            f'{{{self.format_list_of_names(best_solutions)}}}'\
+            f'{{{self.format_histogram(histogram)}}}'
 
     def get_series_histogram(self, obj):
         return models.Problem.get_stats(obj).get('histogram')
