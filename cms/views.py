@@ -1,19 +1,13 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, exceptions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from cms.models import InfoBanner, MenuItem, MessageTemplate, Post, Logo
-from cms.permissions import PostPermission
+from cms.permissions import PostPermission, IsAdminUser
 from cms.serializers import (InfoBannerSerializer, MenuItemShortSerializer,
                              MessageTemplateSerializer, PostSerializer, LogoSerializer)
 
-
 from django.http import HttpResponse
-from rest_framework import exceptions, status, viewsets
-from rest_framework.decorators import action
-from rest_framework.permissions import IsAdminUser, IsAuthenticated
-from rest_framework.response import Response
-
 from base.utils import mime_type
 
 class MenuItemViewSet(viewsets.ReadOnlyModelViewSet):
@@ -51,7 +45,7 @@ class PostViewSet(viewsets.ModelViewSet):
         posts = self.filter_queryset(self.get_queryset()).visible()
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data)
-    
+
 
 class LogoViewSet(viewsets.ModelViewSet):
     """Publikácie(výsledky, brožúrky, časopisy, ...)"""
@@ -72,7 +66,7 @@ class LogoViewSet(viewsets.ModelViewSet):
                 'Nedostatočné práva na vytvorenie tohoto objektu')
 
     @action(methods=['get'], detail=True, url_path='download')
-    def download_logo(self, request, pk=None):
+    def download_logo(self, request):
         """Stiahne logo"""
         logo = self.get_object()
         response = HttpResponse(

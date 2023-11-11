@@ -129,11 +129,6 @@ class Logo(models.Model):
         upload_to='logo_images/',
         verbose_name='Logo', null=True, blank=True)
 
-    def __str__(self):
-        return f'{self.series.semester.competition.name}-{self.series.semester.year}' \
-            f'-{self.series.semester.season[0]}S-S{self.series.order} - {self.order}. úloha'
-
-
 
 class InfoBanner(ModelWithVisibility):
     class Meta:
