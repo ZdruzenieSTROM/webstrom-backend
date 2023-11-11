@@ -3,8 +3,8 @@ from django.contrib.sites.models import Site
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.timezone import now
-from base.models import RestrictedFileField
 
+from base.models import RestrictedFileField
 from competition.models import Event, Series
 
 from .querysets import VisibilityQuerySet
@@ -127,7 +127,7 @@ class Logo(models.Model):
     image = RestrictedFileField(
         content_types=['image/svg+xml', 'image/png'],
         upload_to='logo_images/',
-        verbose_name='Logo', null=True, blank=True)
+        verbose_name='Logo')
 
 
 class InfoBanner(ModelWithVisibility):
