@@ -7,8 +7,6 @@ from cms.permissions import PostPermission
 from cms.serializers import (InfoBannerSerializer, MenuItemShortSerializer,
                              MessageTemplateSerializer, PostSerializer, LogoSerializer)
 
-from django.http import HttpResponse
-from base.utils import mime_type
 
 class MenuItemViewSet(viewsets.ReadOnlyModelViewSet):
     """Položky menu"""
