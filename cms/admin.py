@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from cms.models import InfoBanner, MenuItem, MessageTemplate, Post, PostLink
+from cms.models import InfoBanner, MenuItem, MessageTemplate, Post, PostLink, Logo
 
 
 @admin.register(MenuItem)
@@ -13,6 +13,15 @@ class MenuItemAdmin(admin.ModelAdmin):
 
     list_filter = (
         'sites',
+    )
+
+
+@admin.register(Logo)
+class LogoAdmin(admin.ModelAdmin):
+    list_display = (
+        'image',
+        'name',
+        'disabled'
     )
 
 

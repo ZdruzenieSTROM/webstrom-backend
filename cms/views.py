@@ -2,11 +2,19 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from cms.models import InfoBanner, MenuItem, MessageTemplate, Post
+from cms.models import InfoBanner, MenuItem, MessageTemplate, Post, Logo
 from cms.permissions import PostPermission
 from cms.serializers import (InfoBannerSerializer, MenuItemShortSerializer,
-                             MessageTemplateSerializer, PostSerializer)
+                             MessageTemplateSerializer, PostSerializer, LogoSerializer)
 
+
+from django.http import HttpResponse
+from rest_framework import exceptions, status, viewsets
+from rest_framework.decorators import action
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
+from rest_framework.response import Response
+
+from base.utils import mime_type
 
 class MenuItemViewSet(viewsets.ReadOnlyModelViewSet):
     """Položky menu"""
@@ -43,6 +51,47 @@ class PostViewSet(viewsets.ModelViewSet):
         posts = self.filter_queryset(self.get_queryset()).visible()
         serializer = PostSerializer(posts, many=True)
         return Response(serializer.data)
+    
+
+class LogoViewSet(viewsets.ModelViewSet):
+    """Publikácie(výsledky, brožúrky, časopisy, ...)"""
+    queryset = Logo.objects.all()
+    serializer_class = LogoSerializer
+    permission_classes = (PostPermission,)
+
+    def perform_create(self, serializer):
+        '''
+        Vola sa pri vytvarani objektu,
+        checkuju sa tu permissions, ci user vie vytvorit publication v danom evente
+        '''
+        event = serializer.validated_data['event']
+        if event.can_user_modify(self.request.user):
+            serializer.save()
+        else:
+            raise exceptions.PermissionDenied(
+                'Nedostatočné práva na vytvorenie tohoto objektu')
+
+    @action(methods=['get'], detail=True, url_path='download')
+    def download_logo(self, request, pk=None):
+        """Stiahne logo"""
+        logo = self.get_object()
+        response = HttpResponse(
+            logo.file, content_type=mime_type(logo.file))
+        response['Content-Disposition'] = f'attachment; filename="{logo.name}"'
+        return response
+
+    @action(methods=['post'], detail=False, url_path='upload', permission_classes=[IsAdminUser])
+    def upload_publication(self, request):
+        """Nahrá súbor publikácie"""
+        if 'file' not in request.data:
+            raise exceptions.ParseError(detail='Request neobsahoval súbor')
+
+        file = request.data['file']
+        if mime_type(file) not in ['application/jpg', 'application/png']:
+            raise exceptions.ParseError(detail='Nesprávny formát')
+
+        return Response(status=status.HTTP_201_CREATED)
+
 
 
 class InfoBannerViewSet(viewsets.ModelViewSet):
