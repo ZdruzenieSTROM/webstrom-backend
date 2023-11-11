@@ -1,3 +1,9 @@
 {% load registration_extras %}
 
-Pre overenie emailu klikni sem: {{ request.scheme }}://{{ request.get_host }}/{{ request|seminar }}/verify-email/{{ key }}
+Ahoj, 
+už len krok a budeš môcť riešiť jedinečné matematické úlohy. 
+
+Pre dokončenie registrácie klikni sem:
+{{ request.scheme }}://{{ request|source_host }}/{{ request|seminar }}/verify-email/{{ key }}
+
+Tvoji vedúci Stromu
