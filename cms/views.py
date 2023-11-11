@@ -3,7 +3,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from cms.models import InfoBanner, MenuItem, MessageTemplate, Post, Logo
-from cms.permissions import PostPermission, IsAdminUser
+from cms.permissions import PostPermission
 from cms.serializers import (InfoBannerSerializer, MenuItemShortSerializer,
                              MessageTemplateSerializer, PostSerializer, LogoSerializer)
 
@@ -74,7 +74,7 @@ class LogoViewSet(viewsets.ModelViewSet):
         response['Content-Disposition'] = f'attachment; filename="{logo.name}"'
         return response
 
-    @action(methods=['post'], detail=False, url_path='upload', permission_classes=[IsAdminUser])
+    @action(methods=['post'], detail=False, url_path='upload')
     def upload_publication(self, request):
         """Nahrá súbor publikácie"""
         if 'file' not in request.data:

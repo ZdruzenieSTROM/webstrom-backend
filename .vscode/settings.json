@@ -5,5 +5,10 @@
         },
         "editor.defaultFormatter": "ms-python.autopep8",
         "editor.formatOnSave": true,
+        "python.linting.pylintArgs": [
+            "--load-plugins",
+            "pylint_django"
+        ]
     }
+    
 }
