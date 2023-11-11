@@ -76,7 +76,7 @@ class LogoViewSet(viewsets.ModelViewSet):
         file = request.data['file']
         if mime_type(file) not in ['application/jpg', 'application/png']:
             raise exceptions.ParseError(detail='Nesprávny formát')
-        
+
         default_storage.save(file.name, ContentFile(file.read()))
 
         return Response(status=status.HTTP_201_CREATED)
