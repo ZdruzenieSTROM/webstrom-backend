@@ -704,8 +704,7 @@ class SemesterViewSet(ModelViewSetWithSerializerContext):
         header = ProfileExportSerializer.Meta.fields
         writer = csv.DictWriter(response, fieldnames=header)
         writer.writeheader()
-        for row in serializer.data:
-            writer.writerow(row)
+        writer.writerows(serializer.data)
         return response
 
     def post(self, request, format_post):
