@@ -147,12 +147,10 @@ ACCOUNT_ADAPTER = 'user.adapter.CustomAccountAdapter'
 
 REST_SESSION_LOGIN = True
 
-REST_AUTH_SERIALIZERS = {
-    'LOGIN_SERIALIZER': 'user.serializers.LoginSerializer',
-    'USER_DETAILS_SERIALIZER': 'user.serializers.UserDetailsSerializer'
-}
 
-REST_AUTH_REGISTER_SERIALIZERS = {
+REST_AUTH = {
+    'LOGIN_SERIALIZER': 'user.serializers.LoginSerializer',
+    'USER_DETAILS_SERIALIZER': 'user.serializers.UserDetailsSerializer',
     'REGISTER_SERIALIZER': 'user.serializers.RegisterSerializer'
 }
 

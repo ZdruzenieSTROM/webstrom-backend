@@ -1,6 +1,6 @@
 from allauth.account.adapter import get_adapter
+from allauth.account.models import EmailAddress
 from allauth.account.utils import setup_user_email
-from allauth.utils import email_address_exists
 from django.contrib.auth import authenticate, get_user_model
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
@@ -106,10 +106,12 @@ class UserDetailsSerializer(serializers.ModelSerializer):
 
         # Update Profile
         # Nie všetky polia v modeloch User a Profile sú editovateľné cez API.
-        instance.profile.nickname = profile_data.get(
-            'nickname', instance.profile.nickname)
         instance.profile.phone = profile_data.get(
             'phone', instance.profile.phone)
+        instance.profile.fisrt_name = profile_data.get(
+            'first_name', instance.profile.first_name)
+        instance.profile.last_name = profile_data.get(
+            'last_name', instance.profile.last_name)
         instance.profile.parent_phone = profile_data.get(
             'parent_phone', instance.profile.parent_phone)
         instance.profile.gdpr = profile_data.get(
@@ -121,13 +123,17 @@ class UserDetailsSerializer(serializers.ModelSerializer):
 
         # User sa nikdy neupdatuje preto nie je potrebné volať instance.save()
         instance.profile.save()
-        self.handle_other_school(validated_data.pop('new_school_description'))
+        instance.save()
+        self.handle_other_school(validated_data.pop(
+            'new_school_description', None))
         return instance
 
     def handle_other_school(self, school):
         '''
         Ak je zadana skola "ina skola" tak posle o tom mail.
         '''
+        if school is None:
+            return
         if school.code == self.OTHER_SCHOOL_CODE:
             email = self.validated_data['email']
             first_name = self.validated_data['profile']['first_name']
@@ -169,7 +175,7 @@ class RegisterSerializer(UserDetailsSerializer):
 
     def validate_email(self, email):
         email = get_adapter().clean_email(email)
-        if email and email_address_exists(email):
+        if email and EmailAddress.objects.filter(email__iexact=email).exists():
             raise serializers.ValidationError(
                 "Používateľ s danou emailovou adresou už existuje.")
         return email
@@ -215,7 +221,6 @@ class RegisterSerializer(UserDetailsSerializer):
         Profile.objects.create(user=user,
                                first_name=profile_data['first_name'],
                                last_name=profile_data['last_name'],
-                               nickname=profile_data['nickname'],
                                school=profile_data['school'],
                                year_of_graduation=grade.get_year_of_graduation_by_date(),
                                phone=profile_data['phone'],
@@ -226,27 +231,3 @@ class RegisterSerializer(UserDetailsSerializer):
         setup_user_email(request, user, [])
 
         return user
-
-    def handle_other_school(self, school):
-        '''
-        Ak je zadana skola "ina skola" tak posle o tom mail.
-        '''
-        if school.code == self.OTHER_SCHOOL_CODE:
-            email = self.validated_data['email']
-            first_name = self.validated_data['profile']['first_name']
-            last_name = self.validated_data['profile']['last_name']
-            school_info = self.validated_data['new_school_description']
-            send_mail(
-                'Žiadosť o pridanie novej školy',
-                render_to_string(
-                    'user/emails/new_school_request.txt',
-                    {
-                        'email': email,
-                        'first_name': first_name,
-                        'last_name': last_name,
-                        'school_info': school_info
-                    },
-                ),
-                EMAIL_NO_REPLY,
-                [EMAIL_ALERT]
-            )
