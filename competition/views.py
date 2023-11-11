@@ -1,3 +1,4 @@
+import csv
 import os
 import zipfile
 from io import BytesIO
@@ -671,9 +672,7 @@ class SemesterViewSet(ModelViewSetWithSerializerContext):
         current_results = SemesterViewSet.semester_results(current_semester)
         return Response(current_results, status=status.HTTP_201_CREATED)
 
-    @action(methods=['get'], detail=True)
-    def participants(self, request, pk=None):
-        """Vráti všetkých užívateľov zapojených do semestra"""
+    def __get_participants(self):
         semester = self.get_object()
         participants_id = []
 
@@ -688,7 +687,25 @@ class SemesterViewSet(ModelViewSetWithSerializerContext):
 
         profiles = Profile.objects.only("user").filter(pk__in=participants_id)
         serializer = ProfileExportSerializer(profiles, many=True)
+        return serializer
+
+    @action(methods=['get'], detail=True)
+    def participants(self, request, pk=None):
+        """Vráti všetkých užívateľov zapojených do semestra"""
+        serializer = self.__get_participants()
         return Response(serializer.data)
+
+    @action(methods=['get'], detail=True, url_path='participants-export')
+    def participants_export(self, request, pk=None):
+        """Vráti všetkých užívateľov zapojených do semestra"""
+        serializer = self.__get_participants()
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="export.csv"'
+        header = ProfileExportSerializer.Meta.fields
+        writer = csv.DictWriter(response, fieldnames=header)
+        writer.writeheader()
+        writer.writerows(serializer.data)
+        return response
 
     def post(self, request, format_post):
         """Založí nový semester"""
