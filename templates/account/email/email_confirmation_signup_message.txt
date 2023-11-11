@@ -1,8 +1,9 @@
 {% load registration_extras %}
 
-Ahoj, už si len krok od toho, aby si začal/a riešiť jedinečné matematické úlohy.
+Ahoj, 
+už len krok a budeš môcť riešiť jedinečné matematické úlohy. 
 
-Pre dokončenie registrácie si teda over email kliknutím na následujúci link:
-{{ request.scheme }}://{{ request.get_host }}/{{ request|seminar }}/verify-email/{{ key }}
+Pre dokončenie registrácie klikni sem:
+{{ request.scheme }}://{{ request|source_host }}/{{ request|seminar }}/verify-email/{{ key }}
 
-Tvoji vedúci Stromu <3
+Tvoji vedúci Stromu
