@@ -195,12 +195,21 @@ class ProblemWithSolutionsSerializer(serializers.ModelSerializer):
     solution_set = SolutionAdministrationSerializer(many=True)
     correction = ProblemCorrectionSerializer(many=False)
     series = SeriesSerializer()
+    
+    histogram = serializers.SerializerMethodField('get_series_histogram')
+    total_solutions = serializers.SerializerMethodField('get_series_num_solutions')
 
     class Meta:
         model = models.Problem
-        fields = ['solution_set', 'text', 'order',
+        fields = ['histogram', 'total_solutions', 'solution_set', 'text', 'order',
                   'correction', 'series', 'solution_pdf']
-        read_only_fields = ['text', 'order', 'series']
+        read_only_fields = ['histogram', 'num_solutions', 'text', 'order', 'series']
+
+    def get_series_histogram(self, obj):
+        return models.Problem.get_stats(obj).get('histogram')
+    
+    def get_series_num_solutions(self, obj):
+        return models.Problem.get_stats(obj).get('num_solutions')
 
 
 # class ProblemStatsSerializer(serializers.Serializer):
