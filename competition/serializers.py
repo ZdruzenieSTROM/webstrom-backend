@@ -230,7 +230,7 @@ class ProblemWithSolutionsSerializer(serializers.ModelSerializer):
             best_solutions = [user.get_full_name()
                               for user in obj.correction.corrected_by.all()]
             best_solution_suffix = 'e' if len(best_solutions) > 1 else 'a'
-        except Problem.correction.RelatedObjectDoesNotExist:
+        except Problem.correction.RelatedObjectDoesNotExist:  # pylint: disable=no-member
             corrected_by = None
             corrected_suffix = ''
             best_solutions = None
