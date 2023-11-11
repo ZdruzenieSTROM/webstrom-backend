@@ -1,15 +1,15 @@
-from rest_framework import viewsets, exceptions, status
+
+
+from rest_framework import viewsets
 from rest_framework.decorators import action
+from rest_framework.exceptions import MethodNotAllowed
 from rest_framework.response import Response
 
-from cms.models import InfoBanner, MenuItem, MessageTemplate, Post, Logo
+from cms.models import InfoBanner, Logo, MenuItem, MessageTemplate, Post
 from cms.permissions import PostPermission
-from cms.serializers import (InfoBannerSerializer, MenuItemShortSerializer,
-                             MessageTemplateSerializer, PostSerializer, LogoSerializer)
-
-from base.utils import mime_type
-from django.core.files.base import ContentFile
-from django.core.files.storage import default_storage
+from cms.serializers import (InfoBannerSerializer, LogoSerializer,
+                             MenuItemShortSerializer,
+                             MessageTemplateSerializer, PostSerializer)
 
 
 class MenuItemViewSet(viewsets.ReadOnlyModelViewSet):
@@ -55,32 +55,10 @@ class LogoViewSet(viewsets.ModelViewSet):
     serializer_class = LogoSerializer
     permission_classes = (PostPermission,)
 
-    def perform_create(self, serializer):
-        '''
-        Vola sa pri vytvarani objektu,
-        checkuju sa tu permissions, ci user vie vytvorit publication v danom evente
-        '''
-        event = serializer.validated_data['event']
-        if event.can_user_modify(self.request.user):
-            serializer.save()
-        else:
-            raise exceptions.PermissionDenied(
-                'Nedostatočné práva na vytvorenie tohoto objektu')
+    # TODO: Maybe create upload image endpoint
 
-    @action(methods=['post'], detail=False, url_path='upload')
-    def upload_logo(self, request):
-        """Vytvorí súbor loga"""
-        if 'file' not in request.data:
-            raise exceptions.ParseError(detail='Request neobsahoval súbor')
-
-        file = request.data['file']
-        if mime_type(file) not in ['application/jpg', 'application/png']:
-            raise exceptions.ParseError(detail='Nesprávny formát')
-
-        default_storage.save(file.name, ContentFile(file.read()))
-
-        return Response(status=status.HTTP_201_CREATED)
-
+    def create(self, request, *args, **kwargs):
+        raise MethodNotAllowed('POST')
 
 
 class InfoBannerViewSet(viewsets.ModelViewSet):
