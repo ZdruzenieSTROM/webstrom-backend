@@ -4,11 +4,11 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-daphne = "*"
-dj-rest-auth = "~=2.2"
-django = "~=3.1"
+daphne = "~=4.0"
+dj-rest-auth = "~=5.0"
+django = "~=3.2"
 django-admin-list-filter-dropdown = "~=1.0"
-django-allauth = "~=0.43"
+django-allauth = "~=0.58"
 django-filter = "~=2.4"
 djangorestframework = "~=3.12"
 drf-writable-nested = "~=0.6"
@@ -17,10 +17,8 @@ python-magic = "~=0.4"
 
 [dev-packages]
 autopep8 = "*"
-django-nose = "*"
 django-rest-swagger = "*"
 django-typomatic = "*"
-pinocchio = "*"
 pylint = "*"
 pylint-django = "*"
 unidecode = "*"
