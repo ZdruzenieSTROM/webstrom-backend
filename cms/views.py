@@ -65,24 +65,10 @@ class LogoViewSet(viewsets.ModelViewSet):
             raise exceptions.PermissionDenied(
                 'Nedostatočné práva na vytvorenie tohoto objektu')
 
-    @action(methods=['get'], detail=True, url_path='download')
-    def download_logo(self, request):
-        """Stiahne logo"""
-        logo = self.get_object()
-        response = HttpResponse(
-            logo.file, content_type=mime_type(logo.file))
-        response['Content-Disposition'] = f'attachment; filename="{logo.name}"'
-        return response
-
     @action(methods=['post'], detail=False, url_path='upload')
-    def upload_publication(self, request):
-        """Nahrá súbor publikácie"""
+    def check_file(self, request):
         if 'file' not in request.data:
             raise exceptions.ParseError(detail='Request neobsahoval súbor')
-
-        file = request.data['file']
-        if mime_type(file) not in ['application/jpg', 'application/png']:
-            raise exceptions.ParseError(detail='Nesprávny formát')
 
         return Response(status=status.HTTP_201_CREATED)
 
