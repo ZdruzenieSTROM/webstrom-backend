@@ -7,80 +7,52 @@ git clone https://github.com/zdruzeniestrom/webstrom-backend
 cd webstrom-backend
 ```
 
-Vytvor a aktivuj prostredie pre python:
-
-Linux:
+Následne je potrebné si nainštalovať python package, na ktorých závisí naša stránka. To sa dá najľahšie dosiahnuť pomocou nástroja `pipenv`. Ten si môžeme buď nainštalovať pomocou package managera našej distribúcie alebo priamo cez `pip`:
 
 ```shell
-python3 -m venv <názov prostredia>
-source <názov prostredia>/bin/activate
+pip install pipenv
 ```
 
-Windows:
-
-```batch
-py -m venv <názov prostredia>
-call <názov prostredia>\Scripts\activate.bat
-```
-
-**Ak si prostredie pre python vytváraš v priečinku so stránkou, nezabudni pridať priečinok s prostredím do `.gitignore`**
-
-Nainštaluj potrebné balíky:
+Keď už máme `pipenv`, spustíme:
 
 ```shell
-pip install -r requirements.txt
+pipenv sync --dev
+
+pipenv shell
 ```
 
-Pre production stačí
-
-```shell
-pip install -r prod-requirements.txt
-```
-
-(bez linteru a formátovaču a podobne).
-
-**Package `python-magic` používa externé knižnice, zariaď, aby si ich mal nainštalované**
-
-**Dokumentácie**
-* [python-magic](https://pypi.org/project/python-magic/)
-
-Vytvor a naplň databázu:
+V tomto bode stačí už len vytvoriť databázu a spustiť si lokálny server:
 
 ```shell
 python manage.py restoredb
-```
-
-Spusti lokálny vývojový server:
-
-```shell
 python manage.py runserver
 ```
 
-# Nastavenia linteru a formátovaču
+V prípade, že nechceme použiť `pipenv`, môžeme použiť `venv` zo štandardnej knižnice pythonu:
 
-## Linter
+```shell
+python -m venv .venv
 
-VSCode python extension podporuje viacero linterov, medzi nimi aj `pylint`. Aby si ho mohol používať, treba VSCodu povedať, aby pri spustení linteru načítal djangový plugin, teda do workspace settings (`${workspaceFolder}/.vscode/settings.json`) treba pridať
+source .venv/bin/activate
 
-```json
-"python.linting.pylintArgs": [
-    "--load-plugins",
-    "pylint_django"
-]
+pip install -r requirements.txt
+
+python manage.py restoredb
+python manage.py runserver
 ```
 
-Teraz ak nemáš nejak veľmi zle nastavený globálny config, mal by ťa linter začať šikanovať tým, že ti bude podfarbovať kusy kódu a pridávať položky do panelu `PROBLEMS`.
+V prípade, že pracujeme na Windowse, musíme si ešte nainštalovať package `python-magic-bin`:
 
-## Formátovač
-
-Nainštaluj si (opäť, vo vnútri svojho virtual environmentu) package `autopep8`. Okrem toho potrebuješ zapnúť `editor.formatOnSave` (defaultne je vypnuté), buď v globálnom configu alebo len lokálne vo projekte.Odporúčam globálne - pridaj do svojho `settings.json` suboru (VSCode) tento riadok
-
+```shell
+pip install python-magic-bin
 ```
-"editor.formatOnSave": true,
-```
+
+V každom prípade by sme mali vytvorené prostredie nastaviť ako python interpreter vo vscode projekte cez `> Python: Select Interpreter`.
+
 # Migrácia starej databázy
 
 Pre načítanie dát zo starej stránky si najrpv potrebuješ stiahnuť starú databázu k sebe. Potom vybrané dáta z nej načítaš pomocou príkazu:
-```
-python manage.py loadb <cesta k databázi>
+
+```shell
+python manage.py load_db <cesta k databázi>
 ```
