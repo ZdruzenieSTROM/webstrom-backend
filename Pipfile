@@ -17,10 +17,8 @@ python-magic = "~=0.4"
 
 [dev-packages]
 autopep8 = "*"
-django-nose = "*"
 django-rest-swagger = "*"
 django-typomatic = "*"
-pinocchio = "*"
 pylint = "*"
 pylint-django = "*"
 unidecode = "*"

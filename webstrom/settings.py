@@ -196,8 +196,3 @@ MANAGERS = [('Web', 'web@strom.sk'), ]
 
 EMAIL_NO_REPLY = 'no-reply@strom.sk'    # z tade sa odosielaju maily
 EMAIL_ALERT = 'alert-email-address@strom.sk'  # tu sa prijimaju maily
-
-# Tests
-
-TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
-NOSE_ARGS = ['--with-spec', '--spec-color', '--nocapture']
