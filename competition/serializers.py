@@ -195,7 +195,7 @@ class ProblemWithSolutionsSerializer(serializers.ModelSerializer):
     solution_set = SolutionAdministrationSerializer(many=True)
     correction = ProblemCorrectionSerializer(many=False)
     series = SeriesSerializer()
-    
+
     histogram = serializers.SerializerMethodField('get_series_histogram')
     total_solutions = serializers.SerializerMethodField('get_series_num_solutions')
 
@@ -207,7 +207,7 @@ class ProblemWithSolutionsSerializer(serializers.ModelSerializer):
 
     def get_series_histogram(self, obj):
         return models.Problem.get_stats(obj).get('histogram')
-    
+
     def get_series_num_solutions(self, obj):
         return models.Problem.get_stats(obj).get('num_solutions')
 
