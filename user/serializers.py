@@ -83,8 +83,9 @@ class UserDetailsSerializer(serializers.ModelSerializer):
     """
     Serializer pre User model spolu s Profile modelom
     """
-
-    profile = ProfileCreateSerializer(label='')
+    profile = ProfileCreateSerializer(label="")
+    new_school_description = serializers.CharField(
+        write_only=True, max_length=200, allow_blank=True, required=False)
 
     def validate_username(self, username):
         username = get_adapter().clean_username(username)
@@ -92,7 +93,7 @@ class UserDetailsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = ('pk', 'email', 'profile')
+        fields = ('pk', 'email', 'profile', 'new_school_description')
         read_only_fields = ('email',)
 
     def update(self, instance, validated_data):
@@ -120,24 +121,7 @@ class UserDetailsSerializer(serializers.ModelSerializer):
 
         # User sa nikdy neupdatuje preto nie je potrebné volať instance.save()
         instance.profile.save()
-
-        return instance
-
-
-@ts_interface(context='user')
-class CreateSerializer(serializers.Serializer):
-
-    email = serializers.EmailField(read_only=True)
-    id = serializers.IntegerField(read_only=True)
-    profile = ProfileCreateSerializer(label="")
-    new_school_description = serializers.CharField(
-        write_only=True, max_length=200, allow_blank=True)
-
-    def update(self, instance, validated_data):
-        instance.profile = validated_data.get('profile', instance.profile)
-        new_school_description = self.handle_other_school(
-            validated_data['new_school_description'])
-        instance.new_school_description = new_school_description
+        self.handle_other_school(validated_data.pop('new_school_description'))
         return instance
 
     def handle_other_school(self, school):
@@ -166,7 +150,7 @@ class CreateSerializer(serializers.Serializer):
 
 
 @ts_interface(context='user')
-class RegisterSerializer(CreateSerializer):
+class RegisterSerializer(UserDetailsSerializer):
 
     email = serializers.EmailField(required=True)
     password1 = serializers.CharField(write_only=True)
@@ -176,6 +160,12 @@ class RegisterSerializer(CreateSerializer):
                                                    max_length=200, allow_blank=True)
 
     OTHER_SCHOOL_CODE = 0
+
+    class Meta:
+        model = get_user_model()
+        fields = ('pk', 'email', 'profile', 'password1',
+                  'password2', 'new_school_description')
+        read_only_fields = ('email',)
 
     def validate_email(self, email):
         email = get_adapter().clean_email(email)

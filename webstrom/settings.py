@@ -156,10 +156,6 @@ REST_AUTH_REGISTER_SERIALIZERS = {
 }
 
 
-REST_AUTH_SERIALIZERS = {
-    'USER_DETAILS_SERIALIZER': 'user.serializers.CreateSerializer'
-}
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
