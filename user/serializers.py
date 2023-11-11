@@ -54,7 +54,7 @@ class LoginSerializer(serializers.Serializer):
         user = self.get_auth_user(email, password)
 
         if not user:
-            msg = 'Nie je možné prihlásiť sa zadanými prihlasovacími údajmi.'
+            msg = 'Nesprávny email alebo heslo.'
             raise exceptions.ValidationError(msg)
 
         # Did we get back an active user?
