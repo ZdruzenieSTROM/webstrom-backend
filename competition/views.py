@@ -488,23 +488,29 @@ class SolutionViewSet(viewsets.ModelViewSet):
         self.get_object().set_vote(Vote.NONE)
         return Response('Hlas Odobraný.', status=status.HTTP_200_OK)
 
-    @action(methods=['get'], detail=True, url_path='download-solution')
-    def download_solution(self, request, pk=None):
+    @action(methods=['get'], detail=True, url_path='file-solution')
+    def file_solution(self, request, pk=None):
         """Stiahne riešenie"""
         solution = self.get_object()
-        response = HttpResponse(
-            solution.solution, content_type='application/pdf')
-        response['Content-Disposition'] = f'attachment; filename="{solution.solution}"'
-        return response
+        file = solution.solution
+        if not file:
+            raise exceptions.NotFound(
+                detail='Zatiaľ nebolo nahraté žiadne riešenie')
+        return FileResponse(
+            file, content_type='application/pdf',
+        )
 
-    @action(methods=['get'], detail=True, url_path='download-corrected')
-    def download_corrected(self, request, pk=None):
+    @action(methods=['get'], detail=True, url_path='file-corrected')
+    def file_corrected(self, request, pk=None):
         """Stiahne opravenú verziu riešenia"""
         solution = self.get_object()
-        response = HttpResponse(
-            solution.solution, content_type='application/pdf')
-        response['Content-Disposition'] = f'attachment; filename="{solution.corrected_solution}"'
-        return response
+        file = solution.corrected_solution
+        if not file:
+            raise exceptions.NotFound(
+                detail='Zatiaľ nebolo nahraté žiadne riešenie')
+        return FileResponse(
+            file, content_type='application/pdf',
+        )
 
     @action(methods=['post'], detail=True,
             url_path='upload-solution-file',
