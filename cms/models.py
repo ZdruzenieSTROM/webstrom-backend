@@ -4,6 +4,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.timezone import now
 
+from base.models import RestrictedFileField
 from competition.models import Event, Series
 
 from .querysets import VisibilityQuerySet
@@ -109,6 +110,24 @@ class MenuItem(models.Model):
 
     # TODO: Pridať oprávnenia a umožniť tak vedúcovské položky v menu
     # zobrazované aj možno niekde inde
+
+
+class Logo(models.Model):
+    """
+    Logo
+    """
+    class Meta:
+        verbose_name = 'logo'
+        verbose_name_plural = 'logá'
+
+        ordering = ['name', ]
+
+    name = models.CharField(verbose_name='názov loga', max_length=150)
+    disabled = models.BooleanField()
+    image = RestrictedFileField(
+        content_types=['image/svg+xml', 'image/png'],
+        upload_to='logo_images/',
+        verbose_name='Logo')
 
 
 class InfoBanner(ModelWithVisibility):
