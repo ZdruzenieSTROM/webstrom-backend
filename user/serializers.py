@@ -83,6 +83,8 @@ class UserDetailsSerializer(serializers.ModelSerializer):
     """
     Serializer pre User model spolu s Profile modelom
     """
+    OTHER_SCHOOL_CODE = 0
+
     profile = ProfileCreateSerializer(label="")
     new_school_description = serializers.CharField(
         write_only=True, max_length=200, allow_blank=True, required=False)
@@ -164,8 +166,6 @@ class RegisterSerializer(UserDetailsSerializer):
     profile = ProfileCreateSerializer(label="")
     new_school_description = serializers.CharField(write_only=True,
                                                    max_length=200, allow_blank=True)
-
-    OTHER_SCHOOL_CODE = 0
 
     class Meta:
         model = get_user_model()

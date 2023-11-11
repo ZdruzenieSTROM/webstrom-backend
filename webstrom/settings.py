@@ -145,8 +145,6 @@ ACCOUNT_AUTHENTICATION_METHOD = 'email'
 
 ACCOUNT_ADAPTER = 'user.adapter.CustomAccountAdapter'
 
-REST_SESSION_LOGIN = True
-
 
 REST_AUTH = {
     'LOGIN_SERIALIZER': 'user.serializers.LoginSerializer',
