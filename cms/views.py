@@ -7,6 +7,10 @@ from cms.permissions import PostPermission
 from cms.serializers import (InfoBannerSerializer, MenuItemShortSerializer,
                              MessageTemplateSerializer, PostSerializer, LogoSerializer)
 
+from base.utils import mime_type
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
+
 
 class MenuItemViewSet(viewsets.ReadOnlyModelViewSet):
     """Položky menu"""
@@ -46,7 +50,7 @@ class PostViewSet(viewsets.ModelViewSet):
 
 
 class LogoViewSet(viewsets.ModelViewSet):
-    """Publikácie(výsledky, brožúrky, časopisy, ...)"""
+    """Logá"""
     queryset = Logo.objects.all()
     serializer_class = LogoSerializer
     permission_classes = (PostPermission,)
@@ -64,9 +68,16 @@ class LogoViewSet(viewsets.ModelViewSet):
                 'Nedostatočné práva na vytvorenie tohoto objektu')
 
     @action(methods=['post'], detail=False, url_path='upload')
-    def check_file(self, request):
+    def upload_logo(self, request):
+        """Vytvorí súbor loga"""
         if 'file' not in request.data:
             raise exceptions.ParseError(detail='Request neobsahoval súbor')
+
+        file = request.data['file']
+        if mime_type(file) not in ['application/jpg', 'application/png']:
+            raise exceptions.ParseError(detail='Nesprávny formát')
+        
+        default_storage.save(file.name, ContentFile(file.read()))
 
         return Response(status=status.HTTP_201_CREATED)
 
