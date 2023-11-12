@@ -27,6 +27,12 @@ class PostSerializer(WritableNestedModelSerializer):
         model = models.Post
         fields = '__all__'
 
+@ts_interface(context='cms')
+class LogoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Logo
+        fields = '__all__'
+
 
 @ts_interface(context='cms')
 class InfoBannerSerializer(serializers.ModelSerializer):
