@@ -281,7 +281,10 @@ class Series(models.Model):
 
     @property
     def can_resubmit(self):
-        return self.get_actual_late_flag().can_resubmit
+        late_flag = self.get_actual_late_flag()
+        if late_flag:
+            return late_flag.can_resubmit
+        return False
 
     def get_actual_late_flag(self) -> Optional[LateTag]:
         """
