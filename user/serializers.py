@@ -5,6 +5,7 @@ from django.contrib.auth import authenticate, get_user_model
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django_typomatic import ts_interface
+from django.utils.translation import gettext_lazy
 from rest_framework import exceptions, serializers
 
 from competition.models import Grade
@@ -176,9 +177,9 @@ class RegisterSerializer(UserDetailsSerializer):
     def validate_email(self, email):
         email = get_adapter().clean_email(email)
         if email and EmailAddress.objects.filter(email__iexact=email).exists():
-            raise serializers.ValidationError(
-                "Zadaná emailová adresa je už používaná." + 
+            text = gettext_lazy("Zadaná emailová adresa je už používaná." + 
                 "Prosíme skús vyskúsať inú emailovú adresu.")
+            raise serializers.ValidationError(text)
         return email
 
     def validate_password1(self, password):

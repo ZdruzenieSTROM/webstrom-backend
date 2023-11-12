@@ -266,7 +266,7 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
         """Nahrá užívateľské riešenie k úlohe"""
         problem: Problem = self.get_object()
         if 'file' not in request.FILES:
-            raise exceptions.ParseError(detail='Požiadávka neobsahovala súbor')
+            raise exceptions.ParseError(detail='Požiadavka neobsahovala súbor')
         file = request.FILES['file']
         if mime_type(file) != 'application/pdf':
             raise exceptions.ParseError(
@@ -518,7 +518,7 @@ class SolutionViewSet(viewsets.ModelViewSet):
     def upload_solution_file(self, request, pk=None):
         solution: Solution = self.get_object()
         if 'file' not in request.FILES:
-            raise exceptions.ParseError(detail='Požiadávka neobsahovala súbor')
+            raise exceptions.ParseError(detail='Požiadavka neobsahovala súbor')
 
         file = request.FILES['file']
         if mime_type(file) != 'application/pdf':
@@ -535,7 +535,7 @@ class SolutionViewSet(viewsets.ModelViewSet):
     def upload_corrected_solution_file(self, request, pk=None):
         solution: Solution = self.get_object()
         if 'file' not in request.FILES:
-            raise exceptions.ParseError(detail='Požiadávka neobsahovala súbor')
+            raise exceptions.ParseError(detail='Požiadavka neobsahovala súbor')
 
         file = request.FILES['file']
         if mime_type(file) != 'application/pdf':
