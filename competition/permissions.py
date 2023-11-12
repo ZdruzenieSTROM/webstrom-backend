@@ -61,11 +61,18 @@ class ProblemPermission(CompetitionRestrictedPermission):
         return super().has_permission(request, view)
 
     def has_object_permission(self, request, view, obj):
-        if view.action in ['upload_solution', 'my_solution', 'corrected_solution']:
+        if view.action == 'upload_solution':
             return (
                 request.user.is_authenticated and
                 EventRegistration.get_registration_by_profile_and_event(
                     request.user.profile, obj.series.semester)
             ) and obj.series.can_submit
+
+        if view.action in ['my_solution', 'corrected_solution']:
+            return (
+                request.user.is_authenticated and
+                EventRegistration.get_registration_by_profile_and_event(
+                    request.user.profile, obj.series.semester))
+            
 
         return super().has_object_permission(request, view, obj)
