@@ -126,8 +126,8 @@ class UserDetailsSerializer(serializers.ModelSerializer):
         # User sa nikdy neupdatuje preto nie je potrebné volať instance.save()
         instance.profile.save()
         instance.save()
-        self.handle_other_school(validated_data.pop(
-            'new_school_description', None))
+        self.handle_other_school(profile_data.pop(
+            'school', None))
         return instance
 
     def handle_other_school(self, school):
@@ -137,7 +137,7 @@ class UserDetailsSerializer(serializers.ModelSerializer):
         if school is None:
             return
         if school.code == self.OTHER_SCHOOL_CODE:
-            email = self.validated_data['email']
+            email = self.validated_data.get('email', '-')
             first_name = self.validated_data['profile']['first_name']
             last_name = self.validated_data['profile']['last_name']
             school_info = self.validated_data['new_school_description']
