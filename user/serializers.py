@@ -177,7 +177,7 @@ class RegisterSerializer(UserDetailsSerializer):
         email = get_adapter().clean_email(email)
         if email and EmailAddress.objects.filter(email__iexact=email).exists():
             raise serializers.ValidationError(
-                "Používateľ s danou emailovou adresou už existuje.")
+                "Entered email adress is already used! Please try again with another email adress.")
         return email
 
     def validate_password1(self, password):
@@ -189,18 +189,18 @@ class RegisterSerializer(UserDetailsSerializer):
         '''
         if not profile['gdpr']:
             raise serializers.ValidationError(
-                'Musíš podvrdiť, že si si vedomý spracovania osobných údajov.')
+                'You have to confirm, that you are aware of the processing of personal data.')
         return profile
 
     def validate(self, attrs):
         if attrs['password1'] != attrs['password2']:
-            raise serializers.ValidationError("Zadané heslá sa nezhodujú.")
+            raise serializers.ValidationError("Entered passwords do not match.")
 
         # ak je zadana skola "ina skola", musi byt nejaky description skoly
         if (attrs['profile']['school'].code == self.OTHER_SCHOOL_CODE and
                 len(attrs['new_school_description']) == 0):
             raise serializers.ValidationError(
-                'Musíš zadať popis tvojej školy.')
+                'You must enter a description of your school.')
 
         return attrs
 
