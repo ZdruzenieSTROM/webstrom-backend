@@ -783,8 +783,8 @@ class EventViewSet(ModelViewSetWithSerializerContext):
         # Profile serializer
         return event.registered_profiles()
 
-    @action(methods=['post'], detail=False, permission_classes=[IsAuthenticated])
-    def active(self):
+    @action(methods=['get'], detail=False, permission_classes=[IsAuthenticated])
+    def active(self, request):
         """Get all active events"""
         active_events = self.get_queryset().active()
         serializer = self.serializer_class(active_events, many=True)
