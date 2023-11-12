@@ -3,7 +3,7 @@ from django_typomatic import ts_interface
 from rest_framework import serializers
 
 from competition import models
-from competition.models import Problem
+from competition.models import Problem, RegistrationLink, Event
 from personal.serializers import ProfileShortSerializer, SchoolShortSerializer
 
 
@@ -43,12 +43,29 @@ class RegistrationLinkSerializer(serializers.ModelSerializer):
 
 @ts_interface(context='competition')
 class EventSerializer(ModelWithParticipationSerializer):
-    publication_set = PublicationSerializer(many=True)
-    registration_link = RegistrationLinkSerializer(many=False)
+    publication_set = PublicationSerializer(many=True, read_only=True)
+    registration_link = RegistrationLinkSerializer(
+        many=False,
+        required=False,
+        allow_null=True,
+    )
 
     class Meta:
         model = models.Event
         fields = '__all__'
+
+    def create(self, validated_data):
+        registration_link = validated_data.pop('registration_link', None)
+
+        if registration_link is not None:
+            registration_link = RegistrationLink.objects.create(
+                **registration_link,
+            )
+
+        return Event.objects.create(
+            registration_link=registration_link,
+            **validated_data,
+        )
 
 
 @ts_interface(context='competition')

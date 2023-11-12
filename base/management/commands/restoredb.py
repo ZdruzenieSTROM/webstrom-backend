@@ -67,6 +67,7 @@ class Command(BaseCommand):
                      'grades',
                      'late_tags',
                      'semesters',
+                     'registration_link',
                      'event_registrations',
                      'event_registrations_more',
                      'solutions',
