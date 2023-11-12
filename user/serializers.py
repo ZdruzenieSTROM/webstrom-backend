@@ -177,7 +177,8 @@ class RegisterSerializer(UserDetailsSerializer):
         email = get_adapter().clean_email(email)
         if email and EmailAddress.objects.filter(email__iexact=email).exists():
             raise serializers.ValidationError(
-                "Zadaná emailová adresa je už používaná. Prosíme skús vyskúsať inú emailovú adresu.")
+                "Zadaná emailová adresa je už používaná." + 
+                "Prosíme skús vyskúsať inú emailovú adresu.")
         return email
 
     def validate_password1(self, password):
