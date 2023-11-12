@@ -100,16 +100,16 @@ def generate_result_row(
     }
 
 
-class CompetitionViewSet(viewsets.ModelViewSet):
+class CompetitionViewSet(mixins.CreateModelMixin,
+                         mixins.RetrieveModelMixin,
+                         mixins.UpdateModelMixin,
+                         mixins.ListModelMixin,
+                         viewsets.GenericViewSet):
     """Naše aktivity"""
     queryset = Competition.objects.all()
     serializer_class = CompetitionSerializer
     lookup_field = 'slug'
     permission_classes = (CompetitionRestrictedPermission,)
-
-    def destroy(self, request, *args, **kwargs):
-        raise exceptions.PermissionDenied(
-            'Zmazanie súťaže je povolené iba v django admin')
 
 
 class CommentViewSet(
