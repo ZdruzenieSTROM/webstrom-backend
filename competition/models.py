@@ -378,7 +378,7 @@ class Problem(models.Model):
 
 class CommentPublishState(models.IntegerChoices):
     '''
-    Enum hlasov
+    Enum stavov komentárov
     '''
     WAITING_FOR_REVIEW = 1, 'čaká'
     PUBLISHED = 2, 'zverejnený'
