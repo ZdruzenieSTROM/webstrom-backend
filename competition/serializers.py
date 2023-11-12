@@ -262,6 +262,7 @@ class ProblemWithSolutionsSerializer(serializers.ModelSerializer):
 class SeriesWithProblemsSerializer(ModelWithParticipationSerializer):
     problems = ProblemSerializer(many=True)
     can_submit = serializers.SerializerMethodField('get_can_submit')
+    can_resubmit = serializers.SerializerMethodField('get_can_resubmit')
 
     class Meta:
         model = models.Series
@@ -270,6 +271,9 @@ class SeriesWithProblemsSerializer(ModelWithParticipationSerializer):
 
     def get_can_submit(self, obj):
         return obj.can_submit
+
+    def get_can_resubmit(self, obj):
+        return obj.can_resubmit
 
     def get_event(self, obj):
         return obj.semester
