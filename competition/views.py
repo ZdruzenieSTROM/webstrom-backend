@@ -100,8 +100,7 @@ def generate_result_row(
     }
 
 
-class CompetitionViewSet(mixins.CreateModelMixin,
-                         mixins.RetrieveModelMixin,
+class CompetitionViewSet(mixins.RetrieveModelMixin,
                          mixins.UpdateModelMixin,
                          mixins.ListModelMixin,
                          viewsets.GenericViewSet):
