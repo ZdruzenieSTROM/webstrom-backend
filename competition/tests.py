@@ -337,7 +337,19 @@ class TestCompetition(APITestCase, PermissionTestMixin):
     def test_permission_update(self):
         ''' update permission OK'''
         self.check_permissions(self.URL_PREFIX + '/strom/', 'PUT',
-                               self.ALL_FORBIDDEN, {'start_year': 2020})
+                               self.ONLY_STROM_OK_RESPONSES,
+                               {
+                                   "id": 0,
+                                   "name": "STROM",
+                                   "slug": "strom",
+                                   "start_year": 1976,
+                                   "description": "popis",
+                                   "rules": "# Pravidlá",
+                                   "min_years_until_graduation": 0,
+                                   "sites": [
+                                       0
+                                   ]
+                               })
 
     def test_permission_create(self):
         ''' create permission OK'''

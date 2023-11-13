@@ -60,7 +60,7 @@ class CompetitionTypeSerializer(serializers.ModelSerializer):
 
 @ts_interface(context='competition')
 class CompetitionSerializer(serializers.ModelSerializer):
-    competition_type = CompetitionTypeSerializer(many=False)
+    competition_type = CompetitionTypeSerializer(many=False, read_only=True)
     upcoming_or_current_event = serializers.SerializerMethodField(
         'get_upcoming_or_current')
     history_events = serializers.SerializerMethodField('get_history_events')
