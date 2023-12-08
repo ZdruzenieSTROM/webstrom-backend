@@ -882,7 +882,7 @@ class PublicationViewSet(viewsets.ModelViewSet):
         return response
 
     @action(methods=['post'], detail=False, url_path='upload', permission_classes=[IsAdminUser])
-    def upload_publication(self, request):
+    def upload_publication(self, request: Request):
         """Nahrá súbor publikácie"""
         if 'file' not in request.data:
             raise exceptions.ParseError(detail='Request neobsahoval súbor')
@@ -900,6 +900,7 @@ class PublicationViewSet(viewsets.ModelViewSet):
             event=event, order=order).first()
         if publication is None:
             publication = Publication.objects.create(
+                name=request.data.get('name'),
                 file=file,
                 event=event,
                 order=order,
