@@ -640,7 +640,7 @@ class Publication(models.Model):
         if self.order:
             self.name = f'{self.order}'
         else:
-            self.name = type.name
+            self.name = self.publication_type.name
         self.save()
 
     def __str__(self):
