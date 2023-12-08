@@ -28,6 +28,13 @@ class ModelWithParticipationSerializer(serializers.ModelSerializer):
 
 
 @ts_interface(context='competition')
+class PublicationTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.PublicationType
+        fields = '__all__'
+
+
+@ts_interface(context='competition')
 class PublicationSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Publication

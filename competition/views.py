@@ -17,19 +17,22 @@ from rest_framework.response import Response
 
 from base.utils import mime_type
 from competition import utils
-from competition.models import (Comment, Competition, Event, EventRegistration,
-                                Grade, LateTag, Problem, Publication,
-                                PublicationType, Semester, Series, Solution,
-                                Vote)
+from competition.models import (Comment, Competition, CompetitionType, Event,
+                                EventRegistration, Grade, LateTag, Problem,
+                                Publication, PublicationType, Semester, Series,
+                                Solution, Vote)
 from competition.permissions import (CommentPermission,
                                      CompetitionRestrictedPermission,
                                      ProblemPermission)
 from competition.serializers import (CommentSerializer, CompetitionSerializer,
+                                     CompetitionTypeSerializer,
                                      EventRegistrationSerializer,
                                      EventSerializer, GradeSerializer,
                                      LateTagSerializer, ProblemSerializer,
                                      ProblemWithSolutionsSerializer,
-                                     PublicationSerializer, SemesterSerializer,
+                                     PublicationSerializer,
+                                     PublicationTypeSerializer,
+                                     SemesterSerializer,
                                      SemesterWithProblemsSerializer,
                                      SeriesWithProblemsSerializer,
                                      SolutionSerializer)
@@ -116,6 +119,11 @@ class CompetitionViewSet(mixins.RetrieveModelMixin,
         return Response(
             CompetitionSerializer(competition, many=False).data
         )
+
+
+class CompetitionTypeViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = CompetitionType.objects.all()
+    serializer_class = CompetitionTypeSerializer
 
 
 class CommentViewSet(
@@ -807,6 +815,11 @@ class EventRegistrationViewSet(viewsets.ModelViewSet):
     serializer_class = EventRegistrationSerializer
     filterset_fields = ['event', 'profile', ]
     permission_classes = (CompetitionRestrictedPermission,)
+
+
+class PublicationTypeViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = PublicationType.objects.all()
+    serializer_class = PublicationTypeSerializer
 
 
 class PublicationViewSet(viewsets.ModelViewSet):
