@@ -1,5 +1,4 @@
 import datetime
-from collections.abc import Iterable
 from typing import Optional
 
 from django.conf import settings
