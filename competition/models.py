@@ -279,6 +279,13 @@ class Series(models.Model):
             max_late_tag_value = datetime.timedelta(0)
         return now() < self.deadline + max_late_tag_value
 
+    @property
+    def can_resubmit(self):
+        late_flag = self.get_actual_late_flag()
+        if late_flag:
+            return late_flag.can_resubmit
+        return False
+
     def get_actual_late_flag(self) -> Optional[LateTag]:
         """
         Vráti late flag, ktorý má byť v tomto okamihu priradený riešeniu,
