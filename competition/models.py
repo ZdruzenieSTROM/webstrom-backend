@@ -150,7 +150,13 @@ class Event(models.Model):
     start = models.DateTimeField(verbose_name='dátum začiatku súťaže')
     end = models.DateTimeField(verbose_name='dátum konca súťaže')
     additional_name = models.CharField(
-        max_length=50, verbose_name='Prísvlastok súťaže', null=True, blank=True)
+        max_length=50, verbose_name='Prívlastok súťaže', null=True, blank=True)
+
+    registration_link = models.OneToOneField(
+        "competition.RegistrationLink",
+        on_delete=models.SET_NULL,
+        null=True,
+    )
 
     objects = ActiveQuerySet.as_manager()
 
@@ -641,14 +647,13 @@ class RegistrationLink(models.Model):
         verbose_name = 'link na registráciu'
         verbose_name_plural = 'linky na registráciu'
 
-    event = models.OneToOneField(
-        Event, related_name='registration_link', on_delete=models.CASCADE)
     url = models.URLField(verbose_name='url registrácie')
     start = models.DateTimeField(verbose_name='Začiatok registrácie')
     end = models.DateTimeField(verbose_name='Koniec registrácie')
     additional_info = models.TextField(verbose_name='Doplňujúce informácie')
 
     def can_user_modify(self, user):
+        # pylint: disable=no-member
         return self.event.can_user_modify(user)
 
 
