@@ -8,5 +8,6 @@
     },
     "git.branchProtection": [
         "master"
-    ]
+    ],
+    "git.branchProtectionPrompt": "alwaysCommitToNewBranch"
 }
