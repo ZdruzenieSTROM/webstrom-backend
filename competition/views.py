@@ -17,14 +17,15 @@ from rest_framework.response import Response
 
 from base.utils import mime_type
 from competition import utils
-from competition.models import (Comment, Competition, Event, EventRegistration,
-                                Grade, LateTag, Problem, Publication,
-                                PublicationType, Semester, Series, Solution,
-                                Vote)
+from competition.models import (Comment, Competition, CompetitionType, Event,
+                                EventRegistration, Grade, LateTag, Problem,
+                                Publication, PublicationType, Semester, Series,
+                                Solution, Vote)
 from competition.permissions import (CommentPermission,
                                      CompetitionRestrictedPermission,
                                      ProblemPermission)
 from competition.serializers import (CommentSerializer, CompetitionSerializer,
+                                     CompetitionTypeSerializer,
                                      EventRegistrationSerializer,
                                      EventSerializer, GradeSerializer,
                                      LateTagSerializer, ProblemSerializer,
@@ -116,6 +117,13 @@ class CompetitionViewSet(mixins.RetrieveModelMixin,
         return Response(
             CompetitionSerializer(competition, many=False).data
         )
+
+
+class CompetitionTypeViewSet(mixins.RetrieveModelMixin,
+                             mixins.ListModelMixin,
+                             viewsets.GenericViewSet):
+    queryset = CompetitionType.objects.all()
+    serializer_class = CompetitionTypeSerializer
 
 
 class CommentViewSet(
