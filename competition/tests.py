@@ -336,7 +336,7 @@ class TestCompetition(APITestCase, PermissionTestMixin):
 
     def test_permission_update(self):
         ''' update permission OK'''
-        self.check_permissions(self.URL_PREFIX + '/slug/strom/', 'PUT',
+        self.check_permissions(self.URL_PREFIX + '/0/', 'PUT',
                                self.ONLY_STROM_OK_RESPONSES,
                                {
                                    "id": 0,
