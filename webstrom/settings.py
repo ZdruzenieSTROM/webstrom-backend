@@ -131,7 +131,6 @@ AUTH_PASSWORD_VALIDATORS = [
 # Allauth
 
 AUTHENTICATION_BACKENDS = [
-    ''
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
