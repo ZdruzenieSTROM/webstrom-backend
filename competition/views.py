@@ -30,7 +30,9 @@ from competition.serializers import (CommentSerializer, CompetitionSerializer,
                                      EventSerializer, GradeSerializer,
                                      LateTagSerializer, ProblemSerializer,
                                      ProblemWithSolutionsSerializer,
-                                     PublicationSerializer, SemesterSerializer,
+                                     PublicationSerializer,
+                                     PublicationTypeSerializer,
+                                     SemesterSerializer,
                                      SemesterWithProblemsSerializer,
                                      SeriesWithProblemsSerializer,
                                      SolutionSerializer)
@@ -119,9 +121,7 @@ class CompetitionViewSet(mixins.RetrieveModelMixin,
         )
 
 
-class CompetitionTypeViewSet(mixins.RetrieveModelMixin,
-                             mixins.ListModelMixin,
-                             viewsets.GenericViewSet):
+class CompetitionTypeViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = CompetitionType.objects.all()
     serializer_class = CompetitionTypeSerializer
 
@@ -815,6 +815,11 @@ class EventRegistrationViewSet(viewsets.ModelViewSet):
     serializer_class = EventRegistrationSerializer
     filterset_fields = ['event', 'profile', ]
     permission_classes = (CompetitionRestrictedPermission,)
+
+
+class PublicationTypeViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = PublicationType.objects.all()
+    serializer_class = PublicationTypeSerializer
 
 
 class PublicationViewSet(viewsets.ModelViewSet):
