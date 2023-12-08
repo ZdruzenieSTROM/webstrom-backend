@@ -331,12 +331,12 @@ class TestCompetition(APITestCase, PermissionTestMixin):
 
     def test_permission_get(self):
         '''retrieve permission OK'''
-        self.check_permissions(self.URL_PREFIX + '/strom/',
+        self.check_permissions(self.URL_PREFIX + '/slug/strom/',
                                'GET', self.PUBLIC_OK_RESPONSES)
 
     def test_permission_update(self):
         ''' update permission OK'''
-        self.check_permissions(self.URL_PREFIX + '/strom/', 'PUT',
+        self.check_permissions(self.URL_PREFIX + '/slug/strom/', 'PUT',
                                self.ALL_FORBIDDEN, {'start_year': 2020})
 
     def test_permission_create(self):
