@@ -150,7 +150,7 @@ class Event(models.Model):
     start = models.DateTimeField(verbose_name='dátum začiatku súťaže')
     end = models.DateTimeField(verbose_name='dátum konca súťaže')
     additional_name = models.CharField(
-        max_length=50, verbose_name='Prísvlastok súťaže', null=True, blank=True)
+        max_length=50, verbose_name='Prívlastok súťaže', null=True, blank=True)
 
     objects = ActiveQuerySet.as_manager()
 
