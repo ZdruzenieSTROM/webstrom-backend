@@ -204,6 +204,11 @@ class Semester(Event):
         blank=True,
         default=None)
 
+    def save(self, *args, **kwargs) -> None:
+        if not self.frozen_results:
+            self.frozen_results = None
+        return super().save(*args, **kwargs)
+
     def get_first_series(self):
         return self.series_set.get(order=1)
 
@@ -250,6 +255,11 @@ class Series(models.Model):
         null=True,
         blank=True,
         default=None)
+
+    def save(self, *args, **kwargs) -> None:
+        if not self.frozen_results:
+            self.frozen_results = None
+        return super().save(*args, **kwargs)
 
     def __str__(self):
         return f'{self.semester} - {self.order}. séria'
@@ -414,6 +424,11 @@ class Comment(models.Model):
     )
     hidden_response = models.TextField(
         null=True, blank=True, verbose_name='Skrytá odpoveď na komentár')
+
+    def save(self, *args, **kwargs) -> None:
+        if not self.hidden_response:
+            self.hidden_response = None
+        return super().save(*args, **kwargs)
 
     def publish(self):
         self.state = CommentPublishState.PUBLISHED
