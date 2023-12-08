@@ -1,5 +1,5 @@
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import status, viewsets
+from rest_framework import exceptions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
@@ -26,13 +26,22 @@ class DistrictViewSet(viewsets.ReadOnlyModelViewSet):
     filterset_fields = ['county', ]
 
 
-class SchoolViewSet(viewsets.ReadOnlyModelViewSet):
+class SchoolViewSet(viewsets.ModelViewSet):
     """Školy"""
     queryset = School.objects.all()
     serializer_class = SchoolSerializer
     filterset_fields = ['district', 'district__county']
     filter_backends = [DjangoFilterBackend, SearchFilter]
     search_fields = ['name', 'street']
+
+    def destroy(self, request, *args, **kwargs):
+        """Zmazanie školy"""
+        instance = self.get_object()
+        if Profile.objects.filter(school=instance).exists():
+            raise exceptions.ValidationError(
+                detail='Nie je možné zmazať školu, ktorá má priradených užívateľov.')
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class ProfileViewSet(viewsets.ModelViewSet):

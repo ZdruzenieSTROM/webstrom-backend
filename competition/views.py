@@ -12,6 +12,7 @@ from rest_framework import exceptions, mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
+from rest_framework.request import Request
 from rest_framework.response import Response
 
 from base.utils import mime_type
@@ -100,12 +101,21 @@ def generate_result_row(
     }
 
 
-class CompetitionViewSet(viewsets.ReadOnlyModelViewSet):
+class CompetitionViewSet(mixins.RetrieveModelMixin,
+                         mixins.UpdateModelMixin,
+                         mixins.ListModelMixin,
+                         viewsets.GenericViewSet):
     """Naše aktivity"""
     queryset = Competition.objects.all()
     serializer_class = CompetitionSerializer
-    lookup_field = 'slug'
     permission_classes = (CompetitionRestrictedPermission,)
+
+    @action(detail=False, url_path=r'slug/(?P<slug>\w+)')
+    def slug(self, request: Request, slug: str = None) -> Response:
+        competition: Competition = self.get_queryset().get(slug=slug)
+        return Response(
+            CompetitionSerializer(competition, many=False).data
+        )
 
 
 class CommentViewSet(
