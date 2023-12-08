@@ -316,11 +316,11 @@ class TestCompetition(APITestCase, PermissionTestMixin):
 
     def test_get_competition_detail(self):
         '''detail format OK'''
-        response = self.client.get(self.URL_PREFIX + '/strom', {}, 'json')
+        response = self.client.get(self.URL_PREFIX + '/slug/strom', {}, 'json')
         self.assertEqual(response.status_code, 200)
         self.competition_assert_format(response.json(), 0)
 
-        response = self.client.get(self.URL_PREFIX + '/matik', {}, 'json')
+        response = self.client.get(self.URL_PREFIX + '/slug/matik', {}, 'json')
         self.assertEqual(response.status_code, 200)
         self.competition_assert_format(response.json(), 1)
 
@@ -336,7 +336,7 @@ class TestCompetition(APITestCase, PermissionTestMixin):
 
     def test_permission_update(self):
         ''' update permission OK'''
-        self.check_permissions(self.URL_PREFIX + '/strom/', 'PUT',
+        self.check_permissions(self.URL_PREFIX + '/slug/strom/', 'PUT',
                                self.ONLY_STROM_OK_RESPONSES,
                                {
                                    "id": 0,
