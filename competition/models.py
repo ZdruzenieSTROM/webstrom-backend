@@ -314,7 +314,7 @@ class Series(models.Model):
         late_flag = self.get_actual_late_flag()
         if late_flag:
             return late_flag.can_resubmit
-        return False
+        return self.can_submit
 
     @property
     def complete(self) -> bool:
