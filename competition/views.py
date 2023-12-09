@@ -252,10 +252,17 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
                 detail='Túto úlohu už nie je možné odovzdať.')
         event_registration = EventRegistration.get_registration_by_profile_and_event(
             request.user.profile, problem.series.semester)
+
         if 'file' not in request.FILES:
             raise exceptions.ParseError(detail='Request neobsahoval súbor')
 
         file = request.FILES['file']
+
+        if file.size > 20971520:  # 20 MB
+            raise exceptions.ParseError(
+                detail='Riešenie prekročilo maximálnu povolenú veľkosť',
+            )
+
         if mime_type(file) != 'application/pdf':
             raise exceptions.ParseError(
                 detail='Riešenie nie je vo formáte pdf')
