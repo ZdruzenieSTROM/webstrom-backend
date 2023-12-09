@@ -116,8 +116,6 @@ class UserDetailsSerializer(serializers.ModelSerializer):
             'last_name', instance.profile.last_name)
         instance.profile.parent_phone = profile_data.get(
             'parent_phone', instance.profile.parent_phone)
-        instance.profile.gdpr = profile_data.get(
-            'gdpr', instance.profile.gdpr)
         instance.profile.school = profile_data.get(
             'school', instance.profile.school)
         instance.profile.year_of_graduation = profile_data.get(
@@ -183,15 +181,6 @@ class RegisterSerializer(UserDetailsSerializer):
     def validate_password1(self, password):
         return get_adapter().clean_password(password)
 
-    def validate_profile(self, profile):
-        '''
-        check ci je gdpr zaskrtnute
-        '''
-        if not profile['gdpr']:
-            raise serializers.ValidationError(
-                'Musíš podvrdiť, že si si vedomý spracovania osobných údajov.')
-        return profile
-
     def validate(self, attrs):
         if attrs['password1'] != attrs['password2']:
             raise serializers.ValidationError("Zadané heslá sa nezhodujú.")
@@ -224,8 +213,8 @@ class RegisterSerializer(UserDetailsSerializer):
                                school=profile_data['school'],
                                year_of_graduation=grade.get_year_of_graduation_by_date(),
                                phone=profile_data['phone'],
-                               parent_phone=profile_data['parent_phone'],
-                               gdpr=profile_data['gdpr'])
+                               parent_phone=profile_data['parent_phone']
+                               )
 
         self.handle_other_school(profile_data['school'])
         setup_user_email(request, user, [])

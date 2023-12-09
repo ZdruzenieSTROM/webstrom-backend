@@ -1,8 +1,9 @@
-from base.managers import UnspecifiedValueManager
-from base.validators import phone_number_validator
 from django.apps import apps
 from django.conf import settings
 from django.db import models
+
+from base.managers import UnspecifiedValueManager
+from base.validators import phone_number_validator
 
 
 class County(models.Model):
@@ -106,9 +107,6 @@ class Profile(models.Model):
         verbose_name='telefónne číslo na rodiča', max_length=32, blank=True,
         validators=[phone_number_validator],
         help_text='Telefonné číslo v medzinárodnom formáte (napr. +421 123 456 789).')
-
-    gdpr = models.BooleanField(
-        verbose_name='súhlas so spracovaním osobných údajov', default=False)
 
     @property
     def grade(self):

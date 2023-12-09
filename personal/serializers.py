@@ -59,7 +59,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = ['grade_name', 'id', 'email', 'first_name', 'last_name', 'school',
-                  'phone', 'parent_phone', 'gdpr', 'grade', 'is_student', 'has_school', 'school_id']
+                  'phone', 'parent_phone', 'grade', 'is_student', 'has_school', 'school_id']
         read_only_fields = ['grade_name', 'id', 'first_name', 'last_name',
                             'email', 'is_student', 'has_school', 'school']  # 'year_of_graduation',
 
@@ -102,8 +102,7 @@ class ProfileSerializer(serializers.ModelSerializer):
             school=validated_data['school'],
             year_of_graduation=grade.get_year_of_graduation_by_date(),
             phone=validated_data['phone'],
-            parent_phone=validated_data['parent_phone'],
-            gdpr=validated_data['gdpr']
+            parent_phone=validated_data['parent_phone']
         )
 
 
@@ -114,7 +113,7 @@ class ProfileCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = ['first_name', 'last_name', 'school',
-                  'phone', 'parent_phone', 'gdpr', 'grade']
+                  'phone', 'parent_phone',  'grade']
         read_only_fields = ['grade']
         extra_kwargs = {
             'grade': {
@@ -143,7 +142,6 @@ class ProfileCreateSerializer(serializers.ModelSerializer):
             year_of_graduation=grade.get_year_of_graduation_by_date(),
             phone=validated_data['phone'],
             parent_phone=validated_data['parent_phone'],
-            gdpr=validated_data['gdpr']
         )
 
 
