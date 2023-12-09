@@ -94,7 +94,7 @@ class Competition(models.Model):
     def get_seminar_by_current_site(cls):
         return cls.get_seminar_by_site(Site.objects.get_current())
 
-    def can_user_modify(self, user):
+    def can_user_modify(self, user: User):
         return len(set(self.permission_group.all()).intersection(set(user.groups.all()))) > 0
 
 
@@ -408,9 +408,9 @@ class Problem(models.Model):
     def can_user_modify(self, user):
         return self.series.can_user_modify(user)
 
-    def get_comments(self, user):
-        def filter_by_permissions(obj):
-            if user.is_staff:
+    def get_comments(self, user: User):
+        def filter_by_permissions(obj: 'Comment'):
+            if not user.is_anonymous and obj.can_user_modify(user):
                 return True
             if obj.state == CommentPublishState.PUBLISHED:
                 return True
