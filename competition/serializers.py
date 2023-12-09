@@ -92,6 +92,16 @@ class CompetitionSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Competition
         exclude = ['permission_group']
+        read_only_fields = [
+            'upcoming_or_current_event',
+            'history_events',
+            'competition_type',
+            'name',
+            'slug',
+            'start_year',
+            'min_years_until_graduation',
+            'sites'
+        ]
 
     def get_upcoming_or_current(self, obj):
         try:
