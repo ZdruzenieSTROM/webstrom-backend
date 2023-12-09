@@ -148,7 +148,7 @@ class ProblemSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Problem
         fields = '__all__'
-        read_only_fields = ['series']
+        read_only_fields = ['series', 'submitted', 'num_comments']
 
     submitted = serializers.SerializerMethodField(
         'submitted_solution')

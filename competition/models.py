@@ -368,10 +368,14 @@ class Problem(models.Model):
         Series, verbose_name='úloha zaradená do série',
         related_name='problems',
         on_delete=models.CASCADE,)
-    image = RestrictedFileField(
-        content_types=['image/svg+xml', 'image/png'],
+
+    image = models.ImageField(
         upload_to='problem_images/',
-        verbose_name='Obrázok k úlohe', null=True, blank=True)
+        verbose_name='Obrázok k úlohe',
+        null=True,
+        blank=True,
+    )
+
     solution_pdf = RestrictedFileField(
         content_types=['application/pdf'],
         verbose_name='Vzorové riešenie', null=True, blank=True,
