@@ -1,7 +1,7 @@
 from competition.models import EventRegistration, Solution
 
 
-def dot_product(solutions: list[int], weights: list[int | float]):
+def dot_product(solutions: list[int], weights: list[int]):
     return sum(s*w for s, w in zip(solutions, weights))
 
 
