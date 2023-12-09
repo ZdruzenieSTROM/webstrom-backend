@@ -627,10 +627,10 @@ class SemesterViewSet(ModelViewSetWithSerializerContext):
         results.sort(key=itemgetter('total'), reverse=True)
         results = utils.rank_results(results)
         return results
-    
+
     @action(methods=['post'], detail=True, url_path='results/freeze')
     def freeze_results(self, request: Request, pk: Optional[int] = None):
-        semester:Semester = self.get_object()
+        semester: Semester = self.get_object()
         try:
             semester.freeze_results(self.semester_results(semester))
         except FreezingNotClosedResults as exc:
