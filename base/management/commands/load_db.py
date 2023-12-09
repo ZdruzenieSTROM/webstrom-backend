@@ -7,13 +7,14 @@ from os import path
 import pytz
 import unidecode
 from allauth.account.models import EmailAddress
-from competition.models import (Competition, EventRegistration, Grade, Problem,
-                                Semester, Series, Solution)
-from competition.utils import get_school_year_by_date
 from django.core.management import BaseCommand
 from django.db.models import Q
 from django.forms.models import model_to_dict
 from django.utils.dateparse import parse_datetime
+
+from competition.models import (Competition, EventRegistration, Grade, Problem,
+                                Semester, Series, Solution)
+from competition.utils import get_school_year_by_date
 from personal.models import Profile, School
 from user.models import User
 
@@ -244,8 +245,7 @@ class Command(BaseCommand):
                     user['school_id'], School.objects.get_unspecified_value()),
                 year_of_graduation=grade,
                 phone=user['phone_number'] or '',
-                parent_phone=user['parent_phone_number'] or '',
-                gdpr=True
+                parent_phone=user['parent_phone_number'] or ''
             )
             user_id_mapping[user['id']] = profile
         return user_id_mapping
