@@ -97,6 +97,8 @@
             "priority": 10,
             "caption": "Ochrana osobných údajov",
             "url": "/gdpr/",
+            "in_footer": true,
+            "in_menu": false,
             "sites": [
                 0,
                 1,
@@ -118,6 +120,7 @@
             ]
         }
     },
+    
     {
         "model": "cms.MenuItem",
         "pk": 10,
@@ -138,6 +141,20 @@
             "priority": 200,
             "caption": "Minulé ročníky",
             "url": "/archiv/",
+            "sites": [
+                0,
+                1,
+                2
+            ]
+        }
+    },
+    {
+        "model": "cms.MenuItem",
+        "pk": 11,
+        "fields": {
+            "priority": 700,
+            "caption": "Novinky",
+            "url": "/",
             "sites": [
                 0,
                 1,
