@@ -229,6 +229,10 @@ class Semester(Event):
         self.frozen_results = results
 
     @property
+    def complete(self) -> bool:
+        return self.frozen_results is not None
+
+    @property
     def is_active(self) -> bool:
         return self.series_set.filter(complete=False).exists()
 

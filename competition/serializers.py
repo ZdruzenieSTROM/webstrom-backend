@@ -349,10 +349,15 @@ class SemesterWithProblemsSerializer(ModelWithParticipationSerializer):
         read_only=True
     )
     publication_set = PublicationSerializer(many=True, read_only=True)
+    complete = serializers.SerializerMethodField('get_complete')
 
     class Meta:
         model = models.Semester
         exclude = ['frozen_results', 'registration_link']
+        read_only_fields = ['complete']
+
+    def get_complete(self, obj: models.Semester):
+        return obj.complete
 
     def update(self, instance: models.Semester, validated_data):
         late_tags = validated_data.pop('late_tags', [])
