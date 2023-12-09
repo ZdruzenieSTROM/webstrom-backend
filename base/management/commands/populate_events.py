@@ -5,7 +5,7 @@ from django.core.management import BaseCommand
 from django.utils.timezone import now
 
 from competition.models import Competition, Event, Publication, PublicationType
-from competition.utils import get_school_year_by_date
+from competition.utils.school_year_manipulation import get_school_year_by_date
 
 
 class Command(BaseCommand):
