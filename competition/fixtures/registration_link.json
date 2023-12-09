@@ -28,5 +28,15 @@
             "url": "https://seminar.strom.sk/sk/prispevky/",
             "additional_info": ""
         }
+    },
+    {
+        "model": "competition.RegistrationLink",
+        "pk": 3,
+        "fields": {
+            "start": "2023-04-01T20:00:00.000Z",
+            "end": "2023-05-01T20:00:00.000Z",
+            "url": "https://seminar.strom.sk/sk/prispevky/",
+            "additional_info": ""
+        }
     }
 ]
