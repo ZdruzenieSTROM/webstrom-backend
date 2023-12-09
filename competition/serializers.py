@@ -321,13 +321,6 @@ class SeriesWithProblemsSerializer(serializers.ModelSerializer):
     def get_event(self, obj):
         return obj.semester
 
-    def create(self, validated_data):
-        problem_data = validated_data.pop('problems', [])
-        series = models.Series.objects.create(**validated_data)
-        for data in problem_data:
-            models.Problem.objects.create(series=series, **data)
-        return series
-
 
 @ts_interface(context='competition')
 class SemesterSerializer(serializers.ModelSerializer):
