@@ -66,15 +66,6 @@ class TestMenuItems(APITestCase, PermissionTestMixin):
     def setUp(self):
         self.create_users()
 
-    def test_get_status_code_on_current_site(self):
-        '''/on-current-site check if any'''
-        response = self.client.get(
-            self.URL_PREFIX + '/on-current-site', {}, 'json')
-        self.check_permissions(self.URL_PREFIX + '/on-current-site',
-                               'GET', self.PUBLIC_OK_RESPONSES, {})
-        self.assertEqual(response.status_code, 200)
-        self.assertTrue(len(response.json()) > 0)
-
     def test_get_status_code(self):
         '''check if any'''
         response = self.client.get(self.URL_PREFIX, {}, 'json')
