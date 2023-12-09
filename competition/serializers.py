@@ -1,7 +1,6 @@
 from django.contrib.auth.models import AnonymousUser
 from django_typomatic import ts_interface
 from rest_framework import serializers
-from rest_framework.request import Request
 
 from competition import models
 from competition.models import Event, Problem, RegistrationLink
@@ -180,29 +179,6 @@ class ProblemSerializer(serializers.ModelSerializer):
                 return None
             return SolutionSerializer(solution).data
         return None
-
-    def update_image(self, problem: Problem):
-        request: Request = self.context.get('request')
-        if request:
-            if len(request.FILES) > 1:
-                raise ValueError('Úloha môže obsahovať iba 1 obrázok')
-            if len(request.FILES) == 1:
-                for name, file in request.FILES.items():
-                    if '.' not in name:
-                        raise ValueError('Nepodarilo sa zistiť formát súboru')
-                    extension = name.split('.')[-1]
-                    problem.image.save(
-                        f'problem_image_{problem.pk}.{extension}', file)
-
-    def create(self, validated_data):
-        problem: Problem = super().create(validated_data)
-        self.update_image(problem)
-        return problem
-
-    def update(self, instance: Problem, validated_data):
-        problem = super().update(instance, validated_data)
-        self.update_image(problem)
-        return problem
 
 
 @ts_interface(context='competition')
