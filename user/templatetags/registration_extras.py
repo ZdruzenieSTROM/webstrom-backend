@@ -11,4 +11,4 @@ def seminar(request: HttpRequest) -> str:
 
 @register.filter
 def source_host(request: HttpRequest) -> str:
-    return request.META['HTTP_X_FORWARDED_HOST']
+    return request.META.get('HTTP_X_FORWARDED_HOST', 'localhost:3000')

@@ -1,6 +1,7 @@
 from allauth.account.adapter import get_adapter
 from allauth.account.models import EmailAddress
-from allauth.account.utils import setup_user_email
+from allauth.account.utils import setup_user_email, user_pk_to_url_str
+from dj_rest_auth.serializers import PasswordResetSerializer
 from django.contrib.auth import authenticate, get_user_model
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
@@ -12,6 +13,25 @@ from personal.models import Profile
 from personal.serializers import ProfileCreateSerializer
 from user.models import TokenModel
 from webstrom.settings import EMAIL_ALERT, EMAIL_NO_REPLY
+
+
+def reset_password_url_generator(request, user, temp_key):
+    uid = user_pk_to_url_str(user)
+    host = request.META.get('HTTP_X_FORWARDED_HOST', 'localhost:3000')
+    return f'{request.scheme}://{host}/strom/reset-password/{temp_key}/{uid}'
+
+
+class FrontendPasswordResetSerializer(PasswordResetSerializer):
+    def get_email_options(self):
+        return {
+            'url_generator': reset_password_url_generator
+        }
+
+    def create(self, validated_data):
+        pass
+
+    def update(self, instance, validated_data):
+        pass
 
 
 @ts_interface(context='user')
