@@ -51,16 +51,10 @@ class PostViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
-class LogoViewSet(viewsets.ModelViewSet):
+class LogoViewSet(viewsets.ReadOnlyModelViewSet):
     """Logá"""
     queryset = Logo.objects.all()
     serializer_class = LogoSerializer
-    permission_classes = (PostPermission,)
-
-    # TODO: Maybe create upload image endpoint
-
-    def create(self, request, *args, **kwargs):
-        raise MethodNotAllowed('POST')
 
 
 class InfoBannerViewSet(viewsets.ModelViewSet):
