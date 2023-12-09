@@ -59,7 +59,7 @@ class Command(BaseCommand):
         for source, target, file in fixture_files:
             target_path = os.path.join(settings.BASE_DIR, target)
             if not os.path.exists(target_path):
-                os.mkdir(target_path)
+                os.makedirs(target_path)
             shutil.copyfile(
                 os.path.join(settings.BASE_DIR, source, file),
                 os.path.join(target_path, file)
