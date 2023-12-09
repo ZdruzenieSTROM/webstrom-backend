@@ -21,18 +21,23 @@ class SeriesAdmin(admin.ModelAdmin):
 
     list_filter = (
         'semester__competition',
-        'complete',
     )
 
     @staticmethod
-    def active(obj):
+    def complete(obj: Series):
+        return obj.complete
+    complete.boolean = True
+    complete.admin_order_field = 'complete'
+
+    @staticmethod
+    def active(obj: Series):
         return not obj.is_past_deadline
     active.boolean = True
 
     @staticmethod
-    def competition(obj):
+    def competition(obj: Series):
         return obj.semester.competition
-    active.admin_order_field = 'semester__competition'
+    competition.admin_order_field = 'semester__competition'
 
 
 @admin.register(Event)

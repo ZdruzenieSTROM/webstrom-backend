@@ -17,6 +17,7 @@ from base.managers import UnspecifiedValueManager
 from base.models import RestrictedFileField
 from base.validators import school_year_validator
 from competition import utils
+from competition.exceptions import FreezingNotClosedResults
 from competition.querysets import ActiveQuerySet
 from personal.models import Profile, School
 from user.models import User
@@ -215,21 +216,23 @@ class Semester(Event):
             self.frozen_results = None
         return super().save(*args, **kwargs)
 
-    def get_first_series(self):
+    def get_first_series(self) -> 'Series':
         return self.series_set.get(order=1)
 
-    def get_second_series(self):
+    def get_second_series(self) -> 'Series':
         return self.series_set.get(order=2)
 
     def freeze_results(self, results):
+        if any(not series.complete for series in self.series_set.all()):
+            raise FreezingNotClosedResults()
         self.frozen_results = results
 
     @property
-    def is_active(self):
+    def is_active(self) -> bool:
         return self.series_set.filter(complete=False).exists()
 
     @property
-    def is_at_least_one_series_open(self):
+    def is_at_least_one_series_open(self) -> bool:
         return self.series_set.filter(can_submit=True).exists()
 
     def __str__(self):
@@ -250,8 +253,6 @@ class Series(models.Model):
     order = models.PositiveSmallIntegerField(verbose_name='poradie série')
 
     deadline = models.DateTimeField(verbose_name='termín série')
-    complete = models.BooleanField(
-        verbose_name='séria uzavretá', help_text='Séria má finálne poradie a už sa nebude meniť')
 
     # Implementuje bonfikáciu
     sum_method = models.CharField(
@@ -271,11 +272,11 @@ class Series(models.Model):
         return f'{self.semester} - {self.order}. séria'
 
     @property
-    def is_past_deadline(self):
+    def is_past_deadline(self) -> bool:
         return now() > self.deadline
 
     @property
-    def time_to_deadline(self):
+    def time_to_deadline(self) -> datetime.timedelta:
         remaining_time = self.deadline - now()
 
         if remaining_time.total_seconds() < 0:
@@ -284,7 +285,7 @@ class Series(models.Model):
         return remaining_time
 
     @property
-    def can_submit(self):
+    def can_submit(self) -> bool:
         """
         Vráti True, ak užívateľ ešte môže odovzdať úlohu.
         Pozerá sa na maximálne možné omeškanie v LateFlagoch.
@@ -296,11 +297,15 @@ class Series(models.Model):
         return now() < self.deadline + max_late_tag_value
 
     @property
-    def can_resubmit(self):
+    def can_resubmit(self) -> bool:
         late_flag = self.get_actual_late_flag()
         if late_flag:
             return late_flag.can_resubmit
         return False
+
+    @property
+    def complete(self) -> bool:
+        return self.frozen_results is not None
 
     def get_actual_late_flag(self) -> Optional[LateTag]:
         """
@@ -316,16 +321,21 @@ class Series(models.Model):
             .first()
 
     def freeze_results(self, results):
+        if any(
+            problem.num_solutions != problem.num_corrected_solutions
+            for problem in self.problems.all()
+        ):
+            raise FreezingNotClosedResults()
         self.frozen_results = results
 
     @property
-    def num_problems(self):
+    def num_problems(self) -> int:
         return self.problems.count()
 
-    def can_user_modify(self, user):
+    def can_user_modify(self, user: User) -> bool:
         return self.semester.can_user_modify(user)
 
-    def can_user_participate(self, user):
+    def can_user_participate(self, user: User) -> bool:
         return self.semester.can_user_participate(user)
 
 
@@ -373,6 +383,14 @@ class Problem(models.Model):
         stats['mean'] = total_points / \
             total_solutions if total_solutions else '?'
         return stats
+
+    @property
+    def num_solutions(self):
+        return self.solution_set.count()
+
+    @property
+    def num_corrected_solutions(self):
+        return self.solution_set.filter(score__isnull=False).count()
 
     def can_user_modify(self, user):
         return self.series.can_user_modify(user)

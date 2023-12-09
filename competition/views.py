@@ -3,6 +3,7 @@ import os
 import zipfile
 from io import BytesIO
 from operator import itemgetter
+from typing import Optional
 
 from django.core.files import File
 from django.core.mail import send_mail
@@ -17,6 +18,7 @@ from rest_framework.response import Response
 
 from base.utils import mime_type
 from competition import utils
+from competition.exceptions import FreezingNotClosedResults
 from competition.models import (Comment, Competition, CompetitionType, Event,
                                 EventRegistration, Grade, LateTag, Problem,
                                 Publication, PublicationType, Semester, Series,
@@ -444,20 +446,39 @@ class SeriesViewSet(ModelViewSetWithSerializerContext):
     permission_classes = (CompetitionRestrictedPermission,)
     http_method_names = ['get', 'head']
 
-    @action(methods=['get'], detail=True)
-    def results(self, request, pk=None):
-        """Vráti výsledkovku pre sériu"""
-        series = self.get_object()
-        if series.frozen_results is not None:
-            return series.frozen_results
+    @staticmethod
+    def __create_result_json(series: Series) -> dict:
         results = []
         for registration in series.semester.eventregistration_set.all():
             results.append(
                 generate_result_row(registration, only_series=series)
             )
         results.sort(key=itemgetter('total'), reverse=True)
-        results = utils.rank_results(results)
+        return utils.rank_results(results)
+
+    @action(methods=['get'], detail=True)
+    def results(self, request: Request, pk: Optional[int] = None):
+        """Vráti výsledkovku pre sériu"""
+        series = self.get_object()
+        if series.frozen_results is not None:
+            return series.frozen_results
+        results = self.__create_result_json(series)
         return Response(results, status=status.HTTP_200_OK)
+
+    @action(methods=['post'], detail=True, url_path='results/freeze')
+    def freeze_results(self, request: Request, pk: Optional[int] = None):
+        series: Series = self.get_object()
+        try:
+            series.freeze_results(self.__create_result_json(series))
+        except FreezingNotClosedResults as exc:
+            raise exceptions.MethodNotAllowed(
+                method='series/results/freeze',
+                detail='Séria nemá opravené všetky úlohy a teda sa nedá uzavrieť.') from exc
+        try:
+            series.semester.freeze_results()
+        except FreezingNotClosedResults:
+            pass
+        return Response('Séria bola uzavretá', status=status.HTTP_200_OK)
 
     @action(methods=['get'], detail=True)
     def stats(self, request, pk=None):
@@ -473,7 +494,7 @@ class SeriesViewSet(ModelViewSetWithSerializerContext):
         """Vráti aktuálnu sériu"""
         items = Semester.objects.filter(
             competition=competition_id
-        ).current().series_set.filter(complete=False)\
+        ).current().series_set.filter(frozen_results__isnull=True)\
             .order_by('-deadline')\
             .first()
         serializer = SeriesWithProblemsSerializer(items, many=False)
@@ -606,6 +627,17 @@ class SemesterViewSet(ModelViewSetWithSerializerContext):
         results.sort(key=itemgetter('total'), reverse=True)
         results = utils.rank_results(results)
         return results
+
+    @action(methods=['post'], detail=True, url_path='results/freeze')
+    def freeze_results(self, request: Request, pk: Optional[int] = None):
+        semester: Semester = self.get_object()
+        try:
+            semester.freeze_results(self.semester_results(semester))
+        except FreezingNotClosedResults as exc:
+            raise exceptions.MethodNotAllowed(
+                method='series/results/freeze',
+                detail='Semester nemá uzavreté všetky série a teda sa nedá uzavrieť.') from exc
+        return Response('Semester bol uzavretý', status=status.HTTP_200_OK)
 
     @action(methods=['get'], detail=True)
     def results(self, request, pk=None):
