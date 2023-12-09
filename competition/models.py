@@ -665,7 +665,13 @@ class RegistrationLink(models.Model):
     url = models.URLField(verbose_name='url registrácie')
     start = models.DateTimeField(verbose_name='Začiatok registrácie')
     end = models.DateTimeField(verbose_name='Koniec registrácie')
-    additional_info = models.TextField(verbose_name='Doplňujúce informácie')
+    additional_info = models.TextField(
+        verbose_name='Doplňujúce informácie', null=True, blank=True)
+
+    def save(self, *args, **kwargs) -> None:
+        if not self.additional_info:
+            self.additional_info = None
+        return super().save(*args, **kwargs)
 
     def can_user_modify(self, user):
         # pylint: disable=no-member
