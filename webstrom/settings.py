@@ -147,6 +147,7 @@ ACCOUNT_ADAPTER = 'user.adapter.CustomAccountAdapter'
 REST_AUTH = {
     'LOGIN_SERIALIZER': 'user.serializers.LoginSerializer',
     'USER_DETAILS_SERIALIZER': 'user.serializers.UserDetailsSerializer',
+    'PASSWORD_RESET_SERIALIZER': 'user.serializers.FrontendPasswordResetSerializer',
     'REGISTER_SERIALIZER': 'user.serializers.RegisterSerializer',
     'OLD_PASSWORD_FIELD_ENABLED': True,
 }
