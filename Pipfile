@@ -4,16 +4,15 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-daphne = "~=4.0"
-dj-rest-auth = "~=5.0"
-django = "~=3.2"
-django-admin-list-filter-dropdown = "~=1.0"
-django-allauth = "~=0.58"
-django-filter = "~=2.4"
-djangorestframework = "~=3.12"
-drf-writable-nested = "~=0.6"
-pillow = "~=10.1"
-python-magic = "~=0.4"
+daphne = "~=4.0.0"
+dj-rest-auth = "~=5.0.1"
+django = "~=3.2.23"
+django-allauth = "~=0.58.2"
+django-filter = "~=23.5"
+djangorestframework = "~=3.14.0"
+drf-writable-nested = "~=0.7.0"
+pillow = "~=10.1.0"
+python-magic = "~=0.4.27"
 
 [dev-packages]
 autopep8 = "*"

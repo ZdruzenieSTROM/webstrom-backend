@@ -1,6 +1,5 @@
 from django.contrib import admin, messages
 from django.http import HttpResponseRedirect
-from django_admin_listfilter_dropdown.filters import RelatedDropdownFilter
 
 from competition.models import (Comment, Event, EventRegistration, LateTag,
                                 Problem, ProblemCorrection, Publication,
@@ -151,8 +150,8 @@ class CommentAdmin(admin.ModelAdmin):
     )
 
     list_filter = (
-        ('posted_by', RelatedDropdownFilter),
-        ('problem', RelatedDropdownFilter),
+        'posted_by',
+        'problem',
         'state',
     )
 
@@ -168,10 +167,10 @@ class EventRegistrationAdmin(admin.ModelAdmin):
     )
 
     list_filter = (
-        ('profile', RelatedDropdownFilter),
-        ('school', RelatedDropdownFilter),
-        ('grade', RelatedDropdownFilter),
-        ('event', RelatedDropdownFilter),
+        'profile',
+        'school',
+        'grade',
+        'event',
     )
 
     ordering = (
@@ -186,7 +185,7 @@ class ProblemCorrectionAdmin(admin.ModelAdmin):
     )
 
     list_filter = (
-        ('problem', RelatedDropdownFilter),
+        'problem',
     )
 
 

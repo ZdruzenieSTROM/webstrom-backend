@@ -27,7 +27,6 @@ DJANGO_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'django.contrib.flatpages',
-    'django_admin_listfilter_dropdown',
 ]
 
 THIRD_PARTY_APPS = [
