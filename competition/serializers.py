@@ -3,7 +3,7 @@ from django_typomatic import ts_interface
 from rest_framework import serializers
 
 from competition import models
-from competition.models import Problem, RegistrationLink, Event
+from competition.models import Event, Problem, RegistrationLink
 from personal.serializers import ProfileShortSerializer, SchoolShortSerializer
 
 
@@ -180,10 +180,10 @@ class CommentSerializer(serializers.ModelSerializer):
     posted_by_name = serializers.SerializerMethodField('get_posted_by_name')
     edit_allowed = serializers.SerializerMethodField('can_edit')
 
-    def get_posted_by_name(self, obj):
+    def get_posted_by_name(self, obj: models.Comment):
         return obj.posted_by.get_full_name()
 
-    def can_edit(self, obj):
+    def can_edit(self, obj: models.Comment):
         if 'request' in self.context:
             return obj.can_user_modify(self.context['request'].user)
         return None
@@ -275,16 +275,13 @@ class ProblemWithSolutionsSerializer(serializers.ModelSerializer):
         return models.Problem.get_stats(obj).get('num_solutions')
 
 
-# class ProblemStatsSerializer(serializers.Serializer):
-#    historgram = HistrogramItemSerializer(many=True)
-#    num_solutions = serializers.IntegerField()
-#   mean = serializers.FloatField()
-#
-
-
 @ts_interface(context='competition')
 class SeriesWithProblemsSerializer(ModelWithParticipationSerializer):
-    problems = ProblemSerializer(many=True)
+    problems = ProblemSerializer(
+        many=True,
+        required=False,
+        allow_null=True
+    )
     can_submit = serializers.SerializerMethodField('get_can_submit')
     can_resubmit = serializers.SerializerMethodField('get_can_resubmit')
 
@@ -303,7 +300,7 @@ class SeriesWithProblemsSerializer(ModelWithParticipationSerializer):
         return obj.semester
 
     def create(self, validated_data):
-        problem_data = validated_data.pop('problems')
+        problem_data = validated_data.pop('problems', [])
         series = models.Series.objects.create(**validated_data)
         for data in problem_data:
             models.Problem.objects.create(series=series, **data)
@@ -312,14 +309,18 @@ class SeriesWithProblemsSerializer(ModelWithParticipationSerializer):
 
 @ts_interface(context='competition')
 class SemesterSerializer(serializers.ModelSerializer):
-    series_set = SeriesSerializer(many=True)
+    series_set = SeriesSerializer(
+        many=True,
+        required=False,
+        allow_null=True
+    )
 
     class Meta:
         model = models.Semester
         fields = '__all__'
 
     def create(self, validated_data):
-        series_data = validated_data.pop('series_set')
+        series_data = validated_data.pop('series_set', [])
         semester = models.Semester.objects.create(**validated_data)
         for series in series_data:
             models.Series.objects.create(semester=semester, **series)
@@ -328,20 +329,24 @@ class SemesterSerializer(serializers.ModelSerializer):
 
 @ts_interface(context='competition')
 class SemesterWithProblemsSerializer(ModelWithParticipationSerializer):
-    series_set = SeriesWithProblemsSerializer(many=True)
+    series_set = SeriesWithProblemsSerializer(
+        many=True,
+        required=False,
+        allow_null=True
+    )
     publication_set = PublicationSerializer(many=True)
 
     class Meta:
         model = models.Semester
         fields = '__all__'
 
-    def create(self, validated_data):
-        all_series_data = validated_data.pop('series_set')
-        late_tags = validated_data.pop('late_tags')
-        validated_data.pop('publication_set')
+    def create(self, validated_data: dict):
+        all_series_data = validated_data.pop('series_set', [])
+        late_tags = validated_data.pop('late_tags', [])
+        validated_data.pop('publication_set', [])
         semester = models.Semester.objects.create(**validated_data)
         for series_data in all_series_data:
-            problems_data = series_data.pop('problems')
+            problems_data = series_data.pop('problems', [])
             series = models.Series.objects.create(
                 semester=semester, **series_data)
             for problem in problems_data:
