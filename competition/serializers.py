@@ -225,7 +225,7 @@ class SeriesSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Series
         read_only_fields = ['complete']
-        fields = ['semester', 'order', 'deadline', 'complete']
+        fields = ['id', 'semester', 'order', 'deadline', 'complete']
 
     def get_complete(self, obj: models.Series):
         return obj.complete
