@@ -27,6 +27,12 @@ class FrontendPasswordResetSerializer(PasswordResetSerializer):
             'url_generator': reset_password_url_generator
         }
 
+    def create(self, validated_data):
+        pass
+
+    def update(self, instance, validated_data):
+        pass
+
 
 @ts_interface(context='user')
 class LoginSerializer(serializers.Serializer):
