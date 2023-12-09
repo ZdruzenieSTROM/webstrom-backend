@@ -216,6 +216,7 @@ class Semester(Event):
             self.frozen_results = None
         return super().save(*args, **kwargs)
 
+
     def get_first_series(self) -> 'Series':
         return self.series_set.get(order=1)
 
