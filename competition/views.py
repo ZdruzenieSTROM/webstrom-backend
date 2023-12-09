@@ -494,7 +494,7 @@ class SeriesViewSet(ModelViewSetWithSerializerContext):
         """Vráti aktuálnu sériu"""
         items = Semester.objects.filter(
             competition=competition_id
-        ).current().series_set.filter(complete=False)\
+        ).current().series_set.filter(frozen_results__isnull=True)\
             .order_by('-deadline')\
             .first()
         serializer = SeriesWithProblemsSerializer(items, many=False)

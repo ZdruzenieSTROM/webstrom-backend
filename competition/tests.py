@@ -12,7 +12,6 @@ series_expected_keys = [
     'order',
     'deadline',
     'complete',
-    'frozen_results',
     'semester',
 ]
 
@@ -47,7 +46,6 @@ semester_expected_keys = [
     'start',
     'end',
     'season_code',
-    'frozen_results',
     'competition',
     'late_tags',
 ]

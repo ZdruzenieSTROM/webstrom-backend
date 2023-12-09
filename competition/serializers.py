@@ -210,9 +210,15 @@ class SolutionAdministrationSerializer(serializers.ModelSerializer):
 
 @ts_interface(context='competition')
 class SeriesSerializer(serializers.ModelSerializer):
+    complete = serializers.SerializerMethodField('get_complete')
+
     class Meta:
         model = models.Series
-        exclude = ['sum_method']
+        read_only_fields = ['complete']
+        fields = ['semester', 'order', 'deadline', 'complete']
+
+    def get_complete(self, obj: models.Series):
+        return obj.complete
 
 
 @ts_interface(context='competition')
@@ -284,14 +290,19 @@ class SeriesWithProblemsSerializer(ModelWithParticipationSerializer):
     )
     can_submit = serializers.SerializerMethodField('get_can_submit')
     can_resubmit = serializers.SerializerMethodField('get_can_resubmit')
+    complete = serializers.SerializerMethodField('get_complete')
 
     class Meta:
         model = models.Series
-        exclude = ['sum_method']
-        read_only_fields = ['semester']
+        exclude = ['sum_method', 'frozen_results']
+        include = ['complete']
+        read_only_fields = ['semester', 'complete']
 
     def get_can_submit(self, obj):
         return obj.can_submit
+
+    def get_complete(self, obj: models.Series):
+        return obj.complete
 
     def get_can_resubmit(self, obj):
         return obj.can_resubmit
