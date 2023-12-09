@@ -292,11 +292,10 @@ class ProblemWithSolutionsSerializer(serializers.ModelSerializer):
 
 
 @ts_interface(context='competition')
-class SeriesWithProblemsSerializer(ModelWithParticipationSerializer):
+class SeriesWithProblemsSerializer(serializers.ModelSerializer):
     problems = ProblemSerializer(
         many=True,
-        required=False,
-        allow_null=True
+        read_only=True
     )
     can_submit = serializers.SerializerMethodField('get_can_submit')
     can_resubmit = serializers.SerializerMethodField('get_can_resubmit')
@@ -305,8 +304,10 @@ class SeriesWithProblemsSerializer(ModelWithParticipationSerializer):
     class Meta:
         model = models.Series
         exclude = ['sum_method', 'frozen_results']
-        include = ['complete']
-        read_only_fields = ['semester', 'complete']
+        include = ['complete', 'problems', 'can_submit', 'can_resubmit']
+        read_only_fields = [
+            'complete',
+            'can_submit', 'can_resubmit']
 
     def get_can_submit(self, obj):
         return obj.can_submit
@@ -332,46 +333,44 @@ class SeriesWithProblemsSerializer(ModelWithParticipationSerializer):
 class SemesterSerializer(serializers.ModelSerializer):
     series_set = SeriesSerializer(
         many=True,
-        required=False,
-        allow_null=True
+        read_only=True
     )
 
     class Meta:
         model = models.Semester
         fields = '__all__'
+        read_only_fields = ['series_set', 'publication_set']
 
-    def create(self, validated_data):
-        series_data = validated_data.pop('series_set', [])
-        semester = models.Semester.objects.create(**validated_data)
-        for series in series_data:
-            models.Series.objects.create(semester=semester, **series)
-        return semester
+    # def create(self, validated_data):
+    #     series_data = validated_data.pop('series_set', [])
+    #     semester = models.Semester.objects.create(**validated_data)
+    #     for series in series_data:
+    #         models.Series.objects.create(semester=semester, **series)
+    #     return semester
 
 
 @ts_interface(context='competition')
 class SemesterWithProblemsSerializer(ModelWithParticipationSerializer):
     series_set = SeriesWithProblemsSerializer(
         many=True,
-        required=False,
-        allow_null=True
+        read_only=True
     )
-    publication_set = PublicationSerializer(many=True)
+    publication_set = PublicationSerializer(many=True, read_only=True)
 
     class Meta:
         model = models.Semester
-        fields = '__all__'
+        exclude = ['frozen_results', 'registration_link']
+
+    def update(self, instance: models.Semester, validated_data):
+        late_tags = validated_data.pop('late_tags', [])
+        instance.late_tags.clear()
+        for tag in late_tags:
+            instance.late_tags.add(tag)
+        return super().update(instance, validated_data)
 
     def create(self, validated_data: dict):
-        all_series_data = validated_data.pop('series_set', [])
         late_tags = validated_data.pop('late_tags', [])
-        validated_data.pop('publication_set', [])
         semester = models.Semester.objects.create(**validated_data)
-        for series_data in all_series_data:
-            problems_data = series_data.pop('problems', [])
-            series = models.Series.objects.create(
-                semester=semester, **series_data)
-            for problem in problems_data:
-                models.Problem.objects.create(series=series, **problem)
         for tag in late_tags:
             semester.late_tags.add(tag)
         return semester

@@ -453,7 +453,7 @@ class SeriesViewSet(ModelViewSetWithSerializerContext):
     queryset = Series.objects.all()
     serializer_class = SeriesWithProblemsSerializer
     permission_classes = (CompetitionRestrictedPermission,)
-    http_method_names = ['get', 'head']
+    http_method_names = ['get', 'head', 'put', 'patch', "post"]
 
     @staticmethod
     def __create_result_json(series: Series) -> dict:
@@ -610,7 +610,7 @@ class SemesterViewSet(ModelViewSetWithSerializerContext):
     serializer_class = SemesterWithProblemsSerializer
     permission_classes = (CompetitionRestrictedPermission,)
     filterset_fields = ['competition']
-    http_method_names = ['get', 'post', 'head']
+    http_method_names = ['get', 'head', 'put', 'patch', 'post']
 
     def perform_create(self, serializer):
         """
