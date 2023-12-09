@@ -2,7 +2,6 @@
 
 from rest_framework import viewsets
 from rest_framework.decorators import action
-from rest_framework.exceptions import MethodNotAllowed
 from rest_framework.request import Request
 from rest_framework.response import Response
 
@@ -51,16 +50,10 @@ class PostViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
-class LogoViewSet(viewsets.ModelViewSet):
+class LogoViewSet(viewsets.ReadOnlyModelViewSet):
     """Logá"""
     queryset = Logo.objects.all()
     serializer_class = LogoSerializer
-    permission_classes = (PostPermission,)
-
-    # TODO: Maybe create upload image endpoint
-
-    def create(self, request, *args, **kwargs):
-        raise MethodNotAllowed('POST')
 
 
 class InfoBannerViewSet(viewsets.ModelViewSet):
