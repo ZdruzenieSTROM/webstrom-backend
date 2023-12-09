@@ -16,9 +16,10 @@ from django.utils.timezone import now
 from base.managers import UnspecifiedValueManager
 from base.models import RestrictedFileField
 from base.validators import school_year_validator
-from competition import utils
 from competition.exceptions import FreezingNotClosedResults
 from competition.querysets import ActiveQuerySet
+from competition.utils.school_year_manipulation import (
+    get_school_year_end_by_date, get_school_year_start_by_date)
 from personal.models import Profile, School
 from user.models import User
 
@@ -74,7 +75,7 @@ class Competition(models.Model):
 
     def can_user_participate(self, user):
         if self.min_years_until_graduation:
-            return user.profile.year_of_graduation-utils.get_school_year_start_by_date() \
+            return user.profile.year_of_graduation-get_school_year_start_by_date() \
                 >= self.min_years_until_graduation
         return True
 
@@ -239,6 +240,18 @@ class Semester(Event):
         return f'{self.competition.name}, {self.year}. ročník - {self.season} semester'
 
 
+SERIES_SUM_METHODS = [
+    ('series_simple_sum', 'Jednoduchý súčet bodov'),
+    ('series_Malynar_sum', 'Bonifikácia Malynár'),
+    ('series_Matik_sum', 'Bonifikácia Matik'),
+    ('series_STROM_sum', 'Bonifikácia STROM'),
+    ('series_Malynar_sum_until_2021', 'Bonifikácia Malynár (Do 2020/2021)'),
+    ('series_Matik_sum_until_2021', 'Bonifikácia Matik (Do 2020/2021)'),
+    ('series_STROM_sum_until_2021', 'Bonifikácia STROM (Do 2020/2021)'),
+    ('series_STROM_4problems_sum', 'Bonifikácia STROM (4. úlohy)')
+]
+
+
 class Series(models.Model):
     """
     Popisuje jednu sériu semestra
@@ -257,7 +270,7 @@ class Series(models.Model):
     # Implementuje bonfikáciu
     sum_method = models.CharField(
         verbose_name='Súčtová metóda', max_length=50, blank=True,
-        choices=utils.SERIES_SUM_METHODS)
+        choices=SERIES_SUM_METHODS)
     frozen_results = models.TextField(
         null=True,
         blank=True,
@@ -491,12 +504,12 @@ class Grade(models.Model):
     objects = UnspecifiedValueManager(unspecified_value_pk=13)
 
     def get_year_of_graduation_by_date(self, date=None):
-        return utils.get_school_year_end_by_date(date) + self.years_until_graduation
+        return get_school_year_end_by_date(date) + self.years_until_graduation
 
     @staticmethod
     def get_grade_by_year_of_graduation(year_of_graduation, date=None):
         years_until_graduation = year_of_graduation - \
-            utils.get_school_year_end_by_date(date)
+            get_school_year_end_by_date(date)
 
         try:
             grade = Grade.objects.get(

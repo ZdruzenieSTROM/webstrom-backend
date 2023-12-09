@@ -17,7 +17,6 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 from base.utils import mime_type
-from competition import utils
 from competition.exceptions import FreezingNotClosedResults
 from competition.models import (Comment, Competition, CompetitionType, Event,
                                 EventRegistration, Grade, LateTag, Problem,
@@ -38,6 +37,9 @@ from competition.serializers import (CommentSerializer, CompetitionSerializer,
                                      SemesterWithProblemsSerializer,
                                      SeriesWithProblemsSerializer,
                                      SolutionSerializer)
+from competition.utils import sum_methods
+from competition.utils.results import (generate_praticipant_invitations,
+                                       rank_results)
 from personal.models import Profile, School
 from personal.serializers import ProfileExportSerializer, SchoolSerializer
 from webstrom.settings import EMAIL_ALERT, EMAIL_NO_REPLY
@@ -82,8 +84,8 @@ def generate_result_row(
                     'votes': 0  # TODO: Implement votes sol.vote
                 }
             )
-        series_sum_func = getattr(utils, series.sum_method or '',
-                                  utils.series_simple_sum)
+        series_sum_func = getattr(sum_methods, series.sum_method or '',
+                                  sum_methods.series_simple_sum)
         solutions.append(series_solutions)
         subtotal.append(
             series_sum_func(solution_points, semester_registration)
@@ -454,7 +456,7 @@ class SeriesViewSet(ModelViewSetWithSerializerContext):
                 generate_result_row(registration, only_series=series)
             )
         results.sort(key=itemgetter('total'), reverse=True)
-        return utils.rank_results(results)
+        return rank_results(results)
 
     @action(methods=['get'], detail=True)
     def results(self, request: Request, pk: Optional[int] = None):
@@ -625,7 +627,7 @@ class SemesterViewSet(ModelViewSetWithSerializerContext):
             results.append(generate_result_row(registration, semester))
 
         results.sort(key=itemgetter('total'), reverse=True)
-        results = utils.rank_results(results)
+        results = rank_results(results)
         return results
 
     @action(methods=['post'], detail=True, url_path='results/freeze')
@@ -674,7 +676,7 @@ class SemesterViewSet(ModelViewSetWithSerializerContext):
         semester = self.get_object()
         num_participants = int(num_participants)
         num_substitutes = int(num_substitutes)
-        participants = utils.generate_praticipant_invitations(
+        participants = generate_praticipant_invitations(
             SemesterViewSet.semester_results(semester),
             num_participants,
             num_substitutes
@@ -692,7 +694,7 @@ class SemesterViewSet(ModelViewSetWithSerializerContext):
         num_participants = int(num_participants)
         num_substitutes = int(num_substitutes)
         semester = self.get_object()
-        participants = utils.generate_praticipant_invitations(
+        participants = generate_praticipant_invitations(
             SemesterViewSet.semester_results(semester),
             num_participants,
             num_substitutes

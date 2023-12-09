@@ -14,7 +14,7 @@ from django.utils.dateparse import parse_datetime
 
 from competition.models import (Competition, EventRegistration, Grade, Problem,
                                 Semester, Series, Solution)
-from competition.utils import get_school_year_by_date
+from competition.utils.school_year_manipulation import get_school_year_by_date
 from personal.models import Profile, School
 from user.models import User
 
