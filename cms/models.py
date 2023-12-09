@@ -106,6 +106,8 @@ class MenuItem(models.Model):
     priority = models.SmallIntegerField(
         verbose_name='priorita',
         help_text='Priorita, čím väčšie, tým vyššie v menu.')
+    in_footer = models.BooleanField(verbose_name='Je v pätičke', default=False)
+    in_menu = models.BooleanField(verbose_name='Je v menu', default=True)
     sites = models.ManyToManyField(Site)
 
     # TODO: Pridať oprávnenia a umožniť tak vedúcovské položky v menu

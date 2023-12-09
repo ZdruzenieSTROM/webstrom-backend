@@ -3,6 +3,7 @@
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import MethodNotAllowed
+from rest_framework.request import Request
 from rest_framework.response import Response
 
 from cms.models import InfoBanner, Logo, MenuItem, MessageTemplate, Post
@@ -17,19 +18,20 @@ class MenuItemViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = MenuItem.objects.order_by('-priority')
     serializer_class = MenuItemShortSerializer
 
-    @action(methods=['get'], detail=False, url_path=r'on-site/(?P<site_id>\d+)')
-    def on_site(self, request, site_id):
-        """Položky menu na stránke(na stránke Matik, Malynár ...)"""
-        items = MenuItem.objects.filter(
-            sites=site_id).order_by('-priority')
-        serializer = MenuItemShortSerializer(items, many=True)
-        return Response(serializer.data)
+    def filter_(self, queryset, filter_by: str | None):
+        if filter_by == 'menu':
+            queryset = queryset.filter(in_menu=True)
+        if filter_by == 'footer':
+            queryset = queryset.filter(in_footer=True)
+        return queryset
 
-    @action(methods=['get'], detail=False, url_path='on-current-site')
-    def on_current_site(self, request):
-        """Položky menu na aktuálnej stránke"""
-        items = MenuItem.objects.filter(
-            sites=request.site).order_by('-priority')
+    @action(methods=['get'], detail=False, url_path=r'on-site/(?P<site_id>\d+)')
+    def on_site(self, request: Request, site_id):
+        """Položky menu na stránke(na stránke Matik, Malynár ...)"""
+        filter_by = request.query_params.get('type')
+        queryset = self.get_queryset().filter(
+            sites=site_id)
+        items = self.filter_(queryset, filter_by)
         serializer = MenuItemShortSerializer(items, many=True)
         return Response(serializer.data)
 
