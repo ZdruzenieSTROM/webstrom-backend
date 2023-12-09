@@ -1,4 +1,5 @@
 import os
+import shutil
 from functools import partial
 
 from django.conf import settings
@@ -49,7 +50,20 @@ class Command(BaseCommand):
         call_command('migrate')
 
         load_fixture = partial(call_command, 'loaddata')
-
+        fixture_files = [
+            (os.path.join('competition', 'fixtures', 'sources'),
+             os.path.join('media', 'publications', '2022'), 'zadaniaMatboj1.pdf'),
+            (os.path.join('competition', 'fixtures', 'sources'),
+             os.path.join('media', 'publications', '2022'), 'poradieMatboj1.pdf'),
+        ]
+        for source, target, file in fixture_files:
+            target_path = os.path.join(settings.BASE_DIR, target)
+            if not os.path.exists(target_path):
+                os.makedirs(target_path)
+            shutil.copyfile(
+                os.path.join(settings.BASE_DIR, source, file),
+                os.path.join(target_path, file)
+            )
         load_fixture('sites',
                      'flatpages',
                      'counties',
@@ -75,5 +89,6 @@ class Command(BaseCommand):
                      'post_links',
                      'menu_items',
                      'message_templates',
-                     'info_banner'
+                     'info_banner',
+                     'events'
                      )

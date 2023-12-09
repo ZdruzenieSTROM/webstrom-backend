@@ -1,0 +1,48 @@
+[
+    {
+        "model": "competition.Event",
+        "pk": 20,
+        "fields": {
+            "competition": 3,
+            "year": 19,
+            "school_year": "2021/2022",
+            "start": "2022-06-01T20:00:00+02:00",
+            "end": "2022-06-02T20:00:00+02:00"
+        }
+    },
+    {
+        "model":"competition.Publication",
+        "pk":1,
+        "fields":{
+            "publication_type": 0,
+            "name": "Zadania",
+            "event": 20,
+            "file": "publications/2022/zadaniaMatboj1.pdf",
+            "order": null
+        }
+    },
+    {
+        "model":"competition.Publication",
+        "pk":2,
+        "fields":{
+            "publication_type": 1,
+            "name": "Poradie",
+            "event": 20,
+            "file": "publications/2022/poradieMatboj1.pdf",
+            "order": null
+        }
+    },
+    {
+        "model": "competition.Event",
+        "pk": 21,
+        "fields": {
+            "competition": 3,
+            "year": 20,
+            "school_year": "2022/2023",
+            "start": "2023-06-01T20:00:00+02:00",
+            "end": "2025-06-01T20:00:00+02:00",
+            "registration_link": 3
+        }
+    }
+
+]
