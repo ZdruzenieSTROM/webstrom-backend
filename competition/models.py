@@ -216,7 +216,6 @@ class Semester(Event):
             self.frozen_results = None
         return super().save(*args, **kwargs)
 
-
     def get_first_series(self) -> 'Series':
         return self.series_set.get(order=1)
 
@@ -322,7 +321,10 @@ class Series(models.Model):
             .first()
 
     def freeze_results(self, results):
-        if any(problem.num_solutions != problem.num_corrected_solutions for problem in self.problems.all()):
+        if any(
+            problem.num_solutions != problem.num_corrected_solutions
+            for problem in self.problems.all()
+        ):
             raise FreezingNotClosedResults()
         self.frozen_results = results
 

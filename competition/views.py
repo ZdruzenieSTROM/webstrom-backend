@@ -627,17 +627,6 @@ class SemesterViewSet(ModelViewSetWithSerializerContext):
         results.sort(key=itemgetter('total'), reverse=True)
         results = utils.rank_results(results)
         return results
-    
-    @action(methods=['post'], detail=True, url_path='results/freeze')
-    def freeze_results(self, request: Request, pk: Optional[int] = None):
-        semester:Semester = self.get_object()
-        try:
-            semester.freeze_results(self.semester_results(semester))
-        except FreezingNotClosedResults as exc:
-            raise exceptions.MethodNotAllowed(
-                method='series/results/freeze',
-                detail='Semester nemá uzavreté všetky série a teda sa nedá uzavrieť.') from exc
-        return Response('Semester bol uzavretý', status=status.HTTP_200_OK)
 
     @action(methods=['post'], detail=True, url_path='results/freeze')
     def freeze_results(self, request: Request, pk: Optional[int] = None):
