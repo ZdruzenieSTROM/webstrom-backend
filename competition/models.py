@@ -80,7 +80,7 @@ class Competition(models.Model):
         return True
 
     @classmethod
-    def can_user_create(cls, user: User, data):
+    def can_user_create(cls, user: User, data):  # pylint:disable=unused-argument
         return user.is_authenticated and user.is_staff
 
     def __str__(self):
