@@ -334,13 +334,6 @@ class SemesterSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ['series_set', 'publication_set']
 
-    # def create(self, validated_data):
-    #     series_data = validated_data.pop('series_set', [])
-    #     semester = models.Semester.objects.create(**validated_data)
-    #     for series in series_data:
-    #         models.Series.objects.create(semester=semester, **series)
-    #     return semester
-
 
 @ts_interface(context='competition')
 class SemesterWithProblemsSerializer(ModelWithParticipationSerializer):
