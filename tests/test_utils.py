@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 
 from rest_framework.test import APIClient
+
 from user.models import User
 from webstrom.settings import BASE_DIR
 
@@ -71,7 +72,7 @@ class PermissionTestMixin:
             self.client.force_authenticate(user=user)
         return self.client
 
-    #pylint: disable=dangerous-default-value
+    # pylint: disable=dangerous-default-value
     def check_permissions(self, url, method, responses, body={}):
         for user, status in responses.items():
             client = self.get_client(user)
@@ -83,6 +84,8 @@ class PermissionTestMixin:
                 response = client.post(url, body, 'json')
             elif method == 'PUT':
                 response = client.put(url, body, 'json')
+            elif method == 'PATCH':
+                response = client.patch(url, body, 'json')
             else:
                 raise NotImplementedError()
             self.assertIn(response.status_code, expected_response,
