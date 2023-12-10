@@ -79,6 +79,10 @@ class Competition(models.Model):
                 >= self.min_years_until_graduation
         return True
 
+    @classmethod
+    def can_user_create(cls, user: User, data):
+        return user.is_authenticated and user.is_staff
+
     def __str__(self):
         return self.name
 
@@ -181,6 +185,11 @@ class Event(models.Model):
 
     def can_user_modify(self, user):
         return self.competition.can_user_modify(user)
+
+    @classmethod
+    def can_user_create(cls, user: User, data: dict) -> bool:
+        competition = Competition.objects.get(pk=data['competition'])
+        return competition.can_user_modify(user)
 
     def can_user_participate(self, user):
         return self.competition.can_user_participate(user)
@@ -352,6 +361,11 @@ class Series(models.Model):
     def can_user_modify(self, user: User) -> bool:
         return self.semester.can_user_modify(user)
 
+    @classmethod
+    def can_user_create(cls, user: User, data: dict) -> bool:
+        semester = Semester.objects.get(pk=data['semester'])
+        return semester.can_user_modify(user)
+
     def can_user_participate(self, user: User) -> bool:
         return self.semester.can_user_participate(user)
 
@@ -415,6 +429,11 @@ class Problem(models.Model):
 
     def can_user_modify(self, user):
         return self.series.can_user_modify(user)
+
+    @classmethod
+    def can_user_create(cls, user: User, data: dict) -> bool:
+        series = Series.objects.get(pk=data['series'])
+        return series.can_user_modify(user)
 
     def get_comments(self, user: User):
         def filter_by_permissions(obj: 'Comment'):
@@ -491,6 +510,11 @@ class Comment(models.Model):
 
     def can_user_modify(self, user):
         return self.problem.can_user_modify(user)
+
+    @classmethod
+    def can_user_create(cls, user: User, data: dict) -> bool:
+        problem = Problem.objects.get(pk=data['problem'])
+        return problem.can_user_modify(user)
 
 
 class Grade(models.Model):
@@ -571,6 +595,11 @@ class EventRegistration(models.Model):
     def can_user_modify(self, user):
         return self.event.can_user_modify(user)
 
+    @classmethod
+    def can_user_create(cls, user: User, data: dict) -> bool:
+        event = Event.objects.get(pk=data['event'])
+        return event.can_user_modify(user)
+
 
 class Vote(models.IntegerChoices):
     '''
@@ -633,6 +662,11 @@ class Solution(models.Model):
     def can_user_modify(self, user):
         return self.problem.can_user_modify(user)
 
+    @classmethod
+    def can_user_create(cls, user: User, data: dict) -> bool:
+        problem = Problem.objects.get(pk=data['problem'])
+        return problem.can_user_modify(user)
+
     def set_vote(self, vote):
         self.vote = vote
         self.save()
@@ -687,6 +721,11 @@ class Publication(models.Model):
 
     def can_user_modify(self, user):
         return self.event.can_user_modify(user)
+
+    @classmethod
+    def can_user_create(cls, user: User, data: dict) -> bool:
+        event = Event.objects.get(pk=data['event'])
+        return event.can_user_modify(user)
 
 
 @receiver(post_save, sender=Publication)

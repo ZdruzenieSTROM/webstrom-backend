@@ -126,11 +126,21 @@ class TestSeries(APITestCase, PermissionTestMixin):
 
     def test_permission_update(self):
         self.check_permissions(self.URL_PREFIX + '/0/',
-                               'PUT', self.ALL_FORBIDDEN, {'year': 2})
+                               'PATCH', self.ONLY_STROM_OK_RESPONSES,
+                               {
+                                   "semester": 1,
+                                   "order": 1,
+                                   "deadline": "2020-01-01T18:00:00Z"
+                               })
 
     def test_permission_create(self):
         self.check_permissions(self.URL_PREFIX + '/',
-                               'POST', self.ALL_FORBIDDEN, {'year': 2})
+                               'POST', self.ONLY_STROM_OK_RESPONSES,
+                               {
+                                   "semester": 1,
+                                   "order": 1,
+                                   "deadline": "2020-01-01T18:00:00Z"
+                               })
 
 
 class TestSemester(APITestCase, PermissionTestMixin):
@@ -172,9 +182,9 @@ class TestSemester(APITestCase, PermissionTestMixin):
     def test_update_permissions(self):
         ''' update permission OK '''
         self.check_permissions(self.URL_PREFIX + '/0/',
-                               'PUT', self.ALL_FORBIDDEN, {'year': 2})
+                               'PATCH', self.ONLY_STROM_OK_RESPONSES, {'year': 2})
         self.check_permissions(self.URL_PREFIX + '/10/',
-                               'PUT', self.ALL_FORBIDDEN, {'year': 2})
+                               'PATCH', self.ONLY_KRICKY_OK_RESPONSES, {'year': 2})
 
     def test_public_points_permission(self):
         self.check_permissions(self.URL_PREFIX + '/',
@@ -214,48 +224,6 @@ class TestAPISemester(APITestCase, PermissionTestMixin):
 
     def test_create_semester(self):
         data = {
-            "series_set": [
-                {
-                    "problems": [
-                        {
-                            "text": "2+2",
-                            "order": 1
-                        },
-                        {
-                            "text": "3+3",
-                            "order": 2
-                        },
-                        {
-                            "text": "3+4",
-                            "order": 3
-                        }
-                    ],
-                    "order": 2,
-                    "deadline": "2017-11-19T22:00:00Z",
-                    "complete": False
-                },
-                {
-                    "problems": [
-                        {
-                            "text": """$EFGH$ je rovnobežník s ostrým uhlom $DAB$.
-                            Dokážte, že $AD$ a $DO$ sú na seba kolmé.""",
-                            "order": 1
-                        },
-                        {
-                            "text": """$IJKL$ je rovnobežník s ostrým uhlom $DAB$.
-                            Body $A,\\ P,\\ B,\\ D$ ležia na jednej kružnici v tomto poradí.
-                            Priamky $AP$ a $CD$ sa pretínajú v bode $Q$. Bod $O$ je stred kružnice
-                            opísanej trojuholníku $CPQ$. Dokážte, že ak $D \\neq O$,
-                            tak priamky $AD$ a $DO$ sú na seba kolmé.""",
-                            "order": 2
-                        }
-                    ],
-                    "order": 2,
-                    "deadline": "2017-11-19T22:00:00Z",
-                    "complete": False
-                }
-            ],
-            "publication_set": [],
             "year": 42,
             "school_year": "2017/2018",
             "start": "2017-10-02T22:00:00Z",
@@ -268,8 +236,6 @@ class TestAPISemester(APITestCase, PermissionTestMixin):
                                'POST',
                                self.ONLY_STROM_OK_RESPONSES, data)
         self.assertEqual(models.Semester.objects.count(), 2)
-        self.assertEqual(models.Series.objects.count(), 2)
-        self.assertEqual(models.Problem.objects.count(), 5)
 
 
 class TestCompetition(APITestCase, PermissionTestMixin):

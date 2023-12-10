@@ -13,8 +13,8 @@ class CommentPermission(permissions.BasePermission):
 
         if view.action == 'retrieve':
             if obj.state == CommentPublishState.PUBLISHED\
-                or can_user_modify\
-                or obj.posted_by == request.user:
+                    or can_user_modify\
+                    or obj.posted_by == request.user:
                 return True
 
         if view.action in ['publish', 'hide']:
@@ -41,6 +41,9 @@ class CompetitionRestrictedPermission(permissions.BasePermission):
     def has_permission(self, request, view):
         if request.method in permissions.SAFE_METHODS:
             return True
+
+        if request.method == 'POST':
+            return view.get_serializer().Meta.model.can_user_create(request.user, request.data)
 
         return request.user.is_authenticated and request.user.is_staff
 
