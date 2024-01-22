@@ -11,7 +11,7 @@ django-allauth = "~=0.58.2"
 django-filter = "~=23.5"
 djangorestframework = "~=3.14.0"
 drf-writable-nested = "~=0.7.0"
-pillow = "~=10.1.0"
+pillow = "~=10.2.0"
 python-magic = "~=0.4.27"
 
 [dev-packages]
