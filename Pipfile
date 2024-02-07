@@ -6,7 +6,7 @@ name = "pypi"
 [packages]
 daphne = "~=4.0.0"
 dj-rest-auth = "~=5.0.1"
-django = "~=3.2.23"
+django = "~=3.2.24"
 django-allauth = "~=0.58.2"
 django-filter = "~=23.5"
 djangorestframework = "~=3.14.0"
