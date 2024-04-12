@@ -292,7 +292,7 @@ class ProblemWithSolutionsSerializer(serializers.ModelSerializer):
 
 
 @ts_interface(context='competition')
-class SeriesWithProblemsSerializer(serializers.ModelSerializer):
+class SeriesWithProblemsSerializer(ModelWithParticipationSerializer):
     problems = ProblemSerializer(
         many=True,
         read_only=True
