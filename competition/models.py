@@ -34,6 +34,9 @@ class CompetitionType(models.Model):
 
     name = models.CharField('typ súťaže', max_length=200)
 
+    def __str__(self):
+        return self.name
+
 
 class Competition(models.Model):
     """
@@ -81,7 +84,7 @@ class Competition(models.Model):
 
     @classmethod
     def can_user_create(cls, user: User, data):  # pylint:disable=unused-argument
-        return user.is_authenticated and user.is_staff
+        return user.is_authenticated and user.is_superuser
 
     def __str__(self):
         return self.name
