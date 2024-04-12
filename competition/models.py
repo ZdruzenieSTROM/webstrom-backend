@@ -192,6 +192,8 @@ class Event(models.Model):
     @classmethod
     def can_user_create(cls, user: User, data: dict) -> bool:
         competition = Competition.objects.get(pk=data['competition'])
+        print(competition.can_user_modify(user))
+        print(competition.permission_group.all())
         return competition.can_user_modify(user)
 
     def can_user_participate(self, user):
