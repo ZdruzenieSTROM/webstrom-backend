@@ -1,5 +1,4 @@
 import datetime
-import sys
 from typing import Optional
 
 from django.conf import settings
@@ -193,8 +192,6 @@ class Event(models.Model):
     @classmethod
     def can_user_create(cls, user: User, data: dict) -> bool:
         competition = Competition.objects.get(pk=data['competition'])
-        print(competition.can_user_modify(user), file=sys.stderr)
-        print(competition.permission_group.all(), file=sys.stderr)
         return competition.can_user_modify(user)
 
     def can_user_participate(self, user):
