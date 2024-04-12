@@ -121,6 +121,8 @@ class UserDetailsSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         profile_data = validated_data.pop('profile')
 
+        profile_data['year_of_graduation'] = Grade.objects.get(
+            pk=profile_data.get('grade')).get_year_of_graduation_by_date()
         # Profile by mal byť stále vytvorený pomocou post_save User signálu.
         # Pre prípad, že sa tak nestalo, vytvorí sa Profile
         if not instance.profile:
