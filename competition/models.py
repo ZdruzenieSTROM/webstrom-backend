@@ -146,7 +146,7 @@ class Event(models.Model):
     ]
 
     competition = models.ForeignKey(
-        Competition, null=True, on_delete=models.CASCADE)
+        Competition, on_delete=models.CASCADE)
 
     year = models.PositiveSmallIntegerField(verbose_name='ročník', blank=True)
     school_year = models.CharField(
