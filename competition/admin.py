@@ -1,9 +1,18 @@
 from django.contrib import admin, messages
 from django.http import HttpResponseRedirect
 
-from competition.models import (Comment, Event, EventRegistration, LateTag,
-                                Problem, ProblemCorrection, Publication,
-                                Semester, Series, Solution)
+from competition.models import (Comment, Competition, Event, EventRegistration,
+                                LateTag, Problem, ProblemCorrection,
+                                Publication, Semester, Series, Solution)
+
+
+@admin.register(Competition)
+class CompetitionAdmin(admin.ModelAdmin):
+    list_display = (
+        'name',
+        'start_year',
+        'competition_type'
+    )
 
 
 @admin.register(Series)
