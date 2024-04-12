@@ -12,6 +12,7 @@ from django.dispatch import receiver
 from django.shortcuts import get_object_or_404
 from django.utils.functional import cached_property
 from django.utils.timezone import now
+from unidecode import unidecode
 
 from base.managers import UnspecifiedValueManager
 from base.models import RestrictedFileField
@@ -682,6 +683,10 @@ class PublicationType(models.Model):
 
     name = models.CharField(max_length=100, verbose_name='názov typu')
 
+    @property
+    def code(self):
+        return unidecode(self.name).lower()
+
     def __str__(self):
         return self.name
 
@@ -714,7 +719,7 @@ class Publication(models.Model):
             return
 
         if self.order:
-            self.name = f'{self.order}'
+            self.name = f'{self.publication_type.code}_{self.order}.pdf'
         else:
             self.name = self.publication_type.name
         self.save()
