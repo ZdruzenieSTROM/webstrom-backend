@@ -908,7 +908,7 @@ class PublicationViewSet(viewsets.ModelViewSet):
         publication = Publication.objects.filter(
             event=event, order=order).first()
         if publication is None:
-            publication = Publication.objects.create(
+            publication = Publication(
                 name=request.data.get('name'),
                 file=file,
                 event=event,
@@ -916,6 +916,7 @@ class PublicationViewSet(viewsets.ModelViewSet):
                 publication_type=publication_type
             )
             publication.generate_name()
+            publication.save()
 
         publication.file.save(publication.name, file)
         return Response(status=status.HTTP_201_CREATED)
