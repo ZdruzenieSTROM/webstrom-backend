@@ -275,8 +275,8 @@ class ProblemWithSolutionsSerializer(serializers.ModelSerializer):
             corrected_suffix = ''
             best_solutions = None
             best_solution_suffix = 'a'
-        num_solutions = self.get_series_num_solutions(obj)
-        histogram = self.get_series_histogram(obj)
+        num_solutions = self.get_total_solutions(obj)
+        histogram = self.get_histogram(obj)
         return f'\\vzorak{{{corrected_suffix}}}'\
             f'{{{self.format_list_of_names(corrected_by)}}}'\
             f'{{{num_solutions}}}'\
