@@ -20,7 +20,7 @@ from base.validators import school_year_validator
 from competition.exceptions import FreezingNotClosedResults
 from competition.querysets import ActiveQuerySet
 from competition.utils.school_year_manipulation import (
-    get_school_year_end_by_date, get_school_year_start_by_date)
+    get_school_year_end_by_date)
 from personal.models import Profile, School
 from user.models import User
 
@@ -79,7 +79,7 @@ class Competition(models.Model):
 
     def can_user_participate(self, user):
         if self.min_years_until_graduation is not None:
-            return user.profile.year_of_graduation-get_school_year_start_by_date() \
+            return user.profile.year_of_graduation-get_school_year_end_by_date() \
                 >= self.min_years_until_graduation
         return True
 
