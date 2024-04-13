@@ -271,8 +271,11 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
         if len(existing_solutions) > 0 and late_tag is not None and not late_tag.can_resubmit:
             raise exceptions.ValidationError(
                 detail='Túto úlohu už nie je možné odovzdať znova.')
+        for solution in existing_solutions:
+            solution.solution.delete()
         Solution.objects.filter(
             problem=problem, semester_registration=event_registration).delete()
+
         solution = Solution.objects.create(
             problem=problem,
             semester_registration=event_registration,
