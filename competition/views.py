@@ -203,8 +203,7 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
         Volá sa pri vytvarani objektu,
         checkuju sa tu permissions, ci user vie vytvorit problem v danej sutazi
         """
-        series = serializer.validated_data['series']
-        if series.can_user_modify(self.request.user):
+        if Problem.can_user_create(self.request.user, serializer.validated_data):
             serializer.save()
         else:
             raise exceptions.PermissionDenied(
@@ -454,6 +453,17 @@ class SeriesViewSet(ModelViewSetWithSerializerContext):
     serializer_class = SeriesWithProblemsSerializer
     permission_classes = (CompetitionRestrictedPermission,)
     http_method_names = ['get', 'head', 'put', 'patch', "post"]
+
+    def perform_create(self, serializer):
+        """
+        Vola sa pri vytvarani objektu,
+        checkuju sa tu permissions, ci user vie vytvorit semester v danej sutazi
+        """
+        if Series.can_user_create(self.request.user, serializer.validated_data):
+            serializer.save()
+        else:
+            raise exceptions.PermissionDenied(
+                'Nedostatočné práva na vytvorenie tohoto objektu')
 
     @staticmethod
     def __create_result_json(series: Series) -> dict:
@@ -793,8 +803,7 @@ class EventViewSet(ModelViewSetWithSerializerContext):
         Vola sa pri vytvarani objektu,
         checkuju sa tu permissions, ci user vie vytvorit event v danej sutazi
         """
-        competition = serializer.validated_data['competition']
-        if competition.can_user_modify(self.request.user):
+        if Event.can_user_create(self.request.user, serializer.validated_data):
             serializer.save()
         else:
             raise exceptions.PermissionDenied(
@@ -874,8 +883,7 @@ class PublicationViewSet(viewsets.ModelViewSet):
         Vola sa pri vytvarani objektu,
         checkuju sa tu permissions, ci user vie vytvorit publication v danom evente
         '''
-        event = serializer.validated_data['event']
-        if event.can_user_modify(self.request.user):
+        if Publication.can_user_create(self.request.user, serializer.validated_data):
             serializer.save()
         else:
             raise exceptions.PermissionDenied(

@@ -42,9 +42,6 @@ class CompetitionRestrictedPermission(permissions.BasePermission):
         if request.method in permissions.SAFE_METHODS:
             return True
 
-        if request.method == 'POST':
-            return view.get_serializer().Meta.model.can_user_create(request.user, request.data)
-
         return request.user.is_authenticated and request.user.is_staff
 
     def has_object_permission(self, request, view, obj):
