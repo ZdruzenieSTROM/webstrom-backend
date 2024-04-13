@@ -196,7 +196,6 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
     queryset = Problem.objects.all()
     serializer_class = ProblemSerializer
     permission_classes = (ProblemPermission,)
-    MAX_SUBMITTED_SOLUTIONS = 10
 
     def perform_create(self, serializer):
         """
