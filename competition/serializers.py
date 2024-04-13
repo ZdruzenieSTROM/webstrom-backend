@@ -36,9 +36,14 @@ class PublicationTypeSerializer(serializers.ModelSerializer):
 
 @ts_interface(context='competition')
 class PublicationSerializer(serializers.ModelSerializer):
+    verbose_name = serializers.SerializerMethodField('get_verbose_name')
+
     class Meta:
         model = models.Publication
         fields = '__all__'
+
+    def get_verbose_name(self, obj):
+        return str(obj)
 
 
 @ts_interface(context='competition')
@@ -50,6 +55,7 @@ class RegistrationLinkSerializer(serializers.ModelSerializer):
 
 @ts_interface(context='competition')
 class EventSerializer(ModelWithParticipationSerializer):
+    verbose_name = serializers.SerializerMethodField('get_verbose_name')
     publication_set = PublicationSerializer(many=True, read_only=True)
     registration_link = RegistrationLinkSerializer(
         many=False,
@@ -73,6 +79,9 @@ class EventSerializer(ModelWithParticipationSerializer):
             registration_link=registration_link,
             **validated_data,
         )
+
+    def get_verbose_name(self, obj):
+        return str(obj)
 
 
 @ts_interface(context='competition')
@@ -154,6 +163,7 @@ class ProblemSerializer(serializers.ModelSerializer):
         'get_submitted')
     num_comments = serializers.SerializerMethodField(
         'get_num_comments')
+    verbose_name = serializers.SerializerMethodField('get_verbose_name')
     # correction = ProblemCorrectionSerializer(many=False,)
 
     def get_num_comments(self, obj):
@@ -179,6 +189,9 @@ class ProblemSerializer(serializers.ModelSerializer):
                 return None
             return SolutionSerializer(solution).data
         return None
+
+    def get_verbose_name(self, obj):
+        return str(obj)
 
 
 @ts_interface(context='competition')
@@ -300,14 +313,16 @@ class SeriesWithProblemsSerializer(ModelWithParticipationSerializer):
     can_submit = serializers.SerializerMethodField('get_can_submit')
     can_resubmit = serializers.SerializerMethodField('get_can_resubmit')
     complete = serializers.SerializerMethodField('get_complete')
+    verbose_name = serializers.SerializerMethodField('get_verbose_name')
 
     class Meta:
         model = models.Series
         exclude = ['sum_method', 'frozen_results']
-        include = ['complete', 'problems', 'can_submit', 'can_resubmit']
+        include = ['complete', 'problems', 'can_submit',
+                   'can_resubmit', 'verbose_name']
         read_only_fields = [
             'complete',
-            'can_submit', 'can_resubmit']
+            'can_submit', 'can_resubmit', 'verbose_name']
 
     def get_can_submit(self, obj):
         return obj.can_submit
@@ -320,6 +335,9 @@ class SeriesWithProblemsSerializer(ModelWithParticipationSerializer):
 
     def get_event(self, obj):
         return obj.semester
+
+    def get_verbose_name(self, obj):
+        return str(obj)
 
 
 @ts_interface(context='competition')

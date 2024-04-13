@@ -178,10 +178,15 @@ class Event(models.Model):
         return Profile.objects.filter(eventregistration_set__event=self.pk)
 
     def __str__(self):
-        if self.semester:
+        try:
             return str(self.semester)
-
-        return f'{self.competition.name}, {self.year}. ročník - {self.season_code}'
+        except Event.semester.RelatedObjectDoesNotExist:
+            name_components = [f'{self.competition.name}, {self.year}. ročník']
+            if self.season_code != 2:
+                name_components.append(self.season)
+            if self.additional_name:
+                name_components.append(self.additional_name)
+            return ' - '.join(name_components)
 
     @property
     def is_active(self):
@@ -725,7 +730,7 @@ class Publication(models.Model):
         self.save()
 
     def __str__(self):
-        return self.name
+        return f'{self.event} - {self.name}'
 
     def can_user_modify(self, user):
         return self.event.can_user_modify(user)
