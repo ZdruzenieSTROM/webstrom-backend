@@ -202,7 +202,8 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
         Volá sa pri vytvarani objektu,
         checkuju sa tu permissions, ci user vie vytvorit problem v danej sutazi
         """
-        if Problem.can_user_create(self.request.user, serializer.validated_data):
+        series = serializer.validated_data['series']
+        if series.can_user_modify(self.request.user):
             serializer.save()
         else:
             raise exceptions.PermissionDenied(
