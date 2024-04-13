@@ -86,7 +86,7 @@ class CompetitionTypeSerializer(serializers.ModelSerializer):
 class CompetitionSerializer(serializers.ModelSerializer):
     competition_type = CompetitionTypeSerializer(many=False, read_only=True)
     upcoming_or_current_event = serializers.SerializerMethodField(
-        'get_upcoming_or_current')
+        'get_upcoming_or_current_event')
     history_events = serializers.SerializerMethodField('get_history_events')
 
     class Meta:
@@ -103,7 +103,7 @@ class CompetitionSerializer(serializers.ModelSerializer):
             'sites'
         ]
 
-    def get_upcoming_or_current(self, obj):
+    def get_upcoming_or_current_event(self, obj):
         try:
             return EventSerializer(obj.event_set.upcoming_or_current()).data
         except models.Event.DoesNotExist:
@@ -151,7 +151,7 @@ class ProblemSerializer(serializers.ModelSerializer):
         read_only_fields = ['series', 'submitted', 'num_comments']
 
     submitted = serializers.SerializerMethodField(
-        'submitted_solution')
+        'get_submitted')
     num_comments = serializers.SerializerMethodField(
         'get_num_comments')
     # correction = ProblemCorrectionSerializer(many=False,)
@@ -161,7 +161,7 @@ class ProblemSerializer(serializers.ModelSerializer):
         user = self.context['request'].user if 'request' in self.context else AnonymousUser
         return len(list(obj.get_comments(user)))
 
-    def submitted_solution(self, obj):
+    def get_submitted(self, obj):
         if 'request' in self.context:
             if (
                 self.context['request'].user.is_anonymous or
@@ -188,12 +188,12 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     posted_by_name = serializers.SerializerMethodField('get_posted_by_name')
-    edit_allowed = serializers.SerializerMethodField('can_edit')
+    edit_allowed = serializers.SerializerMethodField('get_edit_allowed')
 
     def get_posted_by_name(self, obj: models.Comment):
         return obj.posted_by.get_full_name()
 
-    def can_edit(self, obj: models.Comment):
+    def get_edit_allowed(self, obj: models.Comment):
         if 'request' in self.context:
             return obj.can_user_modify(self.context['request'].user)
         return None
@@ -237,9 +237,9 @@ class ProblemWithSolutionsSerializer(serializers.ModelSerializer):
     correction = ProblemCorrectionSerializer(many=False)
     series = SeriesSerializer()
 
-    histogram = serializers.SerializerMethodField('get_series_histogram')
+    histogram = serializers.SerializerMethodField('get_histogram')
     total_solutions = serializers.SerializerMethodField(
-        'get_series_num_solutions')
+        'get_total_solutions')
     tex_header = serializers.SerializerMethodField('get_tex_header')
 
     class Meta:
@@ -275,8 +275,8 @@ class ProblemWithSolutionsSerializer(serializers.ModelSerializer):
             corrected_suffix = ''
             best_solutions = None
             best_solution_suffix = 'a'
-        num_solutions = self.get_series_num_solutions(obj)
-        histogram = self.get_series_histogram(obj)
+        num_solutions = self.get_total_solutions(obj)
+        histogram = self.get_histogram(obj)
         return f'\\vzorak{{{corrected_suffix}}}'\
             f'{{{self.format_list_of_names(corrected_by)}}}'\
             f'{{{num_solutions}}}'\
@@ -284,10 +284,10 @@ class ProblemWithSolutionsSerializer(serializers.ModelSerializer):
             f'{{{self.format_list_of_names(best_solutions)}}}'\
             f'{{{self.format_histogram(histogram)}}}'
 
-    def get_series_histogram(self, obj):
+    def get_histogram(self, obj):
         return models.Problem.get_stats(obj).get('histogram')
 
-    def get_series_num_solutions(self, obj):
+    def get_total_solutions(self, obj):
         return models.Problem.get_stats(obj).get('num_solutions')
 
 
