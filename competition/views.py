@@ -204,7 +204,7 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
         checkuju sa tu permissions, ci user vie vytvorit problem v danej sutazi
         """
         series = serializer.validated_data['series']
-        if series.can_user_modify(self.request.user):
+        if series.can_user_create(self.request.user, serializer.validated_data):
             serializer.save()
         else:
             raise exceptions.PermissionDenied(
@@ -618,7 +618,7 @@ class SemesterViewSet(ModelViewSetWithSerializerContext):
         checkuju sa tu permissions, ci user vie vytvorit semester v danej sutazi
         """
         competition = serializer.validated_data['competition']
-        if competition.can_user_modify(self.request.user):
+        if competition.can_user_create(self.request.user, serializer.validated_data):
             serializer.save()
         else:
             raise exceptions.PermissionDenied(
@@ -794,7 +794,7 @@ class EventViewSet(ModelViewSetWithSerializerContext):
         checkuju sa tu permissions, ci user vie vytvorit event v danej sutazi
         """
         competition = serializer.validated_data['competition']
-        if competition.can_user_modify(self.request.user):
+        if competition.can_user_create(self.request.user, serializer.validated_data):
             serializer.save()
         else:
             raise exceptions.PermissionDenied(
@@ -875,7 +875,7 @@ class PublicationViewSet(viewsets.ModelViewSet):
         checkuju sa tu permissions, ci user vie vytvorit publication v danom evente
         '''
         event = serializer.validated_data['event']
-        if event.can_user_modify(self.request.user):
+        if event.can_user_create(self.request.user, serializer.validated_data):
             serializer.save()
         else:
             raise exceptions.PermissionDenied(
