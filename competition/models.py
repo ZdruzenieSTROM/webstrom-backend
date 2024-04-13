@@ -77,7 +77,7 @@ class Competition(models.Model):
                                               related_name='competition_permissions')
 
     def can_user_participate(self, user):
-        if self.min_years_until_graduation:
+        if self.min_years_until_graduation is not None:
             return user.profile.year_of_graduation-get_school_year_start_by_date() \
                 >= self.min_years_until_graduation
         return True
