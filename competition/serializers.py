@@ -361,6 +361,7 @@ class SemesterWithProblemsSerializer(ModelWithParticipationSerializer):
     )
     publication_set = PublicationSerializer(many=True, read_only=True)
     complete = serializers.SerializerMethodField('get_complete')
+    verbose_name = serializers.SerializerMethodField('get_verbose_name')
 
     class Meta:
         model = models.Semester
@@ -383,6 +384,9 @@ class SemesterWithProblemsSerializer(ModelWithParticipationSerializer):
         for tag in late_tags:
             semester.late_tags.add(tag)
         return semester
+
+    def get_verbose_name(self, obj):
+        return str(obj)
 
 
 @ts_interface(context='competition')
