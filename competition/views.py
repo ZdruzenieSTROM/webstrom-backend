@@ -365,17 +365,17 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
         """Nahrá .zip archív s opravenými riešeniami (pdf-kami)."""
 
         if 'file' not in request.data:
-            raise exceptions.ParseError(detail='No file attached')
+            raise exceptions.ParseError(detail='Žiaden súbor nebol pripojený')
 
         zfile = request.data['file']
 
         if not zipfile.is_zipfile(zfile):
             raise exceptions.ParseError(
-                detail='Attached file is not a zip file')
+                detail='Priložený súbor nie je zip')
 
         with zipfile.ZipFile(zfile) as zfile:
             if zfile.testzip():
-                raise exceptions.ParseError(detail='Zip file is corrupted')
+                raise exceptions.ParseError(detail='Súbor zip poškodený')
 
             parsed_filenames = []
             errors = []
@@ -394,20 +394,20 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
                 except (IndexError, ValueError, AssertionError):
                     errors.append({
                         'filename': filename,
-                        'status': 'Cannot parse file'
+                        'status': 'Nedá sa prečítať názov súboru. Skontroluj, že názov súboru je v tvare BODY-MENO-ID_ULOHY-ID_REGISTRACIE_USERA.pdf'
                     })
                     continue
                 except EventRegistration.DoesNotExist:
                     errors.append({
                         'filename': filename,
-                        'status': f'User registration with id {registration_pk} does not exist'
+                        'status': f'Registrácia užívateľa s id {registration_pk} neexistuje'
                     })
                     continue
                 except Solution.DoesNotExist:
                     errors.append({
                         'filename': filename,
-                        'status': f'Solution with registration id {registration_pk}'
-                        f'and problem id {problem_pk} does not exist'
+                        'status': f'Riešenie pre registráciu užívateľa s id {registration_pk}'
+                        f'a úlohy id {problem_pk} neexistuje'
                     })
                     continue
 
