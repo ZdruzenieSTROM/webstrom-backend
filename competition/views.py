@@ -196,7 +196,6 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
     queryset = Problem.objects.all()
     serializer_class = ProblemSerializer
     permission_classes = (ProblemPermission,)
-    MAX_SUBMITTED_SOLUTIONS = 10
 
     def perform_create(self, serializer):
         """
@@ -271,18 +270,14 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
         if len(existing_solutions) > 0 and late_tag is not None and not late_tag.can_resubmit:
             raise exceptions.ValidationError(
                 detail='Túto úlohu už nie je možné odovzdať znova.')
+        Solution.objects.filter(
+            problem=problem, semester_registration=event_registration).delete()
         solution = Solution.objects.create(
             problem=problem,
             semester_registration=event_registration,
             late_tag=late_tag,
             is_online=True
         )
-
-        # delete solutions until there is less than allowed amount
-        while len(existing_solutions) > self.MAX_SUBMITTED_SOLUTIONS - 1:
-            Solution.objects.filter(
-                problem=problem, semester_registration=event_registration)\
-                .earliest('uploaded_at').delete()
         solution.solution.save(
             solution.get_solution_file_name(), file, save=True)
 
