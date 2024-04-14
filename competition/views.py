@@ -375,7 +375,7 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
 
         with zipfile.ZipFile(zfile) as zfile:
             if zfile.testzip():
-                raise exceptions.ParseError(detail='Súbor zip poškodený')
+                raise exceptions.ParseError(detail='Súbor zip je poškodený')
 
             parsed_filenames = []
             errors = []
@@ -394,19 +394,20 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
                 except (IndexError, ValueError, AssertionError):
                     errors.append({
                         'filename': filename,
-                        'status': 'Nedá sa prečítať názov súboru. Skontroluj, že názov súboru je v tvare BODY-MENO-ID_ULOHY-ID_REGISTRACIE_USERA.pdf'
+                        'status': 'Nedá sa prečítať názov súboru. Skontroluj, že názov súboru' 
+                        'je v tvare BODY-MENO-ID_ULOHY-ID_REGISTRACIE_USERA.pdf'
                     })
                     continue
                 except EventRegistration.DoesNotExist:
                     errors.append({
                         'filename': filename,
-                        'status': f'Registrácia užívateľa s id {registration_pk} neexistuje'
+                        'status': f'Registrácia používateľa s id {registration_pk} neexistuje'
                     })
                     continue
                 except Solution.DoesNotExist:
                     errors.append({
                         'filename': filename,
-                        'status': f'Riešenie pre registráciu užívateľa s id {registration_pk}'
+                        'status': f'Riešenie pre registráciu používateľa s id {registration_pk}'
                         f'a úlohy id {problem_pk} neexistuje'
                     })
                     continue
