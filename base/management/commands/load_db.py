@@ -38,9 +38,9 @@ PROBLEM_QUERY = '''
 '''
 
 COMPETITION_ID_MAPPING = {
-    1: Competition.objects.get(pk=1),
-    2: Competition.objects.get(pk=3),
-    3: Competition.objects.get(pk=2)
+    1: Competition.objects.get(slug='strom'),
+    2: Competition.objects.get(slug='matik'),
+    3: Competition.objects.get(slug='malynar')
 }
 
 SCHOOL_QUERY = '''
@@ -178,7 +178,6 @@ class Command(BaseCommand):
                 semester=semester_id_mapping[series['season_id']],
                 order=series['number'],
                 deadline=localize(series['submission_deadline']),
-                complete=False,
                 sum_method=SUM_METHOD_DICT[series['sum_method']]
 
             )
@@ -342,14 +341,14 @@ class Command(BaseCommand):
             # Save mapping
             # json.dump(school_id_map, open(
             #     'schools.json', 'w', encoding='utf-8'))
-            school_id_map = self._get_school_mapping_from_file(
-                path.join('base', 'management', 'commands', 'schools_mapping.json'))
-            user_id_map = self._load_users(conn, school_id_map)
-            print(f'Načítaných {len(user_id_map)} používateľov')
-            self._load_user_registrations(
-                conn, user_id_map, semester_id_map, school_id_map)
-            print('Načítané registrácie')
-            self._load_solutions(conn, problem_id_map, user_id_map)
+            # school_id_map = self._get_school_mapping_from_file(
+            #     path.join('base', 'management', 'commands', 'schools_mapping.json'))
+            # user_id_map = self._load_users(conn, school_id_map)
+            # print(f'Načítaných {len(user_id_map)} používateľov')
+            # self._load_user_registrations(
+            #     conn, user_id_map, semester_id_map, school_id_map)
+            # print('Načítané registrácie')
+            # self._load_solutions(conn, problem_id_map, user_id_map)
         finally:
             if conn:
                 conn.close()
