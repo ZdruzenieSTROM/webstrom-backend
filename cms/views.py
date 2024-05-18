@@ -1,5 +1,11 @@
 
 
+from datetime import datetime
+
+from django.conf import settings
+from django.shortcuts import render
+from django.templatetags.l10n import localize
+from django.utils.timezone import now
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.request import Request
@@ -10,6 +16,7 @@ from cms.permissions import PostPermission
 from cms.serializers import (InfoBannerSerializer, LogoSerializer,
                              MenuItemShortSerializer,
                              MessageTemplateSerializer, PostSerializer)
+from competition.models import Competition, Event, Semester, Series
 
 
 class MenuItemViewSet(viewsets.ReadOnlyModelViewSet):
@@ -61,6 +68,66 @@ class InfoBannerViewSet(viewsets.ModelViewSet):
     serializer_class = InfoBannerSerializer
     queryset = InfoBanner.objects.visible()
     filterset_fields = ['event', 'page', 'series']
+
+    def format_date(self, datetime_: datetime):
+        return datetime_.strftime("%d.%m.%Y %H:%M")
+
+    @action(methods=['get'], detail=False, url_path=r'series-problems/(?P<series_id>\d+)')
+    def series_problems(self, request, series_id: int) -> list[str]:
+        series_messages = InfoBanner.objects.filter(series=series_id).all()
+        messages = [message.render_message() for message in series_messages]
+        series = Series.objects.get(pk=series_id)
+        if series.complete:
+            messages.append('Séria je uzavretá')
+        elif series.can_submit:
+            messages.append(
+                f'Termín série: {self.format_date(series.deadline)}'
+            )
+        else:
+            messages.append('Prebieha opravovanie')
+        return Response(messages)
+
+    @action(methods=['get'], detail=False, url_path=r'series-results/(?P<series_id>\d+)')
+    def series_results(self, request, series_id):
+        series = Series.objects.get(pk=series_id)
+        if not series.complete:
+            return Response(['Poradie nie je uzavreté'])
+        return Response([])
+
+    @action(methods=['get'], detail=False, url_path=r'competition/(?P<competition_id>\d+)')
+    def event(self, request, competition_id: int) -> list[str]:
+        competition = Competition.objects.get(pk=competition_id)
+        try:
+            event = Event.objects.filter(
+                competition=competition_id, end__gte=now()).earliest('start')
+        except Event.DoesNotExist:
+            return Response([])
+        event_messages = InfoBanner.objects.filter(event=event).all()
+        messages = [message.render_message() for message in event_messages]
+
+        if event.registration_link is not None:
+            if competition.competition_type.name == 'Seminár':
+                if event.registration_link.start > now():
+                    messages.append(
+                        'Prihlasovanie na sústredenie bude spustené '
+                        f'{self.format_date(event.registration_link.start)}')
+                elif event.registration_link.end > now():
+                    messages.append(
+                        'Prihlasovanie na sústredenie končí '
+                        f'{self.format_date(event.registration_link.end)}')
+            else:
+                if event.registration_link.start > now():
+                    messages.append(
+                        'Registrácia bude spustená '
+                        f'{self.format_date(event.registration_link.start)}')
+                elif event.registration_link.end > now():
+                    messages.append(
+                        'Registrácia bude uzavretá '
+                        f'{self.format_date(event.registration_link.end)}')
+
+                else:
+                    messages.append('Registrácia ukončená')
+        return Response(messages)
 
 
 class MessageTemplateViewSet(viewsets.ModelViewSet):
