@@ -141,11 +141,14 @@ class InfoBanner(ModelWithVisibility):
         verbose_name='správa',
         help_text='Správa sa zobrazí v baneri. Správa musí byť stručná - jedna krátka veta.',
         max_length=200)
-    page = models.ForeignKey(FlatPage, on_delete=models.CASCADE, null=True)
-    event = models.ForeignKey(Event, on_delete=models.CASCADE, null=True)
-    series = models.ForeignKey(Series, on_delete=models.CASCADE, null=True)
+    page = models.ForeignKey(
+        FlatPage, on_delete=models.CASCADE, null=True, blank=True)
+    event = models.ForeignKey(
+        Event, on_delete=models.CASCADE, null=True, blank=True)
+    series = models.ForeignKey(
+        Series, on_delete=models.CASCADE, null=True, blank=True)
     message_template = models.ForeignKey(
-        MessageTemplate, on_delete=models.PROTECT, null=True)
+        MessageTemplate, on_delete=models.PROTECT, null=True, blank=True)
 
     def clean(self):
         try:
