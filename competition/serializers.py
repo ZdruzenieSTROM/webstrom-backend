@@ -126,7 +126,7 @@ class CompetitionSerializer(serializers.ModelSerializer):
 class EventRegistrationSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.EventRegistration
-        fields = ['school', 'grade', 'profile', 'id', 'event']
+        fields = ['school', 'grade', 'profile', 'verbose_name', 'id', 'event']
     school = SchoolShortSerializer(many=False)
     grade = serializers.SlugRelatedField(
         slug_field='tag', many=False, read_only=True)
