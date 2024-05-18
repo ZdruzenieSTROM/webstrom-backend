@@ -3,7 +3,8 @@ from django.http import HttpResponseRedirect
 
 from competition.models import (Comment, Competition, Event, EventRegistration,
                                 LateTag, Problem, ProblemCorrection,
-                                Publication, Semester, Series, Solution)
+                                Publication, RegistrationLink, Semester,
+                                Series, Solution)
 
 
 @admin.register(Competition)
@@ -184,6 +185,15 @@ class EventRegistrationAdmin(admin.ModelAdmin):
 
     ordering = (
         'event',
+    )
+
+
+@admin.register(RegistrationLink)
+class RegistrationLinkAdmin(admin.ModelAdmin):
+    list_display = (
+        'event',
+        'start',
+        'end'
     )
 
 
