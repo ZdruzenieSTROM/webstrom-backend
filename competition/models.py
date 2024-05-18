@@ -166,6 +166,7 @@ class Event(models.Model):
         "competition.RegistrationLink",
         on_delete=models.SET_NULL,
         null=True,
+        blank=True
     )
 
     objects = ActiveQuerySet.as_manager()
