@@ -2,9 +2,6 @@
 
 from datetime import datetime
 
-from django.conf import settings
-from django.shortcuts import render
-from django.templatetags.l10n import localize
 from django.utils.timezone import now
 from rest_framework import viewsets
 from rest_framework.decorators import action
@@ -16,7 +13,7 @@ from cms.permissions import PostPermission
 from cms.serializers import (InfoBannerSerializer, LogoSerializer,
                              MenuItemShortSerializer,
                              MessageTemplateSerializer, PostSerializer)
-from competition.models import Competition, Event, Semester, Series
+from competition.models import Competition, Event, Series
 
 
 class MenuItemViewSet(viewsets.ReadOnlyModelViewSet):
