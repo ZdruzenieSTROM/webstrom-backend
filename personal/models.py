@@ -120,7 +120,7 @@ class Profile(models.Model):
             pk=value).get_year_of_graduation_by_date()
 
     def __str__(self):
-        return str(self.user)
+        return f'{self.full_name()} ({self.user})'
 
     def full_name(self):
         return f'{self.first_name} {self.last_name}'
