@@ -21,9 +21,15 @@ class DistrictSerializer(serializers.ModelSerializer):
 
 @ts_interface(context='personal')
 class SchoolSerializer(serializers.ModelSerializer):
+    verbose_name = serializers.SerializerMethodField('get_verbose_name')
+
     class Meta:
         model = School
-        fields = '__all__'
+        fields = ['code', 'name', 'abbreviation', 'street',
+                  'city', 'zip_code', 'email', 'district', 'verbose_name']
+
+    def get_verbose_name(self, obj):
+        return str(obj)
 
 
 @ts_interface(context='personal')
