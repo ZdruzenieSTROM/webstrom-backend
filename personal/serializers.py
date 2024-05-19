@@ -22,14 +22,19 @@ class DistrictSerializer(serializers.ModelSerializer):
 @ts_interface(context='personal')
 class SchoolSerializer(serializers.ModelSerializer):
     verbose_name = serializers.SerializerMethodField('get_verbose_name')
+    id = serializers.SerializerMethodField('get_id')
 
     class Meta:
         model = School
-        fields = ['code', 'name', 'abbreviation', 'street',
+        fields = ['id', 'code', 'name', 'abbreviation', 'street',
                   'city', 'zip_code', 'email', 'district', 'verbose_name']
+        read_only_fields = ['id', 'verbose_name']
 
     def get_verbose_name(self, obj):
         return str(obj)
+
+    def get_id(self, obj):
+        return obj.code
 
 
 @ts_interface(context='personal')
