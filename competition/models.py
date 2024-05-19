@@ -1,5 +1,5 @@
 import datetime
-from typing import Optional
+from typing import Iterable, Optional
 
 from django.conf import settings
 from django.contrib.sites.models import Site
@@ -619,6 +619,14 @@ class Vote(models.IntegerChoices):
     POSITIVE = 1, 'pozitívny'
 
 
+def get_solution_path(instance, filename):
+    return instance.get_solution_path()
+
+
+def get_corrected_solution_path(instance, filename):
+    return instance.get_corrected_solution_path()
+
+
 class Solution(models.Model):
     """
     Popisuje riešenie úlohy od užívateľa. Obsahuje nahraté aj opravné riešenie, body
@@ -634,11 +642,11 @@ class Solution(models.Model):
     solution = RestrictedFileField(
         content_types=['application/pdf'],
         storage=private_storage,
-        verbose_name='účastnícke riešenie', blank=True, upload_to='solutions/user_solutions')
+        verbose_name='účastnícke riešenie', blank=True, upload_to=get_solution_path)
     corrected_solution = RestrictedFileField(
         content_types=['application/pdf'],
         storage=private_storage,
-        verbose_name='opravené riešenie', blank=True, upload_to='solutions/corrected/')
+        verbose_name='opravené riešenie', blank=True, upload_to=get_corrected_solution_path)
 
     score = models.PositiveSmallIntegerField(
         verbose_name='body', null=True, blank=True)
@@ -664,9 +672,15 @@ class Solution(models.Model):
         return f'{self.semester_registration.profile.user.get_full_name_camel_case()}'\
                f'-{self.problem.id}-{self.semester_registration.id}.pdf'
 
+    def get_solution_file_path(self):
+        return f'solutions/user_solutions/{self.get_solution_file_path()}'
+
     def get_corrected_solution_file_name(self):
-        return f'corrected/{self.semester_registration.profile.user.get_full_name_camel_case()}'\
+        return f'{self.semester_registration.profile.user.get_full_name_camel_case()}'\
                f'-{self.problem.id}-{self.semester_registration.id}_corrected.pdf'
+
+    def get_corrected_solution_file_path(self):
+        return f'solutions/corrected/{self.get_corrected_solution_file_path()}'
 
     def can_user_modify(self, user):
         return self.problem.can_user_modify(user)
