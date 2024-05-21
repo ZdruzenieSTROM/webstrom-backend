@@ -10,6 +10,7 @@ urlpatterns = [
     path('cms/', include('cms.urls')),
     path('personal/', include('personal.urls')),
     path('base/', include('base.urls')),
+    path('protected/', include('downloads.urls')),
     # Dočasná cesta pre allauth bez rest frameworku
     path('accounts/', include('allauth.urls')),
 ]

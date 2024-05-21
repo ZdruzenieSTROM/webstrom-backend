@@ -19,6 +19,7 @@ Django==3.2.25
 django-allauth==0.58.2
 django-filter==23.5
 django-rest-swagger==2.2.0
+django-sendfile2==0.7.1
 django-typomatic==2.5.0
 djangorestframework==3.14.0
 drf-writable-nested==0.7.0
