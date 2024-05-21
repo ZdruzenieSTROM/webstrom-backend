@@ -138,6 +138,21 @@ class EventRegistrationSerializer(serializers.ModelSerializer):
 
 
 @ts_interface(context='competition')
+class EventRegistrationShortSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.EventRegistration
+        fields = ['school', 'profile', 'id', 'event']
+
+    def create(self, validated_data):
+        models.EventRegistration.objects.create(
+
+        )
+
+    def update(self, validated_data):
+        pass
+
+
+@ts_interface(context='competition')
 class ProblemCorrectionSerializer(serializers.ModelSerializer):
     corrected_by = serializers.SerializerMethodField('get_corrected_by')
     best_solution = serializers.SerializerMethodField('get_best_solution')

@@ -28,6 +28,7 @@ from competition.permissions import (CommentPermission,
 from competition.serializers import (CommentSerializer, CompetitionSerializer,
                                      CompetitionTypeSerializer,
                                      EventRegistrationSerializer,
+                                     EventRegistrationShortSerializer,
                                      EventSerializer, GradeSerializer,
                                      LateTagSerializer, ProblemSerializer,
                                      ProblemWithSolutionsSerializer,
@@ -866,6 +867,11 @@ class EventRegistrationViewSet(viewsets.ModelViewSet):
     serializer_class = EventRegistrationSerializer
     filterset_fields = ['event', 'profile', ]
     permission_classes = (CompetitionRestrictedPermission,)
+
+    def get_serializer_class(self):
+        if self.action in ('retrieve', 'list'):
+            return EventRegistrationSerializer
+        return EventRegistrationShortSerializer
 
 
 class PublicationTypeViewSet(viewsets.ReadOnlyModelViewSet):
