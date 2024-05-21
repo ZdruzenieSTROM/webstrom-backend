@@ -32,7 +32,7 @@ class SchoolViewSet(viewsets.ModelViewSet):
     serializer_class = SchoolSerializer
     filterset_fields = ['district', 'district__county']
     filter_backends = [DjangoFilterBackend, SearchFilter]
-    search_fields = ['name', 'street']
+    search_fields = ['name', 'street', 'city']
 
     def destroy(self, request, *args, **kwargs):
         """Zmazanie školy"""

@@ -280,10 +280,11 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
             problem=problem,
             semester_registration=event_registration,
             late_tag=late_tag,
-            is_online=True
+            is_online=True,
+            solution=file
         )
-        solution.solution.save(
-            solution.get_solution_file_name(), file, save=True)
+        # solution.solution.save(
+        #     solution.get_solution_file_name(), file, save=True)
 
         return Response(status=status.HTTP_201_CREATED)
 
@@ -394,7 +395,7 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
                 except (IndexError, ValueError, AssertionError):
                     errors.append({
                         'filename': filename,
-                        'status': 'Nedá sa prečítať názov súboru. Skontroluj, že názov súboru' 
+                        'status': 'Nedá sa prečítať názov súboru. Skontroluj, že názov súboru'
                         'je v tvare BODY-MENO-ID_ULOHY-ID_REGISTRACIE_USERA.pdf'
                     })
                     continue
@@ -583,7 +584,7 @@ class SolutionViewSet(viewsets.ModelViewSet):
             raise exceptions.ParseError(
                 detail='Riešenie nie je vo formáte pdf')
         solution.solution.save(
-            solution.get_solution_file_name(), file, save=True
+            solution.get_solution_file_path(), file, save=True
         )
         return Response(status=status.HTTP_201_CREATED)
 
@@ -600,7 +601,7 @@ class SolutionViewSet(viewsets.ModelViewSet):
             raise exceptions.ParseError(
                 detail='Riešenie nie je vo formáte pdf')
         solution.corrected_solution.save(
-            solution.get_corrected_solution_file_name(), file, save=True
+            solution.get_corrected_solution_file_path(), file, save=True
         )
         return Response(status=status.HTTP_201_CREATED)
 

@@ -24,7 +24,9 @@ from competition.utils.school_year_manipulation import \
 from personal.models import Profile, School
 from user.models import User
 
-private_storage = FileSystemStorage(location=settings.PRIVATE_STORAGE_ROOT)
+private_storage = FileSystemStorage(location=settings.PRIVATE_STORAGE_ROOT,
+                                    base_url='/protected/'
+                                    )
 
 
 class CompetitionType(models.Model):
@@ -620,6 +622,14 @@ class Vote(models.IntegerChoices):
     POSITIVE = 1, 'pozitívny'
 
 
+def get_solution_path(instance, filename): #pylint: disable=unused-argument
+    return instance.get_solution_file_path()
+
+
+def get_corrected_solution_path(instance, filename): #pylint: disable=unused-argument
+    return instance.get_corrected_solution_file_path()
+
+
 class Solution(models.Model):
     """
     Popisuje riešenie úlohy od užívateľa. Obsahuje nahraté aj opravné riešenie, body
@@ -635,11 +645,11 @@ class Solution(models.Model):
     solution = RestrictedFileField(
         content_types=['application/pdf'],
         storage=private_storage,
-        verbose_name='účastnícke riešenie', blank=True, upload_to='solutions/user_solutions')
+        verbose_name='účastnícke riešenie', blank=True, upload_to=get_solution_path)
     corrected_solution = RestrictedFileField(
         content_types=['application/pdf'],
         storage=private_storage,
-        verbose_name='opravené riešenie', blank=True, upload_to='solutions/corrected/')
+        verbose_name='opravené riešenie', blank=True, upload_to=get_corrected_solution_path)
 
     score = models.PositiveSmallIntegerField(
         verbose_name='body', null=True, blank=True)
@@ -665,12 +675,31 @@ class Solution(models.Model):
         return f'{self.semester_registration.profile.user.get_full_name_camel_case()}'\
                f'-{self.problem.id}-{self.semester_registration.id}.pdf'
 
+    def get_solution_file_path(self):
+        return f'solutions/user_solutions/{self.get_solution_file_name()}'
+
     def get_corrected_solution_file_name(self):
-        return f'corrected/{self.semester_registration.profile.user.get_full_name_camel_case()}'\
+        return f'{self.semester_registration.profile.user.get_full_name_camel_case()}'\
                f'-{self.problem.id}-{self.semester_registration.id}_corrected.pdf'
+
+    def get_corrected_solution_file_path(self):
+        return f'solutions/corrected/{self.get_corrected_solution_file_name()}'
 
     def can_user_modify(self, user):
         return self.problem.can_user_modify(user)
+
+    def can_access(self, user):
+        return self.semester_registration.profile.user == user or self.can_user_modify(user)
+
+    @classmethod
+    def get_by_filepath(cls, path):
+        try:
+            return cls.objects.get(solution=path)
+        except cls.DoesNotExist:
+            try:
+                return cls.objects.get(corrected_solution=path)
+            except cls.DoesNotExist:
+                return None
 
     @classmethod
     def can_user_create(cls, user: User, data: dict) -> bool:

@@ -126,11 +126,15 @@ class CompetitionSerializer(serializers.ModelSerializer):
 class EventRegistrationSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.EventRegistration
-        fields = ['school', 'grade', 'profile']
+        fields = ['school', 'grade', 'profile', 'verbose_name', 'id', 'event']
     school = SchoolShortSerializer(many=False)
     grade = serializers.SlugRelatedField(
         slug_field='tag', many=False, read_only=True)
     profile = ProfileShortSerializer(many=False)
+    verbose_name = serializers.SerializerMethodField('get_verbose_name')
+
+    def get_verbose_name(self, obj):
+        return str(obj)
 
 
 @ts_interface(context='competition')
