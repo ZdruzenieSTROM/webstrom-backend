@@ -1,5 +1,5 @@
 import datetime
-from typing import Iterable, Optional
+from typing import Optional
 
 from django.conf import settings
 from django.contrib.sites.models import Site
@@ -621,11 +621,11 @@ class Vote(models.IntegerChoices):
     POSITIVE = 1, 'pozitívny'
 
 
-def get_solution_path(instance, filename):
+def get_solution_path(instance, filename): #pylint: disable=unused-argument
     return instance.get_solution_file_path()
 
 
-def get_corrected_solution_path(instance, filename):
+def get_corrected_solution_path(instance, filename): #pylint: disable=unused-argument
     return instance.get_corrected_solution_file_path()
 
 
