@@ -803,7 +803,7 @@ class RegistrationLink(models.Model):
         return self.event.can_user_modify(user)
 
     def __str__(self):
-        return str(self.event)
+        return str(self.event) # pylint: disable=no-member
 
 
 class ProblemCorrection(models.Model):
