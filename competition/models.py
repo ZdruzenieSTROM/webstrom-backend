@@ -622,11 +622,11 @@ class Vote(models.IntegerChoices):
     POSITIVE = 1, 'pozitívny'
 
 
-def get_solution_path(instance, filename): #pylint: disable=unused-argument
+def get_solution_path(instance, filename):  # pylint: disable=unused-argument
     return instance.get_solution_file_path()
 
 
-def get_corrected_solution_path(instance, filename): #pylint: disable=unused-argument
+def get_corrected_solution_path(instance, filename):  # pylint: disable=unused-argument
     return instance.get_corrected_solution_file_path()
 
 
@@ -797,6 +797,9 @@ class RegistrationLink(models.Model):
     def can_user_modify(self, user):
         # pylint: disable=no-member
         return self.event.can_user_modify(user)
+
+    def __str__(self):
+        return str(self.event)
 
 
 class ProblemCorrection(models.Model):
