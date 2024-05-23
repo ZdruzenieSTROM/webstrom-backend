@@ -36,6 +36,8 @@ class CompetitionType(models.Model):
         verbose_name_plural = 'Typy súťaží'
 
     name = models.CharField('typ súťaže', max_length=200)
+    short_name = models.CharField(
+        verbose_name='Krátky jednoslovný názov', max_length=32)
 
     def __str__(self):
         return self.name
@@ -161,6 +163,8 @@ class Event(models.Model):
 
     start = models.DateTimeField(verbose_name='dátum začiatku súťaže')
     end = models.DateTimeField(verbose_name='dátum konca súťaže')
+    location = models.TextField(
+        verbose_name='Miesto konania', help_text='Napríklad "v Košiciach"', null=True, blank=True)
     additional_name = models.CharField(
         max_length=50, verbose_name='Prívlastok súťaže', null=True, blank=True)
 
