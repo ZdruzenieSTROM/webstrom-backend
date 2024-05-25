@@ -36,6 +36,8 @@ class CompetitionType(models.Model):
         verbose_name_plural = 'Typy súťaží'
 
     name = models.CharField('typ súťaže', max_length=200)
+    short_name = models.CharField(
+        verbose_name='Krátky jednoslovný názov', max_length=32)
 
     def __str__(self):
         return self.name
@@ -161,6 +163,8 @@ class Event(models.Model):
 
     start = models.DateTimeField(verbose_name='dátum začiatku súťaže')
     end = models.DateTimeField(verbose_name='dátum konca súťaže')
+    location = models.TextField(
+        verbose_name='Miesto konania', help_text='Napríklad "v Košiciach"', null=True, blank=True)
     additional_name = models.CharField(
         max_length=50, verbose_name='Prívlastok súťaže', null=True, blank=True)
 
@@ -622,11 +626,11 @@ class Vote(models.IntegerChoices):
     POSITIVE = 1, 'pozitívny'
 
 
-def get_solution_path(instance, filename): #pylint: disable=unused-argument
+def get_solution_path(instance, filename):  # pylint: disable=unused-argument
     return instance.get_solution_file_path()
 
 
-def get_corrected_solution_path(instance, filename): #pylint: disable=unused-argument
+def get_corrected_solution_path(instance, filename):  # pylint: disable=unused-argument
     return instance.get_corrected_solution_file_path()
 
 
@@ -797,6 +801,9 @@ class RegistrationLink(models.Model):
     def can_user_modify(self, user):
         # pylint: disable=no-member
         return self.event.can_user_modify(user)
+
+    def __str__(self):
+        return str(self.event) # pylint: disable=no-member
 
 
 class ProblemCorrection(models.Model):
