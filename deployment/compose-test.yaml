@@ -1,0 +1,32 @@
+version: "3"
+
+services:
+  webstrom-backend:
+    build:
+      dockerfile: deployment/webstrom-backend.dockerfile
+      context: ..
+
+    image: webstrom-test-backend
+
+    environment:
+      - DJANGO_SETTINGS_MODULE=webstrom.settings_test
+
+    volumes:
+      - /var/run/postgresql:/var/run/postgresql:rw
+
+    ports:
+      - "127.0.0.1:8920:8000"
+
+    restart: always
+
+  static-files:
+    build:
+      dockerfile: deployment/static-files.dockerfile
+      context: ..
+
+    image: webstrom-test-static
+
+    ports:
+      - "127.0.0.1:8921:80"
+
+    restart: always

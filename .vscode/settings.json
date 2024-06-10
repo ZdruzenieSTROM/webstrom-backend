@@ -6,6 +6,9 @@
         "editor.defaultFormatter": "ms-python.autopep8",
         "editor.formatOnSave": true,
     },
+    "files.associations": {
+        "compose-*.yaml": "dockercompose"
+    },
     "git.branchProtection": [
         "master"
     ],
