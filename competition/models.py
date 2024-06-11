@@ -542,7 +542,7 @@ class Grade(models.Model):
         verbose_name_plural = 'ročníky účastníka'
         ordering = ['years_until_graduation', ]
 
-    name = models.CharField(verbose_name='názov ročníku', max_length=32)
+    name = models.CharField(verbose_name='názov ročníku', max_length=256)
     tag = models.CharField(verbose_name='skratka', max_length=2, unique=True)
     years_until_graduation = models.SmallIntegerField(
         verbose_name='počet rokov do maturity')

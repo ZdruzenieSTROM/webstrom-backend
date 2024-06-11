@@ -4,15 +4,16 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-daphne = "~=4.0.0"
 dj-rest-auth = "~=5.0.1"
-django = "~=3.2.23"
+django = "~=4.2.11"
 django-allauth = "~=0.58.2"
 django-filter = "~=23.5"
 django-sendfile2 = "~=0.7.1"
 djangorestframework = "~=3.14.0"
 drf-writable-nested = "~=0.7.0"
+gunicorn = "~=22.0.0"
 pillow = "~=10.3.0"
+psycopg = "~=3.1.18"
 python-magic = "~=0.4.27"
 
 [dev-packages]
