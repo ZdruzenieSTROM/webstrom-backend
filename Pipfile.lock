@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "fd2f8d27e2405d6db987ee9460aba608c0354df14453b74bec50df6804f7ef48"
+            "sha256": "a26be62f3c6fec9c3d7a5f680e8db98ea4e31df50ca96a0b916ca6a457dd8a05"
         },
         "pipfile-spec": 6,
         "requires": {},
@@ -243,6 +243,7 @@
                 "sha256:a17fcba2aad3fc7d46fdb23215095dbbd64e6174bf4589171e732b18b07e426a"
             ],
             "index": "pypi",
+            "markers": "python_version >= '3.8'",
             "version": "==4.2.13"
         },
         "django-allauth": {
@@ -270,11 +271,12 @@
         },
         "djangorestframework": {
             "hashes": [
-                "sha256:579a333e6256b09489cbe0a067e66abe55c6595d8926be6b99423786334350c8",
-                "sha256:eb63f58c9f218e1a7d064d17a70751f528ed4e1d35547fdade9aaf4cd103fd08"
+                "sha256:2b8871b062ba1aefc2de01f773875441a961fefbf79f5eed1e32b2f096944b20",
+                "sha256:36fe88cd2d6c6bec23dca9804bab2ba5517a8bb9d8f47ebc68981b56840107ad"
             ],
             "index": "pypi",
-            "version": "==3.14.0"
+            "markers": "python_version >= '3.8'",
+            "version": "==3.15.2"
         },
         "drf-writable-nested": {
             "hashes": [
