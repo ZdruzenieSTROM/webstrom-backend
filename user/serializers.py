@@ -12,7 +12,7 @@ from competition.models import Grade
 from personal.models import Profile
 from personal.serializers import ProfileCreateSerializer
 from user.models import TokenModel
-from webstrom.settings import EMAIL_ALERT, EMAIL_NO_REPLY
+from webstrom.settings import EMAIL_ALERT
 
 
 def reset_password_url_generator(request, user, temp_key):
@@ -172,7 +172,7 @@ class UserDetailsSerializer(serializers.ModelSerializer):
                         'school_info': school_info
                     },
                 ),
-                EMAIL_NO_REPLY,
+                None,
                 [EMAIL_ALERT]
             )
 

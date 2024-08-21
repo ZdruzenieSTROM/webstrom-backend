@@ -42,7 +42,7 @@ from competition.utils.results import (generate_praticipant_invitations,
                                        rank_results)
 from personal.models import Profile, School
 from personal.serializers import ProfileExportSerializer, SchoolSerializer
-from webstrom.settings import EMAIL_ALERT, EMAIL_NO_REPLY
+from webstrom.settings import EMAIL_ALERT
 
 # pylint: disable=unused-argument
 
@@ -154,7 +154,7 @@ class CommentViewSet(
         send_mail(
             'Zverejnený komentár',
             render_to_string('competition/emails/comment_published.txt'),
-            EMAIL_NO_REPLY,
+            None,
             [comment.posted_by.email],
         )
 
@@ -171,7 +171,7 @@ class CommentViewSet(
         send_mail(
             'Skrytý komentár',
             render_to_string('competition/emails/comment_hidden.txt'),
-            EMAIL_NO_REPLY,
+            None,
             [comment.posted_by.email],
         )
 
@@ -231,7 +231,7 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
         send_mail(
             'Nový komentár',
             render_to_string('competition/emails/comment_added.txt'),
-            EMAIL_NO_REPLY,
+            None,
             [EMAIL_ALERT],
         )
 
