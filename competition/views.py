@@ -1,4 +1,5 @@
 import csv
+import json
 import os
 import zipfile
 from io import BytesIO
@@ -481,7 +482,7 @@ class SeriesViewSet(ModelViewSetWithSerializerContext):
         """Vráti výsledkovku pre sériu"""
         series = self.get_object()
         if series.frozen_results is not None:
-            return series.frozen_results
+            return json.loads(series.frozen_results)
         results = self.__create_result_json(series)
         return Response(results, status=status.HTTP_200_OK)
 
@@ -639,7 +640,7 @@ class SemesterViewSet(ModelViewSetWithSerializerContext):
     def semester_results(semester):
         """Vyrobí výsledky semestra"""
         if semester.frozen_results is not None:
-            return semester.frozen_results
+            return json.loads(semester.frozen_results)
         results = []
         for registration in semester.eventregistration_set.all():
             results.append(generate_result_row(registration, semester))
