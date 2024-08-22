@@ -5,12 +5,14 @@ import re
 import sqlite3
 import sys
 from dataclasses import dataclass
+from functools import partial
 from os import path
 from typing import Optional
 
 import bs4
 import pytz
 import requests
+import tqdm
 import unidecode
 from django.utils.dateparse import parse_datetime
 from django.utils.timezone import now
@@ -123,13 +125,22 @@ def transform_problem(problem):
     }
 
 
-def transform_series(series):
+def get_relevant_series_results(results, semester_id, order):
+    for series in results:
+        if series['semester_id'] == semester_id and series['order'] == order:
+            return series['frozen_results']
+    return None
+
+
+def transform_series(series, results):
+
     return {
         'id': series['id'],
         'semester_id': series['season_id'],
         'order': series['number'],
         'deadline': localize(series['submission_deadline']),
-        'sum_method': SUM_METHOD_DICT[series['sum_method']]
+        'sum_method': SUM_METHOD_DICT[series['sum_method']],
+        'frozen_results': get_relevant_series_results(results, series['season_id'], series['number'])
     }
 
 
@@ -146,7 +157,7 @@ def load_resource(connection, query, tranform_func, output_filename):
 
 
 @dataclass
-class SeriesResult:
+class ResultRow:
     start: int
     end: int
     changed: bool
@@ -207,12 +218,12 @@ def parse_semester(rows: list):
         if position:
             current_rank = position
         num_problems = (len(values)-5)//2
-        result_rows.append(SeriesResult(
+        result_rows.append(ResultRow(
             start=current_rank.split(' - ')[-1].strip('.'),
             end=current_rank.split('-')[0].strip('.'),
             changed=bool(position),
             first_name=' '.join(values[1].split(' ')[:-1]),
-            last_name=values[1].split(' ')[0],
+            last_name=values[1].split(' ')[-1],
             grade=values[2],
             school=values[3],
             points=[values[4:4+num_problems],
@@ -223,51 +234,96 @@ def parse_semester(rows: list):
     return result_rows
 
 
+def parse_series(rows):
+    result_rows = []
+    current_rank = None
+    for values in rows:
+        position = values[0]
+        if position:
+            current_rank = position
+        num_problems = (len(values)-5)
+        result_rows.append(ResultRow(
+            start=current_rank.split(' - ')[0].strip().strip('.'),
+            end=current_rank.split('-')[-1].strip().strip('.'),
+            changed=bool(position),
+            first_name=' '.join(values[1].split(' ')[:-1]),
+            last_name=values[1].split(' ')[-1],
+            grade=values[2],
+            school=values[3],
+            points=[values[4:4+num_problems]],
+            total=values[4+num_problems]
+        )
+        )
+    return result_rows
+
+
 def get_results_response(semester_id):
     for domain in ['matik', 'malynar', 'seminar']:
         response = requests.get(
-            f'https://{domain}.strom.sk/sk/sutaze/semester/poradie/{semester_id}', timeout=5)
+            f'https://{domain}.strom.sk/sk/sutaze/semester/poradie/{semester_id}', timeout=10)
         if response.status_code == 200:
             return response
     raise ValueError(f'Invalid semester id: {semester_id}')
 
 
 def parse_semester_results(semester_id):
+    def parse_from_table(table):
+        body = table.find('tbody')
+        return [[value.get_text().strip() for value in row.find_all('td')]
+                for row in body.find_all('tr')]
     response = get_results_response(semester_id)
     soup = bs4.BeautifulSoup(response.text)
     body: bs4.BeautifulSoup = soup.find_all(
-        'table', {'class': 'table table-condensed table-striped'})[-1].find('tbody')
-    values = [[value.get_text().strip() for value in row.find_all('td')]
-              for row in body.find_all('tr')]
-    results = parse_semester(values)
-    for series_values in series:
-        results = parse_series(series_values)
+        'table', {'class': 'table table-condensed table-striped'})
+    semester = parse_from_table(body[-1])
+    series = [parse_from_table(body[0]), parse_from_table(body[1])]
+    results = parse_semester(semester)
+    series_results = [
+        {
+            'order': i+1,
+            'semester_id': semester_id,
+            'frozen_results': json.dumps([row.build_result_row() for row in parse_series(series_values)])
+        } for i, series_values in enumerate(series)]
     return {
         'event_ptr_id': semester_id,
         'frozen_resuts': json.dumps([row.build_result_row() for row in results])
-    }
+    }, series_results
 
 
 def parse_results():
     objects = []
-    for i in range(74):
+    series_list = []
+    for i in tqdm.tqdm(range(74)):
         try:
-            objects.append(parse_semester_results(i))
+            semester, series = parse_semester_results(i)
+            objects.append(semester)
+            series_list += series
         except ValueError as exc:
             print(exc)
     with open('semester_results.csv', 'w', newline='', encoding='utf-8') as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=list(objects[0].keys()))
         writer.writeheader()
         writer.writerows(objects)
+    with open('series_results.json', 'w', newline='', encoding='utf-8') as json_file:
+        json.dump(series_list, json_file)
 
 
 def parse_one_day_competition(url):
     pass
 
 
+def load_series(conn):
+    with open('series_results.json', 'r', newline='', encoding='utf-8') as json_file:
+        series = json.load(json_file)
+    transform_series_with_results = partial(transform_series, results=series)
+    load_resource(conn, SERIES_QUERY,
+                  transform_series_with_results, 'series.csv')
+
+
 if __name__ == '__main__':
-    conn = get_connection(sys.argv[1])
+    conn_ = get_connection(sys.argv[1])
     parse_results()
     # load_resource(conn, SEMESTER_QUERY, transform_semester, 'semesters.csv')
-    # load_resource(conn, SERIES_QUERY, transform_series, 'series.csv')
+
+    load_series(conn_)
     # load_resource(conn, PROBLEM_QUERY, transform_problem, 'problems.csv')
