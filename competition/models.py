@@ -1,4 +1,5 @@
 import datetime
+import json
 from typing import Optional
 
 from django.conf import settings
@@ -251,7 +252,7 @@ class Semester(Event):
     def freeze_results(self, results):
         if any(not series.complete for series in self.series_set.all()):
             raise FreezingNotClosedResults()
-        self.frozen_results = results
+        self.frozen_results = json.dumps(results)
 
     @property
     def complete(self) -> bool:
@@ -368,7 +369,7 @@ class Series(models.Model):
             for problem in self.problems.all()
         ):
             raise FreezingNotClosedResults()
-        self.frozen_results = results
+        self.frozen_results = json.dumps(results)
 
     @property
     def num_problems(self) -> int:
@@ -803,7 +804,7 @@ class RegistrationLink(models.Model):
         return self.event.can_user_modify(user)
 
     def __str__(self):
-        return str(self.event) # pylint: disable=no-member
+        return str(self.event)  # pylint: disable=no-member
 
 
 class ProblemCorrection(models.Model):
