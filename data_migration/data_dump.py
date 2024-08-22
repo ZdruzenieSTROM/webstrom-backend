@@ -1,7 +1,10 @@
 import csv
 import datetime
+import json
+import re
 import sqlite3
 import sys
+from dataclasses import dataclass
 from os import path
 from typing import Optional
 
@@ -48,14 +51,15 @@ PROBLEM_QUERY = '''
     INNER JOIN problems_problem AS problem ON problem.id=inset.problem_id
 '''
 
+
 SUM_METHOD_DICT = {
-    'SUCET_SERIE_35': '',
-    'SUCET_SERIE_32': '',
-    'SUCET_SERIE_MATIK': '',
-    'SUCET_SERIE_MALYNAR': '',
-    'SUCET_SERIE_46': '',
-    'SUCET_SERIE_MALYNAR_31': '',
-    'SUCET_SERIE_MATIK_35': ''
+    'SUCET_SERIE_35': 'series_STROM_sum_until_2021',
+    'SUCET_SERIE_32': 'series_STROM_4problems_sum',
+    'SUCET_SERIE_MATIK': 'series_Matik_sum',
+    'SUCET_SERIE_MALYNAR': 'series_Malynar_sum',
+    'SUCET_SERIE_46': 'series_STROM_sum',
+    'SUCET_SERIE_MALYNAR_31': 'series_Malynar_sum_until_2021',
+    'SUCET_SERIE_MATIK_35': 'series_Matik_sum_until_2021'
 }
 
 COMPETITION_ID_MAPPING = {
@@ -112,15 +116,17 @@ def transform_semester(semester):
 
 def transform_problem(problem):
     return {
-        'text': problem['text'],
-        'series': problem['series_id'],
-        'order': problem['position']
+        'id': problem['id'],
+        'text': re.sub(r'\s+<li>', '<li>', problem['text']),
+        'series_id': problem['series_id'],
+        'order': problem['position']+1
     }
 
 
 def transform_series(series):
     return {
-        'semester': series['season_id'],
+        'id': series['id'],
+        'semester_id': series['season_id'],
         'order': series['number'],
         'deadline': localize(series['submission_deadline']),
         'sum_method': SUM_METHOD_DICT[series['sum_method']]
@@ -139,64 +145,120 @@ def load_resource(connection, query, tranform_func, output_filename):
         writer.writerows(objects)
 
 
-def build_result_row(rank_start, rank_end, list):
+@dataclass
+class SeriesResult:
+    start: int
+    end: int
+    changed: bool
+    school: str
+    grade: str
+    first_name: str
+    last_name: str
+    points: list[int]
+    total: int
 
-    return {
-        "rank_start": 1,
-        "rank_end": 1,
-        "rank_changed": true,
-        "registration": {
-            "school": {
-                "code": 160971,
-                "name": "Gymnázium M.R.Štefánika",
-                "abbreviation": "GNamL4KE",
-                "street": "Nám. L. Novomeského 4",
-                "city": "Košice-Staré Mesto",
-                "zip_code": "04224"
-            },
-            "grade": "S3",
-            "profile": {
-                "first_name": "Ucastnik",
-                "last_name": "Priezvisko58"
-            }
-        },
-        "subtotal": [
-            30,
-            6
-        ],
-        "total": 36,
-        "solutions": [
-            [
-                {
-                    "points": "-",
-                    "solution_pk": null,
-                    "problem_pk": 0,
-                    "votes": 0
+    def build_result_row(self):
+
+        return {
+            "rank_start": self.start,
+            "rank_end": self.end,
+            "rank_changed": self.changed,
+            "registration": {
+                "school": {
+                    "code": "",
+                    "name": self.school,
+                    "abbreviation": "",
+                    "street": "",
+                    "city": "",
+                    "zip_code": ""
                 },
+                "grade": self.grade,
+                "profile": {
+                    "first_name": self.first_name,
+                    "last_name": self.last_name
+                }
+            },
+            "subtotal": [
+                sum(int(point) for point in series_points if point.isdigit()) for series_points in self.points
 
             ],
-            [
+            "total": self.total,
+            "solutions": [
 
-                {
-                    "points": "?",
-                    "solution_pk": 391,
-                    "problem_pk": 11,
-                    "votes": 0
-                }
+                [
+                    {
+                        "points": point.replace('--', '-'),
+                        "solution_pk": None,
+                        "problem_pk": 0,
+                        "votes": 0
+                    } for point in series_points
+
+                ] for series_points in self.points
+
             ]
-        ]
-    },
+        }
 
 
-def parse_results():
-    response = requests.get(
-        'https://seminar.strom.sk/sk/sutaze/semester/poradie/posledny/')
+def parse_semester(rows: list):
+    result_rows = []
+    current_rank = None
+    for values in rows:
+        position = values[0]
+        if position:
+            current_rank = position
+        num_problems = (len(values)-5)//2
+        result_rows.append(SeriesResult(
+            start=current_rank.split(' - ')[-1].strip('.'),
+            end=current_rank.split('-')[0].strip('.'),
+            changed=bool(position),
+            first_name=' '.join(values[1].split(' ')[:-1]),
+            last_name=values[1].split(' ')[0],
+            grade=values[2],
+            school=values[3],
+            points=[values[4:4+num_problems],
+                    values[4+num_problems:4+2*num_problems]],
+            total=values[4+2*num_problems]
+        )
+        )
+    return result_rows
+
+
+def get_results_response(semester_id):
+    for domain in ['matik', 'malynar', 'seminar']:
+        response = requests.get(
+            f'https://{domain}.strom.sk/sk/sutaze/semester/poradie/{semester_id}', timeout=5)
+        if response.status_code == 200:
+            return response
+    raise ValueError(f'Invalid semester id: {semester_id}')
+
+
+def parse_semester_results(semester_id):
+    response = get_results_response(semester_id)
     soup = bs4.BeautifulSoup(response.text)
     body: bs4.BeautifulSoup = soup.find_all(
         'table', {'class': 'table table-condensed table-striped'})[-1].find('tbody')
-    for row in body.find_all('tr'):
-        values = row.find_all('td')
-        print([v.get_text().strip() for v in values])
+    values = [[value.get_text().strip() for value in row.find_all('td')]
+              for row in body.find_all('tr')]
+    results = parse_semester(values)
+    for series_values in series:
+        results = parse_series(series_values)
+    return {
+        'event_ptr_id': semester_id,
+        'frozen_resuts': json.dumps([row.build_result_row() for row in results])
+    }
+
+
+def parse_results():
+    objects = []
+    for i in range(74):
+        try:
+            objects.append(parse_semester_results(i))
+        except ValueError as exc:
+            print(exc)
+    with open('semester_results.csv', 'w', newline='', encoding='utf-8') as csvfile:
+        writer = csv.DictWriter(csvfile, fieldnames=list(objects[0].keys()))
+        writer.writeheader()
+        writer.writerows(objects)
 
 
 def parse_one_day_competition(url):
