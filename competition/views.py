@@ -482,7 +482,7 @@ class SeriesViewSet(ModelViewSetWithSerializerContext):
         """Vráti výsledkovku pre sériu"""
         series = self.get_object()
         if series.frozen_results is not None:
-            return json.loads(series.frozen_results)
+            return Response(json.loads(series.frozen_results), status=status.HTTP_200_OK)
         results = self.__create_result_json(series)
         return Response(results, status=status.HTTP_200_OK)
 
