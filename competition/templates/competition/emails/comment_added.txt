@@ -1,1 +1,2 @@
-Bol pridaný nový komentár.
+Bol pridaný nový komentár k úlohe {{problem}}:
+{{comment}}
