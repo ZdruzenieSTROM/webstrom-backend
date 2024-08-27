@@ -1,4 +1,4 @@
 Tvoj komentár
 {{comment}} 
-k úloje {{problem}} bol skrytý a dostal si k nemu súkromnú odpoveď:
+k úlohe {{problem}} bol skrytý a dostal si k nemu súkromnú odpoveď:
 {{response}}
