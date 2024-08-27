@@ -219,8 +219,8 @@ def parse_semester(rows: list):
             current_rank = position
         num_problems = (len(values)-5)//2
         result_rows.append(ResultRow(
-            start=current_rank.split(' - ')[-1].strip('.'),
-            end=current_rank.split('-')[0].strip('.'),
+            start=current_rank.split(' - ')[0].strip('.'),
+            end=current_rank.split('-')[-1].strip('.'),
             changed=bool(position),
             first_name=' '.join(values[1].split(' ')[:-1]),
             last_name=values[1].split(' ')[-1],
