@@ -177,7 +177,7 @@ class ResultRow:
             "registration": {
                 "school": {
                     "code": "",
-                    "name": self.school,
+                    "name": self.school if (self.school is not None and self.school != "None") else "",
                     "abbreviation": "",
                     "street": "",
                     "city": "",
