@@ -149,12 +149,17 @@ class CommentViewSet(
     @action(methods=['post'], detail=True)
     def publish(self, request, pk=None):
         """Publikovanie, teda zverejnenie komentára"""
-        comment = self.get_object()
+        comment: Comment = self.get_object()
         comment.publish()
 
         send_mail(
             'Zverejnený komentár',
-            render_to_string('competition/emails/comment_published.txt'),
+            render_to_string(
+                'competition/emails/comment_published.txt',
+                context={
+                    'comment': comment.text,
+                    'problem': comment.problem
+                }),
             None,
             [comment.posted_by.email],
         )
@@ -166,12 +171,17 @@ class CommentViewSet(
     @action(methods=['post'], detail=True)
     def hide(self, request, pk=None):
         """Skrytie komentára"""
-        comment = self.get_object()
+        comment: Comment = self.get_object()
         comment.hide(message=request.data.get('hidden_response'))
 
         send_mail(
             'Skrytý komentár',
-            render_to_string('competition/emails/comment_hidden.txt'),
+            render_to_string('competition/emails/comment_hidden.txt',
+                             context={
+                                 'comment': comment.text,
+                                 'problem': comment.problem,
+                                 'response': comment.hidden_response
+                             }),
             None,
             [comment.posted_by.email],
         )
@@ -224,14 +234,18 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
             permission_classes=[IsAuthenticated])
     def add_comment(self, request, pk=None):
         """Pridá komentár (otázku) k úlohe"""
-        problem = self.get_object()
+        problem: Problem = self.get_object()
         also_publish = problem.can_user_modify(request.user)
 
         problem.add_comment(request.data['text'], request.user, also_publish)
 
         send_mail(
             'Nový komentár',
-            render_to_string('competition/emails/comment_added.txt'),
+            render_to_string('competition/emails/comment_added.txt',
+                             context={
+                                 'problem': problem,
+                                 'comment': request.data['text']
+                             }),
             None,
             [EMAIL_ALERT],
         )

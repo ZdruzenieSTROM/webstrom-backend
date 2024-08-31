@@ -14,6 +14,11 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:3000',
+    'https://localhost:3000'
+]
+
 SITE_ID = 1
 
 # Application definition
