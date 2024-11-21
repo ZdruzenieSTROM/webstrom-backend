@@ -105,14 +105,18 @@ def to_school_year(year, competition):
 def transform_semester(semester):
     return {
         'id': semester['id'],
-        'season_code': semester['number']-1,
-        'competition': COMPETITION_ID_MAPPING[semester['competition_id']],
         'year': semester['year'],
         'school_year': to_school_year(
             semester['year'],
             COMPETITION_ID_MAPPING[semester['competition_id']]),
+        'season_code': semester['number']-1,
         'start': localize(semester['start']),
-        'end': localize(semester['end'])
+        'end': localize(semester['end']),
+        'location': None,
+        'additional_name': None,
+        'competition_id': COMPETITION_ID_MAPPING[semester['competition_id']],
+        'registration_link_id': None
+
     }
 
 
@@ -120,8 +124,11 @@ def transform_problem(problem):
     return {
         'id': problem['id'],
         'text': re.sub(r'\s+<li>', '<li>', problem['text']),
+        'order': problem['position']+1,
+        'image': None,
+        'solution_pdf': None,
         'series_id': problem['series_id'],
-        'order': problem['position']+1
+
     }
 
 
@@ -136,11 +143,11 @@ def transform_series(series, results):
 
     return {
         'id': series['id'],
-        'semester_id': series['season_id'],
         'order': series['number'],
         'deadline': localize(series['submission_deadline']),
         'sum_method': SUM_METHOD_DICT[series['sum_method']],
-        'frozen_results': get_relevant_series_results(results, series['season_id'], series['number'])
+        'frozen_results': get_relevant_series_results(results, series['season_id'], series['number']),
+        'semester_id': series['season_id']
     }
 
 
