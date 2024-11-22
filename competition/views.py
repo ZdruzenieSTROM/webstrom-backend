@@ -10,6 +10,7 @@ from django.core.files import File
 from django.core.mail import send_mail
 from django.http import FileResponse, HttpResponse
 from django.template.loader import render_to_string
+from django.utils.timezone import now
 from rest_framework import exceptions, mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
@@ -528,12 +529,17 @@ class SeriesViewSet(ModelViewSetWithSerializerContext):
     @action(methods=['get'], detail=False, url_path=r'current/(?P<competition_id>\d+)')
     def current(self, request, competition_id=None):
         """Vráti aktuálnu sériu"""
-        items = Semester.objects.filter(
+        current_semester_series = Semester.objects.filter(
             competition=competition_id
-        ).current().series_set.filter(frozen_results__isnull=True)\
-            .order_by('-deadline')\
-            .first()
-        serializer = SeriesWithProblemsSerializer(items, many=False)
+        ).current().series_set
+        current_series = current_semester_series.filter(
+            deadline__gte=now()
+        ).order_by('deadline').first()
+        if current_series is None:
+            current_series = current_semester_series.order_by(
+                '-deadline').first()
+        serializer = SeriesWithProblemsSerializer(
+            current_series, many=False)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
