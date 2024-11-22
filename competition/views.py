@@ -532,7 +532,7 @@ class SeriesViewSet(ModelViewSetWithSerializerContext):
         ).current().series_set
         current_series = current_semester_series.filter(
             frozen_results__isnull=True
-        ).order_by('-deadline').first()
+        ).order_by('deadline').first()
         if current_series is None:
             current_series = current_semester_series.order_by(
                 '-deadline').first()
