@@ -10,6 +10,7 @@ from django.core.files import File
 from django.core.mail import send_mail
 from django.http import FileResponse, HttpResponse
 from django.template.loader import render_to_string
+from django.utils.timezone import now
 from rest_framework import exceptions, mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
@@ -531,7 +532,7 @@ class SeriesViewSet(ModelViewSetWithSerializerContext):
             competition=competition_id
         ).current().series_set
         current_series = current_semester_series.filter(
-            frozen_results__isnull=True
+            deadline__gte=now()
         ).order_by('deadline').first()
         if current_series is None:
             current_series = current_semester_series.order_by(
