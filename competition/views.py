@@ -790,7 +790,7 @@ class SemesterViewSet(ModelViewSetWithSerializerContext):
     def participants_export(self, request, pk=None):
         """Vráti všetkých užívateľov zapojených do semestra"""
         serializer = self.__get_participants()
-        response = HttpResponse(content_type='text/csv')
+        response = HttpResponse(content_type='text/csv; charset=utf-8')
         response['Content-Disposition'] = 'attachment; filename="export.csv"'
         header = ProfileExportSerializer.Meta.fields
         writer = csv.DictWriter(response, fieldnames=header)
