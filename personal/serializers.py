@@ -166,6 +166,7 @@ class ProfileShortSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = ['id', 'first_name', 'last_name']
+        read_only_fields = ['id']
 
 
 @ts_interface(context='personal')
