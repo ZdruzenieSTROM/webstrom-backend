@@ -534,7 +534,8 @@ class SeriesViewSet(ModelViewSetWithSerializerContext):
             frozen_results__isnull=True
         ).order_by('-deadline').first()
         if current_series is None:
-            current_semester_series.order_by('-deadline')
+            current_series = current_semester_series.order_by(
+                '-deadline').first()
         serializer = SeriesWithProblemsSerializer(
             current_series, many=False)
         return Response(serializer.data, status=status.HTTP_200_OK)
