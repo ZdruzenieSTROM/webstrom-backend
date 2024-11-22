@@ -28,7 +28,8 @@ from competition.permissions import (CommentPermission,
                                      ProblemPermission)
 from competition.serializers import (CommentSerializer, CompetitionSerializer,
                                      CompetitionTypeSerializer,
-                                     EventRegistrationSerializer,
+                                     EventRegistrationReadSerializer,
+                                     EventRegistrationWriteSerializer,
                                      EventSerializer, GradeSerializer,
                                      LateTagSerializer, ProblemSerializer,
                                      ProblemWithSolutionsSerializer,
@@ -99,7 +100,7 @@ def generate_result_row(
         # Indikuje či sa zmenilo poradie od minulej priečky, slúži na delené miesta
         'rank_changed': True,
         # primary key riešiteľovej registrácie do semestra
-        'registration': EventRegistrationSerializer(semester_registration).data,
+        'registration': EventRegistrationReadSerializer(semester_registration).data,
         # Súčty bodov po sériách
         'subtotal': subtotal,
         # Celkový súčet za danú entitu
@@ -878,9 +879,13 @@ class EventViewSet(ModelViewSetWithSerializerContext):
 class EventRegistrationViewSet(viewsets.ModelViewSet):
     """Registrácie na akcie"""
     queryset = EventRegistration.objects.all()
-    serializer_class = EventRegistrationSerializer
     filterset_fields = ['event', 'profile', ]
     permission_classes = (CompetitionRestrictedPermission,)
+
+    def get_serializer_class(self):
+        if self.action in ['list', 'retrieve']:
+            return EventRegistrationReadSerializer
+        return EventRegistrationWriteSerializer
 
 
 class PublicationTypeViewSet(viewsets.ReadOnlyModelViewSet):
