@@ -13,6 +13,8 @@ services:
 
     volumes:
       - /var/run/postgresql:/var/run/postgresql:rw
+      - /data/www/webstrom-test/media:/app/media:rw
+      - /data/www/webstrom-test/protected-media:/app/protected-media:rw
 
     ports:
       - "127.0.0.1:8920:8000"
