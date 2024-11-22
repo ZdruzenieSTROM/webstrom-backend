@@ -1,9 +1,12 @@
 {% load registration_extras %}
 
-Ahoj, 
-už len krok a budeš môcť riešiť jedinečné matematické úlohy. 
+Ahoj,
+
+predtým, než budeš môcť svoj účet na stránke strom.sk plne využívať, musíš si overiť e-mailovú adresu. 
 
 Pre dokončenie registrácie klikni sem:
-{{ request.scheme }}://{{ request|source_host}}/{{ request|seminar }}/verify-email/{{ key }}
+{{ request.scheme }}://{{ request|source_host }}/{{ request|seminar }}/verify-email/{{ key }}
 
-Tvoji vedúci Stromu 
+Ak registráciu nechceš dokončiť, tak tento e-mail môžeš ignorovať.
+
+Tvoji vedúci STROMu
