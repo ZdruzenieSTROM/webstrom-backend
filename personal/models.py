@@ -20,6 +20,10 @@ class County(models.Model):
         return self.name
 
 
+def unspecified_county():
+    return County.objects.get_unspecified_value()
+
+
 class District(models.Model):
     class Meta:
         verbose_name = 'okres'
@@ -31,12 +35,17 @@ class District(models.Model):
 
     county = models.ForeignKey(
         County, verbose_name='kraj',
-        on_delete=models.SET(County.objects.get_unspecified_value))
+        on_delete=models.SET(unspecified_county)
+    )
 
     objects = UnspecifiedValueManager(unspecified_value_pk=0)
 
     def __str__(self):
         return self.name
+
+
+def unspecified_district():
+    return District.objects.get_unspecified_value()
 
 
 class School(models.Model):
@@ -55,7 +64,8 @@ class School(models.Model):
 
     district = models.ForeignKey(
         District, verbose_name='okres',
-        on_delete=models.SET(District.objects.get_unspecified_value))
+        on_delete=models.SET(unspecified_district)
+    )
 
     objects = UnspecifiedValueManager(unspecified_value_pk=0)
 
@@ -72,6 +82,10 @@ class School(models.Model):
     def stitok(self):
         return f'\\stitok{{{ self.name }}}{{{ self.city }}}' \
                f'{{{ self.printable_zip_code }}}{{{ self.street }}}'
+
+
+def unspecified_school():
+    return School.objects.get_unspecified_value()
 
 
 class Profile(models.Model):
@@ -92,8 +106,9 @@ class Profile(models.Model):
     )
 
     school = models.ForeignKey(
-        School, on_delete=models.SET(School.objects.get_unspecified_value),
-        verbose_name='škola')
+        School, on_delete=models.SET(unspecified_school),
+        verbose_name='škola'
+    )
 
     year_of_graduation = models.PositiveSmallIntegerField(
         verbose_name='rok maturity')
@@ -120,7 +135,7 @@ class Profile(models.Model):
             pk=value).get_year_of_graduation_by_date()
 
     def __str__(self):
-        return str(self.user)
+        return f'{self.full_name()} ({self.user})'
 
     def full_name(self):
         return f'{self.first_name} {self.last_name}'

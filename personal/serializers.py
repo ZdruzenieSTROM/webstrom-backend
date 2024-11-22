@@ -21,9 +21,20 @@ class DistrictSerializer(serializers.ModelSerializer):
 
 @ts_interface(context='personal')
 class SchoolSerializer(serializers.ModelSerializer):
+    verbose_name = serializers.SerializerMethodField('get_verbose_name')
+    id = serializers.SerializerMethodField('get_id')
+
     class Meta:
         model = School
-        fields = '__all__'
+        fields = ['id', 'code', 'name', 'abbreviation', 'street',
+                  'city', 'zip_code', 'email', 'district', 'verbose_name']
+        read_only_fields = ['id', 'verbose_name']
+
+    def get_verbose_name(self, obj):
+        return str(obj)
+
+    def get_id(self, obj):
+        return obj.code
 
 
 @ts_interface(context='personal')
@@ -55,13 +66,15 @@ class ProfileSerializer(serializers.ModelSerializer):
     has_school = serializers.SerializerMethodField('get_has_school')
     school_id = serializers.IntegerField()
     email = serializers.EmailField(source='user.email')
+    verbose_name = serializers.SerializerMethodField('get_verbose_name')
 
     class Meta:
         model = Profile
         fields = ['grade_name', 'id', 'email', 'first_name', 'last_name', 'school',
-                  'phone', 'parent_phone', 'grade', 'is_student', 'has_school', 'school_id']
+                  'phone', 'parent_phone', 'grade', 'is_student', 'has_school',
+                  'school_id', 'verbose_name']
         read_only_fields = ['grade_name', 'id', 'first_name', 'last_name',
-                            'email', 'is_student', 'has_school', 'school']  # 'year_of_graduation',
+                            'email', 'is_student', 'has_school', 'school', 'verbose_name']
 
         extra_kwargs = {
             'grade': {
@@ -71,6 +84,9 @@ class ProfileSerializer(serializers.ModelSerializer):
                 'write_only': True,
             }
         }
+
+    def get_verbose_name(self, obj):
+        return str(obj)
 
     def get_is_student(self, obj):
         return obj.school != School.objects.get(pk=1)
@@ -149,7 +165,8 @@ class ProfileCreateSerializer(serializers.ModelSerializer):
 class ProfileShortSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
-        fields = ['first_name', 'last_name']
+        fields = ['id', 'first_name', 'last_name']
+        read_only_fields = ['id']
 
 
 @ts_interface(context='personal')

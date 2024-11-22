@@ -14,6 +14,11 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:3000',
+    'https://localhost:3000'
+]
+
 SITE_ID = 1
 
 # Application definition
@@ -45,8 +50,7 @@ LOCAL_APPS = [
     'competition',
     'cms',
     'user',
-    'personal',
-    'problem_database'
+    'personal'
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -179,8 +183,9 @@ STATIC_URL = '/static/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 MEDIA_URL = '/media/'
-PRIVATE_STORAGE_ROOT = os.path.join(BASE_DIR, 'protected_media')
-
+PRIVATE_STORAGE_ROOT = os.path.join(BASE_DIR, 'protected_media/')
+SENDFILE_ROOT = PRIVATE_STORAGE_ROOT
+SENDFILE_BACKEND = "django_sendfile.backends.simple"
 # Email backend
 
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
@@ -188,7 +193,7 @@ EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'emails')
 
 EMAIL_VERIFICATION_TIMEOUT = 86400
 
-MANAGERS = [('Web', 'web@strom.sk'), ]
+MANAGERS = [('Web', 'webmaster@strom.sk'), ]
 
-EMAIL_NO_REPLY = 'no-reply@strom.sk'    # z tade sa odosielaju maily
+DEFAULT_FROM_EMAIL = 'noreply@strom.sk'    # z tade sa odosielaju maily
 EMAIL_ALERT = 'alert-email-address@strom.sk'  # tu sa prijimaju maily

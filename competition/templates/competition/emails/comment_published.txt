@@ -1,1 +1,3 @@
-Tvoj komentár bol zverejnený a dostal si k nemu odpoveď.
+Tvoj komentár
+{{comment}}
+k úlohe {{problem}} bol zverejnený a dostal/a si k nemu odpoveď.

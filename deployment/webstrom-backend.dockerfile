@@ -10,8 +10,4 @@ RUN pipenv sync --dev --system
 
 COPY . /app
 
-RUN python manage.py restoredb
-
-EXPOSE 8000
-
-ENTRYPOINT [ "daphne", "-b", "0.0.0.0", "-p", "8000", "webstrom.asgi:application" ]
+CMD [ "gunicorn", "-b", "0.0.0.0", "-p", "8000", "webstrom.wsgi:application" ]

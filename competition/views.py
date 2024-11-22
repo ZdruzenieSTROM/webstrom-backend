@@ -1,4 +1,5 @@
 import csv
+import json
 import os
 import zipfile
 from io import BytesIO
@@ -9,6 +10,7 @@ from django.core.files import File
 from django.core.mail import send_mail
 from django.http import FileResponse, HttpResponse
 from django.template.loader import render_to_string
+from django.utils.timezone import now
 from rest_framework import exceptions, mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
@@ -27,7 +29,8 @@ from competition.permissions import (CommentPermission,
                                      ProblemPermission)
 from competition.serializers import (CommentSerializer, CompetitionSerializer,
                                      CompetitionTypeSerializer,
-                                     EventRegistrationSerializer,
+                                     EventRegistrationReadSerializer,
+                                     EventRegistrationWriteSerializer,
                                      EventSerializer, GradeSerializer,
                                      LateTagSerializer, ProblemSerializer,
                                      ProblemWithSolutionsSerializer,
@@ -42,7 +45,7 @@ from competition.utils.results import (generate_praticipant_invitations,
                                        rank_results)
 from personal.models import Profile, School
 from personal.serializers import ProfileExportSerializer, SchoolSerializer
-from webstrom.settings import EMAIL_ALERT, EMAIL_NO_REPLY
+from webstrom.settings import EMAIL_ALERT
 
 # pylint: disable=unused-argument
 
@@ -78,7 +81,8 @@ def generate_result_row(
             solution_points.append(sol.score or 0 if sol is not None else 0)
             series_solutions.append(
                 {
-                    'points': str(sol.score or '?') if sol is not None else '-',
+                    'points': (str(sol.score if sol.score is not None else '?')
+                               if sol is not None else '-'),
                     'solution_pk': sol.pk if sol is not None else None,
                     'problem_pk': problem.pk,
                     'votes': 0  # TODO: Implement votes sol.vote
@@ -98,7 +102,7 @@ def generate_result_row(
         # Indikuje či sa zmenilo poradie od minulej priečky, slúži na delené miesta
         'rank_changed': True,
         # primary key riešiteľovej registrácie do semestra
-        'registration': EventRegistrationSerializer(semester_registration).data,
+        'registration': EventRegistrationReadSerializer(semester_registration).data,
         # Súčty bodov po sériách
         'subtotal': subtotal,
         # Celkový súčet za danú entitu
@@ -148,13 +152,18 @@ class CommentViewSet(
     @action(methods=['post'], detail=True)
     def publish(self, request, pk=None):
         """Publikovanie, teda zverejnenie komentára"""
-        comment = self.get_object()
+        comment: Comment = self.get_object()
         comment.publish()
 
         send_mail(
             'Zverejnený komentár',
-            render_to_string('competition/emails/comment_published.txt'),
-            EMAIL_NO_REPLY,
+            render_to_string(
+                'competition/emails/comment_published.txt',
+                context={
+                    'comment': comment.text,
+                    'problem': comment.problem
+                }),
+            None,
             [comment.posted_by.email],
         )
 
@@ -165,13 +174,18 @@ class CommentViewSet(
     @action(methods=['post'], detail=True)
     def hide(self, request, pk=None):
         """Skrytie komentára"""
-        comment = self.get_object()
+        comment: Comment = self.get_object()
         comment.hide(message=request.data.get('hidden_response'))
 
         send_mail(
             'Skrytý komentár',
-            render_to_string('competition/emails/comment_hidden.txt'),
-            EMAIL_NO_REPLY,
+            render_to_string('competition/emails/comment_hidden.txt',
+                             context={
+                                 'comment': comment.text,
+                                 'problem': comment.problem,
+                                 'response': comment.hidden_response
+                             }),
+            None,
             [comment.posted_by.email],
         )
 
@@ -202,7 +216,8 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
         Volá sa pri vytvarani objektu,
         checkuju sa tu permissions, ci user vie vytvorit problem v danej sutazi
         """
-        if Problem.can_user_create(self.request.user, serializer.validated_data):
+        series = serializer.validated_data['series']
+        if series.can_user_modify(self.request.user):
             serializer.save()
         else:
             raise exceptions.PermissionDenied(
@@ -222,15 +237,19 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
             permission_classes=[IsAuthenticated])
     def add_comment(self, request, pk=None):
         """Pridá komentár (otázku) k úlohe"""
-        problem = self.get_object()
+        problem: Problem = self.get_object()
         also_publish = problem.can_user_modify(request.user)
 
         problem.add_comment(request.data['text'], request.user, also_publish)
 
         send_mail(
             'Nový komentár',
-            render_to_string('competition/emails/comment_added.txt'),
-            EMAIL_NO_REPLY,
+            render_to_string('competition/emails/comment_added.txt',
+                             context={
+                                 'problem': problem,
+                                 'comment': request.data['text']
+                             }),
+            None,
             [EMAIL_ALERT],
         )
 
@@ -270,16 +289,20 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
         if len(existing_solutions) > 0 and late_tag is not None and not late_tag.can_resubmit:
             raise exceptions.ValidationError(
                 detail='Túto úlohu už nie je možné odovzdať znova.')
+        for solution in existing_solutions:
+            solution.solution.delete()
         Solution.objects.filter(
             problem=problem, semester_registration=event_registration).delete()
+
         solution = Solution.objects.create(
             problem=problem,
             semester_registration=event_registration,
             late_tag=late_tag,
-            is_online=True
+            is_online=True,
+            solution=file
         )
-        solution.solution.save(
-            solution.get_solution_file_name(), file, save=True)
+        # solution.solution.save(
+        #     solution.get_solution_file_name(), file, save=True)
 
         return Response(status=status.HTTP_201_CREATED)
 
@@ -361,17 +384,17 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
         """Nahrá .zip archív s opravenými riešeniami (pdf-kami)."""
 
         if 'file' not in request.data:
-            raise exceptions.ParseError(detail='No file attached')
+            raise exceptions.ParseError(detail='Žiaden súbor nebol pripojený')
 
         zfile = request.data['file']
 
         if not zipfile.is_zipfile(zfile):
             raise exceptions.ParseError(
-                detail='Attached file is not a zip file')
+                detail='Priložený súbor nie je zip')
 
         with zipfile.ZipFile(zfile) as zfile:
             if zfile.testzip():
-                raise exceptions.ParseError(detail='Zip file is corrupted')
+                raise exceptions.ParseError(detail='Súbor zip je poškodený')
 
             parsed_filenames = []
             errors = []
@@ -390,20 +413,21 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
                 except (IndexError, ValueError, AssertionError):
                     errors.append({
                         'filename': filename,
-                        'status': 'Cannot parse file'
+                        'status': 'Nedá sa prečítať názov súboru. Skontroluj, že názov súboru'
+                        'je v tvare BODY-MENO-ID_ULOHY-ID_REGISTRACIE_USERA.pdf'
                     })
                     continue
                 except EventRegistration.DoesNotExist:
                     errors.append({
                         'filename': filename,
-                        'status': f'User registration with id {registration_pk} does not exist'
+                        'status': f'Registrácia používateľa s id {registration_pk} neexistuje'
                     })
                     continue
                 except Solution.DoesNotExist:
                     errors.append({
                         'filename': filename,
-                        'status': f'Solution with registration id {registration_pk}'
-                        f'and problem id {problem_pk} does not exist'
+                        'status': f'Riešenie pre registráciu používateľa s id {registration_pk}'
+                        f'a úlohy id {problem_pk} neexistuje'
                     })
                     continue
 
@@ -475,7 +499,7 @@ class SeriesViewSet(ModelViewSetWithSerializerContext):
         """Vráti výsledkovku pre sériu"""
         series = self.get_object()
         if series.frozen_results is not None:
-            return series.frozen_results
+            return Response(json.loads(series.frozen_results), status=status.HTTP_200_OK)
         results = self.__create_result_json(series)
         return Response(results, status=status.HTTP_200_OK)
 
@@ -506,12 +530,17 @@ class SeriesViewSet(ModelViewSetWithSerializerContext):
     @action(methods=['get'], detail=False, url_path=r'current/(?P<competition_id>\d+)')
     def current(self, request, competition_id=None):
         """Vráti aktuálnu sériu"""
-        items = Semester.objects.filter(
+        current_semester_series = Semester.objects.filter(
             competition=competition_id
-        ).current().series_set.filter(frozen_results__isnull=True)\
-            .order_by('-deadline')\
-            .first()
-        serializer = SeriesWithProblemsSerializer(items, many=False)
+        ).current().series_set
+        current_series = current_semester_series.filter(
+            deadline__gte=now()
+        ).order_by('deadline').first()
+        if current_series is None:
+            current_series = current_semester_series.order_by(
+                '-deadline').first()
+        serializer = SeriesWithProblemsSerializer(
+            current_series, many=False)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -578,7 +607,7 @@ class SolutionViewSet(viewsets.ModelViewSet):
             raise exceptions.ParseError(
                 detail='Riešenie nie je vo formáte pdf')
         solution.solution.save(
-            solution.get_solution_file_name(), file, save=True
+            solution.get_solution_file_path(), file, save=True
         )
         return Response(status=status.HTTP_201_CREATED)
 
@@ -595,7 +624,7 @@ class SolutionViewSet(viewsets.ModelViewSet):
             raise exceptions.ParseError(
                 detail='Riešenie nie je vo formáte pdf')
         solution.corrected_solution.save(
-            solution.get_corrected_solution_file_name(), file, save=True
+            solution.get_corrected_solution_file_path(), file, save=True
         )
         return Response(status=status.HTTP_201_CREATED)
 
@@ -633,7 +662,7 @@ class SemesterViewSet(ModelViewSetWithSerializerContext):
     def semester_results(semester):
         """Vyrobí výsledky semestra"""
         if semester.frozen_results is not None:
-            return semester.frozen_results
+            return json.loads(semester.frozen_results)
         results = []
         for registration in semester.eventregistration_set.all():
             results.append(generate_result_row(registration, semester))
@@ -769,7 +798,7 @@ class SemesterViewSet(ModelViewSetWithSerializerContext):
     def participants_export(self, request, pk=None):
         """Vráti všetkých užívateľov zapojených do semestra"""
         serializer = self.__get_participants()
-        response = HttpResponse(content_type='text/csv')
+        response = HttpResponse(content_type='text/csv; charset=utf-8')
         response['Content-Disposition'] = 'attachment; filename="export.csv"'
         header = ProfileExportSerializer.Meta.fields
         writer = csv.DictWriter(response, fieldnames=header)
@@ -857,9 +886,13 @@ class EventViewSet(ModelViewSetWithSerializerContext):
 class EventRegistrationViewSet(viewsets.ModelViewSet):
     """Registrácie na akcie"""
     queryset = EventRegistration.objects.all()
-    serializer_class = EventRegistrationSerializer
     filterset_fields = ['event', 'profile', ]
     permission_classes = (CompetitionRestrictedPermission,)
+
+    def get_serializer_class(self):
+        if self.action in ['list', 'retrieve']:
+            return EventRegistrationReadSerializer
+        return EventRegistrationWriteSerializer
 
 
 class PublicationTypeViewSet(viewsets.ReadOnlyModelViewSet):

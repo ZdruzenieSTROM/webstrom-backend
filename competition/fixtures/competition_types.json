@@ -3,42 +3,48 @@
         "model": "competition.CompetitionType",
         "pk": 0,
         "fields": {
-            "name": "Seminár"
+            "name": "Seminár",
+            "short_name": "seminár"
         }
     },
     {
         "model": "competition.CompetitionType",
         "pk": 1,
         "fields": {
-            "name": "Jednodňová tímová súťaž"
+            "name": "Jednodňová tímová súťaž",
+            "short_name": "súťaž"
         }
     },
     {
         "model": "competition.CompetitionType",
         "pk": 2,
         "fields": {
-            "name": "Tábor"
+            "name": "Tábor",
+            "short_name": "tábor"
         }
     },
     {
         "model": "competition.CompetitionType",
         "pk": 3,
         "fields": {
-            "name": "Šifrovacia hra"
+            "name": "Šifrovacia hra",
+            "short_name": "šifrovačka"
         }
     },
     {
         "model": "competition.CompetitionType",
         "pk": 4,
         "fields": {
-            "name": "Robotická tímová súťaž"
+            "name": "Robotická tímová súťaž",
+            "short_name": "súťaž"
         }
     },
     {
         "model": "competition.CompetitionType",
         "pk": 5,
         "fields": {
-            "name": "Individuálna online súťaž"
+            "name": "Individuálna online súťaž",
+            "short_name": "súťaž"
         }
     }
 ]

@@ -123,14 +123,40 @@ class CompetitionSerializer(serializers.ModelSerializer):
 
 
 @ts_interface(context='competition')
-class EventRegistrationSerializer(serializers.ModelSerializer):
+class GradeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Grade
+        exclude = ['is_active']
+
+
+@ts_interface(context='competition')
+class EventRegistrationReadSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.EventRegistration
-        fields = ['school', 'grade', 'profile']
+        fields = ['school', 'grade', 'profile', 'verbose_name', 'id', 'event']
     school = SchoolShortSerializer(many=False)
-    grade = serializers.SlugRelatedField(
-        slug_field='tag', many=False, read_only=True)
+    grade = GradeSerializer(many=False)
     profile = ProfileShortSerializer(many=False)
+    verbose_name = serializers.SerializerMethodField('get_verbose_name')
+
+    def get_verbose_name(self, obj):
+        return str(obj)
+
+
+class EventRegistrationWriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.EventRegistration
+        fields = ['school', 'grade', 'profile', 'id', 'event']
+
+    id = serializers.ReadOnlyField()
+    school = serializers.PrimaryKeyRelatedField(
+        queryset=models.School.objects.all())
+    grade = serializers.PrimaryKeyRelatedField(
+        queryset=models.Grade.objects.all())
+    profile = serializers.PrimaryKeyRelatedField(
+        queryset=models.Profile.objects.all())
+    event = serializers.PrimaryKeyRelatedField(
+        queryset=models.Event.objects.all())
 
 
 @ts_interface(context='competition')
@@ -157,7 +183,7 @@ class ProblemSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Problem
         fields = '__all__'
-        read_only_fields = ['series', 'submitted', 'num_comments']
+        read_only_fields = ['submitted', 'num_comments']
 
     submitted = serializers.SerializerMethodField(
         'get_submitted')
@@ -221,7 +247,7 @@ class SolutionSerializer(serializers.ModelSerializer):
 
 @ts_interface(context='competition')
 class SolutionAdministrationSerializer(serializers.ModelSerializer):
-    semester_registration = EventRegistrationSerializer(read_only=True)
+    semester_registration = EventRegistrationReadSerializer(read_only=True)
 
     class Meta:
         model = models.Solution
@@ -361,6 +387,7 @@ class SemesterWithProblemsSerializer(ModelWithParticipationSerializer):
     )
     publication_set = PublicationSerializer(many=True, read_only=True)
     complete = serializers.SerializerMethodField('get_complete')
+    verbose_name = serializers.SerializerMethodField('get_verbose_name')
 
     class Meta:
         model = models.Semester
@@ -384,16 +411,12 @@ class SemesterWithProblemsSerializer(ModelWithParticipationSerializer):
             semester.late_tags.add(tag)
         return semester
 
+    def get_verbose_name(self, obj):
+        return str(obj)
+
 
 @ts_interface(context='competition')
 class LateTagSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.LateTag
         exclude = ['comment']
-
-
-@ts_interface(context='competition')
-class GradeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Grade
-        exclude = ['is_active']

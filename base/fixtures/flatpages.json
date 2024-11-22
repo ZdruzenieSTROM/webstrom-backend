@@ -51,11 +51,28 @@
     },
     {
         "model": "flatpages.flatpage",
-        "pk": 3,
+        "pk": 4,
         "fields": {
             "url": "kontakty",
             "title": "Kontakty",
             "content": "Nas mail je info@strom.sk",
+            "enable_comments": false,
+            "template_name": "",
+            "registration_required": false,
+            "sites": [
+                0,
+                1,
+                2
+            ]
+        }
+    },
+    {
+        "model": "flatpages.flatpage",
+        "pk": 5,
+        "fields": {
+            "url": "ako-riesit",
+            "title": "Ako získať 9 bodov",
+            "content": "Tu pribudnú tipy, ako riešiť a získať 9 bodov.",
             "enable_comments": false,
             "template_name": "",
             "registration_required": false,
