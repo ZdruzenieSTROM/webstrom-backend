@@ -79,7 +79,8 @@ def generate_result_row(
             solution_points.append(sol.score or 0 if sol is not None else 0)
             series_solutions.append(
                 {
-                    'points': str(sol.score or '?') if sol is not None else '-',
+                    'points': (str(sol.score if sol.score is not None else '?')
+                               if sol is not None else '-'),
                     'solution_pk': sol.pk if sol is not None else None,
                     'problem_pk': problem.pk,
                     'votes': 0  # TODO: Implement votes sol.vote
