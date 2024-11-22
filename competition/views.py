@@ -527,12 +527,16 @@ class SeriesViewSet(ModelViewSetWithSerializerContext):
     @action(methods=['get'], detail=False, url_path=r'current/(?P<competition_id>\d+)')
     def current(self, request, competition_id=None):
         """Vráti aktuálnu sériu"""
-        items = Semester.objects.filter(
+        current_semester_series = Semester.objects.filter(
             competition=competition_id
-        ).current().series_set.filter(frozen_results__isnull=True)\
-            .order_by('-deadline')\
-            .first()
-        serializer = SeriesWithProblemsSerializer(items, many=False)
+        ).current().series_set
+        current_series = current_semester_series.filter(
+            frozen_results__isnull=True
+        ).order_by('-deadline').first()
+        if current_series is None:
+            current_semester_series.order_by('-deadline')
+        serializer = SeriesWithProblemsSerializer(
+            current_series, many=False)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
