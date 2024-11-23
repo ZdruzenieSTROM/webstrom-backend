@@ -100,8 +100,7 @@ class MenuItem(models.Model):
         verbose_name='názov',
         help_text='Nápis, ktorý sa zobrazí v menu. Maximálne 2 slová.',
         max_length=25)
-    url = models.CharField(verbose_name='URL',
-                           max_length=100,
+    url = models.TextField(verbose_name='URL',
                            help_text='URL stránky kam má preklik viesť')
     priority = models.SmallIntegerField(
         verbose_name='priorita',
