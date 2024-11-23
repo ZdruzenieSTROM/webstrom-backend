@@ -71,7 +71,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     is_student = serializers.SerializerMethodField('get_is_student')
     has_school = serializers.SerializerMethodField('get_has_school')
     school_id = serializers.IntegerField()
-    email = serializers.EmailField(source='user.email')
+    email = serializers.EmailField(source='user.email', read_only=True)
     verbose_name = serializers.SerializerMethodField('get_verbose_name')
 
     class Meta:
