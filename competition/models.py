@@ -810,8 +810,8 @@ class RegistrationLink(models.Model):
 class ProblemCorrection(models.Model):
     # TODO: Add images
     class Meta:
-        verbose_name = 'opravenie úlohy'
-        verbose_name_plural = 'opravene ulohy'
+        verbose_name = 'Opravenie úlohy'
+        verbose_name_plural = 'Opravené úlohy'
 
     problem = models.OneToOneField(
         Problem,
