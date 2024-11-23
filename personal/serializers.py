@@ -14,9 +14,15 @@ class CountySerializer(serializers.ModelSerializer):
 
 @ts_interface(context='personal')
 class DistrictSerializer(serializers.ModelSerializer):
+    id = serializers.SerializerMethodField('get_id')
+
     class Meta:
         model = District
-        fields = '__all__'
+        fields = ['id', 'code', 'name', 'abbreviation', 'county']
+        read_only_fields = ['id']
+
+    def get_id(self, obj):
+        return obj.code
 
 
 @ts_interface(context='personal')
