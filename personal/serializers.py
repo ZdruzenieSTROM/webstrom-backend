@@ -71,7 +71,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     is_student = serializers.SerializerMethodField('get_is_student')
     has_school = serializers.SerializerMethodField('get_has_school')
     school_id = serializers.IntegerField()
-    email = serializers.EmailField(source='user.email')
+    email = serializers.EmailField(source='user.email', read_only=True)
     verbose_name = serializers.SerializerMethodField('get_verbose_name')
 
     class Meta:
@@ -79,8 +79,8 @@ class ProfileSerializer(serializers.ModelSerializer):
         fields = ['grade_name', 'id', 'email', 'first_name', 'last_name', 'school',
                   'phone', 'parent_phone', 'grade', 'is_student', 'has_school',
                   'school_id', 'verbose_name']
-        read_only_fields = ['grade_name', 'id', 'first_name', 'last_name',
-                            'email', 'is_student', 'has_school', 'school', 'verbose_name']
+        read_only_fields = ['grade_name', 'id', 'email',
+                            'is_student', 'has_school', 'school', 'verbose_name']
 
         extra_kwargs = {
             'grade': {
@@ -118,13 +118,14 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         grade = Grade.objects.get(pk=validated_data['grade'])
+        school = School.objects.get(pk=validated_data['school_id'])
         return Profile.objects.create(
             first_name=validated_data['first_name'],
             last_name=validated_data['last_name'],
-            school=validated_data['school'],
+            school=school,
             year_of_graduation=grade.get_year_of_graduation_by_date(),
-            phone=validated_data['phone'],
-            parent_phone=validated_data['parent_phone']
+            phone=validated_data.get('phone', None),
+            parent_phone=validated_data.get('parent_phone', None),
         )
 
 
