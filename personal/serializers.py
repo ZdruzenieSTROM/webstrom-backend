@@ -124,8 +124,8 @@ class ProfileSerializer(serializers.ModelSerializer):
             last_name=validated_data['last_name'],
             school=school,
             year_of_graduation=grade.get_year_of_graduation_by_date(),
-            phone=validated_data['phone'],
-            parent_phone=validated_data['parent_phone']
+            phone=validated_data.get('phone', None),
+            parent_phone=validated_data.get('parent_phone', None),
         )
 
 

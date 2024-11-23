@@ -114,12 +114,12 @@ class Profile(models.Model):
         verbose_name='rok maturity')
 
     phone = models.CharField(
-        verbose_name='telefónne číslo', max_length=32, blank=True,
+        verbose_name='telefónne číslo', max_length=32, blank=True, null=True,
         validators=[phone_number_validator],
         help_text='Telefonné číslo v medzinárodnom formáte (napr. +421 123 456 789).')
 
     parent_phone = models.CharField(
-        verbose_name='telefónne číslo na rodiča', max_length=32, blank=True,
+        verbose_name='telefónne číslo na rodiča', max_length=32, blank=True, null=True,
         validators=[phone_number_validator],
         help_text='Telefonné číslo v medzinárodnom formáte (napr. +421 123 456 789).')
 
