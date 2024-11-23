@@ -847,8 +847,8 @@ class PublicationViewSet(viewsets.ModelViewSet):
         publication = self.get_object()
         response = HttpResponse(
             publication.file, content_type=mime_type(publication.file))
-        response['Content-Disposition'] = f'attachment; filename="{
-            publication.name}"'
+        response['Content-Disposition'] = f'attachment; '\
+            f'filename="{publication.name}"'
         return response
 
     @action(methods=['post'], detail=False, url_path='upload', permission_classes=[IsAdminUser])

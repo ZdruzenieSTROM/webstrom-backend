@@ -403,8 +403,8 @@ class Problem(models.Model):
 
     def __str__(self):
         return f'{self.series.semester.competition.name}-{self.series.semester.year}' \
-            f'-{self.series.semester.season[0]
-                }S-S{self.series.order} - {self.order}. úloha'
+            f'-{self.series.semester.season[0]}S-S{self.series.order}'\
+            f' - {self.order}. úloha'
 
     def get_stats(self):
         stats = {}
