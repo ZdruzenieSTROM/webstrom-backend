@@ -2,9 +2,19 @@ from django.contrib import admin, messages
 from django.http import HttpResponseRedirect
 
 from competition.models import (Comment, Competition, Event, EventRegistration,
-                                LateTag, Problem, ProblemCorrection,
+                                Grade, LateTag, Problem, ProblemCorrection,
                                 Publication, RegistrationLink, Semester,
                                 Series, Solution)
+
+
+@admin.register(Grade)
+class GradeAdmin(admin.ModelAdmin):
+    list_display = (
+        'name',
+        'tag',
+        'years_until_graduation',
+        'is_active'
+    )
 
 
 @admin.register(Competition)
