@@ -6,14 +6,12 @@ import sqlite3
 import sys
 from dataclasses import dataclass
 from functools import partial
-from os import path
 from typing import Optional
 
 import bs4
 import pytz
 import requests
 import tqdm
-import unidecode
 from django.utils.dateparse import parse_datetime
 from django.utils.timezone import now
 
@@ -124,7 +122,7 @@ def transform_problem(problem):
     return {
         'id': problem['id'],
         'text': re.sub(r'\s+<li>', '<li>', problem['text']),
-        'order': problem['position']+1,
+        'order': problem['position']+1 if problem['position'] < 7 else problem['position']-5,
         'image': None,
         'solution_pdf': None,
         'series_id': problem['series_id'],
@@ -146,7 +144,8 @@ def transform_series(series, results):
         'order': series['number'],
         'deadline': localize(series['submission_deadline']),
         'sum_method': SUM_METHOD_DICT[series['sum_method']],
-        'frozen_results': get_relevant_series_results(results, series['season_id'], series['number']),
+        'frozen_results': get_relevant_series_results(
+            results, series['season_id'], series['number']),
         'semester_id': series['season_id']
     }
 
@@ -161,6 +160,23 @@ def load_resource(connection, query, tranform_func, output_filename):
         writer = csv.DictWriter(csvfile, fieldnames=list(objects[0].keys()))
         writer.writeheader()
         writer.writerows(objects)
+
+
+def build_grades_dictionary():
+    grade_dict = {}
+    with open('../competition/fixtures/grades.json', 'r', encoding='utf-8') as file_:
+        grades = json.load(file_)
+        for grade in grades:
+            grade_dict[grade['fields']['tag']] = {
+                'id': grade['pk'],
+                'name': grade['name']['name'],
+                'tag': grade['fields']['tag'],
+                'years_until_graduation': grade['fields']['years_until_graduation']
+            }
+    return grade_dict
+
+
+GRADES = build_grades_dictionary()
 
 
 @dataclass
@@ -184,20 +200,24 @@ class ResultRow:
             "registration": {
                 "school": {
                     "code": "",
-                    "name": self.school if (self.school is not None and self.school != "None") else "",
+                    "name": self.school if (
+                        self.school is not None and self.school != "None"
+                    ) else "",
                     "abbreviation": "",
                     "street": "",
                     "city": "",
                     "zip_code": ""
                 },
-                "grade": self.grade,
+                "grade": GRADES[self.grade],
                 "profile": {
                     "first_name": self.first_name,
                     "last_name": self.last_name
                 }
             },
             "subtotal": [
-                sum(int(point) for point in series_points if point.isdigit()) for series_points in self.points
+                sum(int(point)
+                    for point in series_points if point.isdigit()
+                    ) for series_points in self.points
 
             ],
             "total": self.total,
@@ -248,7 +268,7 @@ def parse_series(rows):
         position = values[0]
         if position:
             current_rank = position
-        num_problems = (len(values)-5)
+        num_problems = len(values)-5
         result_rows.append(ResultRow(
             start=current_rank.split(' - ')[0].strip().strip('.'),
             end=current_rank.split('-')[-1].strip().strip('.'),
@@ -289,7 +309,10 @@ def parse_semester_results(semester_id):
         {
             'order': i+1,
             'semester_id': semester_id,
-            'frozen_results': json.dumps([row.build_result_row() for row in parse_series(series_values)])
+            'frozen_results': json.dumps([
+                row.build_result_row()
+                for row in parse_series(series_values)
+            ])
         } for i, series_values in enumerate(series)]
     return {
         'event_ptr_id': semester_id,
@@ -313,10 +336,6 @@ def parse_results():
         writer.writerows(objects)
     with open('series_results.json', 'w', newline='', encoding='utf-8') as json_file:
         json.dump(series_list, json_file)
-
-
-def parse_one_day_competition(url):
-    pass
 
 
 def load_series(conn):
