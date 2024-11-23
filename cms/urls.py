@@ -1,21 +1,16 @@
 from rest_framework.routers import DefaultRouter
 
-from cms import views
+from .views import (FileUploadViewSet, InfoBannerViewSet, LogoViewSet,
+                    MenuItemViewSet, MessageTemplateViewSet, PostViewSet)
+
+router = DefaultRouter()
+
+router.register('post', PostViewSet)
+router.register('menu-item', MenuItemViewSet)
+router.register('info-banner', InfoBannerViewSet)
+router.register('message-template', MessageTemplateViewSet)
+router.register('logo', LogoViewSet)
+router.register('uploads', FileUploadViewSet)
 
 app_name = 'cms'
-
-
-# Create a router and register our viewsets with it.
-router = DefaultRouter()
-router.register(r'post', views.PostViewSet)
-router.register(r'menu-item', views.MenuItemViewSet)
-router.register(r'info-banner', views.InfoBannerViewSet)
-router.register(r'message-template', views.MessageTemplateViewSet)
-router.register(r'logo', views.LogoViewSet)
-
-
-urlpatterns = [
-
-]
-
-urlpatterns += router.urls
+urlpatterns = router.urls

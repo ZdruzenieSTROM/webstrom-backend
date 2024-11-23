@@ -164,3 +164,9 @@ class InfoBanner(ModelWithVisibility):
         if self.series is not None:
             return self.message_template.render_with(self.series)
         return self.message_template.render_with({})
+
+
+class FileUpload(models.Model):
+    """Slúži na nahrávanie súborov ktoré nepatria priamo k súťažiam"""
+
+    file = models.FileField(upload_to="uploads/")
