@@ -149,17 +149,6 @@ class ProfileCreateSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
-    def create(self, validated_data):
-        grade = Grade.objects.create(validated_data['grade'])
-        return Profile.objects.create(
-            first_name=validated_data['first_name'],
-            last_name=validated_data['last_name'],
-            school=validated_data['school'],
-            year_of_graduation=grade.get_year_of_graduation_by_date(),
-            phone=validated_data['phone'],
-            parent_phone=validated_data['parent_phone'],
-        )
-
 
 @ts_interface(context='personal')
 class ProfileShortSerializer(serializers.ModelSerializer):
