@@ -6,6 +6,7 @@ from io import BytesIO
 from operator import itemgetter
 from typing import Optional
 
+from django.core.exceptions import ValidationError as CoreValidationError
 from django.core.files import File
 from django.core.mail import send_mail
 from django.http import FileResponse, HttpResponse
@@ -441,7 +442,11 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
                     solution.score = score
                     solution.corrected_solution = File(corrected_solution)
 
-                    solution.save()
+                    try:
+                        solution.full_clean()
+                        solution.save()
+                    except CoreValidationError:
+                        return Response(status=status.HTTP_422_UNPROCESSABLE_ENTITY)
 
             return Response()
 
@@ -460,7 +465,11 @@ class ProblemAdministrationViewSet(ModelViewSetWithSerializerContext):
             if solution.problem != problem:
                 continue
             solution.score = solution_dict['score']
-            solution.save()
+            try:
+                solution.full_clean()
+                solution.save()
+            except CoreValidationError:
+                return Response(status=status.HTTP_422_UNPROCESSABLE_ENTITY)
         return Response(status=status.HTTP_200_OK)
 
 
