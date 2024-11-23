@@ -3,7 +3,6 @@ import datetime
 import json
 import re
 import sqlite3
-import sys
 from dataclasses import dataclass
 from functools import partial
 from typing import Optional
@@ -12,10 +11,11 @@ import bs4
 import pytz
 import requests
 import tqdm
+from django.conf import settings
 from django.utils.dateparse import parse_datetime
 from django.utils.timezone import now
 
-# from competition.utils.school_year_manipulation import get_school_year_by_date
+from competition.utils import sum_methods  # noqa
 
 
 def get_school_year_start_by_date(date: Optional[datetime.datetime] = None) -> int:
@@ -61,6 +61,34 @@ SUM_METHOD_DICT = {
     'SUCET_SERIE_MALYNAR_31': 'series_Malynar_sum_until_2021',
     'SUCET_SERIE_MATIK_35': 'series_Matik_sum_until_2021'
 }
+
+
+@dataclass
+class FakeGrade:
+    years_until_graduation: int
+
+
+@dataclass
+class FakeRegistration:
+    grade: FakeGrade
+
+
+def build_fake_profile(grade: str):
+    years_until_graduation = 0
+    if grade != '':
+        grade_num = int(grade[1])
+        years_until_graduation = 4 - \
+            grade_num if grade[0] == 'S' else 13-grade_num
+    return FakeRegistration(
+        grade=FakeGrade(years_until_graduation=years_until_graduation)
+    )
+
+
+def sum_by_method(method, points, grade):
+    sum_method = getattr(sum_methods, SUM_METHOD_DICT[method])
+    points = [int(point) if point.isdigit() else 0 for point in points]
+    return sum_method(points, build_fake_profile(grade))
+
 
 COMPETITION_ID_MAPPING = {
     1: 0,
@@ -138,7 +166,6 @@ def get_relevant_series_results(results, semester_id, order):
 
 
 def transform_series(series, results):
-
     return {
         'id': series['id'],
         'order': series['number'],
@@ -164,7 +191,7 @@ def load_resource(connection, query, tranform_func, output_filename):
 
 def build_grades_dictionary():
     grade_dict = {}
-    with open('../competition/fixtures/grades.json', 'r', encoding='utf-8') as file_:
+    with open(f'{settings.BASE_DIR}/competition/fixtures/grades.json', 'r', encoding='utf-8') as file_:
         grades = json.load(file_)
         for grade in grades:
             grade_dict[grade['fields']['tag']] = {
@@ -182,6 +209,14 @@ def build_grades_dictionary():
 GRADES = build_grades_dictionary()
 
 
+def get_method_by_semester(conn, semester_id: int):
+    cursor = conn.cursor()
+    cursor.execute(
+        'SELECT sum_method FROM competitions_series WHERE season_id=:semester_id', {'semester_id': semester_id})
+    object_ = cursor.fetchone()
+    return object_['sum_method']
+
+
 @dataclass
 class ResultRow:
     start: int
@@ -193,6 +228,7 @@ class ResultRow:
     last_name: str
     points: list[int]
     total: int
+    sum_method: str
 
     def build_result_row(self):
 
@@ -218,14 +254,11 @@ class ResultRow:
                 }
             },
             "subtotal": [
-                sum(int(point)
-                    for point in series_points if point.isdigit()
-                    ) for series_points in self.points
+                sum_by_method(self.sum_method, series_points, self.grade) for series_points in self.points
 
             ],
             "total": self.total,
             "solutions": [
-
                 [
                     {
                         "points": point.replace('--', '-'),
@@ -240,7 +273,7 @@ class ResultRow:
         }
 
 
-def parse_semester(rows: list):
+def parse_semester(rows: list, sum_method: str):
     result_rows = []
     current_rank = None
     for values in rows:
@@ -258,13 +291,14 @@ def parse_semester(rows: list):
             school=values[3],
             points=[values[4:4+num_problems],
                     values[4+num_problems:4+2*num_problems]],
-            total=values[4+2*num_problems]
+            total=values[4+2*num_problems],
+            sum_method=sum_method
         )
         )
     return result_rows
 
 
-def parse_series(rows):
+def parse_series(rows, sum_method: str):
     result_rows = []
     current_rank = None
     for values in rows:
@@ -281,7 +315,8 @@ def parse_series(rows):
             grade=values[2],
             school=values[3],
             points=[values[4:4+num_problems]],
-            total=values[4+num_problems]
+            total=values[4+num_problems],
+            sum_method=sum_method
         )
         )
     return result_rows
@@ -296,7 +331,7 @@ def get_results_response(semester_id):
     raise ValueError(f'Invalid semester id: {semester_id}')
 
 
-def parse_semester_results(semester_id):
+def parse_semester_results(semester_id, conn):
     def parse_from_table(table):
         body = table.find('tbody')
         return [[value.get_text().strip() for value in row.find_all('td')]
@@ -307,14 +342,15 @@ def parse_semester_results(semester_id):
         'table', {'class': 'table table-condensed table-striped'})
     semester = parse_from_table(body[-1])
     series = [parse_from_table(body[0]), parse_from_table(body[1])]
-    results = parse_semester(semester)
+    sum_method = get_method_by_semester(conn, semester_id)
+    results = parse_semester(semester, sum_method)
     series_results = [
         {
             'order': i+1,
             'semester_id': semester_id,
             'frozen_results': json.dumps([
                 row.build_result_row()
-                for row in parse_series(series_values)
+                for row in parse_series(series_values, sum_method)
             ])
         } for i, series_values in enumerate(series)]
     return {
@@ -323,12 +359,12 @@ def parse_semester_results(semester_id):
     }, series_results
 
 
-def parse_results():
+def parse_results(conn):
     objects = []
     series_list = []
-    for i in tqdm.tqdm(range(74)):
+    for i in tqdm.tqdm(range(77)):
         try:
-            semester, series = parse_semester_results(i)
+            semester, series = parse_semester_results(i, conn)
             objects.append(semester)
             series_list += series
         except ValueError as exc:
@@ -349,10 +385,11 @@ def load_series(conn):
                   transform_series_with_results, 'series.csv')
 
 
-if __name__ == '__main__':
-    conn_ = get_connection(sys.argv[1])
-    parse_results()
-    load_resource(conn_, SEMESTER_QUERY, transform_semester, 'semesters.csv')
+def dump_data(database_path: str):
+    conn_ = get_connection(database_path)
+    parse_results(conn_)
+    load_resource(conn_, SEMESTER_QUERY,
+                  transform_semester, 'semesters.csv')
 
     load_series(conn_)
     load_resource(conn_, PROBLEM_QUERY, transform_problem, 'problems.csv')
