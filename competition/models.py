@@ -1,5 +1,4 @@
 import datetime
-import json
 from typing import Optional
 
 from django.conf import settings
@@ -18,7 +17,6 @@ from unidecode import unidecode
 from base.managers import UnspecifiedValueManager
 from base.models import RestrictedFileField
 from base.validators import school_year_validator
-from competition.exceptions import FreezingNotClosedResults
 from competition.querysets import ActiveQuerySet
 from competition.utils.school_year_manipulation import \
     get_school_year_end_by_date
@@ -249,11 +247,6 @@ class Semester(Event):
     def get_second_series(self) -> 'Series':
         return self.series_set.get(order=2)
 
-    def freeze_results(self, results):
-        if any(not series.complete for series in self.series_set.all()):
-            raise FreezingNotClosedResults()
-        self.frozen_results = json.dumps(results)
-
     @property
     def complete(self) -> bool:
         return self.frozen_results is not None
@@ -363,14 +356,6 @@ class Series(models.Model):
             .order_by('upper_bound')\
             .first()
 
-    def freeze_results(self, results):
-        if any(
-            problem.num_solutions != problem.num_corrected_solutions
-            for problem in self.problems.all()
-        ):
-            raise FreezingNotClosedResults()
-        self.frozen_results = json.dumps(results)
-
     @property
     def num_problems(self) -> int:
         return self.problems.count()
@@ -418,7 +403,8 @@ class Problem(models.Model):
 
     def __str__(self):
         return f'{self.series.semester.competition.name}-{self.series.semester.year}' \
-            f'-{self.series.semester.season[0]}S-S{self.series.order} - {self.order}. úloha'
+            f'-{self.series.semester.season[0]
+                }S-S{self.series.order} - {self.order}. úloha'
 
     def get_stats(self):
         stats = {}
@@ -607,7 +593,7 @@ class EventRegistration(models.Model):
         return registration
 
     def __str__(self):
-        return f'{ self.profile.user.get_full_name() } @ { self.event }'
+        return f'{self.profile.user.get_full_name()} @ {self.event}'
 
     def can_user_modify(self, user):
         return self.event.can_user_modify(user)
@@ -674,18 +660,18 @@ class Solution(models.Model):
         verbose_name='internetové riešenie', default=False)
 
     def __str__(self):
-        return f'Riešiteľ: { self.semester_registration } - úloha { self.problem }'
+        return f'Riešiteľ: {self.semester_registration} - úloha {self.problem}'
 
     def get_solution_file_name(self):
         return f'{self.semester_registration.profile.user.get_full_name_camel_case()}'\
-               f'-{self.problem.id}-{self.semester_registration.id}.pdf'
+            f'-{self.problem.id}-{self.semester_registration.id}.pdf'
 
     def get_solution_file_path(self):
         return f'solutions/user_solutions/{self.get_solution_file_name()}'
 
     def get_corrected_solution_file_name(self):
         return f'{self.semester_registration.profile.user.get_full_name_camel_case()}'\
-               f'-{self.problem.id}-{self.semester_registration.id}_corrected.pdf'
+            f'-{self.problem.id}-{self.semester_registration.id}_corrected.pdf'
 
     def get_corrected_solution_file_path(self):
         return f'solutions/corrected/{self.get_corrected_solution_file_name()}'

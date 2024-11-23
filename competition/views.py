@@ -19,7 +19,6 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 from base.utils import mime_type
-from competition.exceptions import FreezingNotClosedResults
 from competition.models import (Comment, Competition, CompetitionType, Event,
                                 EventRegistration, Grade, LateTag, Problem,
                                 Publication, PublicationType, Semester, Series,
@@ -27,6 +26,11 @@ from competition.models import (Comment, Competition, CompetitionType, Event,
 from competition.permissions import (CommentPermission,
                                      CompetitionRestrictedPermission,
                                      ProblemPermission)
+from competition.results import (FreezingNotClosedResults,
+                                 freeze_semester_results,
+                                 freeze_series_results,
+                                 generate_praticipant_invitations,
+                                 semester_results, series_results)
 from competition.serializers import (CommentSerializer, CompetitionSerializer,
                                      CompetitionTypeSerializer,
                                      EventRegistrationReadSerializer,
@@ -40,9 +44,6 @@ from competition.serializers import (CommentSerializer, CompetitionSerializer,
                                      SemesterWithProblemsSerializer,
                                      SeriesWithProblemsSerializer,
                                      SolutionSerializer)
-from competition.utils import sum_methods
-from competition.utils.results import (generate_praticipant_invitations,
-                                       rank_results)
 from personal.models import Profile, School
 from personal.serializers import ProfileExportSerializer, SchoolSerializer
 from webstrom.settings import EMAIL_ALERT
@@ -56,60 +57,6 @@ class ModelViewSetWithSerializerContext(viewsets.ModelViewSet):
         context = super().get_serializer_context()
         context.update({"request": self.request})
         return context
-
-
-def generate_result_row(
-    semester_registration: EventRegistration,
-    semester: Semester = None,
-    only_series: Series = None
-):
-    """
-    Vygeneruje riadok výsledku pre používateľa.
-    Ak je uvedený only_semester vygenerujú sa výsledky iba sa daný semester
-    """
-    user_solutions = semester_registration.solution_set
-    series_set = semester.series_set.order_by(
-        'order') if semester is not None else [only_series]
-    solutions = []
-    subtotal = []
-    for series in series_set:
-        series_solutions = []
-        solution_points = []
-        for problem in series.problems.order_by('order'):
-            sol = user_solutions.filter(problem=problem).first()
-
-            solution_points.append(sol.score or 0 if sol is not None else 0)
-            series_solutions.append(
-                {
-                    'points': (str(sol.score if sol.score is not None else '?')
-                               if sol is not None else '-'),
-                    'solution_pk': sol.pk if sol is not None else None,
-                    'problem_pk': problem.pk,
-                    'votes': 0  # TODO: Implement votes sol.vote
-                }
-            )
-        series_sum_func = getattr(sum_methods, series.sum_method or '',
-                                  sum_methods.series_simple_sum)
-        solutions.append(series_solutions)
-        subtotal.append(
-            series_sum_func(solution_points, semester_registration)
-        )
-    return {
-        # Poradie - horná hranica, v prípade deleného miesto(napr. 1.-3.) ide o nižšie miesto(1)
-        'rank_start': 0,
-        # Poradie - dolná hranica, v prípade deleného miesto(napr. 1.-3.) ide o vyššie miesto(3)
-        'rank_end': 0,
-        # Indikuje či sa zmenilo poradie od minulej priečky, slúži na delené miesta
-        'rank_changed': True,
-        # primary key riešiteľovej registrácie do semestra
-        'registration': EventRegistrationReadSerializer(semester_registration).data,
-        # Súčty bodov po sériách
-        'subtotal': subtotal,
-        # Celkový súčet za danú entitu
-        'total': sum(subtotal),
-        # Zoznam riešení,
-        'solutions': solutions
-    }
 
 
 class CompetitionViewSet(mixins.RetrieveModelMixin,
@@ -484,36 +431,26 @@ class SeriesViewSet(ModelViewSetWithSerializerContext):
             raise exceptions.PermissionDenied(
                 'Nedostatočné práva na vytvorenie tohoto objektu')
 
-    @staticmethod
-    def __create_result_json(series: Series) -> dict:
-        results = []
-        for registration in series.semester.eventregistration_set.all():
-            results.append(
-                generate_result_row(registration, only_series=series)
-            )
-        results.sort(key=itemgetter('total'), reverse=True)
-        return rank_results(results)
-
     @action(methods=['get'], detail=True)
     def results(self, request: Request, pk: Optional[int] = None):
         """Vráti výsledkovku pre sériu"""
         series = self.get_object()
         if series.frozen_results is not None:
             return Response(json.loads(series.frozen_results), status=status.HTTP_200_OK)
-        results = self.__create_result_json(series)
+        results = series_results(series)
         return Response(results, status=status.HTTP_200_OK)
 
     @action(methods=['post'], detail=True, url_path='results/freeze')
     def freeze_results(self, request: Request, pk: Optional[int] = None):
         series: Series = self.get_object()
         try:
-            series.freeze_results(self.__create_result_json(series))
+            freeze_series_results(series)
         except FreezingNotClosedResults as exc:
             raise exceptions.MethodNotAllowed(
                 method='series/results/freeze',
                 detail='Séria nemá opravené všetky úlohy a teda sa nedá uzavrieť.') from exc
         try:
-            series.semester.freeze_results()
+            freeze_semester_results(series.semester)
         except FreezingNotClosedResults:
             pass
         return Response('Séria bola uzavretá', status=status.HTTP_200_OK)
@@ -658,24 +595,11 @@ class SemesterViewSet(ModelViewSetWithSerializerContext):
             raise exceptions.PermissionDenied(
                 'Nedostatočné práva na vytvorenie tohoto objektu')
 
-    @staticmethod
-    def semester_results(semester):
-        """Vyrobí výsledky semestra"""
-        if semester.frozen_results is not None:
-            return json.loads(semester.frozen_results)
-        results = []
-        for registration in semester.eventregistration_set.all():
-            results.append(generate_result_row(registration, semester))
-
-        results.sort(key=itemgetter('total'), reverse=True)
-        results = rank_results(results)
-        return results
-
     @action(methods=['post'], detail=True, url_path='results/freeze')
     def freeze_results(self, request: Request, pk: Optional[int] = None):
         semester: Semester = self.get_object()
         try:
-            semester.freeze_results(self.semester_results(semester))
+            freeze_semester_results(semester)
         except FreezingNotClosedResults as exc:
             raise exceptions.MethodNotAllowed(
                 method='series/results/freeze',
@@ -686,7 +610,7 @@ class SemesterViewSet(ModelViewSetWithSerializerContext):
     def results(self, request, pk=None):
         """Vráti výsledkovku semestra"""
         semester = self.get_object()
-        current_results = SemesterViewSet.semester_results(semester)
+        current_results = semester_results(semester)
         return Response(current_results, status=status.HTTP_200_OK)
 
     @action(methods=['get'], detail=True, permission_classes=[IsAdminUser])
@@ -718,7 +642,7 @@ class SemesterViewSet(ModelViewSetWithSerializerContext):
         num_participants = int(num_participants)
         num_substitutes = int(num_substitutes)
         participants = generate_praticipant_invitations(
-            SemesterViewSet.semester_results(semester),
+            semester_results(semester),
             num_participants,
             num_substitutes
         )
@@ -736,7 +660,7 @@ class SemesterViewSet(ModelViewSetWithSerializerContext):
         num_substitutes = int(num_substitutes)
         semester = self.get_object()
         participants = generate_praticipant_invitations(
-            SemesterViewSet.semester_results(semester),
+            semester_results(semester),
             num_participants,
             num_substitutes
         )
@@ -768,7 +692,7 @@ class SemesterViewSet(ModelViewSetWithSerializerContext):
         """Vráti výsledky pre aktuálny semester"""
         current_semester = self.get_queryset().filter(
             competition=competition_id).current()
-        current_results = SemesterViewSet.semester_results(current_semester)
+        current_results = semester_results(current_semester)
         return Response(current_results, status=status.HTTP_201_CREATED)
 
     def __get_participants(self):
@@ -923,7 +847,8 @@ class PublicationViewSet(viewsets.ModelViewSet):
         publication = self.get_object()
         response = HttpResponse(
             publication.file, content_type=mime_type(publication.file))
-        response['Content-Disposition'] = f'attachment; filename="{publication.name}"'
+        response['Content-Disposition'] = f'attachment; filename="{
+            publication.name}"'
         return response
 
     @action(methods=['post'], detail=False, url_path='upload', permission_classes=[IsAdminUser])

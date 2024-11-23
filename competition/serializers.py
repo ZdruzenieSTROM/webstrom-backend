@@ -3,7 +3,6 @@ from django_typomatic import ts_interface
 from rest_framework import serializers
 
 from competition import models
-from competition.models import Event, Problem, RegistrationLink
 from personal.serializers import ProfileShortSerializer, SchoolShortSerializer
 
 
@@ -71,11 +70,11 @@ class EventSerializer(ModelWithParticipationSerializer):
         registration_link = validated_data.pop('registration_link', None)
 
         if registration_link is not None:
-            registration_link = RegistrationLink.objects.create(
+            registration_link = models.RegistrationLink.objects.create(
                 **registration_link,
             )
 
-        return Event.objects.create(
+        return models.Event.objects.create(
             registration_link=registration_link,
             **validated_data,
         )
@@ -299,7 +298,7 @@ class ProblemWithSolutionsSerializer(serializers.ModelSerializer):
     def format_histogram(self, histogram: list[dict[str, int]]) -> str:
         return ''.join([f'({item["score"]},{item["count"]})' for item in histogram])
 
-    def get_tex_header(self, obj: Problem) -> str:
+    def get_tex_header(self, obj: models.Problem) -> str:
         """Generuje tex hlavicku vzoraku do casaku"""
         try:
             corrected_by = [user.get_full_name()
@@ -309,7 +308,7 @@ class ProblemWithSolutionsSerializer(serializers.ModelSerializer):
             best_solutions = [user.get_full_name()
                               for user in obj.correction.corrected_by.all()]
             best_solution_suffix = 'e' if len(best_solutions) > 1 else 'a'
-        except Problem.correction.RelatedObjectDoesNotExist:  # pylint: disable=no-member
+        except models.Problem.correction.RelatedObjectDoesNotExist:  # pylint: disable=no-member
             corrected_by = None
             corrected_suffix = ''
             best_solutions = None
