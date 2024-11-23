@@ -169,10 +169,13 @@ def build_grades_dictionary():
         for grade in grades:
             grade_dict[grade['fields']['tag']] = {
                 'id': grade['pk'],
-                'name': grade['name']['name'],
+                'name': grade['fields']['name'],
                 'tag': grade['fields']['tag'],
                 'years_until_graduation': grade['fields']['years_until_graduation']
             }
+    grade_dict['S5'] = grade_dict['S4']
+    grade_dict[''] = {'id': '', 'name': '',
+                      'tag': '', 'years_until_graduation': ''}
     return grade_dict
 
 

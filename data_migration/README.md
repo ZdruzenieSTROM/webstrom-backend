@@ -15,4 +15,4 @@ Postup migrácie dát na web:
    4. `problems.csv` - Do `competition_problems`
    5. `events.csv` - Do `competition_event`
    6. `publications.csv` - Do `competition_publication`
-8.   
+8. Pustiť skript pre úpravu sekvencií `update_sequences.sql`
