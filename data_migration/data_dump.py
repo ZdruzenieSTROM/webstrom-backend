@@ -330,7 +330,7 @@ def load_series(conn):
 if __name__ == '__main__':
     conn_ = get_connection(sys.argv[1])
     parse_results()
-    # load_resource(conn, SEMESTER_QUERY, transform_semester, 'semesters.csv')
+    load_resource(conn_, SEMESTER_QUERY, transform_semester, 'semesters.csv')
 
     load_series(conn_)
-    # load_resource(conn, PROBLEM_QUERY, transform_problem, 'problems.csv')
+    load_resource(conn_, PROBLEM_QUERY, transform_problem, 'problems.csv')
