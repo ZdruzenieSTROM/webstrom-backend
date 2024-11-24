@@ -396,7 +396,7 @@ class SemesterWithProblemsSerializer(ModelWithParticipationSerializer):
         validators = []
 
     def validate(self, attrs):
-        if attrs['season_code'] not in (0, 1):
+        if attrs.get('season_code', 0) not in (0, 1):
             raise ValidationError(
                 'Seminár musí byť zimný alebo letný(season_code 0 alebo 1)')
         return super().validate(attrs)
