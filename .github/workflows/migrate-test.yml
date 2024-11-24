@@ -13,4 +13,4 @@ jobs:
           ssh_private_key: ${{ secrets.WEBSTROM_DEPLOY_SSH_PRIVATE_KEY }}
           ssh_public_key: ${{ secrets.WEBSTROM_DEPLOY_SSH_PUBLIC_KEY }}
           stack_file_name: deployment/compose-test.yaml
-          args: run --rm webstrom-backend python manage.py migrate --noinput
+          args: run --build --rm webstrom-backend python manage.py migrate --noinput
