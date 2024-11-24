@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AnonymousUser
 from django_typomatic import ts_interface
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
 from competition import models
 from personal.serializers import ProfileShortSerializer, SchoolShortSerializer
@@ -392,6 +393,13 @@ class SemesterWithProblemsSerializer(ModelWithParticipationSerializer):
         model = models.Semester
         exclude = ['frozen_results', 'registration_link']
         read_only_fields = ['complete']
+        validators = []
+
+    def validate(self, attrs):
+        if attrs['season_code'] not in (0, 1):
+            raise ValidationError(
+                'Seminár musí byť zimný alebo letný(season_code 0 alebo 1)')
+        return super().validate(attrs)
 
     def get_complete(self, obj: models.Semester):
         return obj.complete
