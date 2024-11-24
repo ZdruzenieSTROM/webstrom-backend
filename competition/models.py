@@ -20,6 +20,7 @@ from base.validators import school_year_validator
 from competition.querysets import ActiveQuerySet
 from competition.utils.school_year_manipulation import \
     get_school_year_end_by_date
+from competition.utils.validations import validate_points
 from personal.models import Profile, School
 from user.models import User
 
@@ -643,7 +644,7 @@ class Solution(models.Model):
         verbose_name='opravené riešenie', blank=True, upload_to=get_corrected_solution_path)
 
     score = models.PositiveSmallIntegerField(
-        verbose_name='body', null=True, blank=True)
+        verbose_name='body', null=True, blank=True, validators=[validate_points])
 
     vote = models.IntegerField(choices=Vote.choices,
                                default=Vote.NONE)
