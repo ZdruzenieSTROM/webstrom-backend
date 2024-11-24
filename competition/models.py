@@ -3,6 +3,7 @@ from typing import Optional
 
 from django.conf import settings
 from django.contrib.sites.models import Site
+from django.core.exceptions import ValidationError
 from django.core.files.storage import FileSystemStorage
 from django.core.validators import validate_slug
 from django.db import models
@@ -236,6 +237,12 @@ class Semester(Event):
         null=True,
         blank=True,
         default=None)
+
+    def clean(self) -> None:
+        if self.season_code == 2:
+            raise ValidationError(
+                'Seminár musí byť zimný alebo letný(season_code 0 alebo 1)')
+        return super().clean()
 
     def save(self, *args, **kwargs) -> None:
         if not self.frozen_results:
