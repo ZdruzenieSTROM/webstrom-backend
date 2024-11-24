@@ -1,7 +1,7 @@
 from django.contrib import admin
 
-from cms.models import (InfoBanner, Logo, MenuItem, MessageTemplate, Post,
-                        PostLink)
+from cms.models import (FileUpload, InfoBanner, Logo, MenuItem,
+                        MessageTemplate, Post, PostLink)
 
 
 @admin.register(MenuItem)
@@ -64,3 +64,6 @@ class InfoBannerAdmin(admin.ModelAdmin):
         'visible_until',
         'message_template'
     )
+
+
+admin.site.register(FileUpload)

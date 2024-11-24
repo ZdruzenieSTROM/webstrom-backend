@@ -4,6 +4,8 @@ from rest_framework import serializers
 
 from cms import models
 
+from .models import FileUpload
+
 
 @ts_interface(context='cms')
 class MenuItemShortSerializer(serializers.ModelSerializer):
@@ -27,6 +29,7 @@ class PostSerializer(WritableNestedModelSerializer):
         model = models.Post
         fields = '__all__'
 
+
 @ts_interface(context='cms')
 class LogoSerializer(serializers.ModelSerializer):
     class Meta:
@@ -48,3 +51,9 @@ class MessageTemplateSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.MessageTemplate
         fields = ['message']
+
+
+class FileUploadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FileUpload
+        fields = ('id', 'file')

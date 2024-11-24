@@ -8,10 +8,11 @@ from rest_framework.decorators import action
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from cms.models import InfoBanner, Logo, MenuItem, MessageTemplate, Post
+from cms.models import (FileUpload, InfoBanner, Logo, MenuItem,
+                        MessageTemplate, Post)
 from cms.permissions import PostPermission
-from cms.serializers import (InfoBannerSerializer, LogoSerializer,
-                             MenuItemShortSerializer,
+from cms.serializers import (FileUploadSerializer, InfoBannerSerializer,
+                             LogoSerializer, MenuItemShortSerializer,
                              MessageTemplateSerializer, PostSerializer)
 from competition.models import Competition, Event, Series
 
@@ -131,3 +132,8 @@ class MessageTemplateViewSet(viewsets.ModelViewSet):
     """Templaty správ pre info banner/posty"""
     serializer_class = MessageTemplateSerializer
     queryset = MessageTemplate.objects.all()
+
+
+class FileUploadViewSet(viewsets.ModelViewSet):
+    serializer_class = FileUploadSerializer
+    queryset = FileUpload.objects.all()
