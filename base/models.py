@@ -25,3 +25,7 @@ class RestrictedFileField(models.FileField):
                 'Nepovolený typ súboru')
 
         return file
+
+
+class Site(models.Model):
+    name = models.CharField(max_length=10, unique=True)

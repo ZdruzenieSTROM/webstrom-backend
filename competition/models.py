@@ -2,7 +2,6 @@ import datetime
 from typing import Optional
 
 from django.conf import settings
-from django.contrib.sites.models import Site
 from django.core.exceptions import ValidationError
 from django.core.files.storage import FileSystemStorage
 from django.core.validators import validate_slug
@@ -16,7 +15,7 @@ from django.utils.timezone import now
 from unidecode import unidecode
 
 from base.managers import UnspecifiedValueManager
-from base.models import RestrictedFileField
+from base.models import RestrictedFileField, Site
 from base.validators import school_year_validator
 from competition.querysets import ActiveQuerySet
 from competition.utils.school_year_manipulation import \
@@ -102,10 +101,6 @@ class Competition(models.Model):
     @classmethod
     def get_seminar_by_site(cls, site):
         return get_object_or_404(cls, sites=site, competition_type=0)
-
-    @classmethod
-    def get_seminar_by_current_site(cls):
-        return cls.get_seminar_by_site(Site.objects.get_current())
 
     def can_user_modify(self, user: User):
         return len(set(self.permission_group.all()).intersection(set(user.groups.all()))) > 0
