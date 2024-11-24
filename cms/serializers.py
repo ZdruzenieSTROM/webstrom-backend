@@ -4,7 +4,7 @@ from rest_framework import serializers
 
 from cms import models
 
-from .models import FileUpload
+from .models import FileUpload, FlatPage
 
 
 @ts_interface(context='cms')
@@ -57,3 +57,9 @@ class FileUploadSerializer(serializers.ModelSerializer):
     class Meta:
         model = FileUpload
         fields = ('id', 'file')
+
+
+class FlatPageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FlatPage
+        fields = ('id', 'url', 'title', 'content')

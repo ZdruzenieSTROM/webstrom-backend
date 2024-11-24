@@ -1,10 +1,8 @@
-from django.contrib.flatpages.models import FlatPage
-from django.contrib.sites.models import Site
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.timezone import now
 
-from base.models import RestrictedFileField
+from base.models import RestrictedFileField, Site
 from competition.models import Event, Series
 
 from .querysets import VisibilityQuerySet
@@ -23,6 +21,17 @@ class ModelWithVisibility(models.Model):
 
     class Meta:
         abstract = True
+
+
+class FlatPage(models.Model):
+    """Statická stránka"""
+
+    url = models.SlugField("url", max_length=100, unique=True)
+    title = models.CharField("title", max_length=200)
+    content = models.TextField("content", blank=True)
+
+    def __str__(self):
+        return f"{self.url} - {self.title}"
 
 
 class MessageTemplate(models.Model):

@@ -5,14 +5,17 @@ from datetime import datetime
 from django.utils.timezone import now
 from rest_framework import viewsets
 from rest_framework.decorators import action
+from rest_framework.exceptions import NotFound
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from cms.models import (FileUpload, InfoBanner, Logo, MenuItem,
+from base.permissions import IsAdminOrReadOnly
+from cms.models import (FileUpload, FlatPage, InfoBanner, Logo, MenuItem,
                         MessageTemplate, Post)
 from cms.permissions import PostPermission
-from cms.serializers import (FileUploadSerializer, InfoBannerSerializer,
-                             LogoSerializer, MenuItemShortSerializer,
+from cms.serializers import (FileUploadSerializer, FlatPageSerializer,
+                             InfoBannerSerializer, LogoSerializer,
+                             MenuItemShortSerializer,
                              MessageTemplateSerializer, PostSerializer)
 from competition.models import Competition, Event, Series
 
@@ -137,3 +140,19 @@ class MessageTemplateViewSet(viewsets.ModelViewSet):
 class FileUploadViewSet(viewsets.ModelViewSet):
     serializer_class = FileUploadSerializer
     queryset = FileUpload.objects.all()
+
+
+class FlatPageViewSet(viewsets.ModelViewSet):
+    serializer_class = FlatPageSerializer
+    queryset = FlatPage.objects.all()
+    permission_classes = (IsAdminOrReadOnly,)
+
+    @action(detail=False, methods=['get'], url_path='by-url/(?P<slug>.+)')
+    def by_url(self, request, slug):
+        try:
+            page = self.queryset.get(url=slug)
+
+            return Response(FlatPageSerializer(page).data)
+
+        except FlatPage.DoesNotExist as exc:
+            raise NotFound from exc

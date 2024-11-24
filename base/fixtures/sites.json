@@ -1,25 +1,22 @@
 [
     {
-        "model": "sites.site",
+        "model": "base.Site",
         "pk": 0,
         "fields": {
-            "domain": "seminar.strom.sk",
             "name": "STROM"
         }
     },
     {
-        "model": "sites.site",
+        "model": "base.Site",
         "pk": 1,
         "fields": {
-            "domain": "matik.strom.sk",
             "name": "Matik"
         }
     },
     {
-        "model": "sites.site",
+        "model": "base.Site",
         "pk": 2,
         "fields": {
-            "domain": "malynar.strom.sk",
             "name": "Malyn\u00e1r"
         }
     }
