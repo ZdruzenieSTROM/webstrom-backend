@@ -12,7 +12,9 @@ from django.core.mail import send_mail
 from django.http import FileResponse, HttpResponse
 from django.template.loader import render_to_string
 from django.utils.timezone import now
-from rest_framework import exceptions, mixins, status, viewsets
+from django_filters import Filter, FilterSet
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import exceptions, filters, mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
@@ -68,6 +70,12 @@ class CompetitionViewSet(mixins.RetrieveModelMixin,
     queryset = Competition.objects.all()
     serializer_class = CompetitionSerializer
     permission_classes = (CompetitionRestrictedPermission,)
+    filter_backends = [DjangoFilterBackend,
+                       filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['slug', 'sites', 'competition_type']
+    search_fields = ['name']
+    ordering_fields = ['name', 'start_year', 'competition_type']
+    ordering = ['start_year']
 
     @action(detail=False, url_path=r'slug/(?P<slug>\w+)')
     def slug(self, request: Request, slug: str = None) -> Response:
@@ -155,9 +163,26 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
     """
     Obsluhuje API endpoint pre Úlohy
     """
+    class ProblemFilterSet(FilterSet):
+        competition = Filter(
+            field_name='series__semester__competition')
+        semester = Filter(
+            field_name='series__semester'
+        )
+
+        class Meta:
+            model = Problem
+            fields = ['order', 'series']
+
     queryset = Problem.objects.all()
     serializer_class = ProblemSerializer
     permission_classes = (ProblemPermission,)
+    filter_backends = [DjangoFilterBackend,
+                       filters.SearchFilter, filters.OrderingFilter]
+    filterset_class = ProblemFilterSet
+    search_fields = ['text']
+    ordering_fields = ['order', 'series__order', 'series__deadline']
+    ordering = ['series__deadline', 'order']
 
     def perform_create(self, serializer):
         """
@@ -424,10 +449,27 @@ class SeriesViewSet(ModelViewSetWithSerializerContext):
     """
     Obsluhuje API endpoint pre Úlohy
     """
+    class SeriesFilterSet(FilterSet):
+        competition = Filter(
+            field_name='semester__competition')
+
+        class Meta:
+            model = Series
+            fields = ['order', 'semester']
+
     queryset = Series.objects.all()
     serializer_class = SeriesWithProblemsSerializer
     permission_classes = (CompetitionRestrictedPermission,)
     http_method_names = ['get', 'head', 'put', 'patch', "post"]
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter
+    ]
+    filterset_class = SeriesFilterSet
+    search_fields = ['semester__competition__name']
+    ordering_fields = ['deadline']
+    ordering = ['deadline']
 
     def perform_create(self, serializer):
         """
@@ -492,8 +534,37 @@ class SeriesViewSet(ModelViewSetWithSerializerContext):
 
 class SolutionViewSet(viewsets.ModelViewSet):
     """Užívateľské riešenia"""
+    class SolutionFilterSet(FilterSet):
+        profile = Filter(
+            field_name='semester_registration__profile'
+        )
+        school = profile = Filter(
+            field_name='semester_registration__school'
+        )
+        missing_file = Filter(
+            'solution__isnull'
+        )
+        missing_corrected_file = Filter(
+            'corrected_solution__isnull'
+        )
+        uploaded_after = Filter(
+            'uploaded_at__gt'
+        )
+        uploaded_before = Filter(
+            'uploaded_at__lt'
+        )
+
+        class Meta:
+            model = Solution
+            fields = ['problem', 'late_tag', 'semester_registration']
     queryset = Solution.objects.all()
     serializer_class = SolutionSerializer
+    filter_backends = [DjangoFilterBackend,
+                       filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['semester_registration__profile__first_name',
+                     'semester_registration__profile__last_name']
+    ordering_fields = ['problem', 'score', 'uploaded_at']
+    ordering = ['uploaded_at']
 
     @action(methods=['post'], detail=True, url_path='add-positive-vote',
             permission_classes=[IsAdminUser])
@@ -589,7 +660,11 @@ class SemesterViewSet(ModelViewSetWithSerializerContext):
     queryset = Semester.objects.all()
     serializer_class = SemesterWithProblemsSerializer
     permission_classes = (CompetitionRestrictedPermission,)
-    filterset_fields = ['competition']
+    filterset_fields = ['school_year',
+                        'season_code', 'competition']
+    search_fields = ['competition__name']
+    ordering_fields = ['start', 'end', 'year']
+    ordering = ['start']
     http_method_names = ['get', 'head', 'put', 'patch', 'post']
 
     def perform_create(self, serializer):
@@ -754,6 +829,13 @@ class EventViewSet(ModelViewSetWithSerializerContext):
     serializer_class = EventSerializer
     filterset_fields = ['school_year', 'competition', ]
     permission_classes = (CompetitionRestrictedPermission,)
+    filter_backends = [DjangoFilterBackend,
+                       filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['school_year',
+                        'season_code', 'location', 'competition']
+    search_fields = ['competition__name', 'year', 'additional_name']
+    ordering_fields = ['start', 'end', 'year']
+    ordering = ['start']
 
     def perform_create(self, serializer):
         """
@@ -818,8 +900,12 @@ class EventViewSet(ModelViewSetWithSerializerContext):
 
 class EventRegistrationViewSet(viewsets.ModelViewSet):
     """Registrácie na akcie"""
+
     queryset = EventRegistration.objects.all()
-    filterset_fields = ['event', 'profile', ]
+    filterset_fields = ['school', 'profile', 'grade', 'event']
+    search_fields = ['profile__first_name', 'profile__last_name']
+    ordering_fields = ['event__start']
+    ordering = ['event__start']
     permission_classes = (CompetitionRestrictedPermission,)
 
     def get_serializer_class(self):

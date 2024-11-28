@@ -3,7 +3,8 @@
 from datetime import datetime
 
 from django.utils.timezone import now
-from rest_framework import viewsets
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound
 from rest_framework.request import Request
@@ -48,7 +49,12 @@ class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     permission_classes = (PostPermission,)
-    filterset_fields = ['sites', ]
+    filter_backends = [DjangoFilterBackend,
+                       filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['sites']
+    search_fields = ['caption', 'short_text', 'details']
+    ordering_fields = ['added_at', 'visible_until', 'visible_after']
+    ordering = ['added_at']
 
     @action(detail=False)
     def visible(self, request):
