@@ -158,6 +158,16 @@ class EventRegistrationWriteSerializer(serializers.ModelSerializer):
     event = serializers.PrimaryKeyRelatedField(
         queryset=models.Event.objects.all())
 
+    def validate(self, attrs):
+        grade: models.Grade | None = attrs.get('grade')
+        event: models.Event | None = attrs.get('event')
+        if event and grade and (
+            event.competition.min_years_until_graduation > grade.years_until_graduation
+        ):
+            raise ValidationError(
+                f'Ročník {grade.tag} nie je povolený pre {event.competition.name}')
+        return super().validate(attrs)
+
 
 @ts_interface(context='competition')
 class ProblemCorrectionSerializer(serializers.ModelSerializer):
