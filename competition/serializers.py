@@ -399,7 +399,8 @@ class SemesterWithProblemsSerializer(ModelWithParticipationSerializer):
         if attrs.get('season_code', 0) not in (0, 1):
             raise ValidationError(
                 'Seminár musí byť zimný alebo letný(season_code 0 alebo 1)')
-        if attrs.get('competition').competition_type.name != "Seminár":
+        competition: models.Competition | None = attrs.get('competition')
+        if competition and competition.competition_type.name != "Seminár":
             raise ValidationError('Súťaž nie je typu seminár')
         return super().validate(attrs)
 
