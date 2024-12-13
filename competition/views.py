@@ -373,7 +373,15 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
             errors = []
 
             # TODO: checks file are really pdfs
-            for filename in filter(lambda filename: filename.endswith('.pdf'), zfile.namelist()):
+            for filename in zfile.namelist():
+                if not filename.endswith(".pdf"):
+                    # Ignore other non-pdf files in the archive
+                    continue
+
+                if "__MACOSX" in filename:
+                    # Ignore mac os metadata folder
+                    continue
+
                 try:
                     parts = filename.rstrip('.pdf').split('-')
                     score = int(parts[0])
