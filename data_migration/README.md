@@ -1,6 +1,6 @@
 Postup migrácie dát na web:
 1. Stiahnuť aktuálny dump databáze
-2. Exportovať csvčka objektov pomocou `python data_dump.py db.roots`
+2. Exportovať csvčka objektov pomocou `python manage.py data_dump db.roots`
 3. Zmazať staré objekty v aktuálnej postgres DB. Skript je v `delete_all.sql`
 4. Nahrať fily na server do `/data/www/webstrom-test/media/publications/`
 5. Opraviť oprávnenia
