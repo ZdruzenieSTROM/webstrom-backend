@@ -963,16 +963,6 @@ class PublicationViewSet(viewsets.ModelViewSet):
             raise exceptions.PermissionDenied(
                 'Nedostatočné práva na vytvorenie tohoto objektu')
 
-    @action(methods=['get'], detail=True, url_path='download')
-    def download_publication(self, request, pk=None):
-        """Stiahne súbor publikácie"""
-        publication = self.get_object()
-        response = HttpResponse(
-            publication.file, content_type=mime_type(publication.file))
-        response['Content-Disposition'] = f'attachment; '\
-            f'filename="{publication.name}"'
-        return response
-
 
 class GradeViewSet(viewsets.ReadOnlyModelViewSet):
     """Ročníky riešiteľov (Z9,S1 ...)"""
