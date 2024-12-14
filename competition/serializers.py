@@ -71,6 +71,26 @@ class EventSerializer(ModelWithParticipationSerializer):
         model = models.Event
         fields = '__all__'
 
+    def validate_school_year(self, value: str):
+        try:
+            school_year_validator(value)
+            return value
+        except exceptions.ValidationError as exc:
+            raise ValidationError('Nesprávny formát šk. roku') from exc
+
+    def validate(self, attrs):
+        school_year = attrs.get('school_year')
+        start_year, end_year = school_year.split('/')
+        start = attrs.get('start')
+        end = attrs.get('end')
+        if start and start.date() < datetime.date(year=int(start_year), month=7, day=1):
+            raise ValidationError(
+                f'Začiatok súťaže ({start}) nie je v školskom roku {school_year}')
+        if end and end.date() > datetime.date(year=int(end_year), month=8, day=31):
+            raise ValidationError(
+                f'Koniec súťaže ({end}) nie je v školskom roku {school_year}')
+        return super().validate(attrs)
+
     def create(self, validated_data):
         registration_link = validated_data.pop('registration_link', None)
 
