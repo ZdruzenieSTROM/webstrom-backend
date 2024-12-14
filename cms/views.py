@@ -54,7 +54,7 @@ class PostViewSet(viewsets.ModelViewSet):
     filterset_fields = ['sites']
     search_fields = ['caption', 'short_text', 'details']
     ordering_fields = ['added_at', 'visible_until', 'visible_after']
-    ordering = ['added_at']
+    ordering = ['-added_at']
 
     @action(detail=False)
     def visible(self, request):
