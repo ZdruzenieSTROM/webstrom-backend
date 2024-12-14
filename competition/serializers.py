@@ -449,15 +449,16 @@ class SemesterWithProblemsSerializer(ModelWithParticipationSerializer):
 
     def validate(self, attrs):
         school_year = attrs.get('school_year')
-        start_year, end_year = school_year.split('/')
-        start = attrs.get('start')
-        end = attrs.get('end')
-        if start and start.date() < datetime.date(year=int(start_year), month=7, day=1):
-            raise ValidationError(
-                f'Začiatok súťaže ({start}) nie je v školskom roku {school_year}')
-        if end and end.date() > datetime.date(year=int(end_year), month=8, day=31):
-            raise ValidationError(
-                f'Koniec súťaže ({end}) nie je v školskom roku {school_year}')
+        if school_year is not None:
+            start = attrs.get('start')
+            end = attrs.get('end')
+            start_year, end_year = school_year.split('/')
+            if start and start.date() < datetime.date(year=int(start_year), month=7, day=1):
+                raise ValidationError(
+                    f'Začiatok súťaže ({start}) nie je v školskom roku {school_year}')
+            if end and end.date() > datetime.date(year=int(end_year), month=8, day=31):
+                raise ValidationError(
+                    f'Koniec súťaže ({end}) nie je v školskom roku {school_year}')
         return super().validate(attrs)
 
     def get_complete(self, obj: models.Semester):
