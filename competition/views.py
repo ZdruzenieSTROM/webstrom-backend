@@ -1,3 +1,4 @@
+# pylint:disable=too-many-lines
 import csv
 import json
 import os
