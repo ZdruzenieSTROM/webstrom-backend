@@ -230,7 +230,7 @@ class ResultRow:
     total: int
     sum_method: str
 
-    def build_result_row(self):
+    def build_result_row(self, school_to_abbr):
 
         return {
             "rank_start": self.start,
@@ -242,7 +242,7 @@ class ResultRow:
                     "name": self.school if (
                         self.school is not None and self.school != "None"
                     ) else "",
-                    "abbreviation": "",
+                    "abbreviation": school_to_abbr.get(self.school, ""),
                     "street": "",
                     "city": "",
                     "zip_code": ""
@@ -326,9 +326,24 @@ def get_results_response(semester_id):
     for domain in ['matik', 'malynar', 'seminar']:
         response = requests.get(
             f'https://{domain}.strom.sk/sk/sutaze/semester/poradie/{semester_id}', timeout=10)
+        response_tex = requests.get(
+            f'https://{domain}.strom.sk/sk/sutaze/semester/poradie/tex/{semester_id}', timeout=10
+        )
         if response.status_code == 200:
-            return response
+            if response_tex.status_code == 200:
+                return response, response_tex
+            return response, None
     raise ValueError(f'Invalid semester id: {semester_id}')
+
+
+def get_school_to_abbreviation_conversion(semester_results, response_tex):
+    soup = bs4.BeautifulSoup(response_tex.text)
+    soup.find('b').decompose()
+    body = soup.get_text()
+    lines = body.split('\\\\')
+    lines = [' '.join(line.split()).split('&') for line in lines]
+    return {result_line[3]: tex_line[3].strip()
+            for tex_line, result_line in zip(lines, semester_results)}
 
 
 def parse_semester_results(semester_id, conn):
@@ -336,11 +351,14 @@ def parse_semester_results(semester_id, conn):
         body = table.find('tbody')
         return [[value.get_text().strip() for value in row.find_all('td')]
                 for row in body.find_all('tr')]
-    response = get_results_response(semester_id)
+
+    response, response_tex = get_results_response(semester_id)
     soup = bs4.BeautifulSoup(response.text)
     body: bs4.BeautifulSoup = soup.find_all(
         'table', {'class': 'table table-condensed table-striped'})
     semester = parse_from_table(body[-1])
+    school_to_abbr = get_school_to_abbreviation_conversion(
+        semester, response_tex)
     series = [parse_from_table(body[0]), parse_from_table(body[1])]
     sum_method = get_method_by_semester(conn, semester_id)
     results = parse_semester(semester, sum_method)
@@ -349,13 +367,13 @@ def parse_semester_results(semester_id, conn):
             'order': i+1,
             'semester_id': semester_id,
             'frozen_results': json.dumps([
-                row.build_result_row()
+                row.build_result_row(school_to_abbr)
                 for row in parse_series(series_values, sum_method)
             ])
         } for i, series_values in enumerate(series)]
     return {
         'event_ptr_id': semester_id,
-        'frozen_resuts': json.dumps([row.build_result_row() for row in results])
+        'frozen_resuts': json.dumps([row.build_result_row(school_to_abbr) for row in results])
     }, series_results
 
 
