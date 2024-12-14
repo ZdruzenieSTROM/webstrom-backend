@@ -736,7 +736,7 @@ class Publication(models.Model):
     event = models.ForeignKey(Event, null=True, on_delete=models.SET_NULL)
 
     file = RestrictedFileField(
-        upload_to='publications/%Y',
+        upload_to='publications/%Y/',
         content_types=['application/pdf', 'application/zip'],
         verbose_name='súbor')
 

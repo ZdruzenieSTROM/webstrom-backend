@@ -46,6 +46,11 @@ class PublicationSerializer(serializers.ModelSerializer):
         model = models.Publication
         fields = '__all__'
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields['file'].parent = None
+
     def get_verbose_name(self, obj):
         return str(obj)
 
