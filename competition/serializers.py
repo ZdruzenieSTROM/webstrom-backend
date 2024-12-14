@@ -193,12 +193,16 @@ class ProblemSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Problem
         fields = '__all__'
-        read_only_fields = ['submitted', 'num_comments']
+        read_only_fields = ['submitted', 'num_comments',
+                            'num_solutions', 'num_corrected_solutions']
 
     submitted = serializers.SerializerMethodField(
         'get_submitted')
     num_comments = serializers.SerializerMethodField(
         'get_num_comments')
+    num_solutions = serializers.SerializerMethodField('get_num_solutions')
+    num_corrected_solutions = serializers.SerializerMethodField(
+        'get_num_corrected_solutions')
     verbose_name = serializers.SerializerMethodField('get_verbose_name')
     # correction = ProblemCorrectionSerializer(many=False,)
 
@@ -206,6 +210,12 @@ class ProblemSerializer(serializers.ModelSerializer):
         """Get number of comments related to problem"""
         user = self.context['request'].user if 'request' in self.context else AnonymousUser
         return len(list(obj.get_comments(user)))
+
+    def get_num_solutions(self, obj: models.Problem):
+        return obj.num_solutions
+
+    def get_num_corrected_solutions(self, obj: models.Problem):
+        return obj.num_corrected_solutions
 
     def get_submitted(self, obj):
         if 'request' in self.context:
