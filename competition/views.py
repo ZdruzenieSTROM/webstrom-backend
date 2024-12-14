@@ -973,37 +973,6 @@ class PublicationViewSet(viewsets.ModelViewSet):
             f'filename="{publication.name}"'
         return response
 
-    @action(methods=['post'], detail=False, url_path='upload', permission_classes=[IsAdminUser])
-    def upload_publication(self, request: Request):
-        """Nahrá súbor publikácie"""
-        if 'file' not in request.data:
-            raise exceptions.ParseError(detail='Request neobsahoval súbor')
-
-        file = request.data['file']
-        if mime_type(file) not in ['application/pdf', 'application/zip']:
-            raise exceptions.ParseError(detail='Nesprávny formát')
-
-        event = Event.objects.filter(pk=int(request.data['event'])).first()
-        publication_type = PublicationType.objects.get(
-            name=request.data['publication_type'])
-        order = int(request.data.get('order'))
-
-        publication = Publication.objects.filter(
-            event=event, order=order).first()
-        if publication is None:
-            publication = Publication(
-                name=request.data.get('name'),
-                file=file,
-                event=event,
-                order=order,
-                publication_type=publication_type
-            )
-            publication.generate_name()
-            publication.save()
-
-        publication.file.save(publication.name, file)
-        return Response(status=status.HTTP_201_CREATED)
-
 
 class GradeViewSet(viewsets.ReadOnlyModelViewSet):
     """Ročníky riešiteľov (Z9,S1 ...)"""

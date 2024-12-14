@@ -751,6 +751,7 @@ class Publication(models.Model):
             self.name = f'{self.publication_type.code}_{self.order}.pdf'
         else:
             self.name = self.publication_type.name
+
         self.save()
 
     def __str__(self):
@@ -761,7 +762,8 @@ class Publication(models.Model):
 
     @classmethod
     def can_user_create(cls, user: User, data: dict) -> bool:
-        event = Event.objects.get(pk=data['event'])
+        event = data['event']
+
         return event.can_user_modify(user)
 
 
