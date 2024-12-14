@@ -5,6 +5,8 @@ from django_filters import BooleanFilter
 
 class UpcomingFilter(BooleanFilter):
     def filter(self, qs: BaseManager, value: bool):
+        if value is None:
+            return qs
         lookup_expr = 'gte' if value else 'lte'
         lookup = '__'.join([self.field_name, lookup_expr])
         return qs.filter(**{lookup: now()})
