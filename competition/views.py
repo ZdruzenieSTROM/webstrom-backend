@@ -1,3 +1,4 @@
+# pylint:disable=too-many-lines
 import csv
 import json
 import os
@@ -9,10 +10,11 @@ from typing import Optional
 from django.core.exceptions import ValidationError as CoreValidationError
 from django.core.files import File
 from django.core.mail import send_mail
+from django.db.models.manager import BaseManager
 from django.http import FileResponse, HttpResponse
 from django.template.loader import render_to_string
 from django.utils.timezone import now
-from django_filters import Filter, FilterSet
+from django_filters import Filter, FilterSet, ModelChoiceFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import exceptions, filters, mixins, status, viewsets
 from rest_framework.decorators import action
@@ -22,6 +24,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 from base.utils import mime_type
+from competition.filters import UpcomingFilter
 from competition.models import (Comment, Competition, CompetitionType, Event,
                                 EventRegistration, Grade, LateTag, Problem,
                                 Publication, PublicationType, Semester, Series,
@@ -833,14 +836,30 @@ class SemesterViewSet(ModelViewSetWithSerializerContext):
 
 class EventViewSet(ModelViewSetWithSerializerContext):
     """Ročníky akcií (napríklad Matboj 2021)"""
+    class EventFilterSet(FilterSet):
+
+        class SuitableForGradeFilter(ModelChoiceFilter):
+            def filter(self, qs: BaseManager, value: Grade):
+                if value is None:
+                    return qs
+                return qs.filter(
+                    competition__min_years_until_graduation__lte=value.years_until_graduation
+                )
+
+        grade = SuitableForGradeFilter(queryset=Grade.objects.all())
+        future = UpcomingFilter(field_name='end')
+
+        class Meta:
+            model = Event
+            fields = ['school_year',
+                      'season_code', 'location', 'competition']
+
     queryset = Event.objects.all()
     serializer_class = EventSerializer
-    filterset_fields = ['school_year', 'competition', ]
     permission_classes = (CompetitionRestrictedPermission,)
     filter_backends = [DjangoFilterBackend,
                        filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['school_year',
-                        'season_code', 'location', 'competition']
+    filterset_class = EventFilterSet
     search_fields = ['competition__name', 'year', 'additional_name']
     ordering_fields = ['start', 'end', 'year']
     ordering = ['start']
