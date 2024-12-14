@@ -285,7 +285,7 @@ class Series(models.Model):
     class Meta:
         verbose_name = 'séria'
         verbose_name_plural = 'série'
-        ordering = ['semester', '-order', ]
+        ordering = ['semester', 'order', ]
 
     semester = models.ForeignKey(
         Semester, verbose_name='semester', on_delete=models.CASCADE)
