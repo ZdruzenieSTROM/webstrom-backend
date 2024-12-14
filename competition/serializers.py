@@ -1,8 +1,12 @@
+import datetime
+
 from django.contrib.auth.models import AnonymousUser
+from django.core import exceptions
 from django_typomatic import ts_interface
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
+from base.validators import school_year_validator
 from competition import models
 from personal.serializers import ProfileShortSerializer, SchoolShortSerializer
 
@@ -66,6 +70,26 @@ class EventSerializer(ModelWithParticipationSerializer):
     class Meta:
         model = models.Event
         fields = '__all__'
+
+    def validate_school_year(self, value: str):
+        try:
+            school_year_validator(value)
+            return value
+        except exceptions.ValidationError as exc:
+            raise ValidationError('Nesprávny formát šk. roku') from exc
+
+    def validate(self, attrs):
+        school_year = attrs.get('school_year')
+        start_year, end_year = school_year.split('/')
+        start = attrs.get('start')
+        end = attrs.get('end')
+        if start and start.date() < datetime.date(year=int(start_year), month=7, day=1):
+            raise ValidationError(
+                f'Začiatok súťaže ({start}) nie je v školskom roku {school_year}')
+        if end and end.date() > datetime.date(year=int(end_year), month=8, day=31):
+            raise ValidationError(
+                f'Koniec súťaže ({end}) nie je v školskom roku {school_year}')
+        return super().validate(attrs)
 
     def create(self, validated_data):
         registration_link = validated_data.pop('registration_link', None)
@@ -415,13 +439,36 @@ class SemesterWithProblemsSerializer(ModelWithParticipationSerializer):
         read_only_fields = ['complete']
         validators = []
 
-    def validate(self, attrs):
-        if attrs.get('season_code', 0) not in (0, 1):
+    def validate_season_code(self, value: int):
+        if value not in (0, 1):
             raise ValidationError(
                 'Seminár musí byť zimný alebo letný(season_code 0 alebo 1)')
-        competition: models.Competition | None = attrs.get('competition')
-        if competition and competition.competition_type.name != "Seminár":
+        return value
+
+    def validate_competition(self, value: models.Competition):
+        if value and value.competition_type.name != "Seminár":
             raise ValidationError('Súťaž nie je typu seminár')
+        return value
+
+    def validate_school_year(self, value: str):
+        try:
+            school_year_validator(value)
+            return value
+        except exceptions.ValidationError as exc:
+            raise ValidationError('Nesprávny formát šk. roku') from exc
+
+    def validate(self, attrs):
+        school_year = attrs.get('school_year')
+        if school_year is not None:
+            start = attrs.get('start')
+            end = attrs.get('end')
+            start_year, end_year = school_year.split('/')
+            if start and start.date() < datetime.date(year=int(start_year), month=7, day=1):
+                raise ValidationError(
+                    f'Začiatok súťaže ({start}) nie je v školskom roku {school_year}')
+            if end and end.date() > datetime.date(year=int(end_year), month=8, day=31):
+                raise ValidationError(
+                    f'Koniec súťaže ({end}) nie je v školskom roku {school_year}')
         return super().validate(attrs)
 
     def get_complete(self, obj: models.Semester):
