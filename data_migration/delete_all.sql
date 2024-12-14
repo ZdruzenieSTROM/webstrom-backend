@@ -7,3 +7,4 @@ DELETE FROM public.competition_problem;
 DELETE FROM public.competition_series;
 DELETE FROM public.competition_semester;
 DELETE FROM public.competition_event;
+DELETE FROM public.competition_registration_link;
