@@ -5,9 +5,10 @@ from .settings import *
 DEBUG = False
 
 ALLOWED_HOSTS = [
-    "localhost",
     "test.strom.sk",
 ]
+
+APPEND_SLASH = False
 
 CSRF_TRUSTED_ORIGINS = [
     "https://test.strom.sk",
@@ -37,4 +38,8 @@ SERVER_EMAIL = DEFAULT_FROM_EMAIL
 ADMINS = [
     ("Martin Mihálik", "mihalik@strom.sk"),
     ("Peter Kovács", "kovacs@strom.sk"),
+]
+
+MANAGERS = [
+    ("Martin Mihálik", "mihalik@strom.sk"),
 ]
