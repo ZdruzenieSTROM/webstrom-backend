@@ -957,11 +957,26 @@ class PublicationViewSet(viewsets.ModelViewSet):
         Vola sa pri vytvarani objektu,
         checkuju sa tu permissions, ci user vie vytvorit publication v danom evente
         '''
+        self._ensure_file_attached(serializer)
+
         if Publication.can_user_create(self.request.user, serializer.validated_data):
             serializer.save()
         else:
             raise exceptions.PermissionDenied(
                 'Nedostatočné práva na vytvorenie tohoto objektu')
+
+    def perform_update(self, serializer):
+        if not serializer.partial:
+            self._ensure_file_attached(serializer)
+
+        return super().perform_update(serializer)
+
+    @staticmethod
+    def _ensure_file_attached(serializer: PublicationSerializer):
+        if 'file' not in serializer.validated_data:
+            raise exceptions.ValidationError(
+                'Publikácia musí mať pripojený súbor'
+            )
 
 
 class GradeViewSet(viewsets.ReadOnlyModelViewSet):

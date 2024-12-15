@@ -738,7 +738,9 @@ class Publication(models.Model):
     file = RestrictedFileField(
         upload_to='publications/%Y/',
         content_types=['application/pdf', 'application/zip'],
-        verbose_name='súbor')
+        verbose_name='súbor',
+        blank=True,
+    )
 
     order = models.PositiveSmallIntegerField(
         verbose_name='poradie', null=True, blank=True)
