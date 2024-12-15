@@ -196,14 +196,11 @@ class ProblemSerializer(serializers.ModelSerializer):
         read_only_fields = ['submitted', 'num_comments',
                             'num_solutions', 'num_corrected_solutions']
 
-    submitted = serializers.SerializerMethodField(
-        'get_submitted')
-    num_comments = serializers.SerializerMethodField(
-        'get_num_comments')
-    num_solutions = serializers.SerializerMethodField('get_num_solutions')
-    num_corrected_solutions = serializers.SerializerMethodField(
-        'get_num_corrected_solutions')
-    verbose_name = serializers.SerializerMethodField('get_verbose_name')
+    submitted = serializers.SerializerMethodField()
+    num_comments = serializers.SerializerMethodField()
+    num_solutions = serializers.SerializerMethodField()
+    num_corrected_solutions = serializers.SerializerMethodField()
+    verbose_name = serializers.SerializerMethodField()
     # correction = ProblemCorrectionSerializer(many=False,)
 
     def get_num_comments(self, obj):
