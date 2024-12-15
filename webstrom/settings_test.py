@@ -2,7 +2,7 @@
 
 from .settings import *
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
     "localhost",
@@ -31,3 +31,10 @@ EMAIL_HOST = "smtp-relay.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_TIMEOUT = 10
+
+SERVER_EMAIL = DEFAULT_FROM_EMAIL
+
+ADMINS = [
+    ("Martin Mihálik", "mihalik@strom.sk"),
+    ("Peter Kovács", "kovacs@strom.sk"),
+]
