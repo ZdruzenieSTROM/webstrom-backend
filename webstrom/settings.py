@@ -19,6 +19,11 @@ CSRF_TRUSTED_ORIGINS = [
     'https://localhost:3000'
 ]
 
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',
+]
+CORS_ALLOW_CREDENTIALS = True
+
 # Application definition
 
 DJANGO_APPS = [
@@ -39,6 +44,7 @@ THIRD_PARTY_APPS = [
     'dj_rest_auth',
     'django_filters',
     'rest_framework_swagger',
+    "corsheaders",
 ]
 
 LOCAL_APPS = [
@@ -61,6 +67,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allauth.account.middleware.AccountMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
 ]
 
 ROOT_URLCONF = 'webstrom.urls'
