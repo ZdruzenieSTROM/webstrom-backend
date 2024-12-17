@@ -81,7 +81,7 @@ def semester_assert_format(self, semester):
 class TestSeries(APITestCase, PermissionTestMixin):
     '''competition/series'''
 
-    URL_PREFIX = '/competition/series'
+    URL_PREFIX = '/api/competition/series'
 
     fixtures = get_app_fixtures([
         'base',
@@ -146,7 +146,7 @@ class TestSeries(APITestCase, PermissionTestMixin):
 class TestSemester(APITestCase, PermissionTestMixin):
     '''competition/semester'''
 
-    URL_PREFIX = '/competition/semester'
+    URL_PREFIX = '/api/competition/semester'
 
     fixtures = get_app_fixtures([
         'base',
@@ -208,7 +208,7 @@ class TestSemester(APITestCase, PermissionTestMixin):
 class TestAPISemester(APITestCase, PermissionTestMixin):
     '''competition/semester - Create all'''
 
-    URL_PREFIX = '/competition/semester/'
+    URL_PREFIX = '/api/competition/semester/'
     fixtures = PermissionTestMixin.get_basic_fixtures()
 
     def setUp(self):
@@ -240,7 +240,7 @@ class TestAPISemester(APITestCase, PermissionTestMixin):
 
 class TestCompetition(APITestCase, PermissionTestMixin):
     '''competition/competition'''
-    URL_PREFIX = '/competition/competition'
+    URL_PREFIX = '/api/competition/competition'
 
     fixtures = PermissionTestMixin.get_basic_fixtures()
 
@@ -324,7 +324,7 @@ class TestCompetition(APITestCase, PermissionTestMixin):
 
 class TestSolution(APITestCase, PermissionTestMixin):
     '''competition/solution'''
-    URL_PREFIX = '/competition/solution'
+    URL_PREFIX = '/api/competition/solution'
 
     fixtures = get_app_fixtures([
         'base',

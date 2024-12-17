@@ -8,12 +8,6 @@ ALLOWED_HOSTS = [
     "test.strom.sk",
 ]
 
-APPEND_SLASH = False
-
-CSRF_TRUSTED_ORIGINS = [
-    "https://test.strom.sk",
-]
-
 USE_X_FORWARDED_HOST = True
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
@@ -38,8 +32,4 @@ SERVER_EMAIL = DEFAULT_FROM_EMAIL
 ADMINS = [
     ("Martin Mihálik", "mihalik@strom.sk"),
     ("Peter Kovács", "kovacs@strom.sk"),
-]
-
-MANAGERS = [
-    ("Martin Mihálik", "mihalik@strom.sk"),
 ]
