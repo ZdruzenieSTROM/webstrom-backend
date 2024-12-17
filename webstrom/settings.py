@@ -60,6 +60,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.common.BrokenLinkEmailsMiddleware',
     'allauth.account.middleware.AccountMiddleware',
 ]
 
@@ -165,19 +166,21 @@ USE_L10N = False
 USE_TZ = True
 
 DATETIME_FORMAT = 'd.m.Y H:i:s'
+
+API_PREFIX = 'api/'
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-STATIC_URL = '/static/'
-
+STATIC_URL = 'static/'
 
 # Media files
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-MEDIA_URL = '/media/'
+MEDIA_URL = 'media/'
 PRIVATE_STORAGE_ROOT = os.path.join(BASE_DIR, 'protected_media/')
 SENDFILE_ROOT = PRIVATE_STORAGE_ROOT
 SENDFILE_BACKEND = "django_sendfile.backends.simple"

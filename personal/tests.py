@@ -48,7 +48,7 @@ class CountyViewsTest(APITestCase):
                          County.objects.create(name="Prešovský kraj"),
                          County.objects.create(name="Bratislavský kraj")]
 
-    URL_PREFIX = '/personal/counties'
+    URL_PREFIX = '/api/personal/counties'
 
     def test_can_browse_all_counties(self):
         response = self.client.get(self.URL_PREFIX, {}, 'json')
@@ -91,7 +91,7 @@ class DistrictViewsTest(APITestCase):
                               name="Rožňava", county=county1),
                           District.objects.create(name="Sabinov", county=county2)]
 
-    URL_PREFIX = '/personal/districts'
+    URL_PREFIX = '/api/personal/districts'
 
     def test_can_browse_all_districts(self):
         response = self.client.get(self.URL_PREFIX, {}, 'json')
@@ -211,7 +211,7 @@ class SchoolViewsTest(APITestCase):
             )
         ]
 
-    URL_PREFIX = '/personal/schools'
+    URL_PREFIX = '/api/personal/schools'
 
     def test_can_browse_all_schools(self):
         response = self.client.get(self.URL_PREFIX, {}, 'json')

@@ -6,7 +6,7 @@ from tests.test_utils import PermissionTestMixin, get_app_fixtures
 class TestPosts(APITestCase, PermissionTestMixin):
     '''cms/post'''
 
-    URL_PREFIX = '/cms/post'
+    URL_PREFIX = '/api/cms/post'
 
     fixtures = get_app_fixtures([
         'base',
@@ -55,7 +55,7 @@ class TestPosts(APITestCase, PermissionTestMixin):
 class TestMenuItems(APITestCase, PermissionTestMixin):
     '''cms/menu-item'''
 
-    URL_PREFIX = '/cms/menu-item'
+    URL_PREFIX = '/api/cms/menu-item'
 
     fixtures = get_app_fixtures([
         'base',
