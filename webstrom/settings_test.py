@@ -5,12 +5,7 @@ from .settings import *
 DEBUG = False
 
 ALLOWED_HOSTS = [
-    "localhost",
     "test.strom.sk",
-]
-
-CSRF_TRUSTED_ORIGINS = [
-    "https://test.strom.sk",
 ]
 
 USE_X_FORWARDED_HOST = True
