@@ -75,11 +75,13 @@ class ProfileViewSet(viewsets.ModelViewSet):
     @action(methods=['get'], detail=False, permission_classes=[IsAuthenticated])
     def mypermissions(self, request):
         is_staff = request.user.is_staff
+        is_superuser = request.user.is_superuser
         competition_set = set()
         for group in request.user.groups.all():
             for competition in group.competition_permissions.all():
                 competition_set.add(competition.pk)
         return Response({
             'is_staff': is_staff,
+            'is_superuser': is_superuser,
             'competition_permissions': competition_set,
         }, status=status.HTTP_200_OK)
