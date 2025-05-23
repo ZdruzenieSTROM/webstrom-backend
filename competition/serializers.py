@@ -426,6 +426,9 @@ class SemesterSerializer(serializers.ModelSerializer):
         model = models.Semester
         fields = '__all__'
         read_only_fields = ['series_set', 'publication_set']
+        extra_kwargs = {
+            'frozen_results': {'write_only': True}
+        }
 
 
 @ts_interface(context='competition')
