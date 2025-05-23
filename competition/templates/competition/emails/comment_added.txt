@@ -1,2 +1,3 @@
 Bol pridaný nový komentár k úlohe {{problem}}:
+
 {{comment}}
