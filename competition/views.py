@@ -480,7 +480,7 @@ class SeriesViewSet(ModelViewSetWithSerializerContext):
     filterset_class = SeriesFilterSet
     search_fields = ['semester__competition__name', 'semester__year']
     ordering_fields = ['deadline']
-    ordering = ['deadline']
+    ordering = ['-deadline']
 
     def perform_create(self, serializer):
         """
@@ -664,6 +664,9 @@ class SemesterListViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = (CompetitionRestrictedPermission,)
     http_method_names = ['get', 'post', 'head']
     filterset_fields = ['competition']
+    ordering = ['-start']
+    search_fields = ['competition__name', 'year']
+    ordering_fields = ['start', 'end', 'year']
 
 
 class SemesterViewSet(ModelViewSetWithSerializerContext):
@@ -675,7 +678,7 @@ class SemesterViewSet(ModelViewSetWithSerializerContext):
                         'season_code', 'competition']
     search_fields = ['competition__name', 'year']
     ordering_fields = ['start', 'end', 'year']
-    ordering = ['start']
+    ordering = ['-start']
     http_method_names = ['get', 'head', 'put', 'patch', 'post']
 
     def perform_create(self, serializer):
