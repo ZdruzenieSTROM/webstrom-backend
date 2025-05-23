@@ -75,13 +75,13 @@ class School(models.Model):
 
     def __str__(self):
         if self.street and self.city:
-            return f'{ self.name }, { self.street }, { self.city }'
+            return f'{self.name}, {self.street}, {self.city}'
         return self.name
 
     @property
     def stitok(self):
-        return f'\\stitok{{{ self.name }}}{{{ self.city }}}' \
-               f'{{{ self.printable_zip_code }}}{{{ self.street }}}'
+        return f'\\stitok{{{self.name}}}{{{self.city}}}' \
+            f'{{{self.printable_zip_code}}}{{{self.street}}}'
 
 
 def unspecified_school():
@@ -134,8 +134,11 @@ class Profile(models.Model):
         self.year_of_graduation = apps.get_model('competition', 'Grade').get(
             pk=value).get_year_of_graduation_by_date()
 
-    def __str__(self):
-        return f'{self.full_name()} ({self.user})'
+    def get_full_name(self):
+        return f'{self.first_name.strip()} {self.last_name.strip()}'
 
-    def full_name(self):
-        return f'{self.first_name} {self.last_name}'
+    def get_full_name_camel_case(self):
+        return f'{self.first_name.strip()}{self.last_name.strip()}'
+
+    def __str__(self):
+        return f'{self.get_full_name()} ({self.user})'

@@ -596,7 +596,7 @@ class EventRegistration(models.Model):
         return registration
 
     def __str__(self):
-        return f'{self.profile.user.get_full_name()} @ {self.event}'
+        return f'{self.profile.get_full_name()} @ {self.event}'
 
     def can_user_modify(self, user):
         return self.event.can_user_modify(user)
@@ -666,14 +666,14 @@ class Solution(models.Model):
         return f'Riešiteľ: {self.semester_registration} - úloha {self.problem}'
 
     def get_solution_file_name(self):
-        return f'{self.semester_registration.profile.user.get_full_name_camel_case()}'\
+        return f'{self.semester_registration.profile.get_full_name_camel_case()}'\
             f'-{self.problem.id}-{self.semester_registration.id}.pdf'
 
     def get_solution_file_path(self):
         return f'solutions/user_solutions/{self.get_solution_file_name()}'
 
     def get_corrected_solution_file_name(self):
-        return f'{self.semester_registration.profile.user.get_full_name_camel_case()}'\
+        return f'{self.semester_registration.profile.get_full_name_camel_case()}'\
             f'-{self.problem.id}-{self.semester_registration.id}_corrected.pdf'
 
     def get_corrected_solution_file_path(self):
@@ -683,7 +683,8 @@ class Solution(models.Model):
         return self.problem.can_user_modify(user)
 
     def can_access(self, user):
-        return self.semester_registration.profile.user == user or self.can_user_modify(user)
+        return (self.semester_registration.profile.user is not None
+                and self.semester_registration.profile.user == user) or self.can_user_modify(user)
 
     @classmethod
     def get_by_filepath(cls, path):
