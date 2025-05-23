@@ -478,7 +478,7 @@ class SeriesViewSet(ModelViewSetWithSerializerContext):
         filters.OrderingFilter
     ]
     filterset_class = SeriesFilterSet
-    search_fields = ['semester__competition__name']
+    search_fields = ['semester__competition__name', 'semester__year']
     ordering_fields = ['deadline']
     ordering = ['deadline']
 
@@ -673,7 +673,7 @@ class SemesterViewSet(ModelViewSetWithSerializerContext):
     permission_classes = (CompetitionRestrictedPermission,)
     filterset_fields = ['school_year',
                         'season_code', 'competition']
-    search_fields = ['competition__name']
+    search_fields = ['competition__name', 'year']
     ordering_fields = ['start', 'end', 'year']
     ordering = ['start']
     http_method_names = ['get', 'head', 'put', 'patch', 'post']
