@@ -20,15 +20,6 @@ class User(AbstractUser):
     EMAIL_FIELD = 'email'
     REQUIRED_FIELDS = []
 
-    def get_full_name(self):
-        return f'{self.profile.first_name.strip()} {self.profile.last_name.strip()}'
-
-    def get_full_name_camel_case(self):
-        return f'{self.profile.first_name.strip()}{self.profile.last_name.strip()}'
-
-    def get_short_name(self):
-        return self.profile.first_name
-
 
 @receiver(email_confirmed)
 def email_verified(request, **kwargs):

@@ -134,7 +134,7 @@ class SolutionAdmin(admin.ModelAdmin):
 
     @staticmethod
     def solution_name(obj):
-        return obj.semester_registration.profile.user.get_full_name()\
+        return obj.semester_registration.profile.get_full_name()\
             + ' | ' + str(obj.problem.order)
 
 

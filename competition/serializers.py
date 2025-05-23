@@ -208,11 +208,11 @@ class ProblemCorrectionSerializer(serializers.ModelSerializer):
         fields = ['corrected_by', 'best_solution']
 
     def get_corrected_by(self, obj):
-        return [user.get_full_name() for user in obj.corrected_by.all()]
+        return [user.profile.get_full_name() for user in obj.corrected_by.all()]
 
     def get_best_solution(self, obj):
         return [
-            solution.semester_registration.profile.full_name()
+            solution.semester_registration.profile.get_full_name()
             for solution in obj.best_solution.all()
         ]
 
@@ -279,7 +279,7 @@ class CommentSerializer(serializers.ModelSerializer):
     edit_allowed = serializers.SerializerMethodField('get_edit_allowed')
 
     def get_posted_by_name(self, obj: models.Comment):
-        return obj.posted_by.get_full_name()
+        return obj.posted_by.profile.get_full_name()
 
     def get_edit_allowed(self, obj: models.Comment):
         if 'request' in self.context:
@@ -351,11 +351,11 @@ class ProblemWithSolutionsSerializer(serializers.ModelSerializer):
     def get_tex_header(self, obj: models.Problem) -> str:
         """Generuje tex hlavicku vzoraku do casaku"""
         try:
-            corrected_by = [user.get_full_name()
+            corrected_by = [user.profile.get_full_name()
                             for user in obj.correction.corrected_by.all()]
             corrected_suffix = 'i' if len(corrected_by) > 1 else ''
 
-            best_solutions = [user.get_full_name()
+            best_solutions = [user.profile.get_full_name()
                               for user in obj.correction.corrected_by.all()]
             best_solution_suffix = 'e' if len(best_solutions) > 1 else 'a'
         except models.Problem.correction.RelatedObjectDoesNotExist:  # pylint: disable=no-member
