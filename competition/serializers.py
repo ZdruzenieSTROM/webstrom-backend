@@ -306,8 +306,15 @@ class SolutionSerializer(serializers.ModelSerializer):
 
 
 @ts_interface(context='competition')
+class LateTagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.LateTag
+
+
+@ts_interface(context='competition')
 class SolutionAdministrationSerializer(serializers.ModelSerializer):
     semester_registration = EventRegistrationReadSerializer(read_only=True)
+    late_tag = LateTagSerializer(read_only=True)
 
     class Meta:
         model = models.Solution
@@ -509,10 +516,3 @@ class SemesterWithProblemsSerializer(ModelWithParticipationSerializer):
 
     def get_verbose_name(self, obj):
         return str(obj)
-
-
-@ts_interface(context='competition')
-class LateTagSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.LateTag
-        exclude = ['comment']
