@@ -463,8 +463,7 @@ class Problem(models.Model):
         )
 
     def get_users_in_comment_thread(self):
-        users = User.objects.filter(comments__problem=self)
-        return list(users)
+        return User.objects.filter(comments__problem=self)
 
 
 class CommentPublishState(models.IntegerChoices):
