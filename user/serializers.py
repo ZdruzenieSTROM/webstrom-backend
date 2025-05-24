@@ -132,10 +132,13 @@ class UserDetailsSerializer(serializers.ModelSerializer):
         # Nie všetky polia v modeloch User a Profile sú editovateľné cez API.
         instance.profile.phone = profile_data.get(
             'phone', instance.profile.phone)
-        instance.profile.fisrt_name = profile_data.get(
-            'first_name', instance.profile.first_name)
-        instance.profile.last_name = profile_data.get(
-            'last_name', instance.profile.last_name)
+
+        if self.context['request'].user.is_staff:
+            instance.profile.first_name = profile_data.get(
+                'first_name', instance.profile.first_name)
+            instance.profile.last_name = profile_data.get(
+                'last_name', instance.profile.last_name)
+
         instance.profile.parent_phone = profile_data.get(
             'parent_phone', instance.profile.parent_phone)
         instance.profile.school = profile_data.get(
