@@ -133,8 +133,9 @@ class CommentViewSet(
                 'problem': comment.problem,
                 'comment': comment.text
             })
-        emails_to_send += [('Nový komentár', user_notification_email_text, None, [
-            user.email]) for user in comment.problem.get_users_in_comment_thread() if user != comment.posted_by]
+        emails_to_send += [
+            ('Nový komentár', user_notification_email_text, None, [user.email])
+            for user in comment.problem.get_users_in_comment_thread() if user != comment.posted_by]
         send_mass_mail(emails_to_send)
 
         comment.save()
