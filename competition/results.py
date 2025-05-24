@@ -2,6 +2,8 @@ from json import dumps as json_dumps
 from json import loads as json_loads
 from operator import itemgetter
 
+from django.utils.timezone import now
+
 from competition.models import EventRegistration, Semester, Series
 from competition.serializers import EventRegistrationReadSerializer
 from competition.utils import sum_methods
@@ -47,7 +49,7 @@ def freeze_series_results(series: Series):
     if any(
         problem.num_solutions != problem.num_corrected_solutions
         for problem in series.problems.all()
-    ):
+    ) or series.deadline > now():
         raise FreezingNotClosedResults()
 
     series.frozen_results = json_dumps(series_results(series))
