@@ -939,6 +939,8 @@ class EventRegistrationViewSet(viewsets.ModelViewSet):
     """Registrácie na akcie"""
 
     queryset = EventRegistration.objects.all()
+    filter_backends = [DjangoFilterBackend,
+                       filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['school', 'profile', 'grade', 'event']
     search_fields = ['profile__first_name', 'profile__last_name']
     ordering_fields = ['event__start']
