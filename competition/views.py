@@ -134,7 +134,7 @@ class CommentViewSet(
                 'comment': comment.text
             })
         emails_to_send += [('Nový komentár', user_notification_email_text, None, [
-            user.email]) for user in comment.problem.get_users_in_comment_thread()]
+            user.email]) for user in comment.problem.get_users_in_comment_thread() if user != comment.posted_by]
         send_mass_mail(emails_to_send)
 
         comment.save()
@@ -246,8 +246,10 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
                     'problem': problem,
                     'comment': request.data['text']
                 })
-            emails_to_send += [('Nový komentár', user_notification_email_text, None, [
-                               user.email]) for user in problem.get_users_in_comment_thread()]
+            emails_to_send += [
+                ('Nový komentár', user_notification_email_text,
+                 None, [user.email])
+                for user in problem.get_users_in_comment_thread() if user != request.user]
         send_mass_mail(emails_to_send)
 
         return Response("Komentár bol pridaný", status=status.HTTP_201_CREATED)
