@@ -1,7 +1,6 @@
 # pylint:disable=too-many-lines
 import csv
 import json
-import os
 import zipfile
 from io import BytesIO
 from operator import itemgetter
@@ -342,9 +341,9 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
                     prefix = ''
                     if solution.late_tag is not None:
                         prefix = f'{solution.late_tag.slug}/'
-                    _, fname = os.path.split(solution.solution.path)
+                    file_name = solution.get_solution_file_name()
                     zipf.write(solution.solution.path,
-                               f'{prefix}{fname}')
+                               f'{prefix}{file_name}')
         response = HttpResponse(stream.getvalue(),
                                 content_type="application/x-zip-compressed")
 
