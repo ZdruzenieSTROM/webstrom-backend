@@ -462,6 +462,10 @@ class Problem(models.Model):
             else CommentPublishState.WAITING_FOR_REVIEW,
         )
 
+    def get_users_in_comment_thread(self):
+        comments = Comment.objects.filter(problem=self)
+        return {comment.posted_by for comment in comments}
+
 
 class CommentPublishState(models.IntegerChoices):
     '''

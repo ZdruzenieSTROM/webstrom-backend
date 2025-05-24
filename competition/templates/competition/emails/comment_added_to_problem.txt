@@ -1,0 +1,3 @@
+Bol pridaný nový komentár k úlohe {{problem}}, ktorú si už komentoval/a:
+
+{{comment}}
