@@ -299,16 +299,18 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 @ts_interface(context='competition')
-class SolutionSerializer(serializers.ModelSerializer):
+class LateTagSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.Solution
+        model = models.LateTag
         fields = '__all__'
 
 
 @ts_interface(context='competition')
-class LateTagSerializer(serializers.ModelSerializer):
+class SolutionSerializer(serializers.ModelSerializer):
+    late_tag = LateTagSerializer(read_only=True)
+
     class Meta:
-        model = models.LateTag
+        model = models.Solution
         fields = '__all__'
 
 
