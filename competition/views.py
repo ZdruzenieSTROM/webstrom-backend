@@ -9,7 +9,7 @@ from typing import Optional
 
 from django.core.exceptions import ValidationError as CoreValidationError
 from django.core.files import File
-from django.core.mail import send_mail
+from django.core.mail import send_mail, send_mass_mail
 from django.db.models.manager import BaseManager
 from django.http import FileResponse, HttpResponse
 from django.template.loader import render_to_string
@@ -115,17 +115,27 @@ class CommentViewSet(
         comment: Comment = self.get_object()
         comment.publish()
 
-        send_mail(
-            'Zverejnený komentár',
-            render_to_string(
-                'competition/emails/comment_published.txt',
-                context={
-                    'comment': comment.text,
-                    'problem': comment.problem
-                }),
-            None,
-            [comment.posted_by.email],
-        )
+        emails_to_send = [
+            ('Zverejnený komentár',
+             render_to_string(
+                 'competition/emails/comment_published.txt',
+                 context={
+                     'comment': comment.text,
+                     'problem': comment.problem
+                 }),
+             None,
+             [comment.posted_by.email])
+        ]
+
+        user_notification_email_text = render_to_string(
+            'competition/emails/comment_added_to_problem.txt',
+            context={
+                'problem': comment.problem,
+                'comment': comment.text
+            })
+        emails_to_send += [('Nový komentár', user_notification_email_text, None, [
+            user.email]) for user in comment.problem.get_users_in_comment_thread()]
+        send_mass_mail(emails_to_send)
 
         comment.save()
 
@@ -219,16 +229,26 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
 
         problem.add_comment(request.data['text'], request.user, also_publish)
 
-        send_mail(
-            'Nový komentár',
-            render_to_string('competition/emails/comment_added.txt',
-                             context={
-                                 'problem': problem,
-                                 'comment': request.data['text']
-                             }),
-            None,
-            [EMAIL_ALERT],
-        )
+        emails_to_send = [
+            ('Nový komentár',
+             render_to_string('competition/emails/comment_added.txt',
+                              context={
+                                  'problem': problem,
+                                  'comment': request.data['text']
+                              }),
+             None,
+             [EMAIL_ALERT])
+        ]
+        if also_publish:
+            user_notification_email_text = render_to_string(
+                'competition/emails/comment_added_to_problem.txt',
+                context={
+                    'problem': problem,
+                    'comment': request.data['text']
+                })
+            emails_to_send += [('Nový komentár', user_notification_email_text, None, [
+                               user.email]) for user in problem.get_users_in_comment_thread()]
+        send_mass_mail(emails_to_send)
 
         return Response("Komentár bol pridaný", status=status.HTTP_201_CREATED)
 

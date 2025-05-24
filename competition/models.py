@@ -462,6 +462,9 @@ class Problem(models.Model):
             else CommentPublishState.WAITING_FOR_REVIEW,
         )
 
+    def get_users_in_comment_thread(self):
+        return User.objects.filter(comments__problem=self)
+
 
 class CommentPublishState(models.IntegerChoices):
     '''
@@ -486,6 +489,7 @@ class Comment(models.Model):
         verbose_name='dátum pridania', auto_now_add=True)
     posted_by = models.ForeignKey(
         User, verbose_name='autor komentára',
+        related_name='comments',
         on_delete=models.CASCADE)
     state = models.IntegerField(
         choices=CommentPublishState.choices,
