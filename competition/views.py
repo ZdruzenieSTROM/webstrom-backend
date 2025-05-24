@@ -1,4 +1,5 @@
 # pylint:disable=too-many-lines
+from competition.utils.validations import validate_points
 import csv
 import json
 import os
@@ -394,6 +395,12 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
                         pk=registration_pk)
                     solution = Solution.objects.get(semester_registration=event_reg,
                                                     problem=problem_pk)
+                    validate_points(score)
+                except ValidationError as exc:
+                    errors.append({
+                        'filename': filename,
+                        'status': str(exc)
+                    })
                 except (IndexError, ValueError, AssertionError):
                     errors.append({
                         'filename': filename,
