@@ -463,8 +463,8 @@ class Problem(models.Model):
         )
 
     def get_users_in_comment_thread(self):
-        comments = Comment.objects.filter(problem=self)
-        return {comment.posted_by for comment in comments}
+        users = User.objects.filter(comments__problem=self)
+        return list(users)
 
 
 class CommentPublishState(models.IntegerChoices):
@@ -490,6 +490,7 @@ class Comment(models.Model):
         verbose_name='dátum pridania', auto_now_add=True)
     posted_by = models.ForeignKey(
         User, verbose_name='autor komentára',
+        related_name='comments',
         on_delete=models.CASCADE)
     state = models.IntegerField(
         choices=CommentPublishState.choices,
