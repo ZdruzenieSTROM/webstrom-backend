@@ -109,6 +109,17 @@ class EventSerializer(ModelWithParticipationSerializer):
             **validated_data,
         )
 
+    def update(self, instance, validated_data):
+        registration_link_data = validated_data.pop('registration_link', None)
+
+        if registration_link_data is not None:
+            (instance.registration_link, _) = models.RegistrationLink.objects.update_or_create(
+                event=instance,
+                defaults=registration_link_data,
+            )
+
+        return super().update(instance, validated_data)
+
     def get_verbose_name(self, obj):
         return str(obj)
 
