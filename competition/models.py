@@ -457,17 +457,18 @@ class Problem(models.Model):
 
         return filter(filter_by_permissions, Comment.objects.filter(problem=self))
 
-    def add_comment(self, text, user, also_publish):
+    def add_comment(self, text: str, user: User, also_publish: bool):
         Comment.objects.create(
             problem=Problem.objects.get(pk=self.pk),
             text=text,
             posted_by=user,
+            from_staff=user.is_staff,
             state=CommentPublishState.PUBLISHED if also_publish
             else CommentPublishState.WAITING_FOR_REVIEW,
         )
 
     def get_users_in_comment_thread(self):
-        return User.objects.filter(comments__problem=self)
+        return User.objects.filter(comments__problem=self).distinct()
 
 
 class CommentPublishState(models.IntegerChoices):
@@ -502,6 +503,8 @@ class Comment(models.Model):
     )
     hidden_response = models.TextField(
         null=True, blank=True, verbose_name='Skrytá odpoveď na komentár')
+    from_staff = models.BooleanField(
+        default=False, verbose_name='Komentár od vedúceho')
 
     def save(self, *args, **kwargs) -> None:
         if not self.hidden_response:
