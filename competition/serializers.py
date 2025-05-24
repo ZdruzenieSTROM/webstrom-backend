@@ -309,6 +309,7 @@ class SolutionSerializer(serializers.ModelSerializer):
 class LateTagSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.LateTag
+        fields = '__all__'
 
 
 @ts_interface(context='competition')
