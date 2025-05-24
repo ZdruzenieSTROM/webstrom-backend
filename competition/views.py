@@ -1,7 +1,6 @@
 # pylint:disable=too-many-lines
 import csv
 import json
-import os
 import zipfile
 from io import BytesIO
 from operator import itemgetter
