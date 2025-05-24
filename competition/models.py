@@ -603,7 +603,7 @@ class EventRegistration(models.Model):
 
     @classmethod
     def can_user_create(cls, user: User, data: dict) -> bool:
-        event = Event.objects.get(pk=data['event'])
+        event = Event.objects.get(pk=data['event'].id)
         return event.can_user_modify(user)
 
 

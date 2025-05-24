@@ -952,6 +952,13 @@ class EventRegistrationViewSet(viewsets.ModelViewSet):
             return EventRegistrationReadSerializer
         return EventRegistrationWriteSerializer
 
+    def perform_create(self, serializer):
+        if not EventRegistration.can_user_create(self.request.user, serializer.validated_data):
+            raise exceptions.PermissionDenied(
+                'Nedostatočné práva na vytvorenie tohoto objektu')
+
+        return super().perform_create(serializer)
+
 
 class PublicationTypeViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = PublicationType.objects.all()
