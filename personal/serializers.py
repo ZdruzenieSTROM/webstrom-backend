@@ -78,8 +78,8 @@ class ProfileSerializer(serializers.ModelSerializer):
         model = Profile
         fields = ['grade_name', 'id', 'email', 'first_name', 'last_name', 'school',
                   'phone', 'parent_phone', 'grade', 'is_student', 'has_school',
-                  'school_id', 'verbose_name']
-        read_only_fields = ['grade_name', 'id', 'email',
+                  'school_id', 'verbose_name', 'user_id']
+        read_only_fields = ['grade_name', 'id', 'email', 'user_id'
                             'is_student', 'has_school', 'school', 'verbose_name']
 
         extra_kwargs = {
