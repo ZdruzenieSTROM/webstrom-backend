@@ -1,5 +1,5 @@
 # pylint:disable=too-many-lines
-from competition.utils.validations import validate_points
+
 import csv
 import json
 import os
@@ -51,6 +51,7 @@ from competition.serializers import (CommentSerializer, CompetitionSerializer,
                                      SemesterWithProblemsSerializer,
                                      SeriesWithProblemsSerializer,
                                      SolutionSerializer)
+from competition.utils.validations import validate_points
 from personal.models import Profile, School
 from personal.serializers import ProfileExportSerializer, SchoolSerializer
 from webstrom.settings import EMAIL_ALERT
@@ -359,7 +360,7 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
             url_path='upload-corrected')
     def upload_solutions_with_points(self, request, pk=None):
         """Nahrá .zip archív s opravenými riešeniami (pdf-kami)."""
-
+        # pylint: disable=too-many-branches
         if 'file' not in request.data:
             raise exceptions.ParseError(detail='Žiaden súbor nebol pripojený')
 
