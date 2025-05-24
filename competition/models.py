@@ -6,6 +6,7 @@ from django.core.exceptions import ValidationError
 from django.core.files.storage import FileSystemStorage
 from django.core.validators import validate_slug
 from django.db import models
+from django.db.models import Q
 from django.db.models.constraints import UniqueConstraint
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -431,7 +432,10 @@ class Problem(models.Model):
 
     @property
     def num_corrected_solutions(self):
-        return self.solution_set.filter(score__isnull=False).count()
+        return self.solution_set.filter(
+            Q(score__isnull=False) &
+            Q(Q(corrected_solution__isnull=False) | Q(is_online=False))
+        ).count()
 
     def can_user_modify(self, user):
         return self.series.can_user_modify(user)
