@@ -13,6 +13,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='competition',
             name='alert_email',
-            field=models.EmailField(blank=True, default=True, max_length=254, null=True, verbose_name='Email pre upozornenia s diskusií'),
+            field=models.EmailField(blank=True, default=None, max_length=254,
+                                    null=True, verbose_name='Email pre upozornenia s diskusií'),
         ),
     ]

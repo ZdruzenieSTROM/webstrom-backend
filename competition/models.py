@@ -63,7 +63,7 @@ class Competition(models.Model):
         verbose_name='Pre koho je súťaž určená', blank=True,
         max_length=50)
     alert_email = models.EmailField(
-        verbose_name='Email pre upozornenia s diskusií', blank=True, null=True, default=True)
+        verbose_name='Email pre upozornenia s diskusií', blank=True, null=True, default=None)
 
     sites = models.ManyToManyField(Site)
 
