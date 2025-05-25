@@ -149,29 +149,26 @@ class UserDetailsSerializer(serializers.ModelSerializer):
         # User sa nikdy neupdatuje preto nie je potrebné volať instance.save()
         instance.profile.save()
         instance.save()
-        self.handle_other_school(profile_data.pop(
+        self.handle_other_school(instance, profile_data.pop(
             'school', None))
         return instance
 
-    def handle_other_school(self, school):
+    def handle_other_school(self, user, school):
         '''
         Ak je zadana skola "ina skola" tak posle o tom mail.
         '''
         if school is None:
             return
         if school.code == self.OTHER_SCHOOL_CODE:
-            email = self.validated_data.get('email', '-')
-            first_name = self.validated_data['profile']['first_name']
-            last_name = self.validated_data['profile']['last_name']
             school_info = self.validated_data['new_school_description']
             send_mail(
                 'Žiadosť o pridanie novej školy',
                 render_to_string(
                     'user/emails/new_school_request.txt',
                     {
-                        'email': email,
-                        'first_name': first_name,
-                        'last_name': last_name,
+                        'email': user.email,
+                        'first_name': user.profile.first_name,
+                        'last_name': user.profile.last_name,
                         'school_info': school_info
                     },
                 ),
@@ -241,7 +238,7 @@ class RegisterSerializer(UserDetailsSerializer):
                                parent_phone=profile_data['parent_phone']
                                )
 
-        self.handle_other_school(profile_data['school'])
+        self.handle_other_school(user, profile_data['school'])
         setup_user_email(request, user, [])
 
         return user
