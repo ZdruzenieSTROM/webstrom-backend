@@ -53,7 +53,6 @@ from competition.serializers import (CommentSerializer, CompetitionSerializer,
 from competition.utils.validations import validate_points
 from personal.models import Profile, School
 from personal.serializers import ProfileExportSerializer, SchoolSerializer
-from webstrom.settings import EMAIL_ALERT
 
 # pylint: disable=unused-argument
 
@@ -131,6 +130,7 @@ class CommentViewSet(
             'competition/emails/comment_added_to_problem.txt',
             context={
                 'problem': comment.problem,
+                'from_stuff': comment.from_staff,
                 'comment': comment.text
             })
         emails_to_send += [
@@ -229,7 +229,7 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
         also_publish = problem.can_user_modify(request.user)
 
         problem.add_comment(request.data['text'], request.user, also_publish)
-
+        alert_email = problem.series.semester.competition.alert_email
         emails_to_send = [
             ('Nový komentár',
              render_to_string('competition/emails/comment_added.txt',
@@ -238,13 +238,14 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
                                   'comment': request.data['text']
                               }),
              None,
-             [EMAIL_ALERT])
-        ]
+             [alert_email])
+        ] if alert_email else []
         if also_publish:
             user_notification_email_text = render_to_string(
                 'competition/emails/comment_added_to_problem.txt',
                 context={
                     'problem': problem,
+                    'from_staff': True,
                     'comment': request.data['text']
                 })
             emails_to_send += [
