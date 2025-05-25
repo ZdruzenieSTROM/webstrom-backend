@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
             model_name='competition',
             name='alert_email',
             field=models.EmailField(blank=True, default=None, max_length=254,
-                                    null=True, verbose_name='Email pre upozornenia s diskusií'),
+                                    null=True, verbose_name='Email pre upozornenia z diskusií'),
         ),
     ]
