@@ -131,6 +131,7 @@ class CommentViewSet(
             'competition/emails/comment_added_to_problem.txt',
             context={
                 'problem': comment.problem,
+                'from_stuff': comment.from_staff,
                 'comment': comment.text
             })
         emails_to_send += [
@@ -245,6 +246,7 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
                 'competition/emails/comment_added_to_problem.txt',
                 context={
                     'problem': problem,
+                    'from_staff': True,
                     'comment': request.data['text']
                 })
             emails_to_send += [
