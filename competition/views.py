@@ -25,10 +25,11 @@ from rest_framework.response import Response
 
 from base.utils import mime_type
 from competition.filters import UpcomingFilter
-from competition.models import (Comment, Competition, CompetitionType, Event,
-                                EventRegistration, Grade, LateTag, Problem,
-                                Publication, PublicationType, Semester, Series,
-                                Solution, Vote)
+from competition.models import (SERIES_SUM_METHODS, Comment, Competition,
+                                CompetitionType, Event, EventRegistration,
+                                Grade, LateTag, Problem, Publication,
+                                PublicationType, Semester, Series, Solution,
+                                Vote)
 from competition.permissions import (CommentPermission,
                                      CompetitionRestrictedPermission,
                                      ProblemPermission)
@@ -571,6 +572,14 @@ class SeriesViewSet(ModelViewSetWithSerializerContext):
         serializer = SeriesWithProblemsSerializer(
             current_series, many=False)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(methods=['get'], detail=False, url_path='sum-methods')
+    def sum_methods(self, request):
+        return Response(
+            [{'name': sum_method_tuple[0]}
+                for sum_method_tuple in SERIES_SUM_METHODS],
+            status=status.HTTP_200_OK
+        )
 
 
 class SolutionViewSet(viewsets.ModelViewSet):
