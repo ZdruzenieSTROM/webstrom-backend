@@ -334,7 +334,8 @@ class SeriesSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Series
         read_only_fields = ['complete']
-        fields = ['id', 'semester', 'order', 'deadline', 'complete']
+        fields = ['id', 'semester', 'order',
+                  'deadline', 'complete', 'sum_method']
 
     def get_complete(self, obj: models.Series):
         return obj.complete
@@ -413,9 +414,9 @@ class SeriesWithProblemsSerializer(ModelWithParticipationSerializer):
 
     class Meta:
         model = models.Series
-        exclude = ['sum_method', 'frozen_results']
+        exclude = ['frozen_results']
         include = ['complete', 'problems', 'can_submit',
-                   'can_resubmit', 'verbose_name']
+                   'can_resubmit', 'verbose_name', 'sum_method']
         read_only_fields = [
             'complete',
             'can_submit', 'can_resubmit', 'verbose_name']

@@ -576,7 +576,7 @@ class SeriesViewSet(ModelViewSetWithSerializerContext):
     @action(methods=['get'], detail=False, url_path='sum-methods')
     def sum_methods(self, request):
         return Response(
-            [{'name': sum_method_tuple[0]}
+            [{'id': sum_method_tuple[0], 'name': sum_method_tuple[1]}
                 for sum_method_tuple in SERIES_SUM_METHODS],
             status=status.HTTP_200_OK
         )
