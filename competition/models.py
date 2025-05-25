@@ -62,6 +62,8 @@ class Competition(models.Model):
     who_can_participate = models.CharField(
         verbose_name='Pre koho je súťaž určená', blank=True,
         max_length=50)
+    alert_email = models.EmailField(
+        verbose_name='Email pre upozornenia s diskusií', blank=True, null=True, default=True)
 
     sites = models.ManyToManyField(Site)
 

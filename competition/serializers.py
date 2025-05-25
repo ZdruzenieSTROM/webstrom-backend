@@ -140,7 +140,7 @@ class CompetitionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Competition
-        exclude = ['permission_group']
+        exclude = ['permission_group', 'alert_email']
         read_only_fields = [
             'upcoming_or_current_event',
             'history_events',
