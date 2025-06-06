@@ -971,10 +971,29 @@ class EventViewSet(ModelViewSetWithSerializerContext):
 class EventRegistrationViewSet(viewsets.ModelViewSet):
     """Registrácie na akcie"""
 
+    class EventRegistrationFilterSet(FilterSet):
+
+        class SuitableForProblemFilter(ModelChoiceFilter):
+            def filter(self, qs: BaseManager, value: Problem):
+                if value is None:
+                    return qs
+
+                return qs.filter(
+                    event=value.series.semester
+                )
+
+        problem = SuitableForProblemFilter(queryset=Problem.objects.all())
+        future = UpcomingFilter(field_name='end')
+
+        class Meta:
+            model = EventRegistration
+            fields = ['school',
+                      'profile', 'grade', 'event']
+
     queryset = EventRegistration.objects.all()
     filter_backends = [DjangoFilterBackend,
                        filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['school', 'profile', 'grade', 'event']
+    filterset_class = EventRegistrationFilterSet
     search_fields = ['profile__first_name', 'profile__last_name']
     ordering_fields = ['event__start']
     ordering = ['event__start']
