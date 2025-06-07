@@ -179,3 +179,6 @@ class FileUpload(models.Model):
     """Slúži na nahrávanie súborov ktoré nepatria priamo k súťažiam"""
 
     file = models.FileField(upload_to="uploads/")
+
+    def __str__(self):
+        return self.file.url
