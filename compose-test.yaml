@@ -3,10 +3,10 @@ version: "3"
 services:
   webstrom-backend:
     build:
-      dockerfile: deployment/webstrom-backend.dockerfile
-      context: ..
+      dockerfile: docker/webstrom-backend.dockerfile
+      context: .
 
-    image: webstrom-test-backend
+    image: webstrom-backend
 
     environment:
       - DJANGO_SETTINGS_MODULE=webstrom.settings_test
@@ -23,10 +23,10 @@ services:
 
   static-files:
     build:
-      dockerfile: deployment/static-files.dockerfile
-      context: ..
+      dockerfile: docker/static-files.dockerfile
+      context: .
 
-    image: webstrom-test-static
+    image: webstrom-static
 
     ports:
       - "127.0.0.1:8921:80"

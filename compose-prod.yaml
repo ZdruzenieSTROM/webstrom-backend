@@ -3,10 +3,10 @@ version: "3"
 services:
   webstrom-backend:
     build:
-      dockerfile: deployment/webstrom-backend.dockerfile
-      context: ..
+      dockerfile: docker/webstrom-backend.dockerfile
+      context: .
 
-    image: webstrom-prod-backend
+    image: webstrom-backend
 
     environment:
       - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
@@ -24,10 +24,10 @@ services:
 
   static-files:
     build:
-      dockerfile: deployment/static-files.dockerfile
-      context: ..
+      dockerfile: docker/static-files.dockerfile
+      context: .
 
-    image: webstrom-prod-static
+    image: webstrom-static
 
     ports:
       - "127.0.0.1:8931:80"
