@@ -11,6 +11,7 @@ import bs4
 import pytz
 import requests
 import tqdm
+from bs4 import BeautifulSoup
 from django.conf import settings
 from django.utils.dateparse import parse_datetime
 from django.utils.timezone import now
@@ -146,10 +147,33 @@ def transform_semester(semester):
     }
 
 
+def format_problem_text(html_text):
+    soup = BeautifulSoup(html_text, "html.parser")
+
+    def process_list(tag, is_ordered):
+        items = []
+        for idx, li in enumerate(tag.find_all("li", recursive=False), start=1):
+            prefix = f"{idx}." if is_ordered else "-"
+            items.append(f"{prefix} {li.get_text(strip=True)}")
+        return "\n".join(items)
+
+    # Replace <ol> tags with Markdown ordered lists
+    for ol in soup.find_all("ol"):
+        markdown = process_list(ol, is_ordered=True)
+        ol.replace_with(markdown)
+
+    # Replace <ul> tags with Markdown unordered lists
+    for ul in soup.find_all("ul"):
+        markdown = process_list(ul, is_ordered=False)
+        ul.replace_with(markdown)
+
+    return soup.get_text().replace('<br>', '\n\n')
+
+
 def transform_problem(problem):
     return {
         'id': problem['id'],
-        'text': re.sub(r'\s+<li>', '<li>', problem['text']),
+        'text': format_problem_text(problem['text']),
         'order': problem['position']+1 if problem['position'] < 7 else problem['position']-5,
         'image': None,
         'solution_pdf': None,
