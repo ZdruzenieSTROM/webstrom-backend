@@ -1,6 +1,5 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
-from django.utils import timezone
 from rest_framework.test import APITestCase
 
 from competition import models
