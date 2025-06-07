@@ -58,7 +58,7 @@ class Competition(models.Model):
         verbose_name='rok prvého ročníka súťaže', blank=True)
     description = models.TextField(verbose_name='Popis súťaže', blank=True)
     long_description = models.TextField(
-        verbose_name='Popis súťaže', blank=True, null=True)
+        verbose_name='Podrobný (dlhší) popis', blank=True, null=True)
     rules = models.TextField(
         verbose_name='Pravidlá súťaže', blank=True, null=True)
     who_can_participate = models.CharField(
