@@ -11,7 +11,6 @@ from django.core.exceptions import ValidationError as CoreValidationError
 from django.core.files import File
 from django.core.mail import send_mail, send_mass_mail
 # pylint: disable=unused-argument
-from django.core.paginator import Paginator
 from django.db.models.manager import BaseManager
 from django.http import FileResponse, HttpResponse
 from django.template.loader import render_to_string
