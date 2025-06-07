@@ -9,7 +9,7 @@ from django_typomatic import ts_interface
 from rest_framework import exceptions, serializers
 
 from competition.models import Grade
-from personal.models import Profile
+from personal.models import OtherSchoolRequest, Profile
 from personal.serializers import ProfileCreateSerializer
 from user.models import TokenModel
 from webstrom.settings import EMAIL_ALERT
@@ -161,6 +161,10 @@ class UserDetailsSerializer(serializers.ModelSerializer):
             return
         if school.code == self.OTHER_SCHOOL_CODE:
             school_info = self.validated_data['new_school_description']
+            OtherSchoolRequest.objects.update_or_create(
+                profile=user.profile,
+                school_info=school_info
+            )
             send_mail(
                 'Žiadosť o pridanie novej školy',
                 render_to_string(
