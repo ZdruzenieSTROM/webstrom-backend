@@ -935,7 +935,7 @@ class EventViewSet(ModelViewSetWithSerializerContext):
     filterset_class = EventFilterSet
     search_fields = ['competition__name', 'year', 'additional_name']
     ordering_fields = ['start', 'end', 'year']
-    ordering = ['start']
+    ordering = ['-start']
 
     def perform_create(self, serializer):
         """
