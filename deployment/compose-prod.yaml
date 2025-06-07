@@ -1,0 +1,35 @@
+version: "3"
+
+services:
+  webstrom-backend:
+    build:
+      dockerfile: deployment/webstrom-backend.dockerfile
+      context: ..
+
+    image: webstrom-prod-backend
+
+    environment:
+      - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
+      - DJANGO_SETTINGS_MODULE=webstrom.settings_prod
+
+    volumes:
+      - /var/run/postgresql:/var/run/postgresql:rw
+      - /data/www/webstrom/media:/app/media:rw
+      - /data/www/webstrom/protected_media:/app/protected_media:rw
+
+    ports:
+      - "127.0.0.1:8930:8000"
+
+    restart: always
+
+  static-files:
+    build:
+      dockerfile: deployment/static-files.dockerfile
+      context: ..
+
+    image: webstrom-prod-static
+
+    ports:
+      - "127.0.0.1:8931:80"
+
+    restart: always
