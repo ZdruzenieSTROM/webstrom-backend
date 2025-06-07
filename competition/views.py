@@ -10,6 +10,7 @@ from typing import Optional
 from django.core.exceptions import ValidationError as CoreValidationError
 from django.core.files import File
 from django.core.mail import send_mail, send_mass_mail
+# pylint: disable=unused-argument
 from django.db.models.manager import BaseManager
 from django.http import FileResponse, HttpResponse
 from django.template.loader import render_to_string
@@ -22,6 +23,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
+from rest_framework.utils.urls import replace_query_param
 
 from base.utils import mime_type
 from competition.filters import UpcomingFilter
@@ -54,8 +56,6 @@ from competition.serializers import (CommentSerializer, CompetitionSerializer,
 from competition.utils.validations import validate_points
 from personal.models import Profile, School
 from personal.serializers import ProfileExportSerializer, SchoolSerializer
-
-# pylint: disable=unused-argument
 
 
 class ModelViewSetWithSerializerContext(viewsets.ModelViewSet):
@@ -575,11 +575,41 @@ class SeriesViewSet(ModelViewSetWithSerializerContext):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(methods=['get'], detail=False, url_path='sum-methods')
-    def sum_methods(self, request):
+    def sum_methods(self, request, limit=None, offset=None):
+        sum_methods = [{'id': sum_method_tuple[0], 'name': sum_method_tuple[1]}
+                       for sum_method_tuple in SERIES_SUM_METHODS]
+        count = len(sum_methods)
+
+        limit = request.query_params.get(
+            'limit', None)
+        offset = request.query_params.get(
+            'offset', None)
+
+        if limit is None and offset is None:
+            return Response(
+                sum_methods,
+                status=status.HTTP_200_OK
+            )
+        try:
+            limit = 20 if limit is None else int(limit)
+            offset = 0 if offset is None else int(offset)
+        except ValueError:
+            return Response(
+                {"detail": "Invalid limit or offset"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        url = self.request.build_absolute_uri()
         return Response(
-            [{'id': sum_method_tuple[0], 'name': sum_method_tuple[1]}
-                for sum_method_tuple in SERIES_SUM_METHODS],
-            status=status.HTTP_200_OK
+            {
+                "count": count,
+                "next": replace_query_param(
+                    url, 'offset', min(offset+limit, count)
+                ) if min(offset+limit, count) != offset else None,
+                "previous": replace_query_param(
+                    url, 'offset', max(0, offset-limit)
+                ) if max(offset-limit, 0) != offset else None,
+                "results": sum_methods[min(offset, count):min(offset+limit, count)]
+            }
         )
 
 
