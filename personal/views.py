@@ -17,6 +17,8 @@ class CountyViewSet(viewsets.ReadOnlyModelViewSet):
     """Kraje"""
     queryset = County.objects.all()
     serializer_class = CountySerializer
+    filter_backends = [SearchFilter]
+    search_fields = ['name']
 
 
 class DistrictViewSet(viewsets.ReadOnlyModelViewSet):
@@ -24,6 +26,8 @@ class DistrictViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = District.objects.all()
     serializer_class = DistrictSerializer
     filterset_fields = ['county', ]
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+    search_fields = ['name', 'abbreviation']
 
 
 class SchoolViewSet(viewsets.ModelViewSet):
