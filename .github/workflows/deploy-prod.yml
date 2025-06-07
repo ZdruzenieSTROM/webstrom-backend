@@ -9,6 +9,8 @@ jobs:
       DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          path: webstrom-prod
       - uses: wshihadeh/docker-deployment-action@v2
         with:
           remote_docker_host: webstrom@server.strom.sk

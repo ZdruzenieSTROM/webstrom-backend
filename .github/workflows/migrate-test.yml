@@ -7,6 +7,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+            path: webstrom-test
       - uses: wshihadeh/docker-deployment-action@v2
         with:
           remote_docker_host: webstrom@server.strom.sk

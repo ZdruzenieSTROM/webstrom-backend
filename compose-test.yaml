@@ -3,7 +3,7 @@ version: "3"
 services:
   webstrom-backend:
     build:
-      dockerfile: deployment/webstrom-backend.dockerfile
+      dockerfile: docker/webstrom-backend.dockerfile
       context: ..
 
     image: webstrom-test-backend
@@ -23,7 +23,7 @@ services:
 
   static-files:
     build:
-      dockerfile: deployment/static-files.dockerfile
+      dockerfile: docker/static-files.dockerfile
       context: ..
 
     image: webstrom-test-static
