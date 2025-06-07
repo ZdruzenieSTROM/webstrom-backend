@@ -13,6 +13,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='competition',
             name='long_description',
-            field=models.TextField(blank=True, null=True, verbose_name='Popis súťaže'),
+            field=models.TextField(blank=True, null=True,
+                                   verbose_name='Podrobný (dlhší) popis'),
         ),
     ]
