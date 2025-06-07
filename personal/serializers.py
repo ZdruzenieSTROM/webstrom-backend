@@ -73,12 +73,14 @@ class ProfileSerializer(serializers.ModelSerializer):
     school_id = serializers.IntegerField()
     email = serializers.EmailField(source='user.email', read_only=True)
     verbose_name = serializers.SerializerMethodField('get_verbose_name')
+    other_school_info = serializers.CharField(
+        source='other_school_request.school_info')
 
     class Meta:
         model = Profile
         fields = ['grade_name', 'id', 'email', 'first_name', 'last_name', 'school',
                   'phone', 'parent_phone', 'grade', 'is_student', 'has_school',
-                  'school_id', 'verbose_name', 'user_id']
+                  'school_id', 'verbose_name', 'user_id', 'other_school_info']
         read_only_fields = ['grade_name', 'id', 'email', 'user_id'
                             'is_student', 'has_school', 'school', 'verbose_name']
 

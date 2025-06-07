@@ -142,3 +142,13 @@ class Profile(models.Model):
 
     def __str__(self):
         return f'{self.get_full_name()} ({self.user})'
+
+
+class OtherSchoolRequest(models.Model):
+    profile = models.OneToOneField(
+        Profile, on_delete=models.CASCADE, related_name='other_school_request')
+    school_info = models.TextField(
+        verbose_name='Požadovaná škola na pridanie')
+
+    def __str__(self):
+        return str(self.profile)
