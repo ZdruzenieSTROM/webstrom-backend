@@ -9,7 +9,7 @@ SECRET_KEY = environ["DJANGO_SECRET_KEY"]
 DEBUG = False
 
 ALLOWED_HOSTS = [
-    "prod.strom.sk",
+    "strom.sk", "www.strom.sk"
 ]
 
 USE_X_FORWARDED_HOST = True
