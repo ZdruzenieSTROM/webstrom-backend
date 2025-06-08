@@ -60,7 +60,8 @@ class School(models.Model):
     street = models.CharField(verbose_name='ulica', max_length=100)
     city = models.CharField(verbose_name='obec', max_length=100)
     zip_code = models.CharField(verbose_name='PSČ', max_length=6)
-    email = models.CharField(verbose_name='email', max_length=50, blank=True)
+    email = models.CharField(verbose_name='email',
+                             max_length=50, blank=True, null=True)
 
     district = models.ForeignKey(
         District, verbose_name='okres',
