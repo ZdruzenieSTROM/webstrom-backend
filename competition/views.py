@@ -12,7 +12,7 @@ from django.core.files import File
 from django.core.mail import send_mail, send_mass_mail
 # pylint: disable=unused-argument
 from django.db.models.manager import BaseManager
-from django.http import FileResponse, HttpResponse
+from django.http import FileResponse, Http404, HttpResponse
 from django.template.loader import render_to_string
 from django.utils.timezone import now
 from django_filters import Filter, FilterSet, ModelChoiceFilter
@@ -83,11 +83,15 @@ class CompetitionViewSet(mixins.RetrieveModelMixin,
 
     @action(detail=False, url_path=r'slug/(?P<slug>\w+)')
     def slug(self, request: Request, slug: str = None) -> Response:
-        competition: Competition = self.get_queryset().get(slug=slug)
-        return Response(
-            CompetitionSerializer(competition, many=False).data
-        )
+        try:
+            competition: Competition = self.get_queryset().get(slug=slug)
 
+            return Response(
+                CompetitionSerializer(competition, many=False).data
+            )
+
+        except Competition.DoesNotExist as exc:
+            raise Http404 from exc
 
 class CompetitionTypeViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = CompetitionType.objects.all()
