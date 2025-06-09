@@ -15,7 +15,7 @@ class SchoolAdmin(admin.ModelAdmin):
 
 @admin.register(OtherSchoolRequest)
 class OtherSchoolRequestAdmin(admin.ModelAdmin):
-    list_display = {
+    list_display = (
         'profile',
         'school_info'
-    }
+    )
