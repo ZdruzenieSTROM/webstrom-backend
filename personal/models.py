@@ -146,6 +146,10 @@ class Profile(models.Model):
 
 
 class OtherSchoolRequest(models.Model):
+    class Meta:
+        verbose_name = 'Požiadavok na založenie školy'
+        verbose_name_plural = 'Požiadavky na založenie školy'
+
     profile = models.OneToOneField(
         Profile, on_delete=models.CASCADE, related_name='other_school_request')
     school_info = models.TextField(
