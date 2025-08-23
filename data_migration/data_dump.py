@@ -353,9 +353,9 @@ def parse_series(rows, sum_method: str):
 def get_results_response(semester_id):
     for domain in ['matik', 'malynar', 'seminar']:
         response = requests.get(
-            f'https://{domain}.strom.sk/sk/sutaze/semester/poradie/{semester_id}', timeout=10)
+            f'https://{domain}.old.strom.sk/sk/sutaze/semester/poradie/{semester_id}', timeout=10)
         response_tex = requests.get(
-            f'https://{domain}.strom.sk/sk/sutaze/semester/poradie/tex/{semester_id}', timeout=10
+            f'https://{domain}.old.strom.sk/sk/sutaze/semester/poradie/tex/{semester_id}', timeout=10
         )
         if response.status_code == 200:
             if response_tex.status_code == 200:
@@ -408,11 +408,16 @@ def parse_semester_results(semester_id, conn):
 def parse_results(conn):
     objects = []
     series_list = []
-    for i in tqdm.tqdm(range(77)):
+    for i in tqdm.tqdm(range(80)):
+        if i < 77:
+            continue
         try:
             semester, series = parse_semester_results(i, conn)
             objects.append(semester)
             series_list += series
+            for s in series:
+                with open(f'{s["semester_id"]}_s{s["order"]}.json', 'w') as f:
+                    f.write(s["frozen_results"])
         except ValueError as exc:
             print(exc)
     with open('semester_results.csv', 'w', newline='', encoding='utf-8') as csvfile:
