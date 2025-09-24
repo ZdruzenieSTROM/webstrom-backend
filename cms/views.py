@@ -2,6 +2,7 @@
 
 from datetime import datetime
 
+from django.utils import timezone
 from django.utils.timezone import now
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, viewsets
@@ -77,7 +78,7 @@ class InfoBannerViewSet(viewsets.ModelViewSet):
     filterset_fields = ['event', 'page', 'series']
 
     def format_date(self, datetime_: datetime):
-        return datetime_.strftime("%d.%m.%Y %H:%M")
+        return timezone.localtime(datetime_).strftime("%d.%m.%Y %H:%M")
 
     @action(methods=['get'], detail=False, url_path=r'series-problems/(?P<series_id>\d+)')
     def series_problems(self, request, series_id: int) -> list[str]:
