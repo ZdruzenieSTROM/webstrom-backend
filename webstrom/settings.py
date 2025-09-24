@@ -157,7 +157,7 @@ REST_AUTH = {
 
 LANGUAGE_CODE = 'sk'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Bratislava'
 
 USE_I18N = True
 
