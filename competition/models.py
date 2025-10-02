@@ -466,7 +466,7 @@ class Problem(models.Model):
             problem=Problem.objects.get(pk=self.pk),
             text=text,
             posted_by=user,
-            from_staff=user.is_staff,
+            from_staff=user.is_staff and self.can_user_modify(user),
             state=CommentPublishState.PUBLISHED if also_publish
             else CommentPublishState.WAITING_FOR_REVIEW,
         )
