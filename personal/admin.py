@@ -11,6 +11,12 @@ class SchoolAdmin(admin.ModelAdmin):
         'city',
         'abbreviation',
     )
+    search_fields = (
+        'name',
+        'street',
+        'city',
+        'abbreviation'
+    )
 
 
 @admin.register(OtherSchoolRequest)

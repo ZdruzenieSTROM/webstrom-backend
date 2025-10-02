@@ -42,6 +42,13 @@ class SeriesAdmin(admin.ModelAdmin):
         'semester__competition',
     )
 
+    search_fields = (
+        'semester__year',
+        'semester__competition__name',
+        'semester__school_year',
+        'semester__season_code'
+    )
+
     @staticmethod
     def complete(obj: Series):
         return obj.complete
@@ -75,6 +82,12 @@ class EventAdmin(admin.ModelAdmin):
         'school_year'
     )
 
+    search_fields = (
+        'year',
+        'competition__name',
+        'school_year',
+    )
+
 
 @admin.register(Semester)
 class SemesterAdmin(admin.ModelAdmin):
@@ -94,6 +107,13 @@ class SemesterAdmin(admin.ModelAdmin):
         'season_code',
     )
 
+    search_fields = (
+        'year',
+        'competition__name',
+        'school_year',
+        'season_code'
+    )
+
 
 @admin.register(Problem)
 class ProblemAdmin(admin.ModelAdmin):
@@ -102,6 +122,10 @@ class ProblemAdmin(admin.ModelAdmin):
         'order',
         'series',
         'get_text',
+    )
+
+    search_fields = (
+        'text',
     )
 
     @staticmethod
@@ -128,6 +152,9 @@ class SolutionAdmin(admin.ModelAdmin):
         'late_tag',
         'is_online',
         'score',
+    )
+    search_fields = (
+        'semester_registration',
     )
 
     date_hierarchy = 'uploaded_at'
@@ -174,6 +201,10 @@ class CommentAdmin(admin.ModelAdmin):
         'problem',
         'state',
     )
+    search_fields = (
+        'text',
+        'posted_by'
+    )
 
 
 @admin.register(EventRegistration)
@@ -197,6 +228,10 @@ class EventRegistrationAdmin(admin.ModelAdmin):
         'event',
     )
 
+    search_fields = (
+        'profile',
+    )
+
 
 @admin.register(RegistrationLink)
 class RegistrationLinkAdmin(admin.ModelAdmin):
@@ -204,6 +239,12 @@ class RegistrationLinkAdmin(admin.ModelAdmin):
         'event',
         'start',
         'end'
+    )
+
+    search_fields = (
+        'event__year',
+        'event__competition__name',
+        'event__school_year'
     )
 
 

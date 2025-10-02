@@ -36,6 +36,10 @@ class PostAdmin(admin.ModelAdmin):
         'visible_until',
         'is_visible'
     )
+    search_fields = (
+        'caption',
+        'short_text'
+    )
 
 
 @admin.register(PostLink)
@@ -44,6 +48,11 @@ class PostLinkAdmin(admin.ModelAdmin):
         '__str__',
         'caption',
         'url',
+    )
+
+    search_fields = (
+        'caption',
+        'url'
     )
 
 
@@ -63,6 +72,10 @@ class InfoBannerAdmin(admin.ModelAdmin):
         'visible_after',
         'visible_until',
         'message_template'
+    )
+
+    search_fields = (
+        'message',
     )
 
 
