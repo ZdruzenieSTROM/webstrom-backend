@@ -22,11 +22,20 @@ class CommentPermission(permissions.BasePermission):
                 return True
 
         if view.action == 'edit':
-            if obj.posted_by == request.user:
+            if (
+                obj.posted_by == request.user
+                and (
+                    obj.state == CommentPublishState.WAITING_FOR_REVIEW
+                    or can_user_modify
+                )
+            ):
                 return True
 
         if view.action == 'destroy':
-            if obj.posted_by == request.user or can_user_modify:
+            if (
+                obj.posted_by == request.user
+                and obj.state == CommentPublishState.WAITING_FOR_REVIEW
+            ) or can_user_modify:
                 return True
 
         return False
