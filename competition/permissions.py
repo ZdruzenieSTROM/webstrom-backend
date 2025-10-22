@@ -22,11 +22,24 @@ class CommentPermission(permissions.BasePermission):
                 return True
 
         if view.action == 'edit':
-            if obj.posted_by == request.user:
+            # Vedúci vie vždy ediovať svoje komentáre
+            # Účastník vie editovať iba svoje nezverejnené komentáre
+            if (
+                obj.posted_by == request.user
+                and (
+                    obj.state == CommentPublishState.WAITING_FOR_REVIEW
+                    or can_user_modify
+                )
+            ):
                 return True
 
         if view.action == 'destroy':
-            if obj.posted_by == request.user or can_user_modify:
+            # Vedúci vie mazať všetko
+            # Používateľ vie zmazať iba svoj komentár
+            if (
+                obj.posted_by == request.user
+                and obj.state == CommentPublishState.WAITING_FOR_REVIEW
+            ) or can_user_modify:
                 return True
 
         return False
@@ -55,7 +68,11 @@ class ProblemPermission(CompetitionRestrictedPermission):
     """Prístup pre Problem """
 
     def has_permission(self, request, view):
-        if view.action in ['upload_solution', 'my_solution', 'corrected_solution']:
+        if view.action in ['upload_solution',
+                           'my_solution',
+                           'corrected_solution',
+                           'file_solution',
+                           'file_corrected']:
             return request.user.is_authenticated
 
         return super().has_permission(request, view)
@@ -73,5 +90,12 @@ class ProblemPermission(CompetitionRestrictedPermission):
                 request.user.is_authenticated and
                 EventRegistration.get_registration_by_profile_and_event(
                     request.user.profile, obj.series.semester))
+
+        if view.action in ['file_solution',
+                           'file_corrected',
+                           'upload_solution_file',
+                           'upload_corrected_solution_file'
+                           ]:
+            return request.user.is_authenticated and obj.can_user_modify(request.user)
 
         return super().has_object_permission(request, view, obj)

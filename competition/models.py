@@ -108,7 +108,10 @@ class Competition(models.Model):
         return get_object_or_404(cls, sites=site, competition_type=0)
 
     def can_user_modify(self, user: User):
-        return len(set(self.permission_group.all()).intersection(set(user.groups.all()))) > 0
+        return user.is_staff and len(
+            set(self.permission_group.all()).intersection(
+                set(user.groups.all()))
+        ) > 0
 
 
 class LateTag(models.Model):

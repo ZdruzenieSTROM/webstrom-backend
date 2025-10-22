@@ -93,6 +93,7 @@ class CompetitionViewSet(mixins.RetrieveModelMixin,
         except Competition.DoesNotExist as exc:
             raise Http404 from exc
 
+
 class CompetitionTypeViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = CompetitionType.objects.all()
     serializer_class = CompetitionTypeSerializer
@@ -672,7 +673,8 @@ class SolutionViewSet(viewsets.ModelViewSet):
         self.get_object().set_vote(Vote.NONE)
         return Response('Hlas Odobraný.', status=status.HTTP_200_OK)
 
-    @action(methods=['get'], detail=True, url_path='file-solution')
+    @action(methods=['get'], detail=True, url_path='file-solution',
+            permission_classes=[ProblemPermission])
     def file_solution(self, request, pk=None):
         """Stiahne riešenie"""
         solution = self.get_object()
@@ -684,7 +686,8 @@ class SolutionViewSet(viewsets.ModelViewSet):
             file, content_type='application/pdf',
         )
 
-    @action(methods=['get'], detail=True, url_path='file-corrected')
+    @action(methods=['get'], detail=True, url_path='file-corrected',
+            permission_classes=[ProblemPermission])
     def file_corrected(self, request, pk=None):
         """Stiahne opravenú verziu riešenia"""
         solution = self.get_object()
@@ -698,7 +701,7 @@ class SolutionViewSet(viewsets.ModelViewSet):
 
     @action(methods=['post'], detail=True,
             url_path='upload-solution-file',
-            permission_classes=[IsAdminUser])
+            permission_classes=[ProblemPermission])
     def upload_solution_file(self, request, pk=None):
         solution: Solution = self.get_object()
         if 'file' not in request.FILES:
@@ -715,7 +718,7 @@ class SolutionViewSet(viewsets.ModelViewSet):
 
     @action(methods=['post'], detail=True,
             url_path='upload-corrected-solution-file',
-            permission_classes=[IsAdminUser])
+            permission_classes=[ProblemPermission])
     def upload_corrected_solution_file(self, request, pk=None):
         solution: Solution = self.get_object()
         if 'file' not in request.FILES:
