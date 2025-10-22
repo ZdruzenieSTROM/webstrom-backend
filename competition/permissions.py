@@ -68,7 +68,11 @@ class ProblemPermission(CompetitionRestrictedPermission):
     """Prístup pre Problem """
 
     def has_permission(self, request, view):
-        if view.action in ['upload_solution', 'my_solution', 'corrected_solution', 'file_solution', 'file_corrected']:
+        if view.action in ['upload_solution',
+                           'my_solution',
+                           'corrected_solution',
+                           'file_solution',
+                           'file_corrected']:
             return request.user.is_authenticated
 
         return super().has_permission(request, view)
@@ -87,7 +91,11 @@ class ProblemPermission(CompetitionRestrictedPermission):
                 EventRegistration.get_registration_by_profile_and_event(
                     request.user.profile, obj.series.semester))
 
-        if view.action in ['file_solution', 'file_corrected', 'upload_solution_file', 'upload_corrected_solution_file']:
+        if view.action in ['file_solution',
+                           'file_corrected',
+                           'upload_solution_file',
+                           'upload_corrected_solution_file'
+                           ]:
             return request.user.is_authenticated and obj.can_user_modify(request.user)
 
         return super().has_object_permission(request, view, obj)
