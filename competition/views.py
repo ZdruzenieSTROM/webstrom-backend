@@ -14,7 +14,6 @@ from django.core.mail import send_mail, send_mass_mail
 from django.db.models.manager import BaseManager
 from django.http import FileResponse, Http404, HttpResponse
 from django.template.loader import render_to_string
-from django.utils.timezone import now
 from django_filters import Filter, FilterSet, ModelChoiceFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import exceptions, filters, mixins, status, viewsets
