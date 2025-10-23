@@ -93,6 +93,7 @@ class CompetitionViewSet(mixins.RetrieveModelMixin,
         except Competition.DoesNotExist as exc:
             raise Http404 from exc
 
+
 class CompetitionTypeViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = CompetitionType.objects.all()
     serializer_class = CompetitionTypeSerializer
@@ -568,9 +569,8 @@ class SeriesViewSet(ModelViewSetWithSerializerContext):
         current_semester_series = Semester.objects.filter(
             competition=competition_id
         ).current().series_set
-        current_series = current_semester_series.filter(
-            deadline__gte=now()
-        ).order_by('deadline').first()
+        current_series = current_semester_series.order_by('deadline')
+        current_series = next(filter(lambda s: s.can_submit, current_series))
         if current_series is None:
             current_series = current_semester_series.order_by(
                 '-deadline').first()
