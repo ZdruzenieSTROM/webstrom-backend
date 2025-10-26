@@ -14,7 +14,6 @@ from django.core.mail import send_mail, send_mass_mail
 from django.db.models.manager import BaseManager
 from django.http import FileResponse, Http404, HttpResponse
 from django.template.loader import render_to_string
-from django.utils.timezone import now
 from django_filters import Filter, FilterSet, ModelChoiceFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import exceptions, filters, mixins, status, viewsets
@@ -569,9 +568,8 @@ class SeriesViewSet(ModelViewSetWithSerializerContext):
         current_semester_series = Semester.objects.filter(
             competition=competition_id
         ).current().series_set
-        current_series = current_semester_series.filter(
-            deadline__gte=now()
-        ).order_by('deadline').first()
+        current_series = current_semester_series.order_by('deadline')
+        current_series = next(filter(lambda s: s.can_submit, current_series))
         if current_series is None:
             current_series = current_semester_series.order_by(
                 '-deadline').first()
