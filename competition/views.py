@@ -569,7 +569,7 @@ class SeriesViewSet(ModelViewSetWithSerializerContext):
             competition=competition_id
         ).current().series_set
         current_series = current_semester_series.order_by('deadline')
-        current_series = next(filter(lambda s: s.can_submit, current_series))
+        current_series = next(filter(lambda s: s.can_submit, current_series), None)
         if current_series is None:
             current_series = current_semester_series.order_by(
                 '-deadline').first()
