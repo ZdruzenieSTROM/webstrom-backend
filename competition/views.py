@@ -359,8 +359,15 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
         if not file:
             raise exceptions.NotFound(
                 detail='Toto riešenie ešte nie je opravené')
-        return FileResponse(
-            file, content_type='application/pdf')
+        response = FileResponse(file, content_type='application/pdf')
+        # Cache corrected solutions for 5 minutes.
+        # - 'private' = cache only in user's browser, not in shared proxies
+        # - 'max-age=300' = cache for 5 minutes (300 seconds)
+        # - 'must-revalidate' = always check with server after cache expires
+        # Corrected solutions change infrequently (only when admin re-uploads),
+        # so short-term caching provides good balance between performance and freshness.
+        response['Cache-Control'] = 'private, max-age=300, must-revalidate'
+        return response
 
     @action(methods=['get'], detail=True, permission_classes=[IsAdminUser],
             url_path='download-solutions')
