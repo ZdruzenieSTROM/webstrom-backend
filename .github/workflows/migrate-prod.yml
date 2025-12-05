@@ -1,20 +1,30 @@
-name: Migrate Prod Environment
+name: Migrate Production Environment
 
 on: workflow_dispatch
 
 jobs:
-  deploy:
+  migrate:
     runs-on: ubuntu-latest
-    env:
-      DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
     steps:
-      - uses: actions/checkout@v4
+      - name: Run migrations on server
+        uses: appleboy/ssh-action@v1.1.0
         with:
-            path: webstrom-prod
-      - uses: wshihadeh/docker-deployment-action@v2
-        with:
-          remote_docker_host: webstrom@server.strom.sk
-          ssh_private_key: ${{ secrets.WEBSTROM_DEPLOY_SSH_PRIVATE_KEY }}
-          ssh_public_key: ${{ secrets.WEBSTROM_DEPLOY_SSH_PUBLIC_KEY }}
-          stack_file_name: webstrom-prod/compose-prod.yaml
-          args: run --rm webstrom-backend python manage.py migrate --noinput
+          host: server.strom.sk
+          username: webstrom
+          key: ${{ secrets.WEBSTROM_DEPLOY_SSH_PRIVATE_KEY }}
+          script: |
+            set -e
+
+            CONTAINER_NAME="webstrom-prod_webstrom-backend"
+
+            # Check if container exists and is running
+            if ! docker ps --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}$"; then
+              echo "❌ Container $CONTAINER_NAME is not running!"
+              exit 1
+            fi
+
+            # Run migrations
+            echo "Running migrations in $CONTAINER_NAME..."
+            docker exec "$CONTAINER_NAME" python manage.py migrate --noinput
+
+            echo "✅ Migrations completed successfully!"
