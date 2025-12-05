@@ -19,7 +19,8 @@ def semester_results(self: Semester) -> dict:
         return json_loads(self.frozen_results)
     results = []
     for registration in self.eventregistration_set.all():
-        results.append(_generate_result_row(registration, self))
+        if registration.has_solutions():
+            results.append(_generate_result_row(registration, self))
 
     results.sort(key=itemgetter('total'), reverse=True)
     results = _rank_results(results)
@@ -38,6 +39,7 @@ def series_results(series: Series):
     results = [
         _generate_result_row(registration, only_series=series)
         for registration in series.semester.eventregistration_set.all()
+        if registration.has_solutions()
     ]
 
     results.sort(key=itemgetter('total'), reverse=True)
