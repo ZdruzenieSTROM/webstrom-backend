@@ -356,7 +356,7 @@ class ProblemWithSolutionsSerializer(serializers.ModelSerializer):
         model = models.Problem
         fields = ['histogram', 'total_solutions', 'solution_set', 'text', 'order',
                   'correction', 'series', 'solution_pdf',
-                  'tex_header']
+                  'tex_header', 'image']
         read_only_fields = ['histogram', 'tex_header'
                             'num_solutions', 'text', 'order', 'series']
 
