@@ -341,8 +341,11 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
         if not file:
             raise exceptions.NotFound(
                 detail='Zatiaľ nebolo nahraté žiadne riešenie')
-        return FileResponse(
-            file, content_type='application/pdf')
+        response = FileResponse(file, content_type='application/pdf')
+        response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+        response['Pragma'] = 'no-cache'
+        response['Expires'] = '0'
+        return response
 
     @action(detail=True, url_path='corrected-solution')
     def corrected_solution(self, request, pk=None):
