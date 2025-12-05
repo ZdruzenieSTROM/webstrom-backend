@@ -1,0 +1,44 @@
+# spusti pomocou: `docker-compose -f compose-local.yaml up --build --force-recreate`
+# da sa prihodit aj `--detach` ked chceme pustit v backgrounde (bez neho vidime server logy priamo v terminali)
+
+services:
+  webstrom-backend:
+    build:
+      dockerfile: docker/webstrom-backend.dockerfile
+      context: .
+
+    image: webstrom-local-backend
+
+    environment:
+      - PORT=8000
+
+      ## local dev
+      - DJANGO_SETTINGS_MODULE=webstrom.settings
+
+      ## test environment
+      # - DJANGO_SETTINGS_MODULE=webstrom.settings_test
+
+      ## prod environment
+      # - DJANGO_SETTINGS_MODULE=webstrom.settings_prod
+      # - DJANGO_SECRET_KEY=your-secret-key-here
+
+    volumes:
+      - /var/run/postgresql:/var/run/postgresql:rw
+      - ./media:/app/media:rw
+      - ./protected_media:/app/protected_media:rw
+
+    network_mode: host
+
+    restart: always
+
+  static-files:
+    build:
+      dockerfile: docker/static-files.dockerfile
+      context: .
+
+    image: webstrom-local-static
+
+    ports:
+      - '127.0.0.1:8001:80'
+
+    restart: always
