@@ -340,6 +340,12 @@ class SeriesSerializer(serializers.ModelSerializer):
     def get_complete(self, obj: models.Series):
         return obj.complete
 
+    def create(self, validated_data):
+        if validated_data.get("sum_method") is None:
+            semester = validated_data.get("semester")
+            validated_data["sum_method"] = semester.competition.default_sum_method
+        return super().create(validated_data)
+
 
 @ts_interface(context='competition')
 class ProblemWithSolutionsSerializer(serializers.ModelSerializer):
@@ -435,6 +441,12 @@ class SeriesWithProblemsSerializer(ModelWithParticipationSerializer):
 
     def get_verbose_name(self, obj):
         return str(obj)
+
+    def create(self, validated_data):
+        if validated_data.get("sum_method") is None:
+            semester = validated_data.get("semester")
+            validated_data["sum_method"] = semester.competition.default_sum_method
+        return super().create(validated_data)
 
 
 @ts_interface(context='competition')

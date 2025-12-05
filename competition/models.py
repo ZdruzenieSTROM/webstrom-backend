@@ -29,6 +29,17 @@ private_storage = FileSystemStorage(location=settings.PRIVATE_STORAGE_ROOT,
                                     base_url='/protected/'
                                     )
 
+SERIES_SUM_METHODS = [
+    ('series_simple_sum', 'Jednoduchý súčet bodov'),
+    ('series_Malynar_sum', 'Bonifikácia Malynár'),
+    ('series_Matik_sum', 'Bonifikácia Matik'),
+    ('series_STROM_sum', 'Bonifikácia STROM'),
+    ('series_Malynar_sum_until_2021', 'Bonifikácia Malynár (Do 2020/2021)'),
+    ('series_Matik_sum_until_2021', 'Bonifikácia Matik (Do 2020/2021)'),
+    ('series_STROM_sum_until_2021', 'Bonifikácia STROM (Do 2020/2021)'),
+    ('series_STROM_4problems_sum', 'Bonifikácia STROM (4. úlohy)')
+]
+
 
 class CompetitionType(models.Model):
     "Druh súťaže"
@@ -66,6 +77,9 @@ class Competition(models.Model):
         max_length=50)
     alert_email = models.EmailField(
         verbose_name='Email pre upozornenia z diskusií', blank=True, null=True, default=None)
+    default_sum_method = models.CharField(
+        verbose_name='Súčtová metóda', max_length=50, blank=True,
+        choices=SERIES_SUM_METHODS, default='series_simple_sum')
 
     sites = models.ManyToManyField(Site)
 
@@ -272,18 +286,6 @@ class Semester(Event):
 
     def __str__(self):
         return f'{self.competition.name}, {self.year}. ročník - {self.season} semester'
-
-
-SERIES_SUM_METHODS = [
-    ('series_simple_sum', 'Jednoduchý súčet bodov'),
-    ('series_Malynar_sum', 'Bonifikácia Malynár'),
-    ('series_Matik_sum', 'Bonifikácia Matik'),
-    ('series_STROM_sum', 'Bonifikácia STROM'),
-    ('series_Malynar_sum_until_2021', 'Bonifikácia Malynár (Do 2020/2021)'),
-    ('series_Matik_sum_until_2021', 'Bonifikácia Matik (Do 2020/2021)'),
-    ('series_STROM_sum_until_2021', 'Bonifikácia STROM (Do 2020/2021)'),
-    ('series_STROM_4problems_sum', 'Bonifikácia STROM (4. úlohy)')
-]
 
 
 class Series(models.Model):
