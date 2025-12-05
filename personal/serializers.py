@@ -2,7 +2,8 @@ from django_typomatic import ts_interface
 from rest_framework import serializers
 
 from competition.models import Grade
-from personal.models import County, District, Profile, School
+from personal.models import (County, District, OtherSchoolRequest, Profile,
+                             School)
 
 
 @ts_interface(context='personal')
@@ -74,7 +75,10 @@ class ProfileSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(source='user.email', read_only=True)
     verbose_name = serializers.SerializerMethodField('get_verbose_name')
     other_school_info = serializers.CharField(
-        source='other_school_request.school_info')
+        source='other_school_request.school_info',
+        required=False,
+        allow_null=True,
+        allow_blank=True)
 
     class Meta:
         model = Profile
@@ -110,6 +114,19 @@ class ProfileSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         grade = Grade.objects.get(pk=validated_data.pop('grade'))
         school = School.objects.get(pk=validated_data.pop('school_id'))
+        other_school_data = validated_data.pop('other_school_request', None)
+
+        if other_school_data is not None:
+            if other_school_data['school_info'] is None:
+                if hasattr(instance, 'other_school_request'):
+                    instance.other_school_request.delete()
+
+            elif other_school_data is not None:
+                info = other_school_data.get('school_info')
+                req, _ = OtherSchoolRequest.objects.get_or_create(
+                    profile=instance)
+                req.school_info = info
+                req.save()
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
 
