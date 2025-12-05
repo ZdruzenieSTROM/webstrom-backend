@@ -1,3 +1,4 @@
+from django.conf import settings
 from allauth.account.adapter import get_adapter
 from allauth.account.models import EmailAddress
 from allauth.account.utils import setup_user_email, user_pk_to_url_str
@@ -103,7 +104,6 @@ class UserDetailsSerializer(serializers.ModelSerializer):
     """
     Serializer pre User model spolu s Profile modelom
     """
-    OTHER_SCHOOL_CODE = 0
 
     profile = ProfileCreateSerializer(label="")
     new_school_description = serializers.CharField(
@@ -159,7 +159,7 @@ class UserDetailsSerializer(serializers.ModelSerializer):
         '''
         if school is None:
             return
-        if school.code == self.OTHER_SCHOOL_CODE:
+        if school.code == settings.OTHER_SCHOOL_CODE:
             school_info = self.validated_data['new_school_description']
             OtherSchoolRequest.objects.update_or_create(
                 profile=user.profile,
@@ -212,7 +212,7 @@ class RegisterSerializer(UserDetailsSerializer):
             raise serializers.ValidationError("Zadané heslá sa nezhodujú.")
 
         # ak je zadana skola "ina skola", musi byt nejaky description skoly
-        if (attrs['profile']['school'].code == self.OTHER_SCHOOL_CODE and
+        if (attrs['profile']['school'].code == settings.OTHER_SCHOOL_CODE and
                 len(attrs['new_school_description']) == 0):
             raise serializers.ValidationError(
                 'Musíš zadať popis tvojej školy.')

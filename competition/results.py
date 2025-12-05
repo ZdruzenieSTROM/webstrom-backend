@@ -1,16 +1,25 @@
+from django.conf import settings
 from json import dumps as json_dumps
 from json import loads as json_loads
 from operator import itemgetter
 
 from django.utils.timezone import now
 
-from competition.models import EventRegistration, Semester, Series
+from competition.models import EventRegistration, Semester, Series, Profile
 from competition.serializers import EventRegistrationReadSerializer
 from competition.utils import sum_methods
 
 
 class FreezingNotClosedResults(Exception):
     """Snažíš sa zamraziť výsledky série, ktorá nemá opravené všetky riešenia"""
+
+
+class UserHasInvalidSchool(Exception):
+    """Snažíš sa zamraziť výsledky semestra, kde je riešiteľ nemá priradenú platnú školu"""
+
+    def __init__(self, users: list[Profile]):
+        users = ', '.join(user.get_full_name() for user in users)
+        super().__init__(f'Užívatelia nemajú priradenú školu: {users}')
 
 
 def semester_results(self: Semester) -> dict:
@@ -46,6 +55,12 @@ def series_results(series: Series):
 
 
 def freeze_series_results(series: Series):
+    registrations_without_school = list(
+        registration for registration in series.semester.eventregistration_set.all()
+        if registration.school.pk == settings.OTHER_SCHOOL_CODE)
+    if registrations_without_school:
+        raise UserHasInvalidSchool([registration.profile
+                                    for registration in registrations_without_school])
     if any(
         problem.num_solutions != problem.num_corrected_solutions
         for problem in series.problems.all()

@@ -34,7 +34,7 @@ from competition.models import (SERIES_SUM_METHODS, Comment, Competition,
 from competition.permissions import (CommentPermission,
                                      CompetitionRestrictedPermission,
                                      ProblemPermission)
-from competition.results import (FreezingNotClosedResults,
+from competition.results import (FreezingNotClosedResults, UserHasInvalidSchool,
                                  freeze_semester_results,
                                  freeze_series_results,
                                  generate_praticipant_invitations,
@@ -547,6 +547,10 @@ class SeriesViewSet(ModelViewSetWithSerializerContext):
             raise exceptions.MethodNotAllowed(
                 method='series/results/freeze',
                 detail='Séria nemá opravené všetky úlohy a teda sa nedá uzavrieť.') from exc
+        except UserHasInvalidSchool as exc:
+            raise exceptions.MethodNotAllowed(
+                method='series/results/freeze',
+                detail=str(exc)) from exc
         try:
             freeze_semester_results(series.semester)
         except FreezingNotClosedResults:
@@ -569,7 +573,8 @@ class SeriesViewSet(ModelViewSetWithSerializerContext):
             competition=competition_id
         ).current().series_set
         current_series = current_semester_series.order_by('deadline')
-        current_series = next(filter(lambda s: s.can_submit, current_series), None)
+        current_series = next(
+            filter(lambda s: s.can_submit, current_series), None)
         if current_series is None:
             current_series = current_semester_series.order_by(
                 '-deadline').first()

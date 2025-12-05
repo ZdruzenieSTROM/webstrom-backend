@@ -195,3 +195,4 @@ MANAGERS = [('Web', 'webmaster@strom.sk'), ]
 
 DEFAULT_FROM_EMAIL = 'noreply@strom.sk'    # z tade sa odosielaju maily
 EMAIL_ALERT = 'otazky.strom@strom.sk'  # tu sa prijimaju maily
+OTHER_SCHOOL_CODE = 0
