@@ -1,8 +1,8 @@
-from django.conf import settings
 from allauth.account.adapter import get_adapter
 from allauth.account.models import EmailAddress
 from allauth.account.utils import setup_user_email, user_pk_to_url_str
 from dj_rest_auth.serializers import PasswordResetSerializer
+from django.conf import settings
 from django.contrib.auth import authenticate, get_user_model
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
