@@ -10,7 +10,7 @@ cryptography==45.0.3
 defusedxml==0.7.1
 dill==0.4.0
 dj-rest-auth==5.0.2
-Django==5.2.2
+Django==5.2.9
 django-allauth==0.58.2
 django-filter==23.5
 django-rest-swagger==2.2.0
