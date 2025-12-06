@@ -1,0 +1,24 @@
+{% extends "base/emails/email_base.html" %}
+
+{% block title %}Pridanie novej školy{% endblock %}
+{% block header %}Pridanie novej školy{% endblock %}
+
+{% block content %}
+  <p>
+    Na webe sa zaregistroval nový používateľ a nenašiel svoju školu.
+  </p>
+  <div>
+    <div class="label">Email:</div>
+    <div class="box">{{ email }}</div>
+  </div>
+
+  <div>
+    <div class="label">Meno:</div>
+    <div class="box">{{first_name}} {{last_name}}</div>
+  </div>
+  <div>
+    <div class="label">Škola:</div>
+    <div class="box">{{ school_info }}</div>
+  </div>
+Prosím doplňte školu a priraďte mu ju.
+{% endblock %}

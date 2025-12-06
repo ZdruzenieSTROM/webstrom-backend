@@ -4,11 +4,10 @@ from allauth.account.utils import setup_user_email, user_pk_to_url_str
 from dj_rest_auth.serializers import PasswordResetSerializer
 from django.conf import settings
 from django.contrib.auth import authenticate, get_user_model
-from django.core.mail import send_mail
-from django.template.loader import render_to_string
 from django_typomatic import ts_interface
 from rest_framework import exceptions, serializers
 
+from base.emails import send_bulk_html_emails
 from competition.models import Grade
 from personal.models import OtherSchoolRequest, Profile
 from personal.serializers import ProfileCreateSerializer
@@ -165,19 +164,16 @@ class UserDetailsSerializer(serializers.ModelSerializer):
                 profile=user.profile,
                 school_info=school_info
             )
-            send_mail(
+            send_bulk_html_emails(
+                [EMAIL_ALERT],
+                'user/emails/new_school_request',
                 'Žiadosť o pridanie novej školy',
-                render_to_string(
-                    'user/emails/new_school_request.txt',
-                    {
-                        'email': user.email,
-                        'first_name': user.profile.first_name,
-                        'last_name': user.profile.last_name,
-                        'school_info': school_info
-                    },
-                ),
-                None,
-                [EMAIL_ALERT]
+                {
+                    'email': user.email,
+                    'first_name': user.profile.first_name,
+                    'last_name': user.profile.last_name,
+                    'school_info': school_info
+                }
             )
 
 

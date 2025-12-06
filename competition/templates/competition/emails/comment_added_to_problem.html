@@ -1,0 +1,21 @@
+{% extends "base/emails/email_base.html" %}
+
+{% block title %}Nový komentár{% endblock %}
+{% block header %}Nový komentár{% endblock %}
+
+{% block content %}
+  <div>
+    <div class="label">{% if from_staff %}Vedúci seminára pridali {% else %}Bol pridaný {% endif %} nový komentár k úlohe, ktorú si už komentoval/a:</div>
+    <div class="box">{{ problem }}</div>
+  </div>
+
+  <div>
+    <div class="label">Nový komentár:</div>
+    <div class="box">{{ comment }}</div>
+  </div>
+  <div>
+    <div class="label">Autor komentáru:</div>
+    <div class="box">{{ user }}{% if from_staff %} (Vedúci){% endif %}</div>
+  </div>
+
+{% endblock %}

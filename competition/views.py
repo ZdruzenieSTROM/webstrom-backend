@@ -9,11 +9,9 @@ from typing import Optional
 
 from django.core.exceptions import ValidationError as CoreValidationError
 from django.core.files import File
-from django.core.mail import send_mail, send_mass_mail
 # pylint: disable=unused-argument
 from django.db.models.manager import BaseManager
 from django.http import FileResponse, Http404, HttpResponse
-from django.template.loader import render_to_string
 from django_filters import Filter, FilterSet, ModelChoiceFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import exceptions, filters, mixins, status, viewsets
@@ -24,6 +22,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.utils.urls import replace_query_param
 
+from base.emails import send_bulk_html_emails
 from base.utils import mime_type
 from competition.filters import UpcomingFilter
 from competition.models import (SERIES_SUM_METHODS, Comment, Competition,
@@ -34,8 +33,8 @@ from competition.models import (SERIES_SUM_METHODS, Comment, Competition,
 from competition.permissions import (CommentPermission,
                                      CompetitionRestrictedPermission,
                                      ProblemPermission)
-from competition.results import (FreezingNotClosedResults, UserHasInvalidSchool,
-                                 freeze_semester_results,
+from competition.results import (FreezingNotClosedResults,
+                                 UserHasInvalidSchool, freeze_semester_results,
                                  freeze_series_results,
                                  generate_praticipant_invitations,
                                  semester_results, series_results)
@@ -119,29 +118,28 @@ class CommentViewSet(
         comment: Comment = self.get_object()
         comment.publish()
 
-        emails_to_send = [
-            ('Zverejnený komentár',
-             render_to_string(
-                 'competition/emails/comment_published.txt',
-                 context={
-                     'comment': comment.text,
-                     'problem': comment.problem
-                 }),
-             None,
-             [comment.posted_by.email])
-        ]
-
-        user_notification_email_text = render_to_string(
-            'competition/emails/comment_added_to_problem.txt',
-            context={
-                'problem': comment.problem,
-                'from_stuff': comment.from_staff,
-                'comment': comment.text
+        send_bulk_html_emails(
+            [comment.posted_by.email],
+            'competition/emails/comment_published',
+            'Zverejnený komentár',
+            {
+                'comment': comment.text,
+                'problem': comment.problem.verbose_name()
             })
-        emails_to_send += [
-            ('Nový komentár', user_notification_email_text, None, [user.email])
-            for user in comment.problem.get_users_in_comment_thread() if user != comment.posted_by]
-        send_mass_mail(emails_to_send)
+
+        emails = [user.email for user in comment.problem.get_users_in_comment_thread(
+        ) if user != comment.posted_by]
+        send_bulk_html_emails(
+            emails,
+            'competition/emails/comment_added_to_problem',
+            'Zverejnený komentár',
+            {
+                'problem': comment.problem.verbose_name(),
+                'from_stuff': comment.from_staff,
+                'comment': comment.text,
+                'user': comment.posted_by.profile.get_full_name()
+            }
+        )
 
         comment.save()
 
@@ -152,19 +150,15 @@ class CommentViewSet(
         """Skrytie komentára"""
         comment: Comment = self.get_object()
         comment.hide(message=request.data.get('hidden_response'))
-
-        send_mail(
-            'Skrytý komentár',
-            render_to_string('competition/emails/comment_hidden.txt',
-                             context={
-                                 'comment': comment.text,
-                                 'problem': comment.problem,
-                                 'response': comment.hidden_response
-                             }),
-            None,
+        send_bulk_html_emails(
             [comment.posted_by.email],
-        )
-
+            'competition/emails/comment_hidden',
+            'Skrytý komentár',
+            context={
+                'comment': comment.text,
+                'problem': comment.problem.verbose_name(),
+                'response': comment.hidden_response
+            })
         comment.save()
 
         return Response("Komentár bol skrytý.", status=status.HTTP_200_OK)
@@ -235,29 +229,32 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
 
         problem.add_comment(request.data['text'], request.user, also_publish)
         alert_email = problem.series.semester.competition.alert_email
-        emails_to_send = [
-            ('Nový komentár',
-             render_to_string('competition/emails/comment_added.txt',
-                              context={
-                                  'problem': problem,
-                                  'comment': request.data['text']
-                              }),
-             None,
-             [alert_email])
-        ] if alert_email else []
+        send_bulk_html_emails(
+            [alert_email],
+            'competition/emails/comment_added',
+            'Nový komentár',
+            {
+                'problem': problem.verbose_name(),
+                'comment': request.data['text'],
+                'user': request.user.profile.get_full_name(),
+                'also_publish': also_publish
+            }
+        )
+
         if also_publish:
-            user_notification_email_text = render_to_string(
-                'competition/emails/comment_added_to_problem.txt',
-                context={
-                    'problem': problem,
-                    'from_staff': True,
-                    'comment': request.data['text']
-                })
-            emails_to_send += [
-                ('Nový komentár', user_notification_email_text,
-                 None, [user.email])
-                for user in problem.get_users_in_comment_thread() if user != request.user]
-        send_mass_mail(emails_to_send)
+            user_emails = [user.email for user in problem.get_users_in_comment_thread(
+            ) if user != request.user]
+            send_bulk_html_emails(
+                user_emails,
+                'competition/emails/comment_added_to_problem',
+                'Nový komentár',
+                {
+                    'problem': problem.verbose_name(),
+                    'from_staff': also_publish,
+                    'comment': request.data['text'],
+                    'user': request.user.profile.get_full_name()
+                }
+            )
 
         return Response("Komentár bol pridaný", status=status.HTTP_201_CREATED)
 
