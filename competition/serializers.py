@@ -7,6 +7,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
 from base.validators import school_year_validator
+from cms.serializers import GallerySerializer
 from competition import models
 from personal.serializers import ProfileShortSerializer, SchoolShortSerializer
 
@@ -71,6 +72,7 @@ class EventSerializer(ModelWithParticipationSerializer):
         required=False,
         allow_null=True,
     )
+    galleries = GallerySerializer(many=True, read_only=True)
 
     class Meta:
         model = models.Event

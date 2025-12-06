@@ -63,3 +63,16 @@ class FlatPageSerializer(serializers.ModelSerializer):
     class Meta:
         model = FlatPage
         fields = ('id', 'url', 'title', 'content')
+
+
+class GallerySerializer(serializers.ModelSerializer):
+    event_name = serializers.SerializerMethodField('get_event_name')
+
+    class Meta:
+        model = models.Gallery
+        fields = '__all__'
+
+    def get_event_name(self, obj):
+        if obj.event:
+            return str(obj.event)
+        return None

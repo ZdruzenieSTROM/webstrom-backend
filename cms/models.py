@@ -182,3 +182,30 @@ class FileUpload(models.Model):
 
     def __str__(self):
         return self.file.url
+
+
+class Gallery(models.Model):
+    """Galéria obrázkov"""
+
+    class Meta:
+        verbose_name = 'galéria'
+        verbose_name_plural = 'galérie'
+
+    name = models.CharField(verbose_name='názov galérie', max_length=100)
+    event = models.ForeignKey(
+        Event,
+        verbose_name='súťaž',
+        related_name='galleries',
+        on_delete=models.SET_NULL,
+        null=True, blank=True)
+    gallery_link = models.URLField(
+        verbose_name='odkaz na galériu',
+        help_text='Odkaz na externú galériu (napr. Google Photos)',
+    )
+    created_at = models.DateTimeField(
+        verbose_name='vytvorené',
+        auto_now_add=True,
+        editable=False)
+
+    def __str__(self):
+        return self.name
