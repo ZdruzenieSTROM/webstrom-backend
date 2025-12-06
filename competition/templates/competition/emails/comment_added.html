@@ -1,0 +1,27 @@
+{% extends "base/emails/email_base.html" %}
+
+{% block title %}Nový komentár{% endblock %}
+{% block header %}Nový komentár{% endblock %}
+
+{% block content %}
+  <div>
+    <div class="label">Úloha:</div>
+    <div class="box">{{ problem }}</div>
+  </div>
+
+  <div>
+    <div class="label">Používateľ:</div>
+    <div class="box">{{ user }}</div>
+  </div>
+
+  <div>
+    <div class="label">Komentár:</div>
+    <div class="box">{{ comment }}</div>
+  </div>
+
+  {% if also_publish %}
+    <div class="status">Príspevok bol publikovaný</div>
+  {% else %}
+    <div class="status">Príspevok čaká na zverejnenie</div>
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends "base/emails/email_base.html" %}
+
+{% block title %}Skrytý komentár{% endblock %}
+{% block header %}Skrytý komentár{% endblock %}
+
+{% block content %}
+  <div>
+    <div class="label">Skryli sme tvoj komentár:</div>
+    <div class="box">{{ comment }}</div>
+  </div>
+
+  <div>
+    <div class="label">k úlohe:</div>
+    <div class="box">{{ problem }}</div>
+  </div>
+
+  <div>
+    <div class="label">a dostal/a si k nemu súkromnú odpoveď</div>
+    <div class="box">{{ response }}</div>
+  </div>
+
+{% endblock %}
