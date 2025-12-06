@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from cms.models import (FileUpload, InfoBanner, Logo, MenuItem,
+from cms.models import (FileUpload, Gallery, InfoBanner, Logo, MenuItem,
                         MessageTemplate, Post, PostLink)
 
 
@@ -80,3 +80,5 @@ class InfoBannerAdmin(admin.ModelAdmin):
 
 
 admin.site.register(FileUpload)
+
+admin.site.register(Gallery)

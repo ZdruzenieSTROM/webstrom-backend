@@ -12,12 +12,12 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 from base.permissions import IsAdminOrReadOnly
-from cms.models import (FileUpload, FlatPage, InfoBanner, Logo, MenuItem,
-                        MessageTemplate, Post)
+from cms.models import (FileUpload, FlatPage, Gallery, InfoBanner, Logo,
+                        MenuItem, MessageTemplate, Post)
 from cms.permissions import PostPermission
 from cms.serializers import (FileUploadSerializer, FlatPageSerializer,
-                             InfoBannerSerializer, LogoSerializer,
-                             MenuItemShortSerializer,
+                             GallerySerializer, InfoBannerSerializer,
+                             LogoSerializer, MenuItemShortSerializer,
                              MessageTemplateSerializer, PostSerializer)
 from competition.models import Competition, Event, Series
 
@@ -147,6 +147,9 @@ class MessageTemplateViewSet(viewsets.ModelViewSet):
 class FileUploadViewSet(viewsets.ModelViewSet):
     serializer_class = FileUploadSerializer
     queryset = FileUpload.objects.all()
+    filter_backends = [DjangoFilterBackend,
+                       filters.SearchFilter, filters.OrderingFilter]
+    permission_classes = (IsAdminOrReadOnly,)
 
 
 class FlatPageViewSet(viewsets.ModelViewSet):
@@ -163,3 +166,13 @@ class FlatPageViewSet(viewsets.ModelViewSet):
 
         except FlatPage.DoesNotExist as exc:
             raise NotFound from exc
+
+
+class GalleryViewSet(viewsets.ModelViewSet):
+    serializer_class = GallerySerializer
+    queryset = Gallery.objects.all()
+    permission_classes = (IsAdminOrReadOnly,)
+    filter_backends = [DjangoFilterBackend,
+                       filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['name']
+    ordering_fields = ['created_at', 'name']
