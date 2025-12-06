@@ -1,8 +1,10 @@
 import datetime
+import os
 from typing import Optional
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
+from django.core.files.base import ContentFile
 from django.core.files.storage import FileSystemStorage
 from django.core.validators import validate_slug
 from django.db import models
@@ -647,6 +649,30 @@ def get_corrected_solution_path(instance, filename):  # pylint: disable=unused-a
     return instance.get_corrected_solution_file_path()
 
 
+def rename_file(instance, field_name, new_path):
+    file_field = getattr(instance, field_name)
+    if not file_field:
+        return
+    old_path = file_field.name
+    if old_path == new_path:
+        return
+
+    if private_storage.exists(new_path):
+        raise ValidationError(
+            f"Súbor s názvom '{new_path}' už existuje. "
+            f"Premenovanie nie je možné."
+        )
+
+    # presun súboru
+    # private_storage.save(new_path)
+    os.rename(
+        private_storage.path(old_path),
+        private_storage.path(new_path)
+    )
+    file_field.name = new_path
+    file_field.save()
+
+
 class Solution(models.Model):
     """
     Popisuje riešenie úlohy od užívateľa. Obsahuje nahraté aj opravné riešenie, body
@@ -727,6 +753,31 @@ class Solution(models.Model):
     def set_vote(self, vote):
         self.vote = vote
         self.save()
+
+    def save(self, *args, **kwargs):
+        # Zistíme starú verziu objektu (pre porovnanie)
+        old = None
+        if self.pk:
+            try:
+                old = Solution.objects.get(pk=self.pk)
+            except Solution.DoesNotExist:
+                pass
+
+        super().save(*args, **kwargs)
+
+        # Kontrola premenovania účastníckeho riešenia
+        if self.solution:
+            new_path = self.get_solution_file_path()
+            if not old or old.get_solution_file_path() != new_path:
+                rename_file(self, 'solution', new_path)
+
+        # Kontrola premenovania opraveného riešenia
+        if self.corrected_solution:
+            new_path = self.get_corrected_solution_file_path()
+            if not old or old.get_corrected_solution_file_path() != new_path:
+                rename_file(self, 'corrected_solution', new_path)
+
+        super().save(update_fields=['solution', 'corrected_solution'])
 
 
 class PublicationType(models.Model):
