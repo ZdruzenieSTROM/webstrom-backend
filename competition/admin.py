@@ -3,8 +3,8 @@ from django.http import HttpResponseRedirect
 
 from competition.models import (Comment, Competition, Event, EventRegistration,
                                 Grade, LateTag, Problem, ProblemCorrection,
-                                Publication, RegistrationLink, Semester,
-                                Series, Solution)
+                                Publication, PublicationType, RegistrationLink,
+                                Semester, Series, Solution)
 
 
 @admin.register(Grade)
@@ -163,6 +163,14 @@ class SolutionAdmin(admin.ModelAdmin):
     def solution_name(obj):
         return obj.semester_registration.profile.get_full_name()\
             + ' | ' + str(obj.problem.order)
+
+
+@admin.register(PublicationType)
+class PublicationTypeAdmin(admin.ModelAdmin):
+    list_display = (
+        'name',
+        'code',
+    )
 
 
 @admin.register(Publication)

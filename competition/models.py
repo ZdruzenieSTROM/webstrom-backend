@@ -772,7 +772,7 @@ class Publication(models.Model):
             return
 
         if self.order:
-            self.name = f'{self.publication_type.code}_{self.order}.pdf'
+            self.name = f'{self.order}. {self.publication_type.name}'
         else:
             self.name = self.publication_type.name
 

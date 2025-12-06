@@ -31,7 +31,7 @@
         "model": "competition.PublicationType",
         "pk": 4,
         "fields": {
-            "name": "Časopisy"
+            "name": "Časopis"
         }
     }
 ]
