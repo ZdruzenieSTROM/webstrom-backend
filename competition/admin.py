@@ -166,7 +166,7 @@ class SolutionAdmin(admin.ModelAdmin):
 
 
 @admin.register(PublicationType)
-class PublicationAdmin(admin.ModelAdmin):
+class PublicationTypeAdmin(admin.ModelAdmin):
     list_display = (
         'name',
         'code',
