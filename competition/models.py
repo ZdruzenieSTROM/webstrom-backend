@@ -419,6 +419,11 @@ class Problem(models.Model):
             f'-{self.series.semester.season[0]}S-S{self.series.order}'\
             f' - {self.order}. úloha'
 
+    def verbose_name(self):
+        return f'{self.series.semester.competition.name} - {self.series.semester.year}. ročník' \
+            f' - {self.series.semester.season} semester - {self.series.order}. séria'\
+            f' - {self.order}. úloha'
+
     def get_stats(self):
         stats = {}
         stats['histogram'] = []

@@ -124,7 +124,7 @@ class CommentViewSet(
             'Zverejnený komentár',
             {
                 'comment': comment.text,
-                'problem': comment.problem
+                'problem': comment.problem.verbose_name()
             })
 
         emails = [user.email for user in comment.problem.get_users_in_comment_thread(
@@ -134,7 +134,7 @@ class CommentViewSet(
             'competition/emails/comment_added_to_problem',
             'Zverejnený komentár',
             {
-                'problem': comment.problem,
+                'problem': comment.problem.verbose_name(),
                 'from_stuff': comment.from_staff,
                 'comment': comment.text
             }
@@ -155,7 +155,7 @@ class CommentViewSet(
             'Skrytý komentár',
             context={
                 'comment': comment.text,
-                'problem': comment.problem,
+                'problem': comment.problem.verbose_name(),
                 'response': comment.hidden_response
             })
         comment.save()
@@ -233,7 +233,7 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
             'competition/emails/comment_added',
             'Nový komentár',
             {
-                'problem': problem,
+                'problem': problem.verbose_name(),
                 'comment': request.data['text'],
                 'user': request.user.profile.get_full_name(),
                 'also_publish': also_publish
@@ -248,7 +248,7 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
                 'competition/emails/comment_added_to_problem',
                 'Nový komentár',
                 {
-                    'problem': problem,
+                    'problem': problem.verbose_name(),
                     'from_staff': also_publish,
                     'comment': request.data['text']
                 }
