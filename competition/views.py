@@ -131,7 +131,7 @@ class CommentViewSet(
         ) if user != comment.posted_by]
         send_bulk_html_emails(
             emails,
-            'competition/emails/comment_published_to_problem',
+            'competition/emails/comment_added_to_problem',
             'Zverejnený komentár',
             {
                 'problem': comment.problem,
