@@ -1,3 +1,4 @@
+from django.conf import settings
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import exceptions, status, viewsets
 from rest_framework.decorators import action
@@ -44,8 +45,19 @@ class SchoolViewSet(viewsets.ModelViewSet):
         if Profile.objects.filter(school=instance).exists():
             raise exceptions.ValidationError(
                 detail='Nie je možné zmazať školu, ktorá má priradených užívateľov.')
+        if instance.code == settings.OTHER_SCHOOL_CODE:
+            raise exceptions.ValidationError(
+                detail='Nie je možné zmazať predvolenú školu.')
         self.perform_destroy(instance)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def update(self, request, *args, **kwargs):
+        """Aktualizácia školy"""
+        instance = self.get_object()
+        if instance.code == settings.OTHER_SCHOOL_CODE:
+            raise exceptions.ValidationError(
+                detail='Nie je možné upraviť predvolenú školu.')
+        return super().update(request, *args, **kwargs)
 
 
 class ProfileViewSet(viewsets.ModelViewSet):
