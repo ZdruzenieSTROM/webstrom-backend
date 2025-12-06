@@ -752,6 +752,8 @@ class SemesterListViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Semester.objects.all()
     serializer_class = SemesterSerializer
     permission_classes = (CompetitionRestrictedPermission,)
+    filter_backends = [DjangoFilterBackend,
+                       filters.SearchFilter, filters.OrderingFilter]
     http_method_names = ['get', 'post', 'head']
     filterset_fields = ['competition']
     ordering = ['-start']
@@ -764,9 +766,11 @@ class SemesterViewSet(ModelViewSetWithSerializerContext):
     queryset = Semester.objects.all()
     serializer_class = SemesterWithProblemsSerializer
     permission_classes = (CompetitionRestrictedPermission,)
+    filter_backends = [DjangoFilterBackend,
+                       filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['school_year',
                         'season_code', 'competition']
-    search_fields = ['competition__name', 'year']
+    search_fields = ['competition__name', 'year', 'school_year']
     ordering_fields = ['start', 'end', 'year']
     ordering = ['-start']
     http_method_names = ['get', 'head', 'put', 'patch', 'post']
@@ -1072,6 +1076,12 @@ class PublicationViewSet(viewsets.ModelViewSet):
     queryset = Publication.objects.all()
     serializer_class = PublicationSerializer
     permission_classes = (CompetitionRestrictedPermission,)
+    filter_backends = [DjangoFilterBackend,
+                       filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['publication_type',
+                        'event', 'order']
+    search_fields = ['name', 'order', 'publication_type']
+    ordering_fields = ['name', 'order', 'publication_type']
 
     def perform_create(self, serializer):
         '''
