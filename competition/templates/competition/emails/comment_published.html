@@ -1,0 +1,17 @@
+{% extends "base/emails/email_base.html" %}
+
+{% block title %}Zverejnený komentár{% endblock %}
+{% block header %}Zverejnený komentár{% endblock %}
+
+{% block content %}
+  <div>
+    <div class="label">Zverejnili sme tvoj komentár:</div>
+    <div class="box">{{ comment }}</div>
+  </div>
+
+  <div>
+    <div class="label">k úlohe</div>
+    <div class="box">{{ problem }}</div>
+  </div>
+
+{% endblock %}
