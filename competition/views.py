@@ -136,7 +136,8 @@ class CommentViewSet(
             {
                 'problem': comment.problem.verbose_name(),
                 'from_stuff': comment.from_staff,
-                'comment': comment.text
+                'comment': comment.text,
+                'user': comment.posted_by.profile.get_full_name()
             }
         )
 
@@ -250,7 +251,8 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
                 {
                     'problem': problem.verbose_name(),
                     'from_staff': also_publish,
-                    'comment': request.data['text']
+                    'comment': request.data['text'],
+                    'user': request.user.profile.get_full_name()
                 }
             )
 

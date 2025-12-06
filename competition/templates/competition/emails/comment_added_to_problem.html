@@ -15,7 +15,7 @@
   </div>
   <div>
     <div class="label">Autor komentáru:</div>
-    <div class="box">{{ user }}</div>
+    <div class="box">{{ user }}{% if from_staff %} (Vedúci){% endif %}</div>
   </div>
 
 {% endblock %}
