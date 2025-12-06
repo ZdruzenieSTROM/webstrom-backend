@@ -564,6 +564,13 @@ class SeriesViewSet(ModelViewSetWithSerializerContext):
             pass
         return Response('Séria bola uzavretá', status=status.HTTP_200_OK)
 
+    @action(methods=['post'], detail=True, url_path='results/unfreeze')
+    def unfreeze_results(self, request: Request, pk: Optional[int] = None):
+        series: Series = self.get_object()
+        series.unfreeze_results()
+        series.semester.unfreeze_results()
+        return Response('Séria bola znovu otvorená', status=status.HTTP_200_OK)
+
     @action(methods=['get'], detail=True)
     def stats(self, request, pk=None):
         """Vráti štatistiky (histogramy, počty riešiteľov) všetkých úloh v sérií"""
@@ -794,6 +801,12 @@ class SemesterViewSet(ModelViewSetWithSerializerContext):
                 method='series/results/freeze',
                 detail='Semester nemá uzavreté všetky série a teda sa nedá uzavrieť.') from exc
         return Response('Semester bol uzavretý', status=status.HTTP_200_OK)
+
+    @action(methods=['post'], detail=True, url_path='results/unfreeze')
+    def unfreeze_results(self, request: Request, pk: Optional[int] = None):
+        semester: Semester = self.get_object()
+        semester.unfreeze_results()
+        return Response('Semester bol znova otvorený', status=status.HTTP_200_OK)
 
     @action(methods=['get'], detail=True)
     def results(self, request, pk=None):

@@ -272,6 +272,10 @@ class Semester(Event):
     def get_second_series(self) -> 'Series':
         return self.series_set.get(order=2)
 
+    def unfreeze_results(self) -> None:
+        self.frozen_results = None
+        self.save()
+
     @property
     def complete(self) -> bool:
         return self.frozen_results is not None
@@ -383,6 +387,10 @@ class Series(models.Model):
 
     def can_user_participate(self, user: User) -> bool:
         return self.semester.can_user_participate(user)
+
+    def unfreeze_results(self) -> None:
+        self.frozen_results = None
+        self.save()
 
 
 class Problem(models.Model):
