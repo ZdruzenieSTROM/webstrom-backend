@@ -1,0 +1,163 @@
+name: Reusable Deploy Workflow
+
+on:
+  workflow_call:
+    inputs:
+      project_name:
+        required: true
+        type: string
+        description: 'Project name (e.g., webstrom-test, webstrom-prod)'
+      backend_port:
+        required: true
+        type: string
+        description: 'Backend application port'
+      static_port:
+        required: true
+        type: string
+        description: 'Static files nginx port'
+      django_settings_module:
+        required: true
+        type: string
+        description: 'Django settings module'
+      media_path:
+        required: true
+        type: string
+        description: 'Media files path on server (e.g., /data/www/webstrom)'
+    # reusable workflowy vraj musia deklarovat secrets explicitne, nemaju pristup k repo secretom
+    secrets:
+      ssh_private_key:
+        required: true
+        description: 'SSH private key for deployment'
+      django_secret_key:
+        required: false
+        description: 'Django secret key (only needed for prod)'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate metadata
+        id: meta
+        run: |
+          # Prepare variables
+          REPO_LOWER=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+
+          # Extract environment name from project name (e.g., webstrom-test -> test)
+          ENV_NAME=$(echo "${{ inputs.project_name }}" | sed 's/^webstrom-//')
+
+          # Backend image names
+          BACKEND_FULL_IMAGE="ghcr.io/${REPO_LOWER}/backend:${ENV_NAME}-${SHORT_SHA}"
+          BACKEND_LATEST_IMAGE="ghcr.io/${REPO_LOWER}/backend:${ENV_NAME}-latest"
+
+          # Static image names
+          STATIC_FULL_IMAGE="ghcr.io/${REPO_LOWER}/static:${ENV_NAME}-${SHORT_SHA}"
+          STATIC_LATEST_IMAGE="ghcr.io/${REPO_LOWER}/static:${ENV_NAME}-latest"
+
+          # Output for next steps
+          echo "backend_tags=$BACKEND_FULL_IMAGE,$BACKEND_LATEST_IMAGE" >> $GITHUB_OUTPUT
+          echo "backend_full_image=$BACKEND_FULL_IMAGE" >> $GITHUB_OUTPUT
+          echo "static_tags=$STATIC_FULL_IMAGE,$STATIC_LATEST_IMAGE" >> $GITHUB_OUTPUT
+          echo "static_full_image=$STATIC_FULL_IMAGE" >> $GITHUB_OUTPUT
+
+      - name: Build and push backend Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/webstrom-backend.dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.backend_tags }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build and push static-files Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/static-files.dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.static_tags }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Deploy to server
+        uses: appleboy/ssh-action@v1.1.0
+        with:
+          host: server.strom.sk
+          username: webstrom
+          key: ${{ secrets.ssh_private_key }}
+          script: |
+            set -e
+
+            # Login to registry
+            echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+            # Container names follow Docker Compose pattern: project_service
+            BACKEND_CONTAINER="${{ inputs.project_name }}_webstrom-backend"
+            STATIC_CONTAINER="${{ inputs.project_name }}_static-files"
+
+            # Stop and remove old backend container (ignore errors if doesn't exist)
+            docker stop "$BACKEND_CONTAINER" 2>/dev/null || true
+            docker rm "$BACKEND_CONTAINER" 2>/dev/null || true
+
+            # Stop and remove old static container (ignore errors if doesn't exist)
+            docker stop "$STATIC_CONTAINER" 2>/dev/null || true
+            docker rm "$STATIC_CONTAINER" 2>/dev/null || true
+
+            # Run new backend container with compose-compatible labels for grouping
+            # Conditional: add DJANGO_SECRET_KEY only if provided (prod needs it, test doesn't)
+            if [ -n "${{ secrets.django_secret_key }}" ]; then
+              docker run -d \
+                --name "$BACKEND_CONTAINER" \
+                --label "com.docker.compose.project=${{ inputs.project_name }}" \
+                --label "com.docker.compose.service=webstrom-backend" \
+                --network host \
+                --restart always \
+                -v /var/run/postgresql:/var/run/postgresql:rw \
+                -v ${{ inputs.media_path }}/media:/app/media:rw \
+                -v ${{ inputs.media_path }}/protected_media:/app/protected_media:rw \
+                -e PORT=${{ inputs.backend_port }} \
+                -e DJANGO_SETTINGS_MODULE=${{ inputs.django_settings_module }} \
+                -e DJANGO_SECRET_KEY=${{ secrets.django_secret_key }} \
+                ${{ steps.meta.outputs.backend_full_image }}
+            else
+              docker run -d \
+                --name "$BACKEND_CONTAINER" \
+                --label "com.docker.compose.project=${{ inputs.project_name }}" \
+                --label "com.docker.compose.service=webstrom-backend" \
+                --network host \
+                --restart always \
+                -v /var/run/postgresql:/var/run/postgresql:rw \
+                -v ${{ inputs.media_path }}/media:/app/media:rw \
+                -v ${{ inputs.media_path }}/protected_media:/app/protected_media:rw \
+                -e PORT=${{ inputs.backend_port }} \
+                -e DJANGO_SETTINGS_MODULE=${{ inputs.django_settings_module }} \
+                ${{ steps.meta.outputs.backend_full_image }}
+            fi
+
+            # Run new static-files container with compose-compatible labels for grouping
+            docker run -d \
+              --name "$STATIC_CONTAINER" \
+              --label "com.docker.compose.project=${{ inputs.project_name }}" \
+              --label "com.docker.compose.service=static-files" \
+              -p 127.0.0.1:${{ inputs.static_port }}:80 \
+              --restart always \
+              ${{ steps.meta.outputs.static_full_image }}
+
+            # Cleanup
+            docker image prune -f
+
+            echo "✅ Deployed $BACKEND_CONTAINER and $STATIC_CONTAINER successfully!"

@@ -1,6 +1,10 @@
 .git
 
 __pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
 
 .github
 .vscode
@@ -8,3 +12,27 @@ __pycache__
 emails
 
 README.md
+
+compose-*.yaml
+
+# Local development
+pyenv/
+db.sqlite3
+
+# Media files (mounted as volumes in production)
+media/
+protected_media/
+
+# Test artifacts
+.pytest_cache
+.coverage
+htmlcov/
+.tox/
+tests/
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+
+# TypeScript files (type definitions, not needed in Docker)
+*.ts

@@ -10,4 +10,5 @@ RUN pipenv sync --dev --system
 
 COPY . /app
 
-CMD [ "gunicorn", "-b", "0.0.0.0", "-p", "8000", "webstrom.wsgi:application" ]
+# Use PORT env var for host networking
+CMD sh -c "gunicorn -b 0.0.0.0:${PORT:-8000} webstrom.wsgi:application"

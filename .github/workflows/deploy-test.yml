@@ -4,15 +4,12 @@ on: workflow_dispatch
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-            path: webstrom-test
-      - uses: wshihadeh/docker-deployment-action@v2
-        with:
-          remote_docker_host: webstrom@server.strom.sk
-          ssh_private_key: ${{ secrets.WEBSTROM_DEPLOY_SSH_PRIVATE_KEY }}
-          ssh_public_key: ${{ secrets.WEBSTROM_DEPLOY_SSH_PUBLIC_KEY }}
-          stack_file_name: webstrom-test/compose-test.yaml
-          args: up --build --force-recreate --detach
+    uses: ./.github/workflows/reusable-deploy.yml
+    with:
+      project_name: webstrom-test
+      backend_port: '8920'
+      static_port: '8921'
+      django_settings_module: 'webstrom.settings_test'
+      media_path: '/data/www/webstrom-test'
+    secrets:
+      ssh_private_key: ${{ secrets.WEBSTROM_DEPLOY_SSH_PRIVATE_KEY }}
