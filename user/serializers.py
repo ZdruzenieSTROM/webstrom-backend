@@ -166,7 +166,7 @@ class UserDetailsSerializer(serializers.ModelSerializer):
             )
             send_bulk_html_emails(
                 [EMAIL_ALERT],
-                'user/emails/new_school_request'
+                'user/emails/new_school_request',
                 'Žiadosť o pridanie novej školy',
                 {
                     'email': user.email,
