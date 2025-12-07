@@ -20,7 +20,7 @@ class UpcomingFilter(BooleanFilter):
 
 class Unaccent(Func):
     function = 'unaccent'
-    template = "%(function)s(%(expressions)s)"
+    template = "%(function)s(%(expressions)s::text)"
 
 
 class UnaccentSearchFilter(SearchFilter):
