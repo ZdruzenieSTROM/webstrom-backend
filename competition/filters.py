@@ -24,10 +24,23 @@ class Unaccent(Func):
     function = 'unaccent'
     template = "%(function)s(%(expressions)s::text)"
 
+    def __rand__(self, other):
+        raise NotImplementedError(
+            "Not supported"
+        )
+
+    def __ror__(self, other):
+        raise NotImplementedError(
+            "Not supported"
+        )
+
+    def __rxor__(self, other):
+        raise NotImplementedError(
+            "Not supported"
+        )
+
 
 class UnaccentSearchFilter(SearchFilter):
-    def get_search_fields(self, view, request):
-        return super().get_search_fields(view, request)
 
     def filter_queryset(self, request, queryset, view):
         search_terms = self.get_search_terms(request)
