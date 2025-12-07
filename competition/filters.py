@@ -1,5 +1,6 @@
 
 
+import unicodedata
 from django.db import connection
 from django.db.models import Func, Q
 from django.db.models.functions import Lower
@@ -32,20 +33,24 @@ class UnaccentSearchFilter(SearchFilter):
         if not search_terms:
             return queryset
 
-        engine = connection.vendor  # 'postgresql', 'sqlite', 'mysql', etc.
+        engine = connection.vendor
 
         for term in search_terms:
             term_filter = Q()
             for field in self.get_search_fields(view, request):
 
                 if engine == 'postgresql':
+                    normalized_term = ''.join(
+                        c for c in unicodedata.normalize('NFKD', term)
+                        if not unicodedata.combining(c)
+                    ).lower()
                     normalized_field = f'normalized_{field.replace(".", "_")}'
                     if normalized_field not in queryset.query.annotations:
                         queryset = queryset.annotate(**{
                             normalized_field: Lower(Unaccent(field))
                         })
                     term_filter |= Q(
-                        **{f"{normalized_field}__icontains": term.lower()})
+                        **{f"{normalized_field}__icontains": normalized_term.lower()})
 
                 else:
                     # Fallback: simple icontains - SQLite does not support unaccent
