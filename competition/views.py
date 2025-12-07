@@ -24,7 +24,7 @@ from rest_framework.utils.urls import replace_query_param
 
 from base.emails import send_bulk_html_emails
 from base.utils import mime_type
-from competition.filters import UpcomingFilter
+from competition.filters import UnaccentSearchFilter, UpcomingFilter
 from competition.models import (SERIES_SUM_METHODS, Comment, Competition,
                                 CompetitionType, Event, EventRegistration,
                                 Grade, LateTag, Problem, Publication,
@@ -192,7 +192,7 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
     serializer_class = ProblemSerializer
     permission_classes = (ProblemPermission,)
     filter_backends = [DjangoFilterBackend,
-                       filters.SearchFilter, filters.OrderingFilter]
+                       filters.SearchFilter, filters.OrderingFilter, UnaccentSearchFilter]
     filterset_class = ProblemFilterSet
     search_fields = [
         'text', 'series__semester__competition__name', 'series__semester__year', 'order']
