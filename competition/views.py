@@ -12,7 +12,7 @@ from django.core.files import File
 # pylint: disable=unused-argument
 from django.db.models.manager import BaseManager
 from django.http import FileResponse, Http404, HttpResponse
-from django_filters import Filter, FilterSet, ModelChoiceFilter
+from django_filters import BooleanFilter, Filter, FilterSet, ModelChoiceFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import exceptions, filters, mixins, status, viewsets
 from rest_framework.decorators import action
@@ -645,18 +645,22 @@ class SolutionViewSet(viewsets.ModelViewSet):
         school = profile = Filter(
             field_name='semester_registration__school'
         )
-        missing_file = Filter(
-            'solution__isnull'
+        missing_file = BooleanFilter(
+            'solution', lookup_expr='isnull'
         )
-        missing_corrected_file = Filter(
-            'corrected_solution__isnull'
+        missing_corrected_file = BooleanFilter(
+            'corrected_solution', lookup_expr='isnull'
         )
         uploaded_after = Filter(
-            'uploaded_at__gt'
+            'uploaded_at', lookup_expr='gt'
         )
         uploaded_before = Filter(
-            'uploaded_at__lt'
+            'uploaded_at', lookup_expr='lt'
         )
+        series = Filter('problem__series')
+        order = Filter('problem__order')
+        semester = Filter('problem__series__semester')
+        competition = Filter('problem__series__semester__competition')
 
         class Meta:
             model = Solution
@@ -665,6 +669,7 @@ class SolutionViewSet(viewsets.ModelViewSet):
     serializer_class = SolutionSerializer
     filter_backends = [DjangoFilterBackend,
                        UnaccentSearchFilter, filters.OrderingFilter]
+    filterset_class = SolutionFilterSet
     search_fields = ['semester_registration__profile__first_name',
                      'semester_registration__profile__last_name']
     ordering_fields = ['problem', 'score', 'uploaded_at']
