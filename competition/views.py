@@ -24,7 +24,7 @@ from rest_framework.utils.urls import replace_query_param
 
 from base.emails import send_bulk_html_emails
 from base.utils import mime_type
-from competition.filters import UpcomingFilter
+from competition.filters import UnaccentSearchFilter, UpcomingFilter
 from competition.models import (SERIES_SUM_METHODS, Comment, Competition,
                                 CompetitionType, Event, EventRegistration,
                                 Grade, LateTag, Problem, Publication,
@@ -73,7 +73,7 @@ class CompetitionViewSet(mixins.RetrieveModelMixin,
     serializer_class = CompetitionSerializer
     permission_classes = (CompetitionRestrictedPermission,)
     filter_backends = [DjangoFilterBackend,
-                       filters.SearchFilter, filters.OrderingFilter]
+                       UnaccentSearchFilter, filters.OrderingFilter]
     filterset_fields = ['slug', 'sites', 'competition_type']
     search_fields = ['name']
     ordering_fields = ['name', 'start_year', 'competition_type']
@@ -192,9 +192,10 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
     serializer_class = ProblemSerializer
     permission_classes = (ProblemPermission,)
     filter_backends = [DjangoFilterBackend,
-                       filters.SearchFilter, filters.OrderingFilter]
+                       filters.OrderingFilter, UnaccentSearchFilter]
     filterset_class = ProblemFilterSet
-    search_fields = ['text']
+    search_fields = [
+        'text', 'series__semester__competition__name', 'series__semester__year', 'order']
     ordering_fields = ['order', 'series__order', 'series__deadline']
     ordering = ['series__deadline', 'order']
 
@@ -517,7 +518,7 @@ class SeriesViewSet(ModelViewSetWithSerializerContext):
     http_method_names = ['get', 'head', 'put', 'patch', "post"]
     filter_backends = [
         DjangoFilterBackend,
-        filters.SearchFilter,
+        UnaccentSearchFilter,
         filters.OrderingFilter
     ]
     filterset_class = SeriesFilterSet
@@ -663,7 +664,7 @@ class SolutionViewSet(viewsets.ModelViewSet):
     queryset = Solution.objects.all()
     serializer_class = SolutionSerializer
     filter_backends = [DjangoFilterBackend,
-                       filters.SearchFilter, filters.OrderingFilter]
+                       UnaccentSearchFilter, filters.OrderingFilter]
     search_fields = ['semester_registration__profile__first_name',
                      'semester_registration__profile__last_name']
     ordering_fields = ['problem', 'score', 'uploaded_at']
@@ -757,7 +758,7 @@ class SemesterListViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = SemesterSerializer
     permission_classes = (CompetitionRestrictedPermission,)
     filter_backends = [DjangoFilterBackend,
-                       filters.SearchFilter, filters.OrderingFilter]
+                       UnaccentSearchFilter, filters.OrderingFilter]
     http_method_names = ['get', 'post', 'head']
     filterset_fields = ['competition']
     ordering = ['-start']
@@ -771,7 +772,7 @@ class SemesterViewSet(ModelViewSetWithSerializerContext):
     serializer_class = SemesterWithProblemsSerializer
     permission_classes = (CompetitionRestrictedPermission,)
     filter_backends = [DjangoFilterBackend,
-                       filters.SearchFilter, filters.OrderingFilter]
+                       UnaccentSearchFilter, filters.OrderingFilter]
     filterset_fields = ['school_year',
                         'season_code', 'competition']
     search_fields = ['competition__name', 'year', 'school_year']
@@ -965,7 +966,7 @@ class EventViewSet(ModelViewSetWithSerializerContext):
     serializer_class = EventSerializer
     permission_classes = (CompetitionRestrictedPermission,)
     filter_backends = [DjangoFilterBackend,
-                       filters.SearchFilter, filters.OrderingFilter]
+                       UnaccentSearchFilter, filters.OrderingFilter]
     filterset_class = EventFilterSet
     search_fields = ['competition__name', 'year', 'additional_name']
     ordering_fields = ['start', 'end', 'year']
@@ -1056,7 +1057,7 @@ class EventRegistrationViewSet(viewsets.ModelViewSet):
 
     queryset = EventRegistration.objects.all()
     filter_backends = [DjangoFilterBackend,
-                       filters.SearchFilter, filters.OrderingFilter]
+                       UnaccentSearchFilter, filters.OrderingFilter]
     filterset_class = EventRegistrationFilterSet
     search_fields = ['profile__first_name', 'profile__last_name']
     ordering_fields = ['event__start']
@@ -1087,7 +1088,7 @@ class PublicationViewSet(viewsets.ModelViewSet):
     serializer_class = PublicationSerializer
     permission_classes = (CompetitionRestrictedPermission,)
     filter_backends = [DjangoFilterBackend,
-                       filters.SearchFilter, filters.OrderingFilter]
+                       UnaccentSearchFilter, filters.OrderingFilter]
     filterset_fields = ['publication_type',
                         'event', 'order']
     search_fields = ['name', 'order', 'publication_type']
