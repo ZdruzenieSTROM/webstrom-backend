@@ -192,7 +192,7 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
     serializer_class = ProblemSerializer
     permission_classes = (ProblemPermission,)
     filter_backends = [DjangoFilterBackend,
-                       filters.SearchFilter, filters.OrderingFilter, UnaccentSearchFilter]
+                       filters.OrderingFilter, UnaccentSearchFilter]
     filterset_class = ProblemFilterSet
     search_fields = [
         'text', 'series__semester__competition__name', 'series__semester__year', 'order']
