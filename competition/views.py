@@ -194,7 +194,8 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
     filter_backends = [DjangoFilterBackend,
                        filters.SearchFilter, filters.OrderingFilter]
     filterset_class = ProblemFilterSet
-    search_fields = ['text']
+    search_fields = [
+        'text', 'series__semester__competition__name', 'series__semester__year', 'order']
     ordering_fields = ['order', 'series__order', 'series__deadline']
     ordering = ['series__deadline', 'order']
 
