@@ -39,13 +39,13 @@ class UnaccentSearchFilter(SearchFilter):
             for field in self.get_search_fields(view, request):
 
                 if engine == 'postgresql':
-                    # PostgreSQL: use unaccent + lower
-                    if field not in queryset.query.annotations:
+                    normalized_field = f'normalized_{field.replace(".", "_")}'
+                    if normalized_field not in queryset.query.annotations:
                         queryset = queryset.annotate(**{
-                            field: Lower(Unaccent(field))
+                            normalized_field: Lower(Unaccent(field))
                         })
                     term_filter |= Q(
-                        **{f"{field}__icontains": term.lower()})
+                        **{f"{normalized_field}__icontains": term.lower()})
 
                 else:
                     # Fallback: simple icontains - SQLite does not support unaccent
