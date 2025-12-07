@@ -1,6 +1,7 @@
 
 
 import unicodedata
+
 from django.db import connection
 from django.db.models import Func, Q
 from django.db.models.functions import Lower
@@ -50,7 +51,7 @@ class UnaccentSearchFilter(SearchFilter):
                             normalized_field: Lower(Unaccent(field))
                         })
                     term_filter |= Q(
-                        **{f"{normalized_field}__icontains": normalized_term.lower()})
+                        **{f"{normalized_field}__icontains": normalized_term})
 
                 else:
                     # Fallback: simple icontains - SQLite does not support unaccent
