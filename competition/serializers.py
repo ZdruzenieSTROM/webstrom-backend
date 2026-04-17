@@ -310,10 +310,31 @@ class LateTagSerializer(serializers.ModelSerializer):
 @ts_interface(context='competition')
 class SolutionSerializer(serializers.ModelSerializer):
     late_tag = LateTagSerializer(read_only=True)
+    solution = serializers.SerializerMethodField('get_solution_url')
+    corrected_solution = serializers.SerializerMethodField(
+        'get_corrected_solution_url')
 
     class Meta:
         model = models.Solution
         fields = '__all__'
+
+    def get_solution_url(self, obj):
+        if not obj.solution:
+            return None
+
+        request = self.context.get("request")
+        return request.build_absolute_uri(
+            f"/api/competition/solution/{obj.id}/file-solution"
+        )
+
+    def get_corrected_solution_url(self, obj):
+        if not obj.solution:
+            return None
+
+        request = self.context.get("request")
+        return request.build_absolute_uri(
+            f"/api/competition/solution/{obj.id}/file-corrected"
+        )
 
 
 @ts_interface(context='competition')

@@ -667,6 +667,7 @@ class SolutionViewSet(viewsets.ModelViewSet):
             fields = ['problem', 'late_tag', 'semester_registration']
     queryset = Solution.objects.all()
     serializer_class = SolutionSerializer
+    permission_classes = (ProblemPermission,)
     filter_backends = [DjangoFilterBackend,
                        UnaccentSearchFilter, filters.OrderingFilter]
     filterset_class = SolutionFilterSet
@@ -674,6 +675,26 @@ class SolutionViewSet(viewsets.ModelViewSet):
                      'semester_registration__profile__last_name']
     ordering_fields = ['problem', 'score', 'uploaded_at']
     ordering = ['uploaded_at']
+
+    def update(self, request, *args, **kwargs):
+        solution: Solution = self.get_object()
+        if 'solution' in request.FILES:
+            file = request.FILES['solution']
+            if mime_type(file) != 'application/pdf':
+                raise exceptions.ParseError(
+                    detail='Riešenie nie je vo formáte pdf')
+            solution.solution.save(
+                solution.get_solution_file_path(), file, save=True
+            )
+        if 'corrected_solution' in request.FILES:
+            file = request.FILES['corrected_solution']
+            if mime_type(file) != 'application/pdf':
+                raise exceptions.ParseError(
+                    detail='Riešenie nie je vo formáte pdf')
+            solution.corrected_solution.save(
+                solution.get_solution_file_path(), file, save=True
+            )
+        return super().update(request, *args, **kwargs)
 
     @action(methods=['post'], detail=True, url_path='add-positive-vote',
             permission_classes=[IsAdminUser])
