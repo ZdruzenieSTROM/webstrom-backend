@@ -60,7 +60,8 @@ def parse_corrected_solution_file_name(file_name: str):
     parts = file_name.rstrip('.pdf').split('-')
     if len(parts) < 4:
         raise CoreValidationError(
-            f'Názov súboru {file_name} nie je v správnom formáte. Očekáva se formát: "BODY-MENO-ID_ULOHY-ID_REGISTRACIE_USERA.pdf"'
+            f'Názov súboru {file_name} nie je v správnom formáte. '
+            f'Očekáva se formát: "BODY-MENO-ID_ULOHY-ID_REGISTRACIE_USERA.pdf"'
         )
 
     try:
@@ -71,6 +72,8 @@ def parse_corrected_solution_file_name(file_name: str):
             pk=registration_pk)
         solution = Solution.objects.get(semester_registration=event_reg,
                                         problem=problem_pk)
+        validate_points(score)
+        return score, event_reg, solution
     except EventRegistration.DoesNotExist as e:
         raise CoreValidationError(
             f'Registrácia používateľa s id {registration_pk} neexistuje'
@@ -80,8 +83,6 @@ def parse_corrected_solution_file_name(file_name: str):
             f'Riešenie pre registráciu používateľa s id {registration_pk}'
             f'a úlohy id {problem_pk} neexistuje'
         ) from e
-    validate_points(score)
-    return score, event_reg, solution
 
 
 class ModelViewSetWithSerializerContext(viewsets.ModelViewSet):
@@ -452,25 +453,12 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
                     continue
 
                 try:
-                    score, event_reg, problem = parse_corrected_solution_file_name(
+                    score, _, solution = parse_corrected_solution_file_name(
                         filename)
                 except (CoreValidationError, ValidationError) as exc:
                     errors.append({
                         'filename': filename,
                         'status': str(exc)
-                    })
-                    continue
-                except EventRegistration.DoesNotExist:
-                    errors.append({
-                        'filename': filename,
-                        'status': f'Registrácia používateľa s id {event_reg.pk} neexistuje'
-                    })
-                    continue
-                except Solution.DoesNotExist:
-                    errors.append({
-                        'filename': filename,
-                        'status': f'Riešenie pre registráciu používateľa s id {event_reg.pk}'
-                        f'a úlohy id {problem.pk} neexistuje'
                     })
                     continue
 
