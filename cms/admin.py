@@ -21,7 +21,8 @@ class MenuItemAdmin(admin.ModelAdmin):
 class LogoAdmin(admin.ModelAdmin):
     list_display = (
         'name',
-        'disabled'
+        'disabled',
+        'url'
     )
 
 

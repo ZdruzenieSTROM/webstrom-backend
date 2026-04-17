@@ -137,7 +137,14 @@ class Logo(models.Model):
     image = RestrictedFileField(
         content_types=['image/svg+xml', 'image/png'],
         upload_to='logo_images/',
-        verbose_name='Logo')
+        verbose_name='Logo'
+    )
+    url = models.TextField(
+        verbose_name='URL',
+        help_text='URL stránky kam má logo po kliknutí viesť',
+        blank=True,
+        null=True
+    )
 
 
 class InfoBanner(ModelWithVisibility):
