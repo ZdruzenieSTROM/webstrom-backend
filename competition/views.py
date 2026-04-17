@@ -929,7 +929,20 @@ class SemesterViewSet(ModelViewSetWithSerializerContext):
     @action(methods=['get'], detail=True, url_path='participants-export')
     def participants_export(self, request, pk=None):
         """Vráti všetkých užívateľov zapojených do semestra"""
-        serializer = self.__get_participants()
+        semester = self.get_object()
+        ordered_profile_ids = [
+            row['registration']['profile']['id']
+            for row in semester_results(semester)
+        ]
+        profiles = Profile.objects.only(
+            'user').filter(pk__in=ordered_profile_ids)
+        profiles_by_id = {profile.pk: profile for profile in profiles}
+        ordered_profiles = [
+            profiles_by_id[profile_id]
+            for profile_id in ordered_profile_ids
+            if profile_id in profiles_by_id
+        ]
+        serializer = ProfileExportSerializer(ordered_profiles, many=True)
         response = HttpResponse(content_type='text/csv; charset=utf-8')
         response['Content-Disposition'] = 'attachment; filename="export.csv"'
         header = ProfileExportSerializer.Meta.fields
