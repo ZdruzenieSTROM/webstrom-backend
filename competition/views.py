@@ -1170,4 +1170,3 @@ class LateTagViewSet(viewsets.ReadOnlyModelViewSet):
     """Omeškania"""
     queryset = LateTag.objects.all()
     serializer_class = LateTagSerializer
-    serializer_class = LateTagSerializer
