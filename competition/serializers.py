@@ -116,7 +116,7 @@ class EventSerializer(ModelWithParticipationSerializer):
 
         if registration_link_data is not None:
             (instance.registration_link, _) = models.RegistrationLink.objects.update_or_create(
-                event=instance,
+                event__pk=instance.pk,
                 defaults=registration_link_data,
             )
 
