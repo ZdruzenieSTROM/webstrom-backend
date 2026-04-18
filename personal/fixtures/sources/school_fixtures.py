@@ -10,7 +10,7 @@ import wget
 
 kraje = 'kraje.xlsx'
 okresy = 'okresy.xlsx'
-files = ['SOS_Z.XLS', 'zs_z.xls', 'GYM_Z.XLS']
+files = ['SOS_Z.XLS', 'zs_z.xls', 'GYM_Z.XLS', '']
 output_format = 'json'
 
 
@@ -93,7 +93,7 @@ def load_schools():
             columns={'abbreviation': 'dist_abbreviation'})
         df = df.join(df_okresy, on='okres')
 
-        #df['skratka'] = list(map(create_abbreviation_x ,list(df['nazov']),list(df['ulica']),list(df['skratka_okresu'])))
+        # df['skratka'] = list(map(create_abbreviation_x ,list(df['nazov']),list(df['ulica']),list(df['skratka_okresu'])))
         df['skratka'] = list(map(create_abbreviation, list(df['nazov']), list(
             df['ulica']), list(df['miesto']), list(df['dist_abbreviation'])))
 
@@ -159,11 +159,39 @@ def transform_json_to_django_format(file_names, primary_keys, model_names, outpu
 
 
 if __name__ == "__main__":
-    #nacitaj_kraje(kraje)
-    load_schools()
-    transform_json_to_django_format(['kraje.json'], ['code'], [
-                                    'user.County'], 'counties.json')
-    transform_json_to_django_format(['okresy.json'], ['code'], [
-                                    'user.District'], 'districts.json')
-    transform_json_to_django_format(['skoly.json'], ['code'], [
-                                    'user.School'], 'schools.json')
+    # nacitaj_kraje(kraje)
+    # load_schools()
+    # transform_json_to_django_format(['kraje.json'], ['code'], [
+    #                                 'user.County'], 'counties.json')
+    # transform_json_to_django_format(['okresy.json'], ['code'], [
+    #                                 'user.District'], 'districts.json')
+    # transform_json_to_django_format(['skoly.json'], ['code'], [
+    #                                 'user.School'], 'schools.json')
+    with open('../schools.json', 'r') as f:
+        schools = json.load(f)
+    code_to_email = {school['pk']: school['fields'].get('email')
+                     for school in schools}
+    with open('../districts.json', 'r') as f:
+        districts = json.load(f)
+    district_to_shortcut = {
+        district['pk']: district['fields']['abbreviation'] for district in districts}
+    print(district_to_shortcut)
+    df = pd.read_excel('SOS_Z.xls', header=1)
+    df = df.rename({
+        'kodsko': 'code',
+        'okres': 'district_id',
+        'nazov': 'name',
+        'ulica': 'street',
+        'psc': 'zip_code',
+        'miesto': 'city',
+
+    }, axis=1)
+    print(df)
+    df['email'] = df['code'].apply(lambda code: code_to_email.get(code))
+    df['abbreviation'] = df.apply(lambda row: create_abbreviation(
+        row['name'], row['street'], row['city'], district_to_shortcut[row['district_id']]), axis=1)
+    df = df.drop(['rok', 'zriadz', 'eduid', 'kraj', 'druh',
+                  'jazyk', 'adrwww',  'ziaci'], axis=1)
+    df = df.reindex(['code', 'name', 'abbreviation', 'street',
+                    'city', 'zip_code', 'email', 'district_id'], axis=1)
+    df.to_csv('school_sos.csv', index=False)
