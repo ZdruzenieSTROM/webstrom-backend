@@ -56,6 +56,57 @@ from personal.models import Profile, School
 from personal.serializers import ProfileExportSerializer, SchoolSerializer
 
 
+def parse_corrected_solution_file_name(file_name: str):
+    parts = file_name.rstrip('.pdf').split('-')
+    if len(parts) < 4:
+        raise CoreValidationError(
+            f'Názov súboru {file_name} nie je v správnom formáte. '
+            f'Očakáva sa format: "BODY-MENO-ID_ULOHY-ID_REGISTRACIE_USERA.pdf"'
+        )
+
+    try:
+        score = int(parts[0])
+        validate_points(score)
+    except ValueError as e:
+        raise CoreValidationError(
+            f'Neplatný názov súboru "{file_name}". '
+            f'Prvá čast (body) "{parts[0]}" musí byť celé číslo v rozsahu 0-9.'
+        ) from e
+
+    try:
+        problem_pk = int(parts[-2])
+    except ValueError as e:
+        raise CoreValidationError(
+            f'Neplatný názov súboru "{file_name}". '
+            f'Predposledná čast (id úlohy) "{parts[-2]}" musí byť celé číslo (primary key).'
+        ) from e
+
+    try:
+        registration_pk = int(parts[-1])
+    except ValueError as e:
+        raise CoreValidationError(
+            f'Neplatný názov súboru "{file_name}". '
+            f'Posledná čast (id reg. používateľa) "{parts[-1]}" musí byť celé číslo (primary key).'
+        ) from e
+
+    try:
+        event_reg = EventRegistration.objects.get(pk=registration_pk)
+        solution = Solution.objects.get(
+            semester_registration=event_reg,
+            problem=problem_pk
+        )
+        return score, event_reg, solution
+    except EventRegistration.DoesNotExist as e:
+        raise CoreValidationError(
+            f'Registrácia používateľa s id {registration_pk} neexistuje'
+        ) from e
+    except Solution.DoesNotExist as e:
+        raise CoreValidationError(
+            f'Riešenie pre registráciu používateľa s id {registration_pk} '
+            f'a úlohy id {problem_pk} neexistuje'
+        ) from e
+
+
 class ModelViewSetWithSerializerContext(viewsets.ModelViewSet):
 
     def get_serializer_context(self):
@@ -424,38 +475,12 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
                     continue
 
                 try:
-                    parts = filename.rstrip('.pdf').split('-')
-                    score = int(parts[0])
-                    problem_pk = int(parts[-2])
-                    registration_pk = int(parts[-1])
-                    event_reg = EventRegistration.objects.get(
-                        pk=registration_pk)
-                    solution = Solution.objects.get(semester_registration=event_reg,
-                                                    problem=problem_pk)
-                    validate_points(score)
-                except ValidationError as exc:
+                    score, _, solution = parse_corrected_solution_file_name(
+                        filename)
+                except (CoreValidationError, ValidationError) as exc:
                     errors.append({
                         'filename': filename,
                         'status': str(exc)
-                    })
-                except (IndexError, ValueError, AssertionError):
-                    errors.append({
-                        'filename': filename,
-                        'status': 'Nedá sa prečítať názov súboru. Skontroluj, že názov súboru'
-                        'je v tvare BODY-MENO-ID_ULOHY-ID_REGISTRACIE_USERA.pdf'
-                    })
-                    continue
-                except EventRegistration.DoesNotExist:
-                    errors.append({
-                        'filename': filename,
-                        'status': f'Registrácia používateľa s id {registration_pk} neexistuje'
-                    })
-                    continue
-                except Solution.DoesNotExist:
-                    errors.append({
-                        'filename': filename,
-                        'status': f'Riešenie pre registráciu používateľa s id {registration_pk}'
-                        f'a úlohy id {problem_pk} neexistuje'
                     })
                     continue
 
@@ -751,6 +776,15 @@ class SolutionViewSet(viewsets.ModelViewSet):
         if mime_type(file) != 'application/pdf':
             raise exceptions.ParseError(
                 detail='Riešenie nie je vo formáte pdf')
+        if file.name:
+            try:
+                points, _, file_solution = parse_corrected_solution_file_name(
+                    file.name)
+                if file_solution == solution:
+                    solution.score = points
+                    solution.save()
+            except CoreValidationError:
+                pass
         solution.corrected_solution.save(
             solution.get_corrected_solution_file_path(), file, save=True
         )
