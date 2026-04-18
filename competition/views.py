@@ -121,12 +121,20 @@ class CompetitionViewSet(mixins.RetrieveModelMixin,
                          mixins.ListModelMixin,
                          viewsets.GenericViewSet):
     """Naše aktivity"""
+    class CompetitionFilterSet(FilterSet):
+        competition_type_exclude = NumberFilter(
+            field_name='competition_type', exclude=True)
+
+        class Meta:
+            model = Competition
+            fields = ['slug', 'sites', 'competition_type']
+
     queryset = Competition.objects.all()
     serializer_class = CompetitionSerializer
     permission_classes = (CompetitionRestrictedPermission,)
     filter_backends = [DjangoFilterBackend,
                        UnaccentSearchFilter, filters.OrderingFilter]
-    filterset_fields = ['slug', 'sites', 'competition_type']
+    filterset_class = CompetitionFilterSet
     search_fields = ['name']
     ordering_fields = ['name', 'start_year', 'competition_type']
     ordering = ['start_year']
