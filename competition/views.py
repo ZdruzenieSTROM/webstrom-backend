@@ -86,7 +86,7 @@ def parse_corrected_solution_file_name(file_name: str):
     except ValueError as e:
         raise CoreValidationError(
             f'Neplatný názov súboru "{file_name}". '
-            f'Posledná čast (id registrácie používateľa) "{parts[-1]}" musí byť celé číslo (primary key).'
+            f'Posledná čast (id reg. používateľa) "{parts[-1]}" musí byť celé číslo (primary key).'
         ) from e
 
     try:
