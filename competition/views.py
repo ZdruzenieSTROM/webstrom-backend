@@ -13,7 +13,7 @@ from django.core.files import File
 from django.db.models.manager import BaseManager
 from django.http import FileResponse, Http404, HttpResponse
 from django_filters import (BooleanFilter, Filter, FilterSet,
-                             ModelChoiceFilter, NumberFilter)
+                            ModelChoiceFilter, NumberFilter)
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import exceptions, filters, mixins, status, viewsets
 from rest_framework.decorators import action
@@ -1017,10 +1017,15 @@ class EventViewSet(ModelViewSetWithSerializerContext):
 
         grade = SuitableForGradeFilter(queryset=Grade.objects.all())
         future = UpcomingFilter(field_name='end')
-        competition_type = NumberFilter(
-            field_name='competition__competition_type')
-        competition_type_exclude = NumberFilter(
-            field_name='competition__competition_type', exclude=True)
+        competition_type = ModelChoiceFilter(
+            field_name='competition__competition_type',
+            queryset=CompetitionType.objects.all()
+        )
+        competition_type_exclude = ModelChoiceFilter(
+            field_name='competition__competition_type',
+            queryset=CompetitionType.objects.all(),
+            exclude=True
+        )
 
         class Meta:
             model = Event
