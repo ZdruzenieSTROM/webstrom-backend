@@ -12,8 +12,7 @@ from django.core.files import File
 # pylint: disable=unused-argument
 from django.db.models.manager import BaseManager
 from django.http import FileResponse, Http404, HttpResponse
-from django_filters import (BooleanFilter, Filter, FilterSet,
-                            ModelChoiceFilter, NumberFilter)
+from django_filters import BooleanFilter, Filter, FilterSet, ModelChoiceFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import exceptions, filters, mixins, status, viewsets
 from rest_framework.decorators import action
@@ -122,7 +121,7 @@ class CompetitionViewSet(mixins.RetrieveModelMixin,
                          viewsets.GenericViewSet):
     """Naše aktivity"""
     class CompetitionFilterSet(FilterSet):
-        competition_type_exclude = NumberFilter(
+        competition_type_exclude = ModelChoiceFilter(
             field_name='competition_type', exclude=True)
 
         class Meta:
