@@ -122,7 +122,10 @@ class CompetitionViewSet(mixins.RetrieveModelMixin,
     """Naše aktivity"""
     class CompetitionFilterSet(FilterSet):
         competition_type_exclude = ModelChoiceFilter(
-            field_name='competition_type', exclude=True)
+            field_name='competition_type',
+            queryset=CompetitionType.objects.all(),
+            exclude=True
+        )
 
         class Meta:
             model = Competition
