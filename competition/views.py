@@ -120,12 +120,23 @@ class CompetitionViewSet(mixins.RetrieveModelMixin,
                          mixins.ListModelMixin,
                          viewsets.GenericViewSet):
     """Naše aktivity"""
+    class CompetitionFilterSet(FilterSet):
+        competition_type_exclude = ModelChoiceFilter(
+            field_name='competition_type',
+            queryset=CompetitionType.objects.all(),
+            exclude=True
+        )
+
+        class Meta:
+            model = Competition
+            fields = ['slug', 'sites', 'competition_type']
+
     queryset = Competition.objects.all()
     serializer_class = CompetitionSerializer
     permission_classes = (CompetitionRestrictedPermission,)
     filter_backends = [DjangoFilterBackend,
                        UnaccentSearchFilter, filters.OrderingFilter]
-    filterset_fields = ['slug', 'sites', 'competition_type']
+    filterset_class = CompetitionFilterSet
     search_fields = ['name']
     ordering_fields = ['name', 'start_year', 'competition_type']
     ordering = ['start_year']
@@ -1008,6 +1019,15 @@ class EventViewSet(ModelViewSetWithSerializerContext):
 
         grade = SuitableForGradeFilter(queryset=Grade.objects.all())
         future = UpcomingFilter(field_name='end')
+        competition_type = ModelChoiceFilter(
+            field_name='competition__competition_type',
+            queryset=CompetitionType.objects.all()
+        )
+        competition_type_exclude = ModelChoiceFilter(
+            field_name='competition__competition_type',
+            queryset=CompetitionType.objects.all(),
+            exclude=True
+        )
 
         class Meta:
             model = Event
