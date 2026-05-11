@@ -33,4 +33,4 @@ sqlparse==0.5.5
 tomlkit==0.14.0
 typing_extensions==4.15.0
 Unidecode==1.4.0
-urllib3==2.6.3
+urllib3==2.7.0
