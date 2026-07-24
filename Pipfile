@@ -16,7 +16,7 @@ pillow = "~=12.2.0"
 psycopg = "~=3.1.18"
 python-magic = "~=0.4.27"
 requests = "~=2.33.0"
-setuptools = "~=78.1.1"
+setuptools = "~=83.0.0"
 
 [dev-packages]
 autopep8 = "*"
