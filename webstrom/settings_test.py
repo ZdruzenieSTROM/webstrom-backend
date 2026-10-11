@@ -12,6 +12,9 @@ USE_X_FORWARDED_HOST = True
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
+# Prvý v zozname, aby hlavičku dostali aj odpovede, ktoré vyrobí iný middleware (redirecty)
+MIDDLEWARE = ['base.middleware.noindex_middleware', *MIDDLEWARE]
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
