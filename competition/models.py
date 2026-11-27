@@ -21,7 +21,7 @@ from base.validators import school_year_validator
 from competition.querysets import ActiveQuerySet
 from competition.utils.school_year_manipulation import \
     get_school_year_end_by_date
-from competition.utils.validations import validate_points
+from competition.utils.validations import MAX_POINTS, validate_points
 from personal.models import Profile, School
 from user.models import User
 
@@ -437,8 +437,14 @@ class Problem(models.Model):
         stats['histogram'] = []
         total_solutions = 0
         total_points = 0
-        for score in range(10):
-            count = self.solution_set.filter(score=score).count()
+        # Záporné body (penalizácia) sa v histograme aj v priemere počítajú ako 0 bodov.
+        # Histogram tak ostáva v rozsahu 0 až MAX_POINTS a riešenia so zápornými
+        # bodmi sa pripočítajú do stĺpca 0.
+        for score in range(0, MAX_POINTS + 1):
+            if score == 0:
+                count = self.solution_set.filter(score__lte=0).count()
+            else:
+                count = self.solution_set.filter(score=score).count()
             total_solutions += count
             total_points += count*score
             stats['histogram'].append({'score': score, 'count': count})
@@ -681,7 +687,7 @@ class Solution(models.Model):
         storage=private_storage,
         verbose_name='opravené riešenie', blank=True, upload_to=get_corrected_solution_path)
 
-    score = models.PositiveSmallIntegerField(
+    score = models.SmallIntegerField(
         verbose_name='body', null=True, blank=True, validators=[validate_points])
 
     vote = models.IntegerField(choices=Vote.choices,

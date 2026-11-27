@@ -1,11 +1,15 @@
 from datetime import datetime, timezone
 
 from django.contrib.auth import get_user_model
-from django.test import TestCase
+from django.core.exceptions import ValidationError
+from django.test import SimpleTestCase, TestCase
 from django.urls import reverse
 from rest_framework.test import APITestCase
 
 from competition import models
+from competition.utils import sum_methods
+from competition.utils.validations import validate_points
+from competition.views import parse_corrected_solution_file_name
 from tests.test_utils import PermissionTestMixin, get_app_fixtures
 
 series_expected_keys = [
@@ -380,3 +384,81 @@ class TestAdminSearch(TestCase):
                     reverse(f'admin:competition_{model}_changelist'),
                     {'q': 'matej'})
                 self.assertEqual(response.status_code, 200)
+
+
+class TestNegativePoints(SimpleTestCase):
+    '''Záporné body za riešenie'''
+
+    def test_validate_points_range(self):
+        for value in (-9, -1, 0, 9):
+            validate_points(value)
+        for value in (-10, 10):
+            with self.assertRaises(ValidationError):
+                validate_points(value)
+
+    def test_simple_sum_with_negative(self):
+        self.assertEqual(sum_methods.series_simple_sum([5, -2, 3, 0]), 6)
+
+    def test_weighted_points_bonus_only_from_positive(self):
+        self.assertEqual(sum_methods.weighted_points(4, 2), 8)
+        self.assertEqual(sum_methods.weighted_points(4, 0), 0)
+        self.assertEqual(sum_methods.weighted_points(-3, 2), -3)
+        self.assertEqual(sum_methods.weighted_points(-3, 1), -3)
+        self.assertEqual(sum_methods.weighted_points(-3, 0), -3)
+
+    def test_weighted_sum_with_negative(self):
+        # zoradené: [9, 5, 3, 2, 0, -2], váhy [1, 2, 1, 1, 1, 0]
+        self.assertEqual(
+            sum_methods.series_general_weighted_sum(
+                [3, -2, 9, 0, 5, 2], [1, 2, 1, 1, 1, 0]),
+            9 + 10 + 3 + 2 + 0 - 2)
+        # záporné body sa pri váhe 2 nenásobia
+        self.assertEqual(
+            sum_methods.series_general_weighted_sum(
+                [-1, -4, -2, 3], [1, 1, 2, 1]),
+            3 - 1 - 2 - 4)
+
+
+class TestParseCorrectedSolutionFileName(TestCase):
+    '''Parsovanie bodov z názvu opraveného riešenia'''
+
+    fixtures = get_app_fixtures([
+        'base',
+        'competition',
+        'personal',
+        'user'
+    ])
+
+    def _file_name(self, points):
+        solution = models.Solution.objects.get(pk=0)
+        return (f'{points}-Meno-{solution.problem_id}'
+                f'-{solution.semester_registration_id}.pdf'), solution
+
+    def test_positive_points(self):
+        file_name, solution = self._file_name(7)
+        score, _, parsed = parse_corrected_solution_file_name(file_name)
+        self.assertEqual(score, 7)
+        self.assertEqual(parsed, solution)
+
+    def test_negative_points(self):
+        file_name, solution = self._file_name(-3)
+        score, _, parsed = parse_corrected_solution_file_name(file_name)
+        self.assertEqual(score, -3)
+        self.assertEqual(parsed, solution)
+
+    def test_out_of_range_points(self):
+        file_name, _ = self._file_name(-10)
+        with self.assertRaises(ValidationError):
+            parse_corrected_solution_file_name(file_name)
+
+    def test_negative_score_counted_as_zero_in_histogram(self):
+        solution = models.Solution.objects.get(pk=0)
+        zero_count_before = solution.problem.get_stats()['histogram'][0]['count']
+        solution.score = -2
+        solution.full_clean()
+        solution.save()
+        stats = solution.problem.get_stats()
+        histogram = stats['histogram']
+        self.assertEqual([item['score'] for item in histogram], list(range(10)))
+        self.assertEqual(histogram[0]['count'], zero_count_before + 1)
+        self.assertGreaterEqual(stats['mean'], 0)

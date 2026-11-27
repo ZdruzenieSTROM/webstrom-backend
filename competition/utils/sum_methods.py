@@ -1,5 +1,18 @@
-def dot_product(solutions: list[int], weights: list[int]):
-    return sum(s*w for s, w in zip(solutions, weights))
+def weighted_points(points: int, weight: int) -> int:
+    """
+    Body riešenia vynásobené váhou. Bonifikácia (váha iná ako 1) sa počíta
+    len z kladných bodov - záporné body sa vždy započítajú práve raz,
+    t.j. points + (weight - 1) * MAX(0, points).
+    """
+    return points + (weight - 1) * max(0, points)
+
+
+def sum_with_bonus_weights(solutions: list[int], weights: list[int]):
+    """
+    Súčet bodov, kde sa každé riešenie započíta podľa svojej váhy (bonifikácie).
+    Nie je to skalárny súčin - záporné body sa váhou nenásobia (pozri weighted_points).
+    """
+    return sum(weighted_points(s, w) for s, w in zip(solutions, weights))
 
 
 def solutions_to_list_of_points(solutions: list) -> list[int]:
@@ -21,7 +34,7 @@ def series_general_weighted_sum(solutions: list[int], weights: list[int]):
         # points = solutions_to_list_of_points(solutions)
         points = solutions
         points.sort(reverse=True)
-        return dot_product(points, weights)
+        return sum_with_bonus_weights(points, weights)
 
     return series_simple_sum(solutions)
 

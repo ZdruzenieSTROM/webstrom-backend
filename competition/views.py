@@ -51,13 +51,19 @@ from competition.serializers import (CommentSerializer, CompetitionSerializer,
                                      SemesterWithProblemsSerializer,
                                      SeriesWithProblemsSerializer,
                                      SolutionSerializer)
-from competition.utils.validations import validate_points
+from competition.utils.validations import (MAX_POINTS, MIN_POINTS,
+                                           validate_points)
 from personal.models import Profile, School
 from personal.serializers import ProfileExportSerializer, SchoolSerializer
 
 
 def parse_corrected_solution_file_name(file_name: str):
-    parts = file_name.rstrip('.pdf').split('-')
+    name = file_name.rstrip('.pdf')
+    # Záporné body začínajú znamienkom "-", ktoré je zároveň oddeľovač častí názvu
+    negative_score = name.startswith('-')
+    parts = name[1:].split('-') if negative_score else name.split('-')
+    if negative_score:
+        parts[0] = '-' + parts[0]
     if len(parts) < 4:
         raise CoreValidationError(
             f'Názov súboru {file_name} nie je v správnom formáte. '
@@ -70,7 +76,8 @@ def parse_corrected_solution_file_name(file_name: str):
     except ValueError as e:
         raise CoreValidationError(
             f'Neplatný názov súboru "{file_name}". '
-            f'Prvá čast (body) "{parts[0]}" musí byť celé číslo v rozsahu 0-9.'
+            f'Prvá čast (body) "{parts[0]}" musí byť celé číslo '
+            f'v rozsahu {MIN_POINTS} až {MAX_POINTS}.'
         ) from e
 
     try:
