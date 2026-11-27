@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 
 from rest_framework.test import APITestCase
 
@@ -359,3 +359,146 @@ class TestSolution(APITestCase, PermissionTestMixin):
                                self.ONLY_STAFF_OK_RESPONSES, {})
         vote = models.Solution.objects.get(pk=0).vote
         self.assertEqual(vote, 0)
+
+
+class TestCamp(APITestCase, PermissionTestMixin):
+    '''competition/camp'''
+    URL_PREFIX = '/api/competition/camp'
+
+    fixtures = PermissionTestMixin.get_basic_fixtures()
+
+    def setUp(self):
+        self.create_users()
+        self.event = models.Event.objects.create(
+            competition=models.Competition.objects.get(pk=0),
+            year=44,
+            school_year='2019/2020',
+            start='2019-09-01T20:00:00+02:00',
+            end='2020-06-01T20:00:00+02:00'
+        )
+        self.camp = models.Camp.objects.create(
+            event=self.event,
+            additional_name='online',
+            start=date(2020, 3, 14),
+            end=date(2020, 3, 20),
+            location='Chata pod Kriváňom',
+        )
+        models.CampLink.objects.create(
+            camp=self.camp, title='Fotky', url='https://example.com/foto')
+
+    def test_display_date(self):
+        self.assertEqual(self.camp.display_date, '14. – 20. 3. 2020')
+        self.camp.end = date(2020, 4, 2)
+        self.assertEqual(self.camp.display_date, '14. 3. – 2. 4. 2020')
+        self.camp.end = None
+        self.assertEqual(self.camp.display_date, '14. 3. 2020')
+
+        self.camp.end = date(2021, 1, 2)
+        self.assertEqual(self.camp.display_date, '14. 3. 2020 – 2. 1. 2021')
+
+    def test_display_date_text(self):
+        camp = models.Camp(event=self.event, start=date(1995, 3, 1),
+                           date_text='marec 1995')
+        self.assertEqual(camp.display_date, 'marec 1995')
+        self.assertEqual(models.Camp(event=self.event).display_date, '')
+
+    def test_ordering_unknown_start_last(self):
+        old = models.Camp.objects.create(
+            event=self.event, date_text='niekedy v 80. rokoch')
+        self.assertEqual(list(models.Camp.objects.all()), [self.camp, old])
+
+    def test_list_format(self):
+        response = self.get_client().get(self.URL_PREFIX + '/')
+        self.assertEqual(response.status_code, 200)
+        camp = response.json()[0]
+        for key in ['id', 'event', 'additional_name', 'start', 'end', 'date_text',
+                    'display_date', 'location', 'leaders', 'story',
+                    'description', 'links']:
+            self.assertIn(key, camp)
+        self.assertEqual(camp['links'][0]['title'], 'Fotky')
+
+    def test_filter_event_and_school_year(self):
+        other_event = models.Event.objects.create(
+            competition=models.Competition.objects.get(pk=0),
+            year=45,
+            school_year='2020/2021',
+            start='2020-09-01T20:00:00+02:00',
+            end='2021-06-01T20:00:00+02:00'
+        )
+        other_camp = models.Camp.objects.create(event=other_event)
+        client = self.get_client()
+
+        response = client.get(self.URL_PREFIX + '/', {'event': other_event.pk})
+        self.assertEqual([c['id'] for c in response.json()], [other_camp.pk])
+
+        response = client.get(self.URL_PREFIX + '/',
+                              {'school_year': '2019/2020'})
+        self.assertEqual([c['id'] for c in response.json()], [self.camp.pk])
+
+        response = client.get(self.URL_PREFIX + '/',
+                              {'competition': 0, 'school_year': '2020/2021'})
+        self.assertEqual([c['id'] for c in response.json()], [other_camp.pk])
+
+    def test_filter_competition(self):
+        response = self.get_client().get(self.URL_PREFIX + '/', {'competition': 1})
+        self.assertEqual(response.json(), [])
+        response = self.get_client().get(self.URL_PREFIX + '/', {'competition': 0})
+        self.assertEqual(len(response.json()), 1)
+
+    def test_permission_list(self):
+        self.check_permissions(self.URL_PREFIX + '/',
+                               'GET', self.PUBLIC_OK_RESPONSES)
+
+    def test_permission_retrieve(self):
+        self.check_permissions(f'{self.URL_PREFIX}/{self.camp.pk}/',
+                               'GET', self.PUBLIC_OK_RESPONSES)
+
+    def test_permission_create(self):
+        self.check_permissions(self.URL_PREFIX + '/', 'POST',
+                               self.ONLY_STROM_OK_RESPONSES,
+                               {
+                                   'event': self.event.pk,
+                                   'date_text': 'február 1998',
+                                   'links': [{'title': 'Web', 'url': 'https://example.com'}],
+                               })
+
+    def test_permission_update(self):
+        self.check_permissions(f'{self.URL_PREFIX}/{self.camp.pk}/', 'PATCH',
+                               self.ONLY_STROM_OK_RESPONSES,
+                               {'story': 'Pirátsky dej'})
+
+    def test_update_replaces_links(self):
+        client = self.get_client('strom')
+        response = client.patch(
+            f'{self.URL_PREFIX}/{self.camp.pk}/',
+            {'links': [{'title': 'Video', 'url': 'https://example.com/video'}]},
+            'json')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            list(self.camp.links.values_list('title', flat=True)), ['Video'])
+
+    def test_end_before_start(self):
+        client = self.get_client('strom')
+        response = client.patch(
+            f'{self.URL_PREFIX}/{self.camp.pk}/', {'end': '2020-03-01'}, 'json')
+        self.assertEqual(response.status_code, 400)
+
+    def test_camp_without_event(self):
+        camp = models.Camp.objects.create(
+            date_text='júl 1988', additional_name='letné')
+        self.assertEqual(str(camp), 'Sústredenie - letné (júl 1988)')
+        response = self.get_client().get(f'{self.URL_PREFIX}/{camp.pk}/')
+        self.assertEqual(response.status_code, 200)
+        self.assertIsNone(response.json()['event'])
+        # bez eventu môže sústredenie upravovať iba superuser
+        self.check_permissions(f'{self.URL_PREFIX}/{camp.pk}/', 'PATCH',
+                               self.ALL_FORBIDDEN, {'story': 'Dej'})
+
+    def test_create_without_event_forbidden_for_staff(self):
+        self.check_permissions(self.URL_PREFIX + '/', 'POST',
+                               self.ALL_FORBIDDEN,
+                               {'date_text': 'júl 1988'})
+
+    def test_detach_event_forbidden_for_staff(self):
+        self.check_permissions(f'{self.URL_PREFIX}/{self.camp.pk}/', 'PATCH',
+                               self.ALL_FORBIDDEN, {'event': None})
