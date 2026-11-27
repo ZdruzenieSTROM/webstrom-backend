@@ -2,7 +2,9 @@
 
 import csv
 import json
+import posixpath
 import zipfile
+from dataclasses import dataclass
 from io import BytesIO
 from operator import itemgetter
 from typing import Optional
@@ -56,55 +58,164 @@ from personal.models import Profile, School
 from personal.serializers import ProfileExportSerializer, SchoolSerializer
 
 
-def parse_corrected_solution_file_name(file_name: str):
-    parts = file_name.rstrip('.pdf').split('-')
-    if len(parts) < 4:
-        raise CoreValidationError(
-            f'Názov súboru {file_name} nie je v správnom formáte. '
-            f'Očakáva sa format: "BODY-MENO-ID_ULOHY-ID_REGISTRACIE_USERA.pdf"'
-        )
+CORRECTED_SOLUTION_NAME_FORMAT = 'BODY-MENO-ID_ULOHY-ID_REGISTRACIE.pdf'
 
+
+def parse_corrected_solution_name_parts(file_name: str) -> tuple[Optional[int], int, int]:
+    base_name = posixpath.basename(file_name.replace('\\', '/'))
+    stem = base_name[:-len('.pdf')] if base_name.lower().endswith('.pdf') else base_name
+    parts = stem.split('-')
+
+    score: Optional[int]
     try:
         score = int(parts[0])
-        validate_points(score)
-    except ValueError as e:
+    except ValueError:
+        score = None
+
+    if len(parts) < (4 if score is not None else 3):
         raise CoreValidationError(
-            f'Neplatný názov súboru "{file_name}". '
-            f'Prvá čast (body) "{parts[0]}" musí byť celé číslo v rozsahu 0-9.'
-        ) from e
+            f'Názov súboru "{base_name}" nie je v správnom formáte. '
+            f'Očakáva sa formát "{CORRECTED_SOLUTION_NAME_FORMAT}".'
+        )
+
+    if score is not None:
+        validate_points(score)
 
     try:
         problem_pk = int(parts[-2])
     except ValueError as e:
         raise CoreValidationError(
-            f'Neplatný názov súboru "{file_name}". '
-            f'Predposledná čast (id úlohy) "{parts[-2]}" musí byť celé číslo (primary key).'
+            f'Predposledná časť názvu (id úlohy) "{parts[-2]}" musí byť celé číslo.'
         ) from e
 
     try:
         registration_pk = int(parts[-1])
     except ValueError as e:
         raise CoreValidationError(
-            f'Neplatný názov súboru "{file_name}". '
-            f'Posledná čast (id reg. používateľa) "{parts[-1]}" musí byť celé číslo (primary key).'
+            f'Posledná časť názvu (id registrácie) "{parts[-1]}" musí byť celé číslo.'
         ) from e
 
+    return score, problem_pk, registration_pk
+
+
+def get_solution_for_corrected_file(problem_pk: int, registration_pk: int) -> Solution:
     try:
-        event_reg = EventRegistration.objects.get(pk=registration_pk)
-        solution = Solution.objects.get(
-            semester_registration=event_reg,
-            problem=problem_pk
+        return Solution.objects.select_related('semester_registration').get(
+            semester_registration_id=registration_pk,
+            problem_id=problem_pk
         )
-        return score, event_reg, solution
-    except EventRegistration.DoesNotExist as e:
-        raise CoreValidationError(
-            f'Registrácia používateľa s id {registration_pk} neexistuje'
-        ) from e
     except Solution.DoesNotExist as e:
+        if not EventRegistration.objects.filter(pk=registration_pk).exists():
+            raise CoreValidationError(
+                f'Registrácia používateľa s id {registration_pk} neexistuje.'
+            ) from e
         raise CoreValidationError(
             f'Riešenie pre registráciu používateľa s id {registration_pk} '
-            f'a úlohy id {problem_pk} neexistuje'
+            f'a úlohu s id {problem_pk} neexistuje.'
         ) from e
+
+
+def parse_corrected_solution_file_name(file_name: str):
+    score, problem_pk, registration_pk = parse_corrected_solution_name_parts(
+        file_name)
+    solution = get_solution_for_corrected_file(problem_pk, registration_pk)
+    return score, solution.semester_registration, solution
+
+
+@dataclass
+class CorrectedSolutionFile:
+    filename: str
+    score: Optional[int]
+    solution: Solution
+
+
+def _file_issue(filename: str, reason: str) -> dict:
+    return {'filename': filename, 'reason': reason}
+
+
+def _is_archive_metadata(path: str) -> bool:
+    base_name = posixpath.basename(path)
+    return (
+        path.startswith('__MACOSX/')
+        or '/__MACOSX/' in path
+        or base_name.startswith('.')
+        or base_name.lower() == 'thumbs.db'
+    )
+
+
+def _validate_corrected_solution_file(
+        archive: zipfile.ZipFile, info: zipfile.ZipInfo, problem: Problem) -> CorrectedSolutionFile:
+    score, problem_pk, registration_pk = parse_corrected_solution_name_parts(
+        info.filename)
+    if problem_pk != problem.pk:
+        raise CoreValidationError(
+            f'Súbor patrí k úlohe s id {problem_pk}, '
+            f'ale nahrávaš opravené riešenia k úlohe s id {problem.pk}.'
+        )
+    solution = get_solution_for_corrected_file(problem_pk, registration_pk)
+
+    with archive.open(info) as corrected_solution:
+        head = corrected_solution.read(2048)
+    if mime_type(File(BytesIO(head))) != 'application/pdf':
+        raise CoreValidationError(
+            'Súbor má koncovku .pdf, ale jeho obsah nie je PDF.')
+
+    return CorrectedSolutionFile(info.filename, score, solution)
+
+
+def _save_corrected_solution(archive: zipfile.ZipFile, item: CorrectedSolutionFile):
+    with archive.open(item.filename) as corrected_solution:
+        if item.score is not None:
+            item.solution.score = item.score
+        item.solution.corrected_solution = File(
+            corrected_solution, name=posixpath.basename(item.filename))
+        item.solution.full_clean()
+        item.solution.save()
+
+
+def collect_corrected_solutions(archive: zipfile.ZipFile, problem: Problem):
+    errors: list[dict] = []
+    skipped: list[dict] = []
+    files_by_solution: dict[int, list[CorrectedSolutionFile]] = {}
+
+    for info in archive.infolist():
+        path = info.filename.replace('\\', '/')
+        base_name = posixpath.basename(path)
+        if info.is_dir() or not base_name or _is_archive_metadata(path):
+            continue
+
+        if base_name.lower().endswith('.zip'):
+            skipped.append(_file_issue(
+                info.filename,
+                'ZIP v ZIPe nie je podporovaný, rozbaľ ho a nahraj PDF súbory priamo.'))
+            continue
+
+        if not base_name.lower().endswith('.pdf'):
+            skipped.append(_file_issue(info.filename, 'Nie je PDF, preskočené.'))
+            continue
+
+        try:
+            corrected_file = _validate_corrected_solution_file(
+                archive, info, problem)
+        except CoreValidationError as exc:
+            errors.append(_file_issue(info.filename, ' '.join(exc.messages)))
+            continue
+
+        files_by_solution.setdefault(
+            corrected_file.solution.pk, []).append(corrected_file)
+
+    corrected: list[CorrectedSolutionFile] = []
+    for files in files_by_solution.values():
+        if len(files) > 1:
+            filenames = ', '.join(f'"{file.filename}"' for file in files)
+            errors.extend(_file_issue(
+                file.filename,
+                f'Duplicitné riešenie - to isté riešenie je v súboroch {filenames}. '
+                'Neuložil sa ani jeden.') for file in files)
+            continue
+        corrected.append(files[0])
+
+    return corrected, errors, skipped
 
 
 class ModelViewSetWithSerializerContext(viewsets.ModelViewSet):
@@ -458,60 +569,71 @@ class ProblemViewSet(ModelViewSetWithSerializerContext):
             url_path='upload-corrected')
     def upload_solutions_with_points(self, request, pk=None):
         """Nahrá .zip archív s opravenými riešeniami (pdf-kami)."""
-        # pylint: disable=too-many-branches
+        problem = self.get_object()
+
         if 'file' not in request.data:
             raise exceptions.ParseError(detail='Žiaden súbor nebol pripojený')
 
-        zfile = request.data['file']
+        uploaded_file = request.data['file']
 
-        if not zipfile.is_zipfile(zfile):
+        if not zipfile.is_zipfile(uploaded_file):
             raise exceptions.ParseError(
                 detail='Priložený súbor nie je zip')
 
-        with zipfile.ZipFile(zfile) as zfile:
-            if zfile.testzip():
-                raise exceptions.ParseError(detail='Súbor zip je poškodený')
+        try:
+            archive = zipfile.ZipFile(uploaded_file)
+        except zipfile.BadZipFile as exc:
+            raise exceptions.ParseError(
+                detail='Súbor zip je poškodený') from exc
 
-            parsed_filenames = []
-            errors = []
+        with archive:
+            try:
+                corrupted_file = archive.testzip()
+            except zipfile.BadZipFile as exc:
+                raise exceptions.ParseError(
+                    detail='Súbor zip je poškodený') from exc
+            if corrupted_file is not None:
+                raise exceptions.ParseError(
+                    detail=f'Súbor zip je poškodený (súbor "{corrupted_file}")')
 
-            # TODO: checks file are really pdfs
-            for filename in zfile.namelist():
-                if not filename.endswith(".pdf"):
-                    # Ignore other non-pdf files in the archive
-                    continue
+            corrected, errors, skipped = collect_corrected_solutions(
+                archive, problem)
 
-                if "__MACOSX" in filename:
-                    # Ignore mac os metadata folder
-                    continue
-
+            uploaded: list[CorrectedSolutionFile] = []
+            for item in corrected:
                 try:
-                    score, _, solution = parse_corrected_solution_file_name(
-                        filename)
-                except (CoreValidationError, ValidationError) as exc:
-                    errors.append({
-                        'filename': filename,
-                        'status': str(exc)
-                    })
+                    _save_corrected_solution(archive, item)
+                except CoreValidationError as exc:
+                    errors.append(_file_issue(item.filename, ' '.join(exc.messages)))
                     continue
+                uploaded.append(item)
 
-                parsed_filenames.append((filename, score, solution))
+        if not uploaded:
+            detail = (
+                f'Nič sa neuložilo. Počet súborov s chybou: {len(errors)}.' if errors
+                else 'V ZIPe sa nenašlo žiadne opravené riešenie. Opravené riešenia musia byť '
+                     f'PDF súbory pomenované vo formáte "{CORRECTED_SOLUTION_NAME_FORMAT}".'
+            )
+            return Response({
+                'detail': detail,
+                'errors': errors,
+                'skipped': skipped,
+            }, status=status.HTTP_400_BAD_REQUEST)
 
-            if errors:
-                return Response(errors, status=status.HTTP_400_BAD_REQUEST)
-
-            for filename, score, solution in parsed_filenames:
-                with zfile.open(filename) as corrected_solution:
-                    solution.score = score
-                    solution.corrected_solution = File(corrected_solution)
-
-                    try:
-                        solution.full_clean()
-                        solution.save()
-                    except CoreValidationError:
-                        return Response(status=status.HTTP_422_UNPROCESSABLE_ENTITY)
-
-            return Response()
+        return Response({
+            'uploaded': [{
+                'filename': item.filename,
+                'solution_id': item.solution.pk,
+                'score': item.score,
+            } for item in uploaded],
+            'errors': errors,
+            'skipped': skipped,
+            'warnings': [
+                _file_issue(item.filename,
+                            'Názov nezačína bodmi - PDF sa nahralo, body ostali nezmenené.')
+                for item in uploaded if item.score is None
+            ],
+        })
 
 
 class ProblemAdministrationViewSet(ModelViewSetWithSerializerContext):
@@ -791,7 +913,7 @@ class SolutionViewSet(viewsets.ModelViewSet):
             try:
                 points, _, file_solution = parse_corrected_solution_file_name(
                     file.name)
-                if file_solution == solution:
+                if file_solution == solution and points is not None:
                     solution.score = points
                     solution.save()
             except CoreValidationError:
