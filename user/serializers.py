@@ -162,7 +162,7 @@ class UserDetailsSerializer(serializers.ModelSerializer):
             school_info = self.validated_data['new_school_description']
             OtherSchoolRequest.objects.update_or_create(
                 profile=user.profile,
-                school_info=school_info
+                defaults={'school_info': school_info}
             )
             send_bulk_html_emails(
                 [EMAIL_ALERT],
