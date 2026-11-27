@@ -359,3 +359,93 @@ class TestSolution(APITestCase, PermissionTestMixin):
                                self.ONLY_STAFF_OK_RESPONSES, {})
         vote = models.Solution.objects.get(pk=0).vote
         self.assertEqual(vote, 0)
+
+
+class TestCanModifyFilter(APITestCase, PermissionTestMixin):
+    '''?can_modify=true vráti iba objekty, ktoré vie používateľ editovať'''
+
+    fixtures = get_app_fixtures([
+        'base',
+        'user',
+        'personal',
+        'competition'
+    ])
+
+    def setUp(self):
+        self.create_users()
+
+    def get_results(self, url, user_type, params=None):
+        response = self.get_client(user_type).get(url, params or {})
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        return data['results'] if isinstance(data, dict) else data
+
+    def assert_only_editable(self, url, model, user_type):
+        user = getattr(self, f'{user_type}_user')
+        results = self.get_results(url, user_type, {'can_modify': 'true'})
+        self.assertTrue(len(results) > 0)
+        for item in results:
+            self.assertTrue(
+                model.objects.get(pk=item['id']).can_user_modify(user),
+                f'{url} returned non-editable object {item["id"]} for {user_type}')
+        all_results = self.get_results(url, user_type)
+        editable_count = sum(
+            model.objects.get(pk=item['id']).can_user_modify(user)
+            for item in all_results)
+        self.assertEqual(len(results), editable_count)
+
+    def test_competition(self):
+        url = '/api/competition/competition/'
+        for user_type in ['strom', 'kricky']:
+            results = self.get_results(url, user_type, {'can_modify': 'true'})
+            user = getattr(self, f'{user_type}_user')
+            expected = {c.name for c in models.Competition.objects.all()
+                        if c.can_user_modify(user)}
+            self.assertSetEqual({c['name'] for c in results}, expected)
+
+    def test_series(self):
+        self.assert_only_editable(
+            '/api/competition/series/', models.Series, 'strom')
+
+    def test_problem(self):
+        self.assert_only_editable(
+            '/api/competition/problem/', models.Problem, 'strom')
+
+    def test_semester(self):
+        self.assert_only_editable(
+            '/api/competition/semester/', models.Semester, 'strom')
+
+    def test_kricky_does_not_see_strom_series(self):
+        results = self.get_results(
+            '/api/competition/series/', 'kricky', {'can_modify': 'true'})
+        for item in results:
+            self.assertTrue(models.Series.objects.get(pk=item['id'])
+                            .can_user_modify(self.kricky_user))
+        self.assertLess(len(results), models.Series.objects.count())
+
+    def test_without_param_returns_everything(self):
+        url = '/api/competition/series/'
+        self.assertEqual(len(self.get_results(url, 'kricky')),
+                         models.Series.objects.count())
+
+    def test_non_staff_gets_empty(self):
+        for user_type in ['competitor', None]:
+            results = self.get_results(
+                '/api/competition/series/', user_type, {'can_modify': 'true'})
+            self.assertEqual(len(results), 0)
+
+    def test_filter_modifiable_matches_can_user_modify(self):
+        '''filter_modifiable musí dávať rovnaký výsledok ako can_user_modify'''
+        model_classes = [
+            models.Competition, models.Event, models.Semester, models.Series,
+            models.Problem, models.Comment, models.EventRegistration,
+            models.Solution, models.Publication, models.RegistrationLink,
+        ]
+        for user in [self.strom_user, self.kricky_user, self.competitior_user]:
+            for model in model_classes:
+                expected = {obj.pk for obj in model.objects.all()
+                            if obj.can_user_modify(user)}
+                actual = set(model.filter_modifiable(
+                    model.objects.all(), user).values_list('pk', flat=True))
+                self.assertSetEqual(
+                    actual, expected, f'{model.__name__} / {user.email}')

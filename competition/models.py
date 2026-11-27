@@ -127,6 +127,16 @@ class Competition(models.Model):
                 set(user.groups.all()))
         ) > 0
 
+    @classmethod
+    def filter_modifiable(cls, queryset, user: User):
+        """Queryset verzia can_user_modify - iba súťaže, ktoré vie user editovať"""
+        if not user.is_authenticated or not user.is_staff:
+            return queryset.none()
+        return queryset.filter(
+            pk__in=cls.objects.filter(
+                permission_group__in=user.groups.all()).values('pk')
+        )
+
 
 class LateTag(models.Model):
     """
@@ -219,6 +229,11 @@ class Event(models.Model):
 
     def can_user_modify(self, user):
         return self.competition.can_user_modify(user)
+
+    @classmethod
+    def filter_modifiable(cls, queryset, user: User):
+        return queryset.filter(
+            competition__in=Competition.filter_modifiable(Competition.objects.all(), user))
 
     @classmethod
     def can_user_create(cls, user: User, data: dict) -> bool:
@@ -381,6 +396,11 @@ class Series(models.Model):
         return self.semester.can_user_modify(user)
 
     @classmethod
+    def filter_modifiable(cls, queryset, user: User):
+        return queryset.filter(
+            semester__in=Semester.filter_modifiable(Semester.objects.all(), user))
+
+    @classmethod
     def can_user_create(cls, user: User, data: dict) -> bool:
         semester = Semester.objects.get(pk=data['semester'])
         return semester.can_user_modify(user)
@@ -461,6 +481,11 @@ class Problem(models.Model):
 
     def can_user_modify(self, user):
         return self.series.can_user_modify(user)
+
+    @classmethod
+    def filter_modifiable(cls, queryset, user: User):
+        return queryset.filter(
+            series__in=Series.filter_modifiable(Series.objects.all(), user))
 
     @classmethod
     def can_user_create(cls, user: User, data: dict) -> bool:
@@ -551,6 +576,11 @@ class Comment(models.Model):
         return self.problem.can_user_modify(user)
 
     @classmethod
+    def filter_modifiable(cls, queryset, user: User):
+        return queryset.filter(
+            problem__in=Problem.filter_modifiable(Problem.objects.all(), user))
+
+    @classmethod
     def can_user_create(cls, user: User, data: dict) -> bool:
         problem = Problem.objects.get(pk=data['problem'])
         return problem.can_user_modify(user)
@@ -633,6 +663,11 @@ class EventRegistration(models.Model):
 
     def can_user_modify(self, user):
         return self.event.can_user_modify(user)
+
+    @classmethod
+    def filter_modifiable(cls, queryset, user: User):
+        return queryset.filter(
+            event__in=Event.filter_modifiable(Event.objects.all(), user))
 
     @classmethod
     def can_user_create(cls, user: User, data: dict) -> bool:
@@ -718,6 +753,11 @@ class Solution(models.Model):
     def can_user_modify(self, user):
         return self.problem.can_user_modify(user)
 
+    @classmethod
+    def filter_modifiable(cls, queryset, user: User):
+        return queryset.filter(
+            problem__in=Problem.filter_modifiable(Problem.objects.all(), user))
+
     def can_access(self, user):
         return (self.semester_registration.profile.user is not None
                 and self.semester_registration.profile.user == user) or self.can_user_modify(user)
@@ -800,6 +840,11 @@ class Publication(models.Model):
         return self.event.can_user_modify(user)
 
     @classmethod
+    def filter_modifiable(cls, queryset, user: User):
+        return queryset.filter(
+            event__in=Event.filter_modifiable(Event.objects.all(), user))
+
+    @classmethod
     def can_user_create(cls, user: User, data: dict) -> bool:
         event = data['event']
 
@@ -832,6 +877,11 @@ class RegistrationLink(models.Model):
     def can_user_modify(self, user):
         # pylint: disable=no-member
         return self.event.can_user_modify(user)
+
+    @classmethod
+    def filter_modifiable(cls, queryset, user: User):
+        return queryset.filter(
+            event__in=Event.filter_modifiable(Event.objects.all(), user))
 
     def __str__(self):
         return str(self.event)  # pylint: disable=no-member

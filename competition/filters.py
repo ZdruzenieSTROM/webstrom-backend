@@ -2,13 +2,14 @@
 
 import unicodedata
 
+from django.core.exceptions import ImproperlyConfigured
 from django.db import connection
 from django.db.models import Func, Q
 from django.db.models.functions import Lower
 from django.db.models.manager import BaseManager
 from django.utils.timezone import now
 from django_filters import BooleanFilter
-from rest_framework.filters import SearchFilter
+from rest_framework.filters import BaseFilterBackend, SearchFilter
 
 
 class UpcomingFilter(BooleanFilter):
@@ -73,3 +74,26 @@ class UnaccentSearchFilter(SearchFilter):
             queryset = queryset.filter(term_filter)
 
         return queryset
+
+
+class CanUserModifyFilter(BaseFilterBackend):
+    """
+    Pri query parametri `can_modify=true` vráti iba objekty, ktoré vie
+    aktuálny používateľ editovať.
+
+    Logiku poskytuje model cez classmethod `filter_modifiable(queryset, user)`,
+    ktorá je queryset verziou `can_user_modify` (kaskáda na rodiča až po súťaž).
+    """
+    query_param = 'can_modify'
+    TRUE_VALUES = {'true', '1', 'yes', 'on'}
+
+    def filter_queryset(self, request, queryset, view):
+        value = request.query_params.get(self.query_param)
+        if value is None or value.lower() not in self.TRUE_VALUES:
+            return queryset
+
+        filter_modifiable = getattr(queryset.model, 'filter_modifiable', None)
+        if filter_modifiable is None:
+            raise ImproperlyConfigured(
+                f'{queryset.model.__name__} nemá metódu filter_modifiable')
+        return filter_modifiable(queryset, request.user)
