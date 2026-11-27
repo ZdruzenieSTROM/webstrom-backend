@@ -1,8 +1,17 @@
+import shutil
+import tempfile
+import zipfile
 from datetime import datetime, timezone
+from io import BytesIO
 
+from django.core.exceptions import ValidationError as CoreValidationError
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.db.models import Count
+from django.test import SimpleTestCase
 from rest_framework.test import APITestCase
 
 from competition import models
+from competition.views import parse_corrected_solution_name_parts
 from tests.test_utils import PermissionTestMixin, get_app_fixtures
 
 series_expected_keys = [
@@ -359,3 +368,294 @@ class TestSolution(APITestCase, PermissionTestMixin):
                                self.ONLY_STAFF_OK_RESPONSES, {})
         vote = models.Solution.objects.get(pk=0).vote
         self.assertEqual(vote, 0)
+
+
+PDF_CONTENT = (b'%PDF-1.4\n1 0 obj\n<< /Type /Catalog >>\nendobj\n'
+               b'trailer\n<< /Root 1 0 R >>\n%%EOF\n')
+
+
+def make_zip(files: dict) -> bytes:
+    stream = BytesIO()
+    with zipfile.ZipFile(stream, 'w') as archive:
+        for path, content in files.items():
+            archive.writestr(path, content)
+    return stream.getvalue()
+
+
+class TestParseCorrectedSolutionName(SimpleTestCase):
+    '''parse_corrected_solution_name_parts'''
+
+    def test_basic(self):
+        self.assertEqual(
+            parse_corrected_solution_name_parts('5-JanNovak-12-34.pdf'), (5, 12, 34))
+
+    def test_ignores_folders(self):
+        self.assertEqual(
+            parse_corrected_solution_name_parts('opravene/Do24Hodin/5-JanNovak-12-34.pdf'),
+            (5, 12, 34))
+        self.assertEqual(
+            parse_corrected_solution_name_parts('opravene\\5-JanNovak-12-34.pdf'), (5, 12, 34))
+
+    def test_uppercase_extension(self):
+        self.assertEqual(
+            parse_corrected_solution_name_parts('5-JanNovak-12-34.PDF'), (5, 12, 34))
+
+    def test_dash_in_name(self):
+        self.assertEqual(
+            parse_corrected_solution_name_parts('5-JanaNovák-Kováčová-12-34.pdf'), (5, 12, 34))
+
+    def test_does_not_strip_characters_from_ids(self):
+        with self.assertRaisesMessage(CoreValidationError, '34_corrected'):
+            parse_corrected_solution_name_parts('5-JanNovak-12-34_corrected.pdf')
+
+    def test_too_few_parts(self):
+        with self.assertRaisesMessage(CoreValidationError, 'nie je v správnom formáte'):
+            parse_corrected_solution_name_parts('5-12-34.pdf')
+        with self.assertRaisesMessage(CoreValidationError, 'nie je v správnom formáte'):
+            parse_corrected_solution_name_parts('JanNovak-34.pdf')
+
+    def test_without_score(self):
+        self.assertEqual(
+            parse_corrected_solution_name_parts('JanNovak-12-34.pdf'), (None, 12, 34))
+        self.assertEqual(
+            parse_corrected_solution_name_parts('Do24Hodin/Jana-Kovacova-12-34.pdf'),
+            (None, 12, 34))
+
+    def test_score_out_of_range(self):
+        with self.assertRaises(CoreValidationError):
+            parse_corrected_solution_name_parts('12-JanNovak-12-34.pdf')
+
+
+class TestUploadCorrectedSolutions(APITestCase, PermissionTestMixin):
+    '''competition/problem/<pk>/upload-corrected'''
+    # pylint: disable=too-many-public-methods
+
+    fixtures = get_app_fixtures([
+        'base',
+        'user',
+        'personal',
+        'competition'
+    ])
+
+    def setUp(self):
+        self.create_users()
+        self.problem = (models.Problem.objects
+                        .annotate(solution_count=Count('solution'))
+                        .filter(solution_count__gte=2)
+                        .order_by('pk')
+                        .first())
+        self.solutions = list(
+            self.problem.solution_set.order_by('pk')[:2])
+        for solution in self.solutions:
+            solution.score = None
+            solution.save()
+        self.other_solution = (models.Solution.objects
+                               .exclude(problem=self.problem)
+                               .order_by('pk')
+                               .first())
+
+        self.storage_dir = tempfile.mkdtemp()
+        storage = models.private_storage
+        self.original_location = storage._location  # pylint: disable=protected-access
+        storage._location = self.storage_dir  # pylint: disable=protected-access
+        storage.__dict__.pop('base_location', None)
+        storage.__dict__.pop('location', None)
+
+    def tearDown(self):
+        storage = models.private_storage
+        storage._location = self.original_location  # pylint: disable=protected-access
+        storage.__dict__.pop('base_location', None)
+        storage.__dict__.pop('location', None)
+        shutil.rmtree(self.storage_dir, ignore_errors=True)
+
+    def url(self, problem=None):
+        return f'/api/competition/problem/{(problem or self.problem).pk}/upload-corrected/'
+
+    @staticmethod
+    def name(solution, score=5):
+        return f'{score}-JanNovak-{solution.problem_id}-{solution.semester_registration_id}.pdf'
+
+    def upload(self, content: bytes, user='strom', filename='opravene.zip'):
+        client = self.get_client(user)
+        return client.post(
+            self.url(),
+            {'file': SimpleUploadedFile(filename, content)},
+            format='multipart')
+
+    def assert_nothing_saved(self):
+        for solution in self.solutions:
+            solution.refresh_from_db()
+            self.assertIsNone(solution.score)
+            self.assertFalse(solution.corrected_solution)
+
+    def test_files_in_root(self):
+        response = self.upload(make_zip({
+            self.name(self.solutions[0], 5): PDF_CONTENT,
+            self.name(self.solutions[1], 7): PDF_CONTENT,
+        }))
+        self.assertEqual(response.status_code, 200, response.content)
+        self.assertEqual(len(response.json()['uploaded']), 2)
+        self.assertEqual(response.json()['skipped'], [])
+        self.solutions[0].refresh_from_db()
+        self.solutions[1].refresh_from_db()
+        self.assertEqual(self.solutions[0].score, 5)
+        self.assertEqual(self.solutions[1].score, 7)
+        self.assertTrue(self.solutions[0].corrected_solution)
+
+    def test_files_in_subfolders(self):
+        response = self.upload(make_zip({
+            'opravene/' + self.name(self.solutions[0], 3): PDF_CONTENT,
+            'opravene/Do24Hodin/' + self.name(self.solutions[1], 4): PDF_CONTENT,
+        }))
+        self.assertEqual(response.status_code, 200, response.content)
+        self.solutions[0].refresh_from_db()
+        self.solutions[1].refresh_from_db()
+        self.assertEqual(self.solutions[0].score, 3)
+        self.assertEqual(self.solutions[1].score, 4)
+
+    def test_uppercase_extension(self):
+        response = self.upload(make_zip({
+            self.name(self.solutions[0]).replace('.pdf', '.PDF'): PDF_CONTENT,
+        }))
+        self.assertEqual(response.status_code, 200, response.content)
+        self.solutions[0].refresh_from_db()
+        self.assertEqual(self.solutions[0].score, 5)
+
+    def test_non_pdf_is_skipped(self):
+        response = self.upload(make_zip({
+            self.name(self.solutions[0]): PDF_CONTENT,
+            'poznamky.txt': b'ahoj',
+        }))
+        self.assertEqual(response.status_code, 200, response.content)
+        self.assertEqual(len(response.json()['uploaded']), 1)
+        self.assertEqual(response.json()['skipped'][0]['filename'], 'poznamky.txt')
+
+    def test_metadata_ignored(self):
+        response = self.upload(make_zip({
+            self.name(self.solutions[0]): PDF_CONTENT,
+            '__MACOSX/._' + self.name(self.solutions[0]): b'metadata',
+            '.DS_Store': b'metadata',
+        }))
+        self.assertEqual(response.status_code, 200, response.content)
+        self.assertEqual(response.json()['skipped'], [])
+
+    def assert_only_first_saved(self, score=5):
+        self.solutions[0].refresh_from_db()
+        self.solutions[1].refresh_from_db()
+        self.assertEqual(self.solutions[0].score, score)
+        self.assertTrue(self.solutions[0].corrected_solution)
+        self.assertIsNone(self.solutions[1].score)
+        self.assertFalse(self.solutions[1].corrected_solution)
+
+    def test_mix_saves_valid_and_reports_invalid(self):
+        response = self.upload(make_zip({
+            self.name(self.solutions[0]): PDF_CONTENT,
+            f'5-JanNovak-{self.problem.pk}-abc.pdf': PDF_CONTENT,
+        }))
+        self.assertEqual(response.status_code, 200, response.content)
+        data = response.json()
+        self.assertEqual(len(data['uploaded']), 1)
+        self.assertEqual(len(data['errors']), 1)
+        self.assertIn('Posledná časť názvu (id registrácie)', data['errors'][0]['reason'])
+        self.assert_only_first_saved()
+
+    def test_only_invalid_files(self):
+        response = self.upload(make_zip({
+            f'5-JanNovak-{self.problem.pk}-abc.pdf': PDF_CONTENT,
+            self.name(self.solutions[1]): b'toto nie je pdf',
+        }))
+        self.assertEqual(response.status_code, 400)
+        data = response.json()
+        self.assertIn('Nič sa neuložilo. Počet súborov s chybou: 2.', data['detail'])
+        self.assertEqual(len(data['errors']), 2)
+        self.assert_nothing_saved()
+
+    def test_without_score_uploads_pdf_and_warns(self):
+        self.solutions[0].score = 4
+        self.solutions[0].save()
+        response = self.upload(make_zip({
+            self.name(self.solutions[0]).split('-', 1)[1]: PDF_CONTENT,
+            self.name(self.solutions[1], 6): PDF_CONTENT,
+        }))
+        self.assertEqual(response.status_code, 200, response.content)
+        data = response.json()
+        self.assertEqual(len(data['uploaded']), 2)
+        self.assertEqual(len(data['warnings']), 1)
+        self.assertIn('body ostali nezmenené', data['warnings'][0]['reason'])
+        self.solutions[0].refresh_from_db()
+        self.solutions[1].refresh_from_db()
+        self.assertEqual(self.solutions[0].score, 4)
+        self.assertTrue(self.solutions[0].corrected_solution)
+        self.assertEqual(self.solutions[1].score, 6)
+
+    def test_only_non_pdf_files(self):
+        response = self.upload(make_zip({'poznamky.txt': b'ahoj', 'obrazok.png': b'png'}))
+        self.assertEqual(response.status_code, 400)
+        data = response.json()
+        self.assertIn('nenašlo žiadne opravené riešenie', data['detail'])
+        self.assertEqual(len(data['skipped']), 2)
+
+    def test_empty_zip(self):
+        response = self.upload(make_zip({}))
+        self.assertEqual(response.status_code, 400)
+        self.assertIn('nenašlo žiadne opravené riešenie', response.json()['detail'])
+
+    def test_nested_zip(self):
+        inner = make_zip({self.name(self.solutions[0]): PDF_CONTENT})
+        response = self.upload(make_zip({'vnutorny.zip': inner}))
+        self.assertEqual(response.status_code, 400)
+        data = response.json()
+        self.assertIn('ZIP v ZIPe', data['skipped'][0]['reason'])
+        self.assert_nothing_saved()
+
+    def test_file_for_other_problem(self):
+        response = self.upload(make_zip({
+            self.name(self.solutions[0]): PDF_CONTENT,
+            self.name(self.other_solution): PDF_CONTENT,
+        }))
+        self.assertEqual(response.status_code, 200, response.content)
+        self.assertIn('patrí k úlohe', response.json()['errors'][0]['reason'])
+        self.assert_only_first_saved()
+        self.other_solution.refresh_from_db()
+        self.assertFalse(self.other_solution.corrected_solution)
+
+    def test_duplicate_solution_saves_neither(self):
+        response = self.upload(make_zip({
+            self.name(self.solutions[1], 5): PDF_CONTENT,
+            'iny/' + self.name(self.solutions[1], 6): PDF_CONTENT,
+            self.name(self.solutions[0], 5): PDF_CONTENT,
+        }))
+        self.assertEqual(response.status_code, 200, response.content)
+        errors = response.json()['errors']
+        self.assertEqual(len(errors), 2)
+        self.assertIn('Duplicitné riešenie', errors[0]['reason'])
+        self.assert_only_first_saved()
+
+    def test_fake_pdf(self):
+        response = self.upload(make_zip({
+            self.name(self.solutions[0]): PDF_CONTENT,
+            self.name(self.solutions[1]): b'toto nie je pdf',
+        }))
+        self.assertEqual(response.status_code, 200, response.content)
+        errors = response.json()['errors']
+        self.assertEqual(len(errors), 1)
+        self.assertIn('obsah nie je PDF', errors[0]['reason'])
+        self.assert_only_first_saved()
+
+    def test_unknown_registration(self):
+        response = self.upload(make_zip({
+            f'5-JanNovak-{self.problem.pk}-999999.pdf': PDF_CONTENT,
+        }))
+        self.assertEqual(response.status_code, 400)
+        self.assertIn('Registrácia používateľa s id 999999 neexistuje',
+                      response.json()['errors'][0]['reason'])
+
+    def test_not_a_zip(self):
+        response = self.upload(b'toto nie je zip', filename='opravene.zip')
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json()['detail'], 'Priložený súbor nie je zip')
+
+    def test_only_staff(self):
+        content = make_zip({self.name(self.solutions[0]): PDF_CONTENT})
+        self.assertEqual(self.upload(content, user='competitor').status_code, 403)
+        self.assert_nothing_saved()
