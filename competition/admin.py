@@ -1,7 +1,8 @@
 from django.contrib import admin, messages
 from django.http import HttpResponseRedirect
 
-from competition.models import (Comment, Competition, Event, EventRegistration,
+from competition.models import (Camp, CampLink, Comment, Competition, Event,
+                                EventRegistration,
                                 Grade, LateTag, Problem, ProblemCorrection,
                                 Publication, PublicationType, RegistrationLink,
                                 Semester, Series, Solution)
@@ -273,3 +274,50 @@ class LateTagAdmin(admin.ModelAdmin):
         'name',
         'upper_bound'
     )
+
+
+class CampLinkInline(admin.TabularInline):
+    model = CampLink
+    extra = 1
+    fields = ('title', 'url', 'order')
+
+
+@admin.register(Camp)
+class CampAdmin(admin.ModelAdmin):
+    inlines = (CampLinkInline,)
+    autocomplete_fields = ('event',)
+    list_display = (
+        '__str__',
+        'event',
+        'display_date',
+        'location',
+    )
+    list_filter = (
+        'event__competition',
+    )
+    search_fields = (
+        'additional_name',
+        'location',
+        'leaders',
+        'event__competition__name',
+        'event__school_year',
+    )
+    date_hierarchy = 'start'
+    fieldsets = (
+        (None, {
+            'fields': ('event', 'additional_name'),
+        }),
+        ('Termín a miesto', {
+            'fields': (('start', 'end'), 'date_text', 'location'),
+            'description': 'Ak nepoznáme presný termín, vyplň textový termín '
+                           '(zobrazí sa namiesto dátumov). Približný začiatok '
+                           'pomôže správne zoradiť sústredenia.',
+        }),
+        ('Obsah', {
+            'fields': ('leaders', 'story', 'description'),
+        }),
+    )
+
+    @admin.display(description='termín', ordering='start')
+    def display_date(self, obj: Camp):
+        return obj.display_date

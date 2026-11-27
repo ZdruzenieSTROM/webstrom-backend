@@ -12,7 +12,8 @@ from django.core.files import File
 # pylint: disable=unused-argument
 from django.db.models.manager import BaseManager
 from django.http import FileResponse, Http404, HttpResponse
-from django_filters import BooleanFilter, Filter, FilterSet, ModelChoiceFilter
+from django_filters import (BooleanFilter, CharFilter, Filter, FilterSet,
+                            ModelChoiceFilter)
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import exceptions, filters, mixins, status, viewsets
 from rest_framework.decorators import action
@@ -25,7 +26,8 @@ from rest_framework.utils.urls import replace_query_param
 from base.emails import send_bulk_html_emails
 from base.utils import mime_type
 from competition.filters import UnaccentSearchFilter, UpcomingFilter
-from competition.models import (SERIES_SUM_METHODS, Comment, Competition,
+from competition.models import (SERIES_SUM_METHODS, Camp, Comment,
+                                Competition,
                                 CompetitionType, Event, EventRegistration,
                                 Grade, LateTag, Problem, Publication,
                                 PublicationType, Semester, Series, Solution,
@@ -38,7 +40,8 @@ from competition.results import (FreezingNotClosedResults,
                                  freeze_series_results,
                                  generate_praticipant_invitations,
                                  semester_results, series_results)
-from competition.serializers import (CommentSerializer, CompetitionSerializer,
+from competition.serializers import (CampSerializer, CommentSerializer,
+                                     CompetitionSerializer,
                                      CompetitionTypeSerializer,
                                      EventRegistrationReadSerializer,
                                      EventRegistrationWriteSerializer,
@@ -1203,3 +1206,51 @@ class LateTagViewSet(viewsets.ReadOnlyModelViewSet):
     """Omeškania"""
     queryset = LateTag.objects.all()
     serializer_class = LateTagSerializer
+
+
+class CampViewSet(viewsets.ModelViewSet):
+    """Sústredenia"""
+    class CampFilterSet(FilterSet):
+        competition = ModelChoiceFilter(
+            field_name='event__competition',
+            queryset=Competition.objects.all()
+        )
+        competition_type = ModelChoiceFilter(
+            field_name='event__competition__competition_type',
+            queryset=CompetitionType.objects.all()
+        )
+        school_year = CharFilter(field_name='event__school_year')
+
+        class Meta:
+            model = Camp
+            fields = ['event']
+
+    queryset = Camp.objects.select_related(
+        'event__competition').prefetch_related('links')
+    serializer_class = CampSerializer
+    permission_classes = (CompetitionRestrictedPermission,)
+    filter_backends = [DjangoFilterBackend,
+                       UnaccentSearchFilter, filters.OrderingFilter]
+    filterset_class = CampFilterSet
+    search_fields = ['additional_name', 'location',
+                     'leaders', 'story', 'description']
+    ordering_fields = ['start', 'end']
+    ordering = ['-start']
+
+    def perform_create(self, serializer):
+        """
+        Vola sa pri vytvarani objektu,
+        checkuju sa tu permissions, ci user vie vytvorit sustredenie v danom evente
+        """
+        if Camp.can_user_create(self.request.user, serializer.validated_data):
+            serializer.save()
+        else:
+            raise exceptions.PermissionDenied(
+                'Nedostatočné práva na vytvorenie tohoto objektu')
+
+    def perform_update(self, serializer):
+        if 'event' in serializer.validated_data and not Camp.can_user_create(
+                self.request.user, serializer.validated_data):
+            raise exceptions.PermissionDenied(
+                'Nedostatočné práva na presunutie sústredenia do tohto eventu')
+        serializer.save()

@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 import datetime
 from typing import Optional
 
@@ -854,3 +855,104 @@ class ProblemCorrection(models.Model):
     best_solution = models.ManyToManyField(
         Solution, verbose_name='najkrajšie riešenia')
     corrected_by = models.ManyToManyField(User, verbose_name='opravovatelia')
+
+
+class Camp(models.Model):
+    """
+    Sústredenie, spravidla viazané k semestru/eventu.
+    Staré sústredenia môžu mať nekompletné údaje, preto sú takmer všetky polia
+    nepovinné. Ak nepoznáme presný termín, vyplní sa textový popis termínu
+    (napr. "marec 1995"), ktorý sa zobrazí namiesto dátumov.
+    """
+    class Meta:
+        verbose_name = 'sústredenie'
+        verbose_name_plural = 'sústredenia'
+        ordering = [models.F('start').desc(nulls_last=True), '-pk']
+
+    event = models.ForeignKey(
+        Event,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='camps',
+        verbose_name='semester/event',
+        help_text='Nepovinné, napríklad pri starých sústredeniach bez eventu v databáze.',
+    )
+    additional_name = models.CharField(
+        verbose_name='prívlastok sústredenia', max_length=50, blank=True,
+        help_text='Napríklad "online"')
+
+    start = models.DateField(verbose_name='začiatok', null=True, blank=True)
+    end = models.DateField(verbose_name='koniec', null=True, blank=True)
+    date_text = models.CharField(
+        verbose_name='termín (text)', max_length=100, blank=True,
+        help_text='Zobrazí sa namiesto dátumov, napríklad "marec 1995". '
+                  'Ak je prázdne, zobrazí sa začiatok a koniec.')
+
+    location = models.CharField(
+        verbose_name='miesto konania', max_length=256, blank=True)
+    leaders = models.TextField(
+        verbose_name='vedúci', blank=True,
+        help_text='Mená vedúcich sústredenia')
+    story = models.TextField(verbose_name='dej', blank=True)
+    description = models.TextField(verbose_name='popis', blank=True)
+
+    def clean(self) -> None:
+        super().clean()
+        if self.start and self.end and self.end < self.start:
+            raise ValidationError(
+                {'end': 'Koniec sústredenia nemôže byť pred začiatkom.'})
+
+    @property
+    def display_date(self) -> str:
+        """Termín na zobrazenie: textový popis termínu, inak dátumy"""
+        if self.date_text:
+            return self.date_text
+        start, end = self.start, self.end
+        if start is None or end is None or start == end:
+            date = start or end
+            return f'{date.day}. {date.month}. {date.year}' if date else ''
+        if start.year != end.year:
+            start_str = f'{start.day}. {start.month}. {start.year}'
+        elif start.month != end.month:
+            start_str = f'{start.day}. {start.month}.'
+        else:
+            start_str = f'{start.day}.'
+        return f'{start_str} – {end.day}. {end.month}. {end.year}'
+
+    def can_user_modify(self, user: User) -> bool:
+        if self.event is None:
+            return user.is_superuser
+        return self.event.can_user_modify(user)
+
+    @classmethod
+    def can_user_create(cls, user: User, data: dict) -> bool:
+        event = data.get('event')
+        if event is None:
+            return user.is_superuser
+        return event.can_user_modify(user)
+
+    def __str__(self):
+        name = 'Sústredenie'
+        if self.additional_name:
+            name = f'{name} - {self.additional_name}'
+        context = str(self.event) if self.event else self.display_date
+        return f'{name} ({context})' if context else name
+
+
+class CampLink(models.Model):
+    """Odkaz k sústredeniu (fotky, video, web, ...)"""
+    class Meta:
+        verbose_name = 'odkaz k sústredeniu'
+        verbose_name_plural = 'odkazy k sústredeniu'
+        ordering = ['order', 'pk']
+
+    camp = models.ForeignKey(
+        Camp, on_delete=models.CASCADE, related_name='links',
+        verbose_name='sústredenie')
+    title = models.CharField(verbose_name='názov', max_length=128)
+    url = models.URLField(verbose_name='url', max_length=512)
+    order = models.PositiveSmallIntegerField(verbose_name='poradie', default=0)
+
+    def __str__(self):
+        return self.title

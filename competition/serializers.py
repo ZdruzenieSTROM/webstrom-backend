@@ -534,3 +534,62 @@ class SemesterWithProblemsSerializer(ModelWithParticipationSerializer):
 
     def get_verbose_name(self, obj):
         return str(obj)
+
+
+@ts_interface(context='competition')
+class CampLinkSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.CampLink
+        fields = ['id', 'title', 'url', 'order']
+
+
+@ts_interface(context='competition')
+class CampSerializer(serializers.ModelSerializer):
+    links = CampLinkSerializer(many=True, required=False)
+    display_date = serializers.CharField(read_only=True)
+    verbose_name = serializers.SerializerMethodField('get_verbose_name')
+
+    class Meta:
+        model = models.Camp
+        fields = '__all__'
+
+    def get_verbose_name(self, obj):
+        return str(obj)
+
+    def validate(self, attrs):
+        camp = models.Camp(**{
+            field: attrs.get(field, getattr(self.instance, field, None))
+            for field in ('start', 'end')
+        })
+        try:
+            camp.clean()
+        except exceptions.ValidationError as exc:
+            raise ValidationError(exc.message_dict) from exc
+        return super().validate(attrs)
+
+    @staticmethod
+    def _save_links(camp: models.Camp, links_data: list[dict]):
+        """Nahradí odkazy sústredenia zadaným zoznamom"""
+        camp.links.all().delete()
+        models.CampLink.objects.bulk_create([
+            models.CampLink(
+                camp=camp,
+                title=link['title'],
+                url=link['url'],
+                order=link.get('order', index),
+            )
+            for index, link in enumerate(links_data)
+        ])
+
+    def create(self, validated_data):
+        links_data = validated_data.pop('links', [])
+        camp = super().create(validated_data)
+        self._save_links(camp, links_data)
+        return camp
+
+    def update(self, instance, validated_data):
+        links_data = validated_data.pop('links', None)
+        camp = super().update(instance, validated_data)
+        if links_data is not None:
+            self._save_links(camp, links_data)
+        return camp
