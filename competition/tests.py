@@ -7,6 +7,7 @@ from django.urls import reverse
 from rest_framework.test import APITestCase
 
 from competition import models
+from competition.results import semester_results, series_results
 from competition.utils import sum_methods
 from competition.utils.validations import validate_points
 from competition.views import parse_corrected_solution_file_name
@@ -184,6 +185,15 @@ class TestSemester(APITestCase, PermissionTestMixin):
         self.assertEqual(response.status_code, 200)
         self.assertTrue(len(response.json()) > 0)
         results_row_assert_format(self, response.json()[0], 2)
+
+    def test_results_query_count_does_not_grow_with_rows(self):
+        '''výsledkovky sa počítajú pevným počtom dotazov, nie dotazom na každú bunku'''
+        semester = models.Semester.objects.get(pk=0)
+        with self.assertNumQueries(6):
+            self.assertTrue(len(semester_results(semester)) > 1)
+        series = semester.series_set.first()
+        with self.assertNumQueries(3):
+            self.assertTrue(len(series_results(series)) > 1)
 
     def test_update_permissions(self):
         ''' update permission OK '''
