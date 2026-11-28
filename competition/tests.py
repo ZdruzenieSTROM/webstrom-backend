@@ -1,5 +1,8 @@
 from datetime import datetime, timezone
 
+from django.contrib.auth import get_user_model
+from django.test import TestCase
+from django.urls import reverse
 from rest_framework.test import APITestCase
 
 from competition import models
@@ -359,3 +362,21 @@ class TestSolution(APITestCase, PermissionTestMixin):
                                self.ONLY_STAFF_OK_RESPONSES, {})
         vote = models.Solution.objects.get(pk=0).vote
         self.assertEqual(vote, 0)
+
+
+class TestAdminSearch(TestCase):
+    """Searching in admin changelists must not crash on FK search fields"""
+
+    def setUp(self):
+        user = get_user_model()(
+            email='admin@example.com', is_staff=True, is_superuser=True)
+        user.save()
+        self.client.force_login(user)
+
+    def test_search(self):
+        for model in ('eventregistration', 'solution', 'comment'):
+            with self.subTest(model=model):
+                response = self.client.get(
+                    reverse(f'admin:competition_{model}_changelist'),
+                    {'q': 'matej'})
+                self.assertEqual(response.status_code, 200)

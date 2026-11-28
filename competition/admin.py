@@ -154,7 +154,9 @@ class SolutionAdmin(admin.ModelAdmin):
         'score',
     )
     search_fields = (
-        'semester_registration',
+        'semester_registration__profile__first_name',
+        'semester_registration__profile__last_name',
+        'semester_registration__profile__user__email',
     )
 
     date_hierarchy = 'uploaded_at'
@@ -211,7 +213,9 @@ class CommentAdmin(admin.ModelAdmin):
     )
     search_fields = (
         'text',
-        'posted_by'
+        'posted_by__email',
+        'posted_by__profile__first_name',
+        'posted_by__profile__last_name',
     )
 
 
@@ -237,7 +241,9 @@ class EventRegistrationAdmin(admin.ModelAdmin):
     )
 
     search_fields = (
-        'profile',
+        'profile__first_name',
+        'profile__last_name',
+        'profile__user__email',
     )
 
 
