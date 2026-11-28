@@ -645,9 +645,6 @@ class EventRegistration(models.Model):
         event = Event.objects.get(pk=data['event'].id)
         return event.can_user_modify(user)
 
-    def has_solutions(self):
-        return self.solution_set.exists()
-
 
 class Vote(models.IntegerChoices):
     '''

@@ -3,9 +3,11 @@ from json import dumps as json_dumps
 from json import loads as json_loads
 from operator import itemgetter
 
+from django.db.models import Prefetch
 from django.utils.timezone import now
 
-from competition.models import EventRegistration, Semester, Series, Profile
+from competition.models import (EventRegistration, Problem, Profile, Semester,
+                                Series, Solution)
 from competition.serializers import EventRegistrationReadSerializer
 from competition.utils import sum_methods
 
@@ -26,10 +28,11 @@ def semester_results(self: Semester) -> dict:
     """Vyrobí výsledky semestra"""
     if self.frozen_results is not None:
         return json_loads(self.frozen_results)
-    results = []
-    for registration in self.eventregistration_set.all():
-        if registration.has_solutions():
-            results.append(_generate_result_row(registration, self))
+    series_set = _with_ordered_problems(self.series_set.order_by('order'))
+    results = [
+        _generate_result_row(registration, series_set)
+        for registration in _registrations_with_solutions(self)
+    ]
 
     results.sort(key=itemgetter('total'), reverse=True)
     results = _rank_results(results)
@@ -45,10 +48,10 @@ def freeze_semester_results(semester: Semester):
 
 
 def series_results(series: Series):
+    series_set = _with_ordered_problems([series])
     results = [
-        _generate_result_row(registration, only_series=series)
-        for registration in series.semester.eventregistration_set.all()
-        if registration.has_solutions()
+        _generate_result_row(registration, series_set)
+        for registration in _registrations_with_solutions(series.semester)
     ]
 
     results.sort(key=itemgetter('total'), reverse=True)
@@ -97,25 +100,39 @@ def generate_praticipant_invitations(
     return invited_users
 
 
+def _with_ordered_problems(series_set) -> list[tuple[Series, list[Problem]]]:
+    return [(series, list(series.problems.order_by('order'))) for series in series_set]
+
+
+def _registrations_with_solutions(semester: Semester) -> list[EventRegistration]:
+    """Načíta naraz registrácie s riešeniami a všetko, čo riadok výsledkovky číta"""
+    registrations = semester.eventregistration_set.select_related(
+        'profile', 'school', 'grade'
+    ).prefetch_related(
+        # Poradie podľa pk zachováva, ktoré z viacerých riešení tej istej úlohy sa ráta
+        Prefetch('solution_set', queryset=Solution.objects.order_by('pk'))
+    )
+    return [registration for registration in registrations
+            if registration.solution_set.all()]
+
+
 def _generate_result_row(
     semester_registration: EventRegistration,
-    semester: Semester | None = None,
-    only_series: Series | None = None,
+    series_set: list[tuple[Series, list[Problem]]],
 ):
     """
-    Vygeneruje riadok výsledku pre používateľa.
-    Ak je uvedený only_semester vygenerujú sa výsledky iba sa daný semester
+    Vygeneruje riadok výsledku pre používateľa zo série/sérií v series_set.
     """
-    user_solutions = semester_registration.solution_set
-    series_set = semester.series_set.order_by(
-        'order') if semester is not None else [only_series]
+    solution_by_problem: dict[int, Solution] = {}
+    for sol in semester_registration.solution_set.all():
+        solution_by_problem.setdefault(sol.problem_id, sol)
     solutions = []
     subtotal = []
-    for series in series_set:
+    for series, problems in series_set:
         series_solutions = []
         solution_points = []
-        for problem in series.problems.order_by('order'):
-            sol = user_solutions.filter(problem=problem).first()
+        for problem in problems:
+            sol = solution_by_problem.get(problem.pk)
 
             solution_points.append(sol.score or 0 if sol is not None else 0)
             series_solutions.append(
