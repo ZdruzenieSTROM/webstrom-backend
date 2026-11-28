@@ -3,9 +3,40 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 # from user.models import User
-from personal.models import County, District, School
+from personal.models import County, District, Profile, School, normalize_name
 from personal.serializers import (CountySerializer, DistrictSerializer,
                                   SchoolSerializer)
+
+
+class TestNormalizeName(TestCase):
+
+    def test_normalize_name(self):
+        cases = {
+            'jozef': 'Jozef',
+            'JOZEF': 'Jozef',
+            'jOzEf': 'Jozef',
+            'ŠTEFAN': 'Štefan',
+            'ján  pAVOL ': 'Ján Pavol',
+            'NOVÁKOVÁ-horváthová': 'Nováková-Horváthová',
+            "o'BRIEN": "O'Brien",
+            '': '',
+        }
+        for raw, expected in cases.items():
+            with self.subTest(raw=raw):
+                self.assertEqual(normalize_name(raw), expected)
+
+    def test_profile_save_normalizes_names(self):
+        county = County.objects.create(name='Testovací kraj')
+        district = District.objects.create(
+            name='Testovací okres', county=county)
+        school = School.objects.create(
+            name='Testovacia škola', district=district)
+        profile = Profile.objects.create(
+            first_name='MARTIN', last_name='kováč', school=school,
+            year_of_graduation=2030)
+        profile.refresh_from_db()
+        self.assertEqual(profile.first_name, 'Martin')
+        self.assertEqual(profile.last_name, 'Kováč')
 
 
 class TestProfile(TestCase):

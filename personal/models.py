@@ -1,3 +1,5 @@
+import re
+
 from django.apps import apps
 from django.conf import settings
 from django.db import models
@@ -89,6 +91,19 @@ def unspecified_school():
     return School.objects.get_unspecified_value()
 
 
+def normalize_name(name):
+    """
+    Upraví meno tak, aby v každom slove (aj v častiach oddelených
+    spojovníkom alebo apostrofom) bolo veľké iba prvé písmeno.
+    Napr. 'jÁN  pAVOL' -> 'Ján Pavol', 'NOVÁKOVÁ-horváthová' -> 'Nováková-Horváthová'
+    """
+    if not name:
+        return name
+    name = ' '.join(name.split()).lower()
+    return re.sub(r"(^|[\s\-'])(\w)",
+                  lambda match: match.group(1) + match.group(2).upper(), name)
+
+
 class Profile(models.Model):
     class Meta:
         verbose_name = 'profil'
@@ -134,6 +149,11 @@ class Profile(models.Model):
     def grade(self, value):
         self.year_of_graduation = apps.get_model('competition', 'Grade').get(
             pk=value).get_year_of_graduation_by_date()
+
+    def save(self, *args, **kwargs):
+        self.first_name = normalize_name(self.first_name)
+        self.last_name = normalize_name(self.last_name)
+        super().save(*args, **kwargs)
 
     def get_full_name(self):
         return f'{self.first_name.strip()} {self.last_name.strip()}'
